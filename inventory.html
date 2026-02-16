@@ -3,324 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAPEYE - Inventory Management</title>
+    <title>Capeye - Inventory</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
-        * { font-family: 'Inter', sans-serif; }
-        
-        body {
-            background: #0f172a;
-            color: #e2e8f0;
-        }
-        
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .nav-item {
-            transition: all 0.3s ease;
-        }
-        
-        .nav-item:hover, .nav-item.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-left: 3px solid #3b82f6;
-        }
-        
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .status-instock { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .status-transit { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-        .status-offsite { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .status-supplier { background: rgba(99, 102, 241, 0.2); color: #6366f1; }
-        
-        .data-table th {
-            background: rgba(30, 41, 59, 0.9);
-            color: #94a3b8;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-        }
-        
-        .data-table td {
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        }
-        
-        .data-table tr:hover {
-            background: rgba(59, 130, 246, 0.05);
-        }
-        
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ef4444;
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .search-input {
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            transition: all 0.3s;
-        }
-        
-        .search-input:focus {
-            border-color: #3b82f6;
-            outline: none;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .status-badge { @apply px-2 py-1 rounded-full text-xs font-medium; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="bg-slate-50 min-h-screen">
+    <!-- Auth Check -->
+    <script src="js/auth.js"></script>
+    <script>
+        if (!Auth.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
     <!-- Header -->
-    <header class="glass-panel sticky top-0 z-50 border-b border-slate-700">
-        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+    <header class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-truck text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold gradient-text">CAPEYE</h1>
-                        <p class="text-xs text-slate-400">Auto Capital Intelligence System</p>
-                    </div>
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="flex items-center hover:opacity-80 transition">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h1 class="text-xl font-bold">Capeye</h1>
+                        </div>
+                    </a>
                 </div>
                 
-                <div class="flex items-center space-x-6">
-                    <div class="relative">
-                        <i class="fas fa-bell text-slate-400 text-lg cursor-pointer hover:text-white transition"></i>
-                        <span class="notification-badge">3</span>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium user-name">Loading...</p>
+                        <p class="text-xs text-slate-400 user-role">Loading...</p>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-white">Keith Hardy</p>
-                            <p class="text-xs text-slate-400">General Manager</p>
-                        </div>
-                        <div class="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-slate-300"></i>
-                        </div>
-                    </div>
+                    <button class="logout-btn p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="flex">
-        <!-- Sidebar Navigation -->
-        <aside class="w-64 glass-panel min-h-screen border-r border-slate-700">
-            <nav class="mt-8 px-4 space-y-2">
-                <a href="index.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-line text-slate-400"></i>
-                    <span>Dashboard</span>
-                </a>
-                
-                <a href="inventory.html" class="nav-item active px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-warehouse text-blue-400"></i>
-                    <span class="font-medium">Inventory</span>
-                </a>
-                
-                <a href="workflow.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-tasks text-slate-400"></i>
-                    <span>Workflow</span>
-                    <span class="ml-auto bg-blue-600 text-white text-xs px-2 py-1 rounded-full">12</span>
-                </a>
-                
-                <a href="analytics.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-pie text-slate-400"></i>
-                    <span>Analytics</span>
-                </a>
-                
-                <a href="alerts.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-exclamation-triangle text-slate-400"></i>
-                    <span>Alerts</span>
-                    <span class="ml-auto bg-red-600 text-white text-xs px-2 py-1 rounded-full">5</span>
-                </a>
-                
-                <a href="staff.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-users text-slate-400"></i>
-                    <span>Staff</span>
-                </a>
-                
-                <div class="mt-8 pt-8 border-t border-slate-700">
-                    <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Departments</p>
-                    
-                    <a href="sales.html" class="nav-item px-4 py-2 rounded-lg cursor-pointer flex items-center space-x-3">
-                        <i class="fas fa-handshake text-slate-400 text-sm"></i>
-                        <span class="text-sm">Sales</span>
-                    </a>
-                    
-                    <a href="workshop.html" class="nav-item px-4 py-2 rounded-lg cursor-pointer flex items-center space-x-3">
-                        <i class="fas fa-wrench text-slate-400 text-sm"></i>
-                        <span class="text-sm">Workshop</span>
-                    </a>
-                    
-                    <a href="valet.html" class="nav-item px-4 py-2 rounded-lg cursor-pointer flex items-center space-x-3">
-                        <i class="fas fa-spray-can text-slate-400 text-sm"></i>
-                        <span class="text-sm">Valeting</span>
-                    </a>
-                    
-                    <a href="accounts.html" class="nav-item px-4 py-2 rounded-lg cursor-pointer flex items-center space-x-3">
-                        <i class="fas fa-calculator text-slate-400 text-sm"></i>
-                        <span class="text-sm">Accounts</span>
-                    </a>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-8 overflow-auto">
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold text-white mb-2">Inventory Management</h2>
-                <p class="text-slate-400">Complete stock visibility and control</p>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center text-sm text-slate-500 mb-2">
+                <a href="dashboard.html" class="hover:text-blue-600">Dashboard</a>
+                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-slate-900">Inventory</span>
             </div>
-
-            <!-- Search and Filters -->
-            <div class="glass-panel rounded-xl p-4 mb-6">
-                <div class="flex flex-wrap gap-4 items-end">
-                    <div class="flex-1 min-w-[300px]">
-                        <label class="block text-sm text-slate-400 mb-2">Search</label>
-                        <div class="relative">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500"></i>
-                            <input type="text" id="searchInput" placeholder="Search by reg, make, model..." 
-                                class="search-input w-full pl-10 pr-4 py-2 rounded-lg text-white">
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-2">Manufacturer</label>
-                        <select id="filterMake" class="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white text-sm">
-                            <option value="">All Manufacturers</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-2">Location</label>
-                        <select id="filterLocation" class="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white text-sm">
-                            <option value="">All Locations</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-2">Status</label>
-                        <select id="filterStatus" class="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white text-sm">
-                            <option value="">All Statuses</option>
-                        </select>
-                    </div>
-                    
-                    <button onclick="applyFilters()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm transition">
-                        <i class="fas fa-filter mr-2"></i>Apply
-                    </button>
-                    
-                    <button onclick="exportInventory()" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2 rounded-lg text-sm transition">
-                        <i class="fas fa-download mr-2"></i>Export
-                    </button>
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Vehicle Inventory</h2>
+                    <p class="text-slate-600 mt-1">Manage and track all vehicles in stock.</p>
                 </div>
-            </div>
-
-            <!-- Stats Summary -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="glass-panel rounded-lg p-4">
-                    <p class="text-slate-400 text-xs uppercase">Total Vehicles</p>
-                    <p class="text-2xl font-bold text-white" id="statTotal">0</p>
-                </div>
-                <div class="glass-panel rounded-lg p-4">
-                    <p class="text-slate-400 text-xs uppercase">Total Value</p>
-                    <p class="text-2xl font-bold text-white" id="statValue">£0</p>
-                </div>
-                <div class="glass-panel rounded-lg p-4">
-                    <p class="text-slate-400 text-xs uppercase">Avg Margin</p>
-                    <p class="text-2xl font-bold text-green-400" id="statMargin">0%</p>
-                </div>
-                <div class="glass-panel rounded-lg p-4">
-                    <p class="text-slate-400 text-xs uppercase">Overdue</p>
-                    <p class="text-2xl font-bold text-red-400" id="statOverdue">0</p>
-                </div>
-            </div>
-
-            <!-- Inventory Table -->
-            <div class="glass-panel rounded-xl overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full data-table">
-                        <thead>
-                            <tr>
-                                <th class="text-left py-4 px-4">Stock #</th>
-                                <th class="text-left py-4 px-4">Registration</th>
-                                <th class="text-left py-4 px-4">Vehicle</th>
-                                <th class="text-left py-4 px-4">Colour</th>
-                                <th class="text-left py-4 px-4">Mileage</th>
-                                <th class="text-left py-4 px-4">Status</th>
-                                <th class="text-left py-4 px-4">Location</th>
-                                <th class="text-left py-4 px-4">Price</th>
-                                <th class="text-left py-4 px-4">Days</th>
-                                <th class="text-left py-4 px-4">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inventoryBody">
-                            <!-- Populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Pagination -->
-                <div class="p-4 border-t border-slate-700 flex justify-between items-center">
-                    <p class="text-slate-400 text-sm">Showing <span id="showingFrom">1</span> to <span id="showingTo">10</span> of <span id="totalItems">0</span> entries</p>
-                    <div class="flex space-x-2">
-                        <button onclick="changePage(-1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1 rounded text-sm transition">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button onclick="changePage(1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1 rounded text-sm transition">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Vehicle Detail Modal -->
-    <div id="vehicleModal" class="fixed inset-0 bg-black/80 hidden z-50 overflow-auto">
-        <div class="min-h-screen px-4 py-8">
-            <div class="max-w-4xl mx-auto glass-panel rounded-xl overflow-hidden">
-                <div class="p-6 border-b border-slate-700 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-2xl font-bold text-white" id="modalTitle">Vehicle Details</h2>
-                        <p class="text-slate-400" id="modalSubtitle">Registration: <span id="modalReg"></span></p>
-                    </div>
-                    <button onclick="closeVehicleModal()" class="text-slate-400 hover:text-white text-2xl">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="p-6" id="vehicleDetails">
-                    <!-- Dynamic content -->
+                <div class="flex space-x-3">
+                    <a href="import.html" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                        Import CSV
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="js/data.js"></script>
-    <script src="js/inventory.js"></script>
+        <!-- Import Status Banner -->
+        <div id="importStatus" class="hidden mb-6 p-4 rounded-lg border">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Search</label>
+                    <input type="text" id="searchInput" placeholder="Reg, Make, Model..." 
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Location</label>
+                    <select id="locationFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Locations</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                    <select id="statusFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Statuses</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Make</label>
+                    <select id="makeFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Makes</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-between items-center">
+                <div class="text-sm text-slate-500">
+                    Showing <span id="showingCount" class="font-medium text-slate-900">0</span> of <span id="totalCount" class="font-medium text-slate-900">0</span> vehicles
+                </div>
+                <button onclick="clearFilters()" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Clear Filters</button>
+            </div>
+        </div>
+
+        <!-- Inventory Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Registration</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Vehicle</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Location</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Days in Stock</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Cost Price</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Retail Price</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTable" class="bg-white divide-y divide-slate-200">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden p-12 text-center">
+                <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                <p class="text-slate-500 text-lg font-medium">No vehicles found</p>
+                <p class="text-slate-400 text-sm mt-1">Import data or adjust your filters</p>
+                <a href="import.html" class="inline-block mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition">Import Vehicles</a>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="js/reference-data.js"></script>
+    <script src="js/vehicle-store.js"></script>
+    <script>
+        // Current filtered data
+        let currentData = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            Auth.updateUI();
+            checkImportStatus();
+            populateFilters();
+            loadInventory();
+            
+            // Event listeners
+            document.getElementById('searchInput').addEventListener('input', debounce(loadInventory, 300));
+            document.getElementById('locationFilter').addEventListener('change', loadInventory);
+            document.getElementById('statusFilter').addEventListener('change', loadInventory);
+            document.getElementById('makeFilter').addEventListener('change', loadInventory);
+        });
+
+        function checkImportStatus() {
+            const lastImport = localStorage.getItem('capeye_last_import');
+            const banner = document.getElementById('importStatus');
+            
+            if (!lastImport) {
+                banner.classList.remove('hidden');
+                banner.className = 'mb-6 p-4 rounded-lg border bg-yellow-50 border-yellow-200';
+                banner.innerHTML = `
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-yellow-900">No data imported yet</p>
+                            <p class="text-sm text-yellow-700">Import your ClickDealer CSV to see vehicles</p>
+                        </div>
+                        <a href="import.html" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white text-sm font-medium rounded-lg transition">Import Now</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            const importDate = new Date(lastImport);
+            const hoursSince = (new Date() - importDate) / (1000 * 60 * 60);
+            
+            if (hoursSince > 48) {
+                banner.classList.remove('hidden');
+                banner.className = 'mb-6 p-4 rounded-lg border bg-orange-50 border-orange-200';
+                banner.innerHTML = `
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-orange-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-orange-900">Data is ${Math.floor(hoursSince / 24)} days old</p>
+                            <p class="text-sm text-orange-700">Last import: ${importDate.toLocaleDateString()}</p>
+                        </div>
+                        <a href="import.html" class="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white text-sm font-medium rounded-lg transition">Update Data</a>
+                    </div>
+                `;
+            } else {
+                banner.classList.remove('hidden');
+                banner.className = 'mb-6 p-4 rounded-lg border bg-green-50 border-green-200';
+                banner.innerHTML = `
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-green-900">Data up to date</p>
+                            <p class="text-sm text-green-700">Last import: ${importDate.toLocaleString()}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function populateFilters() {
+            // Populate from reference data
+            ReferenceData.populateSelect('locationFilter', 'locations', { includeEmpty: true, emptyLabel: 'All Locations' });
+            ReferenceData.populateSelect('statusFilter', 'statuses', { includeEmpty: true, emptyLabel: 'All Statuses' });
+            ReferenceData.populateSelect('makeFilter', 'manufacturers', { includeEmpty: true, emptyLabel: 'All Makes' });
+        }
+
+        function loadInventory() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const location = document.getElementById('locationFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const make = document.getElementById('makeFilter').value;
+            
+            // Get all vehicles
+            let vehicles = VehicleStore.getAll();
+            
+            // Apply filters
+            if (search) {
+                vehicles = vehicles.filter(v => 
+                    (v.registration && v.registration.toLowerCase().includes(search)) ||
+                    (v.make && v.make.toLowerCase().includes(search)) ||
+                    (v.model && v.model.toLowerCase().includes(search)) ||
+                    (v.colour && v.colour.toLowerCase().includes(search))
+                );
+            }
+            
+            if (location) {
+                vehicles = vehicles.filter(v => v.location === location);
+            }
+            
+            if (status) {
+                vehicles = vehicles.filter(v => v.status === status);
+            }
+            
+            if (make) {
+                vehicles = vehicles.filter(v => v.make === make);
+            }
+            
+            currentData = vehicles;
+            
+            // Update counts
+            document.getElementById('showingCount').textContent = vehicles.length;
+            document.getElementById('totalCount').textContent = VehicleStore.getAll().length;
+            
+            // Render table
+            renderTable(vehicles);
+        }
+
+        function renderTable(vehicles) {
+            const tbody = document.getElementById('inventoryTable');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (vehicles.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            tbody.innerHTML = vehicles.map(v => {
+                const daysClass = v.daysInStock > 60 ? 'text-red-600 font-medium' : 
+                                 v.daysInStock > 30 ? 'text-orange-600' : 'text-slate-600';
+                
+                const statusColors = {
+                    'In Stock': 'bg-green-100 text-green-800',
+                    'In Transit': 'bg-blue-100 text-blue-800',
+                    'Reserved': 'bg-yellow-100 text-yellow-800',
+                    'Sold': 'bg-slate-100 text-slate-800',
+                    'Off-site R': 'bg-orange-100 text-orange-800'
+                };
+                
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                            ${v.registration}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-slate-900">${v.make} ${v.model}</div>
+                            <div class="text-sm text-slate-500">${v.variant || ''} ${v.year || ''}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                            ${v.location || '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${statusColors[v.status] || 'bg-slate-100 text-slate-800'}">
+                                ${v.status || 'Unknown'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm ${daysClass}">
+                            ${v.daysInStock || 0} days
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                            ${v.costPrice ? '£' + v.costPrice.toLocaleString() : '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                            ${v.retailPrice ? '£' + v.retailPrice.toLocaleString() : '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button onclick="viewVehicle('${v.registration}')" class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                            <button onclick="editVehicle('${v.registration}')" class="text-slate-600 hover:text-slate-900">Edit</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('locationFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('makeFilter').value = '';
+            loadInventory();
+        }
+
+        function viewVehicle(registration) {
+            alert('View vehicle: ' + registration);
+            // TODO: Open vehicle detail modal or page
+        }
+
+        function editVehicle(registration) {
+            alert('Edit vehicle: ' + registration);
+            // TODO: Open vehicle edit modal or page
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
 </body>
 </html>
