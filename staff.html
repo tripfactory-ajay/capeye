@@ -3,77 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAPEYE - Staff</title>
+    <title>Capeye - Staff Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        * { font-family: 'Inter', sans-serif; }
-        body { background: #0f172a; color: #e2e8f0; }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .nav-item {
-            transition: all 0.3s ease;
-        }
-        .nav-item:hover, .nav-item.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-left: 3px solid #3b82f6;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="min-h-screen">
-    <header class="glass-panel sticky top-0 z-50 border-b border-slate-700">
-        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+<body class="bg-slate-50 min-h-screen">
+    <!-- Auth Check -->
+    <script src="js/auth.js"></script>
+    <script>
+        if (!Auth.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="flex items-center hover:opacity-80 transition">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h1 class="text-xl font-bold">Capeye</h1>
+                        </div>
+                    </a>
+                </div>
+                
                 <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-truck text-white text-lg"></i>
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium user-name">Loading...</p>
+                        <p class="text-xs text-slate-400 user-role">Loading...</p>
                     </div>
-                    <div>
-                        <h1 class="text-xl font-bold gradient-text">CAPEYE</h1>
-                        <p class="text-xs text-slate-400">Auto Capital Intelligence System</p>
-                    </div>
+                    <button class="logout-btn p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="flex">
-        <aside class="w-64 glass-panel min-h-screen border-r border-slate-700">
-            <nav class="mt-8 px-4 space-y-2">
-                <a href="index.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-line text-slate-400"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="inventory.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-warehouse text-slate-400"></i>
-                    <span>Inventory</span>
-                </a>
-                <a href="workflow.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-tasks text-slate-400"></i>
-                    <span>Workflow</span>
-                </a>
-            </nav>
-        </aside>
-
-        <main class="flex-1 p-8 overflow-auto">
-            <div class="glass-panel rounded-xl p-12 text-center">
-                <i class="fas fa-users text-6xl text-slate-600 mb-4"></i>
-                <h2 class="text-2xl font-bold text-white mb-2">Staff Management</h2>
-                <p class="text-slate-400 mb-6">This module is coming soon. Use the main navigation for now.</p>
-                <a href="index.html" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
-                    Go to Dashboard
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center text-sm text-slate-500 mb-2">
+                <a href="dashboard.html" class="hover:text-blue-600">Dashboard</a>
+                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-slate-900">Staff</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Staff Management</h2>
+                    <p class="text-slate-600 mt-1">View and manage team members across all departments.</p>
+                </div>
+                <a href="reference-import.html" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Manage Staff Data
                 </a>
             </div>
-        </main>
-    </div>
+        </div>
+
+        <!-- Department Filter -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+            <div class="flex flex-wrap gap-2" id="departmentFilters">
+                <button onclick="filterByDept('all')" class="dept-filter px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg transition" data-dept="all">All Departments</button>
+                <!-- Other filters populated by JS -->
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Total Staff</p>
+                <p class="text-3xl font-bold text-slate-900 mt-2" id="totalStaff">0</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Active</p>
+                <p class="text-3xl font-bold text-green-600 mt-2" id="activeStaff">0</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Departments</p>
+                <p class="text-3xl font-bold text-blue-600 mt-2" id="deptCount">0</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">New This Month</p>
+                <p class="text-3xl font-bold text-orange-600 mt-2" id="newStaff">0</p>
+            </div>
+        </div>
+
+        <!-- Staff Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-slate-900">Staff Directory</h3>
+                <div class="flex space-x-2">
+                    <input type="text" id="searchStaff" placeholder="Search staff..." 
+                        class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Department</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Role</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Contact</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staffTable" class="bg-white divide-y divide-slate-200">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="emptyState" class="hidden p-12 text-center">
+                <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                <p class="text-slate-500">No staff members found</p>
+                <a href="reference-import.html" class="inline-block mt-4 text-blue-600 hover:text-blue-800 font-medium">Import staff data →</a>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="js/reference-data.js"></script>
+    <script>
+        let currentFilter = 'all';
+        let allStaff = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            Auth.updateUI();
+            loadStaff();
+            setupSearch();
+        });
+
+        function loadStaff() {
+            allStaff = ReferenceData.get('staff');
+            populateDepartmentFilters();
+            renderStaffTable();
+            updateStats();
+        }
+
+        function populateDepartmentFilters() {
+            const container = document.getElementById('departmentFilters');
+            const departments = ReferenceData.getUniqueValues('staff', 'department');
+            
+            departments.forEach(dept => {
+                const btn = document.createElement('button');
+                btn.className = 'dept-filter px-4 py-2 bg-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-300 transition';
+                btn.textContent = dept;
+                btn.dataset.dept = dept;
+                btn.onclick = () => filterByDept(dept);
+                container.appendChild(btn);
+            });
+        }
+
+        function filterByDept(dept) {
+            currentFilter = dept;
+            
+            // Update button styles
+            document.querySelectorAll('.dept-filter').forEach(btn => {
+                if (btn.dataset.dept === dept) {
+                    btn.className = 'dept-filter px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg transition';
+                } else {
+                    btn.className = 'dept-filter px-4 py-2 bg-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-300 transition';
+                }
+            });
+            
+            renderStaffTable();
+        }
+
+        function renderStaffTable() {
+            const tbody = document.getElementById('staffTable');
+            const emptyState = document.getElementById('emptyState');
+            const searchTerm = document.getElementById('searchStaff').value.toLowerCase();
+            
+            let filtered = allStaff;
+            
+            // Apply department filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(s => s.department === currentFilter);
+            }
+            
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(s => 
+                    s.name.toLowerCase().includes(searchTerm) ||
+                    (s.role && s.role.toLowerCase().includes(searchTerm)) ||
+                    (s.email && s.email.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            tbody.innerHTML = filtered.map(staff => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold mr-3">
+                                ${staff.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-slate-900">${staff.name}</div>
+                                ${staff.id ? `<div class="text-xs text-slate-500">ID: ${staff.id.substring(0, 8)}</div>` : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                            ${staff.department}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                        ${staff.role || '-'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        ${staff.email ? `<div class="text-sm text-slate-600">${staff.email}</div>` : ''}
+                        ${staff.phone ? `<div class="text-sm text-slate-500">${staff.phone}</div>` : ''}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        ${staff.active !== false 
+                            ? '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Active</span>'
+                            : '<span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-full">Inactive</span>'
+                        }
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="viewStaff('${staff.name}')" class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                        <button onclick="editStaff('${staff.name}')" class="text-slate-600 hover:text-slate-900">Edit</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats() {
+            const staff = ReferenceData.get('staff');
+            const active = staff.filter(s => s.active !== false);
+            const departments = [...new Set(staff.map(s => s.department))];
+            
+            // Count new this month (created in last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const newStaff = staff.filter(s => {
+                if (!s.createdAt) return false;
+                return new Date(s.createdAt) > thirtyDaysAgo;
+            });
+            
+            document.getElementById('totalStaff').textContent = staff.length;
+            document.getElementById('activeStaff').textContent = active.length;
+            document.getElementById('deptCount').textContent = departments.length;
+            document.getElementById('newStaff').textContent = newStaff.length;
+        }
+
+        function setupSearch() {
+            document.getElementById('searchStaff').addEventListener('input', debounce(() => {
+                renderStaffTable();
+            }, 300));
+        }
+
+        function viewStaff(name) {
+            const staff = allStaff.find(s => s.name === name);
+            if (staff) {
+                alert(`Staff Details:\n\nName: ${staff.name}\nDepartment: ${staff.department}\nRole: ${staff.role || 'N/A'}\nEmail: ${staff.email || 'N/A'}\nPhone: ${staff.phone || 'N/A'}\nStatus: ${staff.active !== false ? 'Active' : 'Inactive'}`);
+            }
+        }
+
+        function editStaff(name) {
+            window.location.href = 'reference-import.html';
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
 </body>
 </html>
