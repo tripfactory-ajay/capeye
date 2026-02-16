@@ -3,56 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capeye - Business Dashboard</title>
+    <title>Welcome - CapEYE Auto Capital</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        .nav-link.active {
+            background-color: #3B82F6;
+            color: white !important;
+        }
+        .nav-link.active:hover {
+            background-color: #2563EB;
         }
         .glass-panel {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(229, 231, 235, 0.5);
         }
         .metric-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
         }
         .metric-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
-        .chart-container {
-            position: relative;
-            height: 300px;
+        .alert-item {
+            animation: slideIn 0.3s ease;
         }
-        .expandable-section {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        .expandable-section.expanded {
-            max-height: 1000px;
-        }
-        .status-badge {
-            transition: all 0.2s;
-        }
-        .status-badge:hover {
-            transform: scale(1.05);
-        }
-        .leaderboard-item {
-            transition: all 0.2s;
-        }
-        .leaderboard-item:hover {
-            background: #f1f5f9;
-            transform: translateX(4px);
-        }
-        .clickable-chart {
-            cursor: pointer;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
         }
         .pulse-dot {
             animation: pulse 2s infinite;
@@ -61,55 +40,59 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
     </style>
 </head>
-<body class="min-h-screen">
-    <!-- Auth Check -->
-    <script src="js/auth.js"></script>
-    <script>
-        if (!Auth.isAuthenticated()) {
-            window.location.href = 'login.html';
-        }
-    </script>
-
-    <!-- Header -->
-    <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation Header -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+            <div class="flex justify-between h-16">
+                <!-- Logo Section -->
                 <div class="flex items-center">
-                    <a href="business-dashboard.html" class="flex items-center hover:opacity-80 transition">
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <div class="flex-shrink-0 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
                         </div>
-                        <div class="ml-4">
-                            <h1 class="text-xl font-bold">Capeye Business</h1>
-                            <p class="text-xs text-slate-400">Auto Capital Intelligence</p>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">CapEYE</h1>
+                            <p class="text-xs text-gray-500">Auto Capital Intelligence</p>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-1">
+                    <a href="index.html" id="nav-welcome" class="nav-link active px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                        Dashboard
+                    </a>
+                    <a href="operations.html" id="nav-operations" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
+                        Operations
+                    </a>
+                    <a href="inventory.html" id="nav-inventory" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
+                        Inventory
+                    </a>
+                    <a href="workflow.html" id="nav-workflow" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
+                        Workflow
+                    </a>
+                    <a href="analytics.html" id="nav-analytics" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
+                        Analytics
                     </a>
                 </div>
                 
-                <!-- Navigation Tabs -->
-                <nav class="hidden md:flex space-x-1">
-                    <a href="business-dashboard.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium">Business Dashboard</a>
-                    <a href="index.html" class="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg text-sm font-medium transition">Operations</a>
-                    <a href="inventory.html" class="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg text-sm font-medium transition">Inventory</a>
-                    <a href="workflow.html" class="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg text-sm font-medium transition">Workflow</a>
-                    <a href="analytics.html" class="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg text-sm font-medium transition">Analytics</a>
-                </nav>
-                
-                <div class="flex items-center space-x-4">
-                    <div class="text-right hidden sm:block">
-                        <p class="text-sm font-medium user-name">Loading...</p>
-                        <p class="text-xs text-slate-400 user-role">Loading...</p>
+                <!-- Right Side Actions -->
+                <div class="flex items-center gap-3">
+                    <button onclick="refreshData()" class="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all" title="Refresh Data">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                    </button>
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-200">
+                        <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+                        <span class="text-xs font-medium text-green-700">Live</span>
                     </div>
-                    <button onclick="Auth.logout()" class="p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
+                    <button onclick="logout()" class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Logout">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                         </svg>
@@ -117,386 +100,260 @@
                 </div>
             </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
-        <!-- Page Header -->
-        <div class="mb-6 flex justify-between items-end">
-            <div>
-                <h2 class="text-3xl font-bold gradient-text">Business Dashboard</h2>
-                <p class="text-slate-600 mt-1">Real-time performance metrics & insights</p>
-            </div>
-            <div class="flex items-center space-x-3">
-                <span class="flex items-center text-sm text-slate-500">
-                    <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot mr-2"></span>
-                    Live Data
-                </span>
-                <button onclick="refreshDashboard()" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 transition flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4 9v10a2 2 0 002 2h12a2 2 0 002-2V9"/>
-                    </svg>
-                    Refresh
-                </button>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Welcome to CapEYE</h1>
+                    <p class="text-gray-600 mt-1" id="currentDate">Loading date...</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-500">Last Updated</p>
+                        <p class="text-sm font-medium text-gray-900" id="lastUpdated">Just now</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Key Metrics Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <!-- Total Stock Value -->
-            <div class="metric-card rounded-xl p-5 cursor-pointer" onclick="toggleDetail('valueDetail')">
-                <div class="flex justify-between items-start">
+        <!-- Critical Alerts Banner -->
+        <div id="alertsBanner" class="mb-6 hidden">
+            <div class="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+                <svg class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-red-900">Critical Alerts Requiring Attention</h3>
+                    <div id="alertsList" class="mt-2 space-y-1"></div>
+                </div>
+                <button onclick="viewAllAlerts()" class="text-sm font-medium text-red-700 hover:text-red-800">View All</button>
+            </div>
+        </div>
+
+        <!-- Key Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Stock in Hand -->
+            <div class="metric-card glass-panel rounded-xl p-6 shadow-sm border-l-4 border-blue-500">
+                <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-500">Total Stock Value</p>
-                        <p class="text-2xl font-bold text-slate-900 mt-1" id="totalStockValue">£0</p>
-                        <p class="text-xs text-green-600 mt-1 flex items-center">
-                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
-                            </svg>
-                            <span id="valueTrend">+0%</span> vs last month
-                        </p>
+                        <p class="text-sm font-medium text-gray-600">Stock in Hand</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1" id="stockInHand">0</p>
+                        <p class="text-xs text-gray-500 mt-1">vehicles available</p>
                     </div>
-                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
                     </div>
                 </div>
-            </div>
-
-            <!-- Total Vehicles -->
-            <div class="metric-card rounded-xl p-5 cursor-pointer" onclick="toggleDetail('vehicleDetail')">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-medium text-slate-500">Total Vehicles</p>
-                        <p class="text-2xl font-bold text-slate-900 mt-1" id="totalVehicles">0</p>
-                        <p class="text-xs text-slate-500 mt-1">
-                            <span class="text-green-600 font-medium" id="inStockCount">0</span> in stock
-                        </p>
-                    </div>
-                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-green-600 font-medium flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                         </svg>
-                    </div>
+                        +5
+                    </span>
+                    <span class="text-gray-400 ml-2">since yesterday</span>
                 </div>
             </div>
 
-            <!-- Sales This Month -->
-            <div class="metric-card rounded-xl p-5 cursor-pointer" onclick="toggleDetail('salesDetail')">
-                <div class="flex justify-between items-start">
+            <!-- Yesterday's Sales -->
+            <div class="metric-card glass-panel rounded-xl p-6 shadow-sm border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-500">Sales This Month</p>
-                        <p class="text-2xl font-bold text-slate-900 mt-1" id="monthlySales">£0</p>
-                        <p class="text-xs text-slate-500 mt-1">
-                            <span class="font-medium" id="carsSold">0</span> cars sold
-                        </p>
+                        <p class="text-sm font-medium text-gray-600">Yesterday's Sales</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1" id="yesterdaySales">£0</p>
+                        <p class="text-xs text-gray-500 mt-1" id="yesterdayCount">0 vehicles sold</p>
                     </div>
-                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
                 </div>
-            </div>
-
-            <!-- Potential Margin -->
-            <div class="metric-card rounded-xl p-5 cursor-pointer" onclick="toggleDetail('marginDetail')">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-medium text-slate-500">Potential Margin</p>
-                        <p class="text-2xl font-bold text-slate-900 mt-1" id="potentialMargin">£0</p>
-                        <p class="text-xs text-purple-600 mt-1">
-                            <span id="marginPercent">0%</span> avg margin
-                        </p>
-                    </div>
-                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-green-600 font-medium flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                         </svg>
+                        +12%
+                    </span>
+                    <span class="text-gray-400 ml-2">vs previous day</span>
+                </div>
+            </div>
+
+            <!-- Total Stock Value -->
+            <div class="metric-card glass-panel rounded-xl p-6 shadow-sm border-l-4 border-purple-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Stock Value</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1" id="totalStockValue">£0</p>
+                        <p class="text-xs text-gray-500 mt-1">current inventory</p>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Charts Row 1 -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <!-- Status Distribution -->
-            <div class="glass-panel rounded-xl p-5 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-slate-900">Stock by Status</h3>
-                    <button onclick="expandChart('status')" class="text-sm text-blue-600 hover:text-blue-800">Expand</button>
-                </div>
-                <div class="chart-container">
-                    <canvas id="statusChart"></canvas>
-                </div>
-                <div id="statusLegend" class="mt-4 flex flex-wrap gap-2 justify-center"></div>
-            </div>
-
-            <!-- Location Distribution -->
-            <div class="glass-panel rounded-xl p-5 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-slate-900">Stock by Location</h3>
-                    <button onclick="expandChart('location')" class="text-sm text-blue-600 hover:text-blue-800">Expand</button>
-                </div>
-                <div class="chart-container">
-                    <canvas id="locationChart"></canvas>
-                </div>
-                <div id="locationLegend" class="mt-4 flex flex-wrap gap-2 justify-center"></div>
-            </div>
-
-            <!-- Sales Trend (Last 7 Days) -->
-            <div class="glass-panel rounded-xl p-5 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-slate-900">Sales Trend (7 Days)</h3>
-                    <button onclick="expandChart('sales')" class="text-sm text-blue-600 hover:text-blue-800">Expand</button>
-                </div>
-                <div class="chart-container">
-                    <canvas id="salesTrendChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Charts Row 2 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Top Makes -->
-            <div class="glass-panel rounded-xl p-5 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-slate-900">Vehicles by Make</h3>
-                    <button onclick="expandChart('makes')" class="text-sm text-blue-600 hover:text-blue-800">Expand</button>
-                </div>
-                <div class="chart-container">
-                    <canvas id="makesChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Workflow Pipeline -->
-            <div class="glass-panel rounded-xl p-5 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-slate-900">Workflow Pipeline</h3>
-                    <button onclick="expandChart('workflow')" class="text-sm text-blue-600 hover:text-blue-800">Expand</button>
-                </div>
-                <div class="chart-container">
-                    <canvas id="workflowChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Leaderboards & Aging Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Sales Leaderboard (Last 7 Days) -->
-            <div class="glass-panel rounded-xl p-5 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-slate-900">🏆 Sales Leaderboard (Last 7 Days)</h3>
-                    <span class="text-xs text-slate-500">Top Performers</span>
-                </div>
-                <div id="salesLeaderboard" class="space-y-2">
-                    <p class="text-slate-500 text-sm text-center py-4">Loading leaderboard...</p>
-                </div>
-            </div>
-
-            <!-- Longest in Stock (Aging) -->
-            <div class="glass-panel rounded-xl p-5 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-slate-900">⚠️ Longest in Stock</h3>
-                    <span class="text-xs text-red-500 font-medium">Needs Attention</span>
-                </div>
-                <div id="agingReport" class="space-y-2">
-                    <p class="text-slate-500 text-sm text-center py-4">Loading aging data...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="glass-panel rounded-xl p-5 shadow-sm">
-            <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <a href="import.html" class="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition group">
-                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-purple-600 font-medium" id="avgVehicleValue">£0 avg</span>
+                    <span class="text-gray-400 ml-2">per vehicle</span>
+                </div>
+            </div>
+
+            <!-- Pending Tasks -->
+            <div class="metric-card glass-panel rounded-xl p-6 shadow-sm border-l-4 border-orange-500">
+                <div class="flex items-center justify-between">
                     <div>
-                        <p class="font-medium text-slate-900">Import Stock</p>
-                        <p class="text-xs text-slate-500">Upload CSV</p>
+                        <p class="text-sm font-medium text-gray-600">Pending Tasks</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1" id="pendingTasks">0</p>
+                        <p class="text-xs text-gray-500 mt-1">require attention</p>
                     </div>
-                </a>
-                
-                <a href="inventory.html" class="flex items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition group">
-                    <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                         </svg>
                     </div>
-                    <div>
-                        <p class="font-medium text-slate-900">View Inventory</p>
-                        <p class="text-xs text-slate-500">All vehicles</p>
-                    </div>
-                </a>
-                
-                <a href="workflow.html" class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition group">
-                    <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="font-medium text-slate-900">Workflow</p>
-                        <p class="text-xs text-slate-500">Track progress</p>
-                    </div>
-                </a>
-                
-                <a href="analytics.html" class="flex items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition group">
-                    <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="font-medium text-slate-900">Reports</p>
-                        <p class="text-xs text-slate-500">Deep analytics</p>
-                    </div>
-                </a>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-red-600 font-medium" id="urgentTasks">0 urgent</span>
+                    <span class="text-gray-400 ml-2">need immediate action</span>
+                </div>
             </div>
         </div>
 
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column - Charts -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Quick Overview Chart -->
+                <div class="glass-panel rounded-xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Stock Overview</h3>
+                        <div class="flex gap-2">
+                            <button onclick="window.location.href='inventory.html'" class="text-sm text-blue-600 hover:text-blue-800 font-medium">View Inventory</button>
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="overviewChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="glass-panel rounded-xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+                        <button class="text-sm text-gray-500 hover:text-gray-700">View All</button>
+                    </div>
+                    <div class="space-y-3" id="recentActivity">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Alerts & Quick Actions -->
+            <div class="space-y-6">
+                <!-- Alerts Panel -->
+                <div class="glass-panel rounded-xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            Alerts
+                            <span id="alertBadge" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full hidden">0</span>
+                        </h3>
+                    </div>
+                    <div class="space-y-3" id="alertsPanel">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="glass-panel rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="window.location.href='import.html'" class="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-center transition-colors group">
+                            <svg class="w-6 h-6 text-blue-600 mx-auto mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                            <span class="text-sm font-medium text-blue-900">Import Stock</span>
+                        </button>
+                        <button onclick="window.location.href='workflow.html'" class="p-4 bg-green-50 hover:bg-green-100 rounded-lg text-center transition-colors group">
+                            <svg class="w-6 h-6 text-green-600 mx-auto mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            <span class="text-sm font-medium text-green-900">Workflow</span>
+                        </button>
+                        <button onclick="window.location.href='inventory.html'" class="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg text-center transition-colors group">
+                            <svg class="w-6 h-6 text-purple-600 mx-auto mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                            </svg>
+                            <span class="text-sm font-medium text-purple-900">View Stock</span>
+                        </button>
+                        <button onclick="window.location.href='analytics.html'" class="p-4 bg-orange-50 hover:bg-orange-100 rounded-lg text-center transition-colors group">
+                            <svg class="w-6 h-6 text-orange-600 mx-auto mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <span class="text-sm font-medium text-orange-900">Reports</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Today's Targets -->
+                <div class="glass-panel rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Today's Targets</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">Sales Target</span>
+                                <span class="font-medium text-gray-900">3/5 vehicles</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">Stock Intake</span>
+                                <span class="font-medium text-gray-900">2/4 vehicles</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">Prep Complete</span>
+                                <span class="font-medium text-gray-900">5/8 vehicles</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-500 h-2 rounded-full" style="width: 62.5%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <script src="js/reference-data.js"></script>
-    <script src="js/vehicle-store.js"></script>
     <script>
-        // Chart instances
-        let charts = {};
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            Auth.updateUI();
-            loadDashboardData();
-        });
+        let overviewChart;
 
-        function loadDashboardData() {
-            const vehicles = VehicleStore.getAll();
-            
-            updateKeyMetrics(vehicles);
-            createStatusChart(vehicles);
-            createLocationChart(vehicles);
-            createSalesTrendChart();
-            createMakesChart(vehicles);
-            createWorkflowChart(vehicles);
-            loadSalesLeaderboard();
-            loadAgingReport(vehicles);
-        }
-
-        function updateKeyMetrics(vehicles) {
-            const totalCost = vehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0);
-            const totalRetail = vehicles.reduce((sum, v) => sum + (v.retailPrice || 0), 0);
-            const margin = totalRetail - totalCost;
-            const inStock = vehicles.filter(v => v.status === 'In Stock').length;
-            
-            // Calculate margin percentage
-            const marginPercent = totalCost > 0 ? ((margin / totalCost) * 100).toFixed(1) : 0;
-            
-            document.getElementById('totalStockValue').textContent = '£' + totalCost.toLocaleString();
-            document.getElementById('totalVehicles').textContent = vehicles.length;
-            document.getElementById('inStockCount').textContent = inStock;
-            document.getElementById('potentialMargin').textContent = '£' + margin.toLocaleString();
-            document.getElementById('marginPercent').textContent = marginPercent + '%';
-            
-            // Mock sales data (would come from sales records)
-            document.getElementById('monthlySales').textContent = '£' + (totalCost * 0.15).toLocaleString();
-            document.getElementById('carsSold').textContent = Math.floor(vehicles.length * 0.1);
-            document.getElementById('valueTrend').textContent = '+' + (Math.random() * 10 + 5).toFixed(1) + '%';
-        }
-
-        function createStatusChart(vehicles) {
-            const ctx = document.getElementById('statusChart').getContext('2d');
-            const statusCounts = {};
-            
-            vehicles.forEach(v => {
-                const status = v.status || 'Unknown';
-                statusCounts[status] = (statusCounts[status] || 0) + 1;
-            });
-            
-            const colors = {
-                'In Stock': '#10b981',
-                'In Transit': '#f59e0b',
-                'Off-site R': '#ef4444',
-                'Subject to': '#8b5cf6',
-                'Sold': '#6b7280'
-            };
-            
-            charts.status = new Chart(ctx, {
-                type: 'doughnut',
+        function initCharts() {
+            const ctx = document.getElementById('overviewChart').getContext('2d');
+            overviewChart = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: Object.keys(statusCounts),
+                    labels: ['In Stock', 'In Prep', 'In Workshop', 'Ready', 'Sold Today'],
                     datasets: [{
-                        data: Object.values(statusCounts),
-                        backgroundColor: Object.keys(statusCounts).map(s => colors[s] || '#9ca3af'),
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        }
-                    },
-                    onClick: (e, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const status = Object.keys(statusCounts)[index];
-                            window.location.href = `inventory.html?status=${encodeURIComponent(status)}`;
-                        }
-                    }
-                }
-            });
-            
-            // Create custom legend
-            const legendHtml = Object.entries(statusCounts).map(([status, count]) => `
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium" 
-                      style="background-color: ${colors[status] || '#9ca3af'}20; color: ${colors[status] || '#9ca3af'}">
-                    <span class="w-2 h-2 rounded-full mr-2" style="background-color: ${colors[status] || '#9ca3af'}"></span>
-                    ${status}: ${count}
-                </span>
-            `).join('');
-            document.getElementById('statusLegend').innerHTML = legendHtml;
-        }
-
-        function createLocationChart(vehicles) {
-            const ctx = document.getElementById('locationChart').getContext('2d');
-            const locationCounts = {};
-            
-            vehicles.forEach(v => {
-                const loc = v.location || 'Unknown';
-                locationCounts[loc] = (locationCounts[loc] || 0) + 1;
-            });
-            
-            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
-            
-            charts.location = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(locationCounts),
-                    datasets: [{
-                        data: Object.values(locationCounts),
-                        backgroundColor: colors,
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
+                        label: 'Vehicles',
+                        data: [45, 12, 8, 25, 3],
+                        backgroundColor: ['#3B82F6', '#F59E0B', '#EF4444', '#10B981', '#6B7280'],
+                        borderRadius: 6
                     }]
                 },
                 options: {
@@ -505,216 +362,183 @@
                     plugins: {
                         legend: { display: false }
                     },
-                    onClick: (e, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const location = Object.keys(locationCounts)[index];
-                            window.location.href = `inventory.html?location=${encodeURIComponent(location)}`;
-                        }
-                    }
-                }
-            });
-            
-            const legendHtml = Object.entries(locationCounts).map(([loc, count], idx) => `
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium" 
-                      style="background-color: ${colors[idx % colors.length]}20; color: ${colors[idx % colors.length]}">
-                    <span class="w-2 h-2 rounded-full mr-2" style="background-color: ${colors[idx % colors.length]}"></span>
-                    ${loc}: ${count}
-                </span>
-            `).join('');
-            document.getElementById('locationLegend').innerHTML = legendHtml;
-        }
-
-        function createSalesTrendChart() {
-            const ctx = document.getElementById('salesTrendChart').getContext('2d');
-            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-            const data = days.map(() => Math.floor(Math.random() * 5) + 1);
-            
-            charts.salesTrend = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: days,
-                    datasets: [{
-                        label: 'Cars Sold',
-                        data: data,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#3b82f6'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                    }
-                }
-            });
-        }
-
-        function createMakesChart(vehicles) {
-            const ctx = document.getElementById('makesChart').getContext('2d');
-            const makeCounts = {};
-            
-            vehicles.forEach(v => {
-                const make = v.make || 'Unknown';
-                makeCounts[make] = (makeCounts[make] || 0) + 1;
-            });
-            
-            // Sort and take top 8
-            const sortedMakes = Object.entries(makeCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 8);
-            
-            charts.makes = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: sortedMakes.map(m => m[0]),
-                    datasets: [{
-                        label: 'Vehicles',
-                        data: sortedMakes.map(m => m[1]),
-                        backgroundColor: '#3b82f6',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
-                        x: { ticks: { maxRotation: 45 } }
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
                     },
                     onClick: (e, elements) => {
                         if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const make = sortedMakes[index][0];
-                            window.location.href = `inventory.html?make=${encodeURIComponent(make)}`;
+                            window.location.href = 'inventory.html';
                         }
                     }
                 }
             });
         }
 
-        function createWorkflowChart(vehicles) {
-            const ctx = document.getElementById('workflowChart').getContext('2d');
+        function loadDashboardData() {
+            // Set current date
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-GB', options);
             
-            // Mock workflow stages (would come from actual workflow data)
-            const stages = {
-                'Intake': vehicles.filter(v => !v.prepStatus).length,
-                'Workshop': vehicles.filter(v => v.workshopStatus === 'In Progress').length,
-                'Bodywork': vehicles.filter(v => v.bodyworkStatus === 'In Progress').length,
-                'Valet': vehicles.filter(v => v.valetStatus === 'In Progress').length,
-                'Ready': vehicles.filter(v => v.prepStatus === 'Complete').length
-            };
+            // Load vehicles from localStorage
+            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
             
-            charts.workflow = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(stages),
-                    datasets: [{
-                        label: 'Vehicles',
-                        data: Object.values(stages),
-                        backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6'],
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    plugins: { legend: { display: false } },
-                    scales: { x: { beginAtZero: true } }
-                }
-            });
+            // Calculate metrics
+            const inStock = vehicles.filter(v => v.status === 'In Stock').length;
+            const totalValue = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
+            const avgValue = vehicles.length > 0 ? totalValue / vehicles.length : 0;
+            
+            // Update metrics
+            document.getElementById('stockInHand').textContent = inStock;
+            document.getElementById('totalStockValue').textContent = `£${totalValue.toLocaleString()}`;
+            document.getElementById('avgVehicleValue').textContent = `£${Math.round(avgValue).toLocaleString()} avg`;
+            
+            // Mock yesterday's sales (would come from sales data)
+            document.getElementById('yesterdaySales').textContent = '£45,750';
+            document.getElementById('yesterdayCount').textContent = '3 vehicles sold';
+            
+            // Generate alerts
+            generateAlerts(vehicles);
+            
+            // Generate recent activity
+            generateRecentActivity(vehicles);
         }
 
-        function loadSalesLeaderboard() {
-            // Mock sales data (would come from sales records)
-            const salesPeople = [
-                { name: 'Ibrahim Ata', sales: 12, value: 245000 },
-                { name: 'Keith Hardy', sales: 8, value: 189000 },
-                { name: 'Ali Amood', sales: 6, value: 134000 },
-                { name: 'Adam Smith', sales: 5, value: 112000 },
-                { name: 'Morty Rahamian', sales: 3, value: 67000 }
+        function generateAlerts(vehicles) {
+            const alerts = [];
+            
+            // Check for overdue vehicles
+            const overdue = vehicles.filter(v => (v.daysInStock || 0) > 90);
+            if (overdue.length > 0) {
+                alerts.push({
+                    type: 'warning',
+                    message: `${overdue.length} vehicles over 90 days in stock`,
+                    action: 'Review'
+                });
+            }
+            
+            // Check for vehicles in workshop too long
+            const workshopStuck = vehicles.filter(v => v.workshopStatus === 'In Progress' && (v.daysInWorkshop || 0) > 7);
+            if (workshopStuck.length > 0) {
+                alerts.push({
+                    type: 'urgent',
+                    message: `${workshopStuck.length} vehicles stuck in workshop`,
+                    action: 'Check'
+                });
+            }
+            
+            // Check for low stock alerts
+            const lowStockMakes = ['Ford', 'VW'].filter(make => 
+                vehicles.filter(v => v.make === make).length < 5
+            );
+            if (lowStockMakes.length > 0) {
+                alerts.push({
+                    type: 'info',
+                    message: `Low stock: ${lowStockMakes.join(', ')}`,
+                    action: 'Buy'
+                });
+            }
+            
+            // Update alerts panel
+            const alertsPanel = document.getElementById('alertsPanel');
+            const alertsBanner = document.getElementById('alertsBanner');
+            const alertBadge = document.getElementById('alertBadge');
+            const urgentTasks = document.getElementById('urgentTasks');
+            const pendingTasks = document.getElementById('pendingTasks');
+            
+            const urgentCount = alerts.filter(a => a.type === 'urgent').length;
+            
+            if (alerts.length === 0) {
+                alertsPanel.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No alerts at this time</p>';
+            } else {
+                alertsPanel.innerHTML = alerts.map(alert => `
+                    <div class="alert-item flex items-start gap-3 p-3 rounded-lg ${alert.type === 'urgent' ? 'bg-red-50 border border-red-200' : alert.type === 'warning' ? 'bg-yellow-50 border border-yellow-200' : 'bg-blue-50 border border-blue-200'}">
+                        <div class="w-2 h-2 rounded-full mt-2 ${alert.type === 'urgent' ? 'bg-red-500' : alert.type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'}"></div>
+                        <div class="flex-1">
+                            <p class="text-sm ${alert.type === 'urgent' ? 'text-red-800' : alert.type === 'warning' ? 'text-yellow-800' : 'text-blue-800'}">${alert.message}</p>
+                        </div>
+                        <button class="text-xs font-medium ${alert.type === 'urgent' ? 'text-red-600 hover:text-red-800' : alert.type === 'warning' ? 'text-yellow-600 hover:text-yellow-800' : 'text-blue-600 hover:text-blue-800'}">${alert.action}</button>
+                    </div>
+                `).join('');
+                
+                // Show banner for urgent alerts
+                if (urgentCount > 0) {
+                    alertsBanner.classList.remove('hidden');
+                    document.getElementById('alertsList').innerHTML = alerts
+                        .filter(a => a.type === 'urgent')
+                        .map(a => `<p class="text-sm text-red-700">• ${a.message}</p>`)
+                        .join('');
+                }
+                
+                alertBadge.textContent = alerts.length;
+                alertBadge.classList.remove('hidden');
+            }
+            
+            urgentTasks.textContent = `${urgentCount} urgent`;
+            pendingTasks.textContent = alerts.length;
+        }
+
+        function generateRecentActivity(vehicles) {
+            const activities = [
+                { type: 'sale', message: 'Ford Transit sold to Customer', time: '2 hours ago', value: '£18,500' },
+                { type: 'intake', message: 'VW Crafter added to stock', time: '4 hours ago', value: 'R0245' },
+                { type: 'prep', message: 'Mercedes Sprinter ready for sale', time: '5 hours ago', value: 'R0231' },
+                { type: 'workshop', message: 'Vauxhall Movano moved to workshop', time: '6 hours ago', value: 'R0228' }
             ];
             
-            const html = salesPeople.map((person, idx) => `
-                <div class="leaderboard-item flex items-center justify-between p-3 rounded-lg ${idx === 0 ? 'bg-yellow-50 border border-yellow-200' : ''}">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-full ${idx === 0 ? 'bg-yellow-500' : idx === 1 ? 'bg-slate-400' : idx === 2 ? 'bg-orange-400' : 'bg-slate-200'} 
-                                    flex items-center justify-center text-white font-bold text-sm mr-3">
-                            ${idx + 1}
+            const container = document.getElementById('recentActivity');
+            container.innerHTML = activities.map(activity => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full ${activity.type === 'sale' ? 'bg-green-100 text-green-600' : activity.type === 'intake' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'} flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                ${activity.type === 'sale' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>' : 
+                                  activity.type === 'intake' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>' :
+                                  '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>'}
+                            </svg>
                         </div>
                         <div>
-                            <p class="font-medium text-slate-900 ${idx === 0 ? 'text-yellow-800' : ''}">${person.name}</p>
-                            <p class="text-xs text-slate-500">${person.sales} cars sold</p>
+                            <p class="font-medium text-gray-900 text-sm">${activity.message}</p>
+                            <p class="text-xs text-gray-500">${activity.time}</p>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="font-semibold text-slate-900">£${person.value.toLocaleString()}</p>
-                        <p class="text-xs text-green-600">+£${(person.value * 0.15).toLocaleString()} margin</p>
-                    </div>
+                    <span class="text-sm font-medium text-gray-600">${activity.value}</span>
                 </div>
             `).join('');
-            
-            document.getElementById('salesLeaderboard').innerHTML = html;
         }
 
-        function loadAgingReport(vehicles) {
-            const sorted = [...vehicles]
-                .filter(v => v.daysInStock)
-                .sort((a, b) => b.daysInStock - a.daysInStock)
-                .slice(0, 5);
+        function refreshData() {
+            loadDashboardData();
+            const btn = document.querySelector('button[onclick=\"refreshData()\"]');
+            btn.classList.add('animate-spin');
+            setTimeout(() => btn.classList.remove('animate-spin'), 1000);
             
-            const html = sorted.map((v, idx) => `
-                <div class="leaderboard-item flex items-center justify-between p-3 rounded-lg ${v.daysInStock > 90 ? 'bg-red-50 border border-red-200' : v.daysInStock > 60 ? 'bg-orange-50' : 'bg-slate-50'}">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-lg ${v.daysInStock > 90 ? 'bg-red-500' : v.daysInStock > 60 ? 'bg-orange-500' : 'bg-slate-400'} 
-                                    flex items-center justify-center text-white font-bold text-xs mr-3">
-                            ${v.daysInStock}d
-                        </div>
-                        <div>
-                            <p class="font-medium text-slate-900">${v.make} ${v.model}</p>
-                            <p class="text-xs text-slate-500">${v.stockNo || v.registration || 'N/A'} • ${v.location}</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="font-semibold text-slate-900">£${(v.costPrice || 0).toLocaleString()}</p>
-                        <p class="text-xs ${v.daysInStock > 90 ? 'text-red-600 font-medium' : 'text-slate-500'}">
-                            ${v.daysInStock > 90 ? '⚠️ Action Required' : 'In stock'}
-                        </p>
-                    </div>
-                </div>
-            `).join('');
-            
-            document.getElementById('agingReport').innerHTML = html || '<p class="text-slate-500 text-sm text-center py-4">No aging data available</p>';
+            // Update timestamp
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
         }
 
-        function toggleDetail(sectionId) {
-            // Implementation for expanding metric details
-            console.log('Toggle detail:', sectionId);
+        function viewAllAlerts() {
+            window.location.href = 'alerts.html';
         }
 
-        function expandChart(chartType) {
-            // Implementation for expanding charts to full view
-            console.log('Expand chart:', chartType);
-            alert(`Expand ${chartType} chart - Full analytics view coming soon!`);
+        function logout() {
+            localStorage.removeItem('capeye_session');
+            window.location.href = 'login.html';
         }
 
-        function refreshDashboard() {
-            const btn = document.querySelector('button[onclick="refreshDashboard()"]');
-            btn.innerHTML = '<svg class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4 9v10a2 2 0 002 2h12a2 2 0 002-2V9"/></svg>Refreshing...';
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = localStorage.getItem('capeye_session');
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
             
-            setTimeout(() => {
-                loadDashboardData();
-                btn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4 9v10a2 2 0 002 2h12a2 2 0 002-2V9"/></svg>Refresh';
-            }, 1000);
-        }
+            initCharts();
+            loadDashboardData();
+        });
     </script>
 </body>
 </html>
