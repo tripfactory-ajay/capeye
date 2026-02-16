@@ -214,7 +214,7 @@ const ImportManager = {
                         <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <h4 class="font-medium text-red-900">Errors (${errors.length})</h4>
+                        <h4 class="font-medium text-red-900">Critical Errors (${errors.length}) - Must Fix</h4>
                     </div>
                     <ul class="text-sm text-red-700 space-y-1 ml-7">
                         ${errors.map(e => `<li>• ${e}</li>`).join('')}
@@ -231,7 +231,7 @@ const ImportManager = {
                         <svg class="w-5 h-5 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                         </svg>
-                        <h4 class="font-medium text-yellow-900">Warnings (${warnings.length})</h4>
+                        <h4 class="font-medium text-yellow-900">Warnings (${warnings.length}) - Can Proceed</h4>
                     </div>
                     <ul class="text-sm text-yellow-700 space-y-1 ml-7">
                         ${warnings.map(w => `<li>• ${w}</li>`).join('')}
@@ -262,14 +262,27 @@ const ImportManager = {
         validationDiv.innerHTML = html;
         validationDiv.classList.remove('hidden');
         
-        // Show action buttons
+        // Show action buttons - ALWAYS allow import if valid, even with warnings
         if (actionDiv) {
+            const hasErrors = errors.length > 0;
+            const hasWarnings = warnings.length > 0;
+            let buttonText = 'Import Data';
+            let buttonClass = 'bg-blue-600 hover:bg-blue-500';
+            
+            if (hasErrors) {
+                buttonText = 'Fix Critical Errors to Import';
+                buttonClass = 'bg-slate-400 cursor-not-allowed';
+            } else if (hasWarnings) {
+                buttonText = `Proceed with Import (${warnings.length} warnings)`;
+                buttonClass = 'bg-blue-600 hover:bg-blue-500';
+            }
+            
             actionDiv.innerHTML = `
                 <div class="flex space-x-4">
                     <button onclick="ImportManager.processImport()" 
-                        class="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition ${!valid ? 'opacity-50 cursor-not-allowed' : ''}"
-                        ${!valid ? 'disabled' : ''}>
-                        ${valid ? 'Import Data' : 'Fix Errors to Import'}
+                        class="flex-1 py-3 px-4 ${buttonClass} text-white font-semibold rounded-lg transition"
+                        ${hasErrors ? 'disabled' : ''}>
+                        ${buttonText}
                     </button>
                     <button onclick="ImportManager.clearFile()" 
                         class="py-3 px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition">
