@@ -3,683 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics - CapEYE Auto Capital</title>
+    <title>Analytics - Capeye Auto Capital</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .nav-link.active {
-            background-color: #3B82F6;
-            color: white !important;
-        }
-        .nav-link.active:hover {
-            background-color: #2563EB;
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(229, 231, 235, 0.5);
-        }
-        .metric-card {
-            transition: all 0.3s ease;
-        }
-        .metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        .pulse-dot {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .chart-container {
-            position: relative;
-            height: 280px;
-        }
-        .legend-item {
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .legend-item:hover {
-            transform: translateX(4px);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; }
+        .glass-panel { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Navigation Header -->
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+<body class="bg-slate-100 min-h-screen">
+    
+    <!-- Auth Check -->
+    <script>
+        (function() {
+            const session = localStorage.getItem('capeye_session');
+            if (!session) {
+                sessionStorage.setItem('redirect_after_login', window.location.href);
+                window.location.replace('./login.html');
+                return;
+            }
+        })();
+    </script>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <!-- Logo Section -->
                 <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center gap-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h1 class="text-xl font-bold text-gray-900">CapEYE</h1>
-                            <p class="text-xs text-gray-500">Auto Capital Intelligence</p>
-                        </div>
-                    </div>
+                    <img src="./autocapital-logo.png" alt="Auto Capital" class="h-10 w-auto object-contain" onerror="this.style.display='none'">
+                    <span class="ml-3 text-xl font-bold text-slate-800">Analytics</span>
                 </div>
-                
-                <!-- Navigation Links -->
-                <div class="flex items-center space-x-1">
-                    <a href="index.html" id="nav-welcome" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
-                        Dashboard
-                    </a>
-                    <a href="operations.html" id="nav-operations" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
-                        Operations
-                    </a>
-                    <a href="inventory.html" id="nav-inventory" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
-                        Inventory
-                    </a>
-                    <a href="workflow.html" id="nav-workflow" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
-                        Workflow
-                    </a>
-                    <a href="analytics.html" id="nav-analytics" class="nav-link active px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                        Analytics
-                    </a>
-                </div>
-                
-                <!-- Right Side Actions -->
-                <div class="flex items-center gap-3">
-                    <button onclick="refreshData()" class="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all" title="Refresh Data">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                        </svg>
-                    </button>
-                    <div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-200">
-                        <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
-                        <span class="text-xs font-medium text-green-700">Live</span>
-                    </div>
-                    <button onclick="logout()" class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Logout">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                        </svg>
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="./index.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Dashboard</a>
+                    <a href="./operations.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Operations</a>
+                    <a href="./inventory.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Inventory</a>
+                    <a href="./workflow.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Workflow</a>
+                    <a href="./analytics.html" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg border-b-2 border-blue-600">Analytics</a>
+                    <button onclick="logout()" class="ml-4 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
                     </button>
                 </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-slate-900 p-2">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-slate-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="./index.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Dashboard</a>
+                <a href="./operations.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Operations</a>
+                <a href="./inventory.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Inventory</a>
+                <a href="./workflow.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Workflow</a>
+                <a href="./analytics.html" class="block px-3 py-2 text-base font-medium text-blue-600 bg-blue-50 rounded-md">Analytics</a>
+                <button onclick="logout()" class="w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md">Logout</button>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Business Analytics</h1>
-                    <p class="text-gray-600 mt-1">Comprehensive business intelligence and reporting</p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <select id="dateRange" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" onchange="updateCharts()">
-                        <option value="7">Last 7 Days</option>
-                        <option value="30" selected>Last 30 Days</option>
-                        <option value="90">Last 90 Days</option>
-                        <option value="365">This Year</option>
-                    </select>
-                    <button onclick="exportReport()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2 text-sm font-medium">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                        </svg>
-                        Export
-                    </button>
-                </div>
-            </div>
-        </div>
+        <h1 class="text-3xl font-bold text-slate-900 mb-8">Business Analytics</h1>
 
-        <!-- KPI Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="metric-card glass-panel rounded-xl p-6 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Total Stock Value</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1" id="totalStockValue">£0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-green-600 font-medium flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                        </svg>
-                        +12.5%
-                    </span>
-                    <span class="text-gray-400 ml-2">vs last period</span>
-                </div>
-            </div>
-
-            <div class="metric-card glass-panel rounded-xl p-6 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Total Vehicles</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1" id="totalVehicles">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-green-600 font-medium flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                        </svg>
-                        +8
-                    </span>
-                    <span class="text-gray-400 ml-2">new this period</span>
-                </div>
-            </div>
-
-            <div class="metric-card glass-panel rounded-xl p-6 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Sales This Period</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1" id="salesThisPeriod">£0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-green-600 font-medium flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                        </svg>
-                        +23%
-                    </span>
-                    <span class="text-gray-400 ml-2">vs last period</span>
-                </div>
-            </div>
-
-            <div class="metric-card glass-panel rounded-xl p-6 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Potential Margin</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1" id="potentialMargin">£0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-purple-600 font-medium">18.5%</span>
-                    <span class="text-gray-400 ml-2">avg margin</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Charts Row 1 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <!-- Stock by Status -->
             <div class="glass-panel rounded-xl p-6 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Stock by Status</h3>
-                    <button onclick="window.location.href='inventory.html'" class="text-sm text-blue-600 hover:text-blue-800 font-medium">View Inventory</button>
-                </div>
-                <div class="chart-container">
-                    <canvas id="statusChart"></canvas>
-                </div>
-                <div class="mt-4 flex flex-wrap gap-2" id="statusLegend"></div>
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Stock by Status</h3>
+                <canvas id="statusChart" height="250"></canvas>
             </div>
 
             <!-- Stock by Location -->
             <div class="glass-panel rounded-xl p-6 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Stock by Location</h3>
-                    <button onclick="window.location.href='inventory.html'" class="text-sm text-blue-600 hover:text-blue-800 font-medium">View Inventory</button>
-                </div>
-                <div class="chart-container">
-                    <canvas id="locationChart"></canvas>
-                </div>
-                <div class="mt-4 flex flex-wrap gap-2" id="locationLegend"></div>
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Stock by Location</h3>
+                <canvas id="locationChart" height="250"></canvas>
             </div>
-        </div>
 
-        <!-- Charts Row 2 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <!-- Sales Trend -->
             <div class="glass-panel rounded-xl p-6 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Sales Trend</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="salesTrendChart"></canvas>
-                </div>
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Sales Trend (Last 7 Days)</h3>
+                <canvas id="salesChart" height="250"></canvas>
             </div>
 
             <!-- Vehicles by Make -->
             <div class="glass-panel rounded-xl p-6 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Vehicles by Make</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="makeChart"></canvas>
-                </div>
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Vehicles by Make</h3>
+                <canvas id="makeChart" height="250"></canvas>
             </div>
         </div>
 
-        <!-- Bottom Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Sales Leaderboard -->
-            <div class="glass-panel rounded-xl p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Sales Leaderboard</h3>
-                <div class="space-y-3" id="salesLeaderboard"></div>
-            </div>
-
-            <!-- Workflow Pipeline -->
-            <div class="glass-panel rounded-xl p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Workflow Pipeline</h3>
-                <div class="chart-container" style="height: 200px;">
-                    <canvas id="workflowChart"></canvas>
+        <!-- Summary Stats -->
+        <div class="glass-panel rounded-xl p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900 mb-4">Financial Summary</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <p class="text-sm text-slate-600 mb-1">Total Investment</p>
+                    <p class="text-2xl font-bold text-blue-900" id="totalInvestment">£0</p>
                 </div>
-            </div>
-
-            <!-- Longest in Stock -->
-            <div class="glass-panel rounded-xl p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Longest in Stock</h3>
-                <div class="space-y-3" id="agingReport"></div>
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <p class="text-sm text-slate-600 mb-1">Total Retail Value</p>
+                    <p class="text-2xl font-bold text-green-900" id="totalRetail">£0</p>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded-lg">
+                    <p class="text-sm text-slate-600 mb-1">Potential Margin</p>
+                    <p class="text-2xl font-bold text-purple-900" id="totalMargin">£0</p>
+                </div>
+                <div class="text-center p-4 bg-orange-50 rounded-lg">
+                    <p class="text-sm text-slate-600 mb-1">Avg. Days in Stock</p>
+                    <p class="text-2xl font-bold text-orange-900" id="avgDays">0</p>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
-        let statusChart, locationChart, salesTrendChart, makeChart, workflowChart;
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAnalytics();
+        });
 
-        function initCharts() {
-            // Status Chart (Doughnut)
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
-            statusChart = new Chart(statusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['In Stock', 'In Transit', 'Off-site R', 'Subject to', 'Sold'],
-                    datasets: [{
-                        data: [45, 12, 8, 5, 18],
-                        backgroundColor: ['#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#6B7280'],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '60%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        }
-                    },
-                    onClick: (e, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const label = statusChart.data.labels[index];
-                            window.location.href = `inventory.html?status=${encodeURIComponent(label)}`;
-                        }
-                    }
-                }
-            });
-
-            // Location Chart (Pie)
-            const locationCtx = document.getElementById('locationChart').getContext('2d');
-            locationChart = new Chart(locationCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Stanmore Retail', 'Stanmore 2', 'Stanmore PDI', 'With Supplier', 'ACL'],
-                    datasets: [{
-                        data: [35, 28, 15, 12, 8],
-                        backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        }
-                    },
-                    onClick: (e, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const label = locationChart.data.labels[index];
-                            window.location.href = `inventory.html?location=${encodeURIComponent(label)}`;
-                        }
-                    }
-                }
-            });
-
-            // Sales Trend Chart (Line)
-            const salesCtx = document.getElementById('salesTrendChart').getContext('2d');
-            salesTrendChart = new Chart(salesCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                    datasets: [{
-                        label: 'Sales',
-                        data: [12, 19, 15, 25],
-                        borderColor: '#3B82F6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#3B82F6',
-                        pointBorderColor: '#ffffff',
-                        pointBorderWidth: 2
-                    }, {
-                        label: 'Target',
-                        data: [15, 15, 20, 20],
-                        borderColor: '#10B981',
-                        borderDash: [5, 5],
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { callback: function(value) { return '£' + value + 'k'; } }
-                        },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
-
-            // Make Chart (Bar)
-            const makeCtx = document.getElementById('makeChart').getContext('2d');
-            makeChart = new Chart(makeCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Ford', 'VW', 'Mercedes', 'Vauxhall', 'Renault', 'Other'],
-                    datasets: [{
-                        label: 'Vehicles',
-                        data: [25, 18, 15, 12, 10, 20],
-                        backgroundColor: '#3B82F6',
-                        borderRadius: 6,
-                        borderSkipped: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                        x: { grid: { display: false } }
-                    },
-                    onClick: (e, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const label = makeChart.data.labels[index];
-                            window.location.href = `inventory.html?make=${encodeURIComponent(label)}`;
-                        }
-                    }
-                }
-            });
-
-            // Workflow Chart (Horizontal Bar)
-            const workflowCtx = document.getElementById('workflowChart').getContext('2d');
-            workflowChart = new Chart(workflowCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Intake', 'Prep', 'Workshop', 'Valet', 'Ready'],
-                    datasets: [{
-                        label: 'Vehicles',
-                        data: [8, 12, 15, 10, 45],
-                        backgroundColor: ['#F59E0B', '#3B82F6', '#EF4444', '#8B5CF6', '#10B981'],
-                        borderRadius: 4,
-                        borderSkipped: false
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                        y: { grid: { display: false } }
-                    }
-                }
-            });
-
-            // Generate legends
-            generateLegends();
-        }
-
-        function generateLegends() {
-            // Status Legend
-            const statusColors = ['#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#6B7280'];
-            const statusLabels = ['In Stock', 'In Transit', 'Off-site R', 'Subject to', 'Sold'];
-            const statusData = statusChart.data.datasets[0].data;
-            
-            document.getElementById('statusLegend').innerHTML = statusLabels.map((label, i) => `
-                <div class="legend-item flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full text-sm cursor-pointer hover:bg-gray-100" onclick="window.location.href='inventory.html?status=${encodeURIComponent(label)}'">
-                    <span class="w-3 h-3 rounded-full" style="background-color: ${statusColors[i]}"></span>
-                    <span class="font-medium text-gray-700">${label}</span>
-                    <span class="text-gray-500">(${statusData[i]})</span>
-                </div>
-            `).join('');
-
-            // Location Legend
-            const locationColors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-            const locationLabels = ['Stanmore Retail', 'Stanmore 2', 'Stanmore PDI', 'With Supplier', 'ACL'];
-            const locationData = locationChart.data.datasets[0].data;
-            
-            document.getElementById('locationLegend').innerHTML = locationLabels.map((label, i) => `
-                <div class="legend-item flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full text-sm cursor-pointer hover:bg-gray-100" onclick="window.location.href='inventory.html?location=${encodeURIComponent(label)}'">
-                    <span class="w-3 h-3 rounded-full" style="background-color: ${locationColors[i]}"></span>
-                    <span class="font-medium text-gray-700">${label}</span>
-                    <span class="text-gray-500">(${locationData[i]})</span>
-                </div>
-            `).join('');
-        }
-
-        function loadData() {
+        function loadAnalytics() {
             const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
             
-            // Calculate metrics
-            const totalValue = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
-            const totalRetail = vehicles.reduce((sum, v) => sum + (parseFloat(v.retailPrice) || 0), 0);
-            const margin = totalRetail - totalValue;
-            
-            // Update KPI cards
-            document.getElementById('totalStockValue').textContent = `£${totalValue.toLocaleString()}`;
-            document.getElementById('totalVehicles').textContent = vehicles.length;
-            document.getElementById('potentialMargin').textContent = `£${margin.toLocaleString()}`;
-            
-            // Mock sales data
-            document.getElementById('salesThisPeriod').textContent = '£127,450';
-            
-            // Update charts with real data
-            updateChartsWithData(vehicles);
-            
-            // Update leaderboard
-            updateLeaderboard();
-            
-            // Update aging report
-            updateAgingReport(vehicles);
-        }
-
-        function updateChartsWithData(vehicles) {
-            // Count by status
-            const statusCounts = {
-                'In Stock': 0,
-                'In Transit': 0,
-                'Off-site R': 0,
-                'Subject to': 0,
-                'Sold': 0
-            };
+            // Status Chart
+            const statusCounts = {};
             vehicles.forEach(v => {
-                if (statusCounts[v.status] !== undefined) {
-                    statusCounts[v.status]++;
-                }
+                statusCounts[v.status] = (statusCounts[v.status] || 0) + 1;
             });
             
-            statusChart.data.datasets[0].data = Object.values(statusCounts);
-            statusChart.update();
-            
-            // Count by location
+            new Chart(document.getElementById('statusChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(statusCounts),
+                    datasets: [{
+                        data: Object.values(statusCounts),
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Location Chart
             const locationCounts = {};
             vehicles.forEach(v => {
                 locationCounts[v.location] = (locationCounts[v.location] || 0) + 1;
             });
             
-            const topLocations = Object.entries(locationCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-            
-            locationChart.data.labels = topLocations.map(l => l[0]);
-            locationChart.data.datasets[0].data = topLocations.map(l => l[1]);
-            locationChart.update();
-            
-            // Count by make
-            const makeCounts = {};
-            vehicles.forEach(v => {
-                if (v.make) {
-                    makeCounts[v.make] = (makeCounts[v.make] || 0) + 1;
+            new Chart(document.getElementById('locationChart'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(locationCounts),
+                    datasets: [{
+                        data: Object.values(locationCounts),
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
                 }
             });
-            
-            const topMakes = Object.entries(makeCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 6);
-            
-            makeChart.data.labels = topMakes.map(m => m[0]);
-            makeChart.data.datasets[0].data = topMakes.map(m => m[1]);
-            makeChart.update();
-            
-            // Regenerate legends
-            generateLegends();
-        }
 
-        function updateLeaderboard() {
-            const leaders = [
-                { name: 'Ibrahim Ata', sales: 12, value: 185000 },
-                { name: 'Keith Hardy', sales: 9, value: 142000 },
-                { name: 'Ali Amood', sales: 7, value: 115000 },
-                { name: 'Marcin Kiljan', sales: 5, value: 78000 },
-                { name: 'Morteza Rahamian', sales: 4, value: 62000 }
-            ];
-            
-            const container = document.getElementById('salesLeaderboard');
-            container.innerHTML = leaders.map((leader, index) => `
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full ${index === 0 ? 'bg-yellow-100 text-yellow-700' : index === 1 ? 'bg-gray-200 text-gray-700' : index === 2 ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'} flex items-center justify-center text-sm font-bold">
-                            ${index + 1}
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-900">${leader.name}</p>
-                            <p class="text-xs text-gray-500">${leader.sales} vehicles</p>
-                        </div>
-                    </div>
-                    <span class="font-semibold text-gray-900">£${(leader.value / 1000).toFixed(0)}k</span>
-                </div>
-            `).join('');
-        }
-
-        function updateAgingReport(vehicles) {
-            const sorted = [...vehicles].sort((a, b) => (b.daysInStock || 0) - (a.daysInStock || 0)).slice(0, 5);
-            
-            const container = document.getElementById('agingReport');
-            if (sorted.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No vehicle data available</p>';
-                return;
-            }
-            
-            container.innerHTML = sorted.map(v => {
-                const days = v.daysInStock || 0;
-                const colorClass = days > 90 ? 'text-red-600 bg-red-50' : days > 60 ? 'text-orange-600 bg-orange-50' : 'text-yellow-600 bg-yellow-50';
-                return `
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" onclick="window.location.href='inventory.html?stockNo=${v.stockNo}'">
-                        <div>
-                            <p class="font-medium text-gray-900">${v.make} ${v.model}</p>
-                            <p class="text-xs text-gray-500">${v.stockNo || v.registration || 'N/A'}</p>
-                        </div>
-                        <span class="px-2 py-1 rounded text-xs font-medium ${colorClass}">${days} days</span>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updateCharts() {
-            // Reload data based on date range selection
-            loadData();
-        }
-
-        function exportReport() {
-            alert('Export functionality - Report will be downloaded as PDF/Excel');
-        }
-
-        function refreshData() {
-            loadData();
-            const btn = document.querySelector('button[onclick=\"refreshData()\"]');
-            btn.classList.add('animate-spin');
-            setTimeout(() => btn.classList.remove('animate-spin'), 1000);
-        }
-
-        function logout() {
-            localStorage.removeItem('capeye_session');
-            window.location.href = 'login.html';
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            const session = localStorage.getItem('capeye_session');
-            if (!session) {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            initCharts();
-            loadData();
-        });
-    </script>
-</body>
-</html>
+            // Sales Chart (Mock data for now)
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            new Chart(document.getElementById('salesChart'), {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Sales',
+                        data: [2, 3, 1, 4, 2, 5, 3],
+                        borderColor: '#3b82f6
