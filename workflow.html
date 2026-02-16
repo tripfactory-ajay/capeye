@@ -3,938 +3,497 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capeye Auto Capital - Complete Workflow System</title>
+    <title>Workflow - Capeye Auto Capital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        * { font-family: 'Inter', sans-serif; }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stage-active {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-        }
-        
-        .stage-complete {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-        
-        .stage-pending {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
-        
-        .form-section {
-            display: none;
-            animation: fadeIn 0.4s ease-in-out;
-        }
-        
-        .form-section.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .photo-upload {
-            border: 2px dashed #d1d5db;
-            transition: all 0.3s ease;
-        }
-        
-        .photo-upload:hover {
-            border-color: #3b82f6;
-            background: #eff6ff;
-        }
-        
-        .photo-upload.has-image {
-            border-color: #10b981;
-            background: #ecfdf5;
-        }
-        
-        .signature-pad {
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            cursor: crosshair;
-            background: white;
-        }
-        
-        .notification-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border-left: 4px solid #10b981;
-            padding: 16px 24px;
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            z-index: 9999;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-        }
-        
-        .notification-toast.show {
-            transform: translateX(0);
-        }
-        
-        .dropdown-enhanced {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 20px;
-            padding-right: 40px;
-        }
-        
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-        }
-        
-        .progress-bar {
-            height: 8px;
-            background: #e5e7eb;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            transition: width 0.5s ease;
-        }
-        
-        .tab-button {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .tab-button::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: #3b82f6;
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-        
-        .tab-button.active::after {
-            transform: scaleX(1);
-        }
-        
-        .required-field::after {
-            content: ' *';
-            color: #ef4444;
-        }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; }
+        .glass-panel { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .stage-card { transition: all 0.3s ease; cursor: pointer; }
+        .stage-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+        .stage-active { border-left: 4px solid #3b82f6; background: #eff6ff; }
+        .stage-complete { border-left: 4px solid #10b981; background: #f0fdf4; }
+        .stage-pending { border-left: 4px solid #f59e0b; background: #fffbeb; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .form-section { display: none; }
+        .form-section.active { display: block; animation: fadeIn 0.3s ease; }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Notification Toast -->
-    <div id="notificationToast" class="notification-toast">
-        <div class="flex items-center gap-3">
-            <i class="fas fa-check-circle text-green-500 text-xl"></i>
-            <div>
-                <h4 class="font-semibold text-gray-900">Notification Sent</h4>
-                <p class="text-sm text-gray-600" id="notificationText">Stage completed successfully</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center gap-4">
-                    <img src="autocapital-logo.png" alt="Auto Capital" class="h-10 object-contain" onerror="this.style.display='none'">
-                    <div class="h-8 w-px bg-gray-300"></div>
-                    <h1 class="text-xl font-bold text-gray-900">Capeye Workflow System</h1>
-                </div>
-                <nav class="flex gap-1">
-                    <a href="index.html" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">Dashboard</a>
-                    <a href="operations.html" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">Operations</a>
-                    <a href="inventory.html" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">Inventory</a>
-                    <a href="workflow.html" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">Workflow</a>
-                    <a href="analytics.html" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">Analytics</a>
-                </nav>
-                <div class="flex items-center gap-3">
-                    <span class="text-sm text-gray-600" id="currentUser">Ajay Kawa</span>
-                    <button onclick="logout()" class="text-sm text-red-600 hover:text-red-700 font-medium">Logout</button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Vehicle Search -->
-        <div class="glass-panel rounded-xl p-6 mb-6">
-            <div class="flex flex-wrap gap-4 items-end">
-                <div class="flex-1 min-w-[300px]">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Search Vehicle</label>
-                    <div class="relative">
-                        <input type="text" id="vehicleSearch" placeholder="Enter Stock No, Reg, or Model..." 
-                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
-                    </div>
-                </div>
-                <button onclick="searchVehicle()" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
-                    <i class="fas fa-search mr-2"></i>Find Vehicle
-                </button>
-                <button onclick="createNewIntake()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
-                    <i class="fas fa-plus mr-2"></i>New Intake
-                </button>
-            </div>
+<body class="bg-slate-100 min-h-screen">
+    
+    <!-- Auth Check -->
+    <script>
+        (function() {
+            const session = localStorage.getItem('capeye_session');
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
             
-            <div id="vehicleDetailsCard" class="hidden mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <div class="flex justify-between items-start">
-                    <div class="grid grid-cols-4 gap-4 flex-1">
-                        <div>
-                            <span class="text-xs text-gray-500 uppercase">Stock No</span>
-                            <p class="font-bold text-lg" id="dispStockNo">-</p>
-                        </div>
-                        <div>
-                            <span class="text-xs text-gray-500 uppercase">Registration</span>
-                            <p class="font-bold text-lg" id="dispReg">-</p>
-                        </div>
-                        <div>
-                            <span class="text-xs text-gray-500 uppercase">Vehicle</span>
-                            <p class="font-bold text-lg" id="dispVehicle">-</p>
-                        </div>
-                        <div>
-                            <span class="text-xs text-gray-500 uppercase">Current Stage</span>
-                            <p class="font-bold text-lg text-blue-600" id="dispStage">-</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-xs text-gray-500 uppercase">Assigned To</span>
-                        <p class="font-semibold" id="dispAssigned">Unassigned</p>
-                        <span class="text-xs text-gray-500 uppercase mt-2 block">Days in Stage</span>
-                        <p class="font-bold text-2xl" id="dispDays">0</p>
-                    </div>
+            if (!session && currentPage !== 'login.html') {
+                sessionStorage.setItem('redirect_after_login', window.location.href);
+                window.location.replace('./login.html');
+                return;
+            }
+        })();
+    </script>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img src="./autocapital-logo.png" alt="Auto Capital" class="h-10 w-auto object-contain" onerror="this.style.display='none'">
+                    <span class="ml-3 text-xl font-bold text-slate-800">Capeye Workflow</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="./index.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Dashboard</a>
+                    <a href="./operations.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Operations</a>
+                    <a href="./inventory.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Inventory</a>
+                    <a href="./workflow.html" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg border-b-2 border-blue-600">Workflow</a>
+                    <a href="./analytics.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Analytics</a>
+                    <button onclick="logout()" class="ml-4 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-slate-900 p-2">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
                 </div>
             </div>
         </div>
-
-        <!-- Pipeline -->
-        <div class="glass-panel rounded-xl p-6 mb-6 overflow-x-auto">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Workflow Pipeline</h2>
-            <div class="flex items-center gap-2 min-w-max pb-2">
-                <div id="pipelineStages" class="flex items-center gap-2"></div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-slate-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="./index.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Dashboard</a>
+                <a href="./operations.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Operations</a>
+                <a href="./inventory.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Inventory</a>
+                <a href="./workflow.html" class="block px-3 py-2 text-base font-medium text-blue-600 bg-blue-50 rounded-md">Workflow</a>
+                <a href="./analytics.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Analytics</a>
+                <button onclick="logout()" class="w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md">Logout</button>
             </div>
-            <div class="mt-4">
-                <div class="flex justify-between text-sm text-gray-600 mb-1">
-                    <span>Overall Progress</span>
-                    <span id="progressPercent">0%</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressBar" style="width: 0%"></div>
-                </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-900">Vehicle Preparation Workflow</h1>
+            <p class="mt-2 text-slate-600">12-stage pipeline from intake to customer delivery</p>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="glass-panel rounded-xl p-6 mb-8 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-slate-800">Pipeline Overview</h2>
+                <span id="activeVehiclesCount" class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">0 Active Vehicles</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" id="pipelineStats">
+                <!-- Stats injected by JS -->
             </div>
         </div>
 
-        <!-- Form Container -->
-        <div class="glass-panel rounded-xl p-6">
-            <div class="border-b border-gray-200 mb-6">
-                <nav class="flex gap-1 overflow-x-auto" id="stageTabs"></nav>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Stage Selection -->
+            <div class="lg:col-span-1 space-y-4">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Select Stage</h3>
+                <div id="stageList" class="space-y-2">
+                    <!-- Stages injected by JS -->
+                </div>
             </div>
 
-            <div id="formContainer">
-                <!-- STAGE 1: VEHICLE INTAKE -->
-                <div id="stage1" class="form-section active">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 1: Vehicle Intake</h2>
-                    <form id="formStage1" onsubmit="submitStage(1, event)">
-                        <div class="grid grid-cols-3 gap-4 mb-4">
-                            <input type="text" name="stockNo" placeholder="Stock No" required class="border rounded p-2">
-                            <input type="text" name="registration" placeholder="Registration" required class="border rounded p-2">
-                            <input type="date" name="dateReceived" class="border rounded p-2">
-                        </div>
-                        <div class="grid grid-cols-4 gap-4 mb-4">
-                            <select name="manufacturer" required class="border rounded p-2"><option value="">Manufacturer</option></select>
-                            <select name="model" required class="border rounded p-2"><option value="">Model</option></select>
-                            <select name="variant" class="border rounded p-2"><option value="">Variant</option></select>
-                            <input type="number" name="year" placeholder="Year" class="border rounded p-2">
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Documentation Checklist</h3>
-                            <div class="grid grid-cols-3 gap-2">
-                                <label class="flex items-center gap-2"><input type="checkbox" name="docs_v5"> V5 Logbook</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="docs_mot"> MOT Certificate</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="docs_service"> Service History</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="docs_keys"> All Keys</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="docs_locking"> Locking Wheel Nut</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="docs_manual"> Owners Manual</label>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <h3 class="font-semibold mb-2">Intake Photos</h3>
-                            <div class="grid grid-cols-4 gap-2">
-                                <div class="photo-upload p-4 text-center cursor-pointer" onclick="document.getElementById('photo1').click()">
-                                    <input type="file" id="photo1" class="hidden" accept="image/*">
-                                    <i class="fas fa-camera text-2xl text-gray-400"></i>
-                                    <p class="text-xs">Front</p>
-                                </div>
-                                <div class="photo-upload p-4 text-center cursor-pointer" onclick="document.getElementById('photo2').click()">
-                                    <input type="file" id="photo2" class="hidden" accept="image/*">
-                                    <i class="fas fa-camera text-2xl text-gray-400"></i>
-                                    <p class="text-xs">Rear</p>
-                                </div>
-                                <div class="photo-upload p-4 text-center cursor-pointer" onclick="document.getElementById('photo3').click()">
-                                    <input type="file" id="photo3" class="hidden" accept="image/*">
-                                    <i class="fas fa-camera text-2xl text-gray-400"></i>
-                                    <p class="text-xs">Side</p>
-                                </div>
-                                <div class="photo-upload p-4 text-center cursor-pointer" onclick="document.getElementById('photo4').click()">
-                                    <input type="file" id="photo4" class="hidden" accept="image/*">
-                                    <i class="fas fa-camera text-2xl text-gray-400"></i>
-                                    <p class="text-xs">Interior</p>
-                                </div>
-                            </div>
-                        </div>
-                        <canvas id="signatureStage1" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <div class="flex justify-between">
-                            <button type="button" onclick="saveDraft(1)" class="px-4 py-2 border rounded">Save Draft</button>
-                            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded">Complete & Notify Workshop</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- STAGE 2: BODYWORK -->
-                <div id="stage2" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 2: Bodywork & Cosmetic</h2>
-                    <form id="formStage2" onsubmit="submitStage(2, event)">
-                        <div class="bg-gray-100 p-4 rounded mb-4">
-                            <svg viewBox="0 0 400 600" class="w-full max-w-md mx-auto h-auto">
-                                <rect x="100" y="50" width="200" height="500" rx="30" fill="white" stroke="#374151" stroke-width="3"/>
-                                <circle cx="80" cy="150" r="35" fill="#374151"/>
-                                <circle cx="320" cy="150" r="35" fill="#374151"/>
-                                <circle cx="80" cy="450" r="35" fill="#374151"/>
-                                <circle cx="320" cy="450" r="35" fill="#374151"/>
-                            </svg>
-                        </div>
-                        <table class="w-full mb-4 text-sm">
-                            <thead class="bg-gray-50">
-                                <tr><th>Location</th><th>Type</th><th>Severity</th><th>Action</th><th>Cost</th></tr>
-                            </thead>
-                            <tbody id="damageTableBody">
-                                <tr>
-                                    <td><select name="damage_loc" class="border rounded"><option>Bonnet</option><option>Door</option></select></td>
-                                    <td><select name="damage_type" class="border rounded"><option>Scratch</option><option>Dent</option></select></td>
-                                    <td><select name="damage_sev" class="border rounded"><option>Minor</option><option>Major</option></select></td>
-                                    <td><select name="damage_action" class="border rounded"><option>Touch Up</option><option>Paint</option></select></td>
-                                    <td><input type="number" name="damage_cost" class="border rounded w-20" placeholder="£"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <button type="button" onclick="addDamageRow()" class="mb-4 px-4 py-2 bg-gray-200 rounded">+ Add Damage</button>
-                        <textarea name="bodywork_notes" placeholder="Workshop instructions..." class="w-full border rounded p-2 mb-4" rows="3"></textarea>
-                        <canvas id="signatureStage2" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <button type="submit" class="px-6 py-2 bg-orange-600 text-white rounded">Submit to Paint Shop</button>
-                    </form>
-                </div>
-
-                <!-- STAGE 3: PAINT -->
-                <div id="stage3" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 3: Paint Repairs</h2>
-                    <form id="formStage3" onsubmit="submitStage(3, event)">
-                        <div class="grid grid-cols-3 gap-4 mb-4">
-                            <input type="text" name="paint_code" placeholder="Paint Code" class="border rounded p-2">
-                            <input type="text" name="colour_name" placeholder="Colour Name" class="border rounded p-2">
-                            <select name="paint_type" class="border rounded p-2"><option>Solid</option><option>Metallic</option><option>Pearl</option></select>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Panels Painted</h3>
-                            <div class="grid grid-cols-4 gap-2">
-                                <label class="flex items-center gap-2"><input type="checkbox" name="panel_bonnet"> Bonnet</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="panel_boot"> Boot</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="panel_door_f"> Front Doors</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="panel_door_r"> Rear Doors</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="panel_wing_f"> Front Wings</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="panel_wing_r"> Rear Wings</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="panel_bumper_f"> Front Bumper</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="panel_bumper_r"> Rear Bumper</label>
-                            </div>
-                        </div>
-                        <div class="bg-purple-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Quality Control</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <select name="colour_match" class="border rounded p-2">
-                                    <option>Perfect Match</option>
-                                    <option>Good Match</option>
-                                    <option>Acceptable</option>
-                                </select>
-                                <select name="finish_quality" class="border rounded p-2">
-                                    <option>Excellent</option>
-                                    <option>Good</option>
-                                    <option>Fair</option>
-                                </select>
-                            </div>
-                        </div>
-                        <canvas id="signatureStage3" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded">Complete & Notify Admin</button>
-                    </form>
-                </div>
-
-                <!-- STAGE 4: DOCUMENTATION -->
-                <div id="stage4" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 4: Legal & Documentation</h2>
-                    <form id="formStage4" onsubmit="submitStage(4, event)">
-                        <div class="grid grid-cols-3 gap-4 mb-4">
-                            <select name="v5_present" class="border rounded p-2"><option>V5 Present</option><option>Applied For</option><option>Missing</option></select>
-                            <input type="text" name="v5_ref" placeholder="V5C Reference" class="border rounded p-2">
-                            <input type="date" name="mot_expiry" class="border rounded p-2">
-                        </div>
-                        <div class="bg-red-50 p-4 rounded mb-4 border border-red-200">
-                            <h3 class="font-semibold mb-2">HPI Check</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <select name="hpi_clear" class="border rounded p-2">
-                                    <option>All Clear</option>
-                                    <option>Finance Outstanding</option>
-                                    <option>Write-off</option>
-                                </select>
-                                <input type="date" name="hpi_date" class="border rounded p-2">
-                            </div>
-                        </div>
-                        <canvas id="signatureStage4" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded">Verify & Notify Mechanical</button>
-                    </form>
-                </div>
-
-                <!-- STAGE 5: MECHANICAL -->
-                <div id="stage5" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 5: Mechanical & Diagnostic</h2>
-                    <form id="formStage5" onsubmit="submitStage(5, event)">
-                        <div class="grid grid-cols-3 gap-4 mb-4">
-                            <select name="lead_technician" class="border rounded p-2"><option>Lead Technician</option></select>
-                            <select name="diagnostic_tool" class="border rounded p-2"><option>Autel</option><option>Launch</option></select>
-                            <input type="date" name="diagnostic_date" class="border rounded p-2">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div class="bg-gray-50 p-4 rounded">
-                                <h3 class="font-semibold mb-2">Engine & Transmission</h3>
-                                <select name="engine_condition" class="border rounded p-2 w-full mb-2">
-                                    <option>Excellent</option><option>Good</option><option>Fair</option><option>Poor</option>
-                                </select>
-                                <textarea name="engine_notes" placeholder="Engine notes..." class="w-full border rounded p-2" rows="2"></textarea>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded">
-                                <h3 class="font-semibold mb-2">Brake System</h3>
-                                <div class="space-y-2">
-                                    <div class="flex justify-between"><span>Front Pads</span><select name="brake_pads_f" class="border rounded"><option>Good</option><option>Replace</option></select></div>
-                                    <div class="flex justify-between"><span>Rear Pads</span><select name="brake_pads_r" class="border rounded"><option>Good</option><option>Replace</option></select></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-red-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Fault Codes</h3>
-                            <div id="faultCodes" class="space-y-2">
-                                <div class="flex gap-2">
-                                    <input type="text" placeholder="Code" class="border rounded p-2 flex-1">
-                                    <input type="text" placeholder="Description" class="border rounded p-2 flex-2">
-                                    <button type="button" onclick="this.parentElement.remove()" class="text-red-600"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </div>
-                            <button type="button" onclick="addFaultCode()" class="mt-2 px-4 py-2 bg-white border rounded">+ Add Fault</button>
-                        </div>
-                        <canvas id="signatureStage5" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded">Submit to External/Workshop</button>
-                    </form>
-                </div>
-
-                <!-- STAGE 6: EXTERNAL -->
-                <div id="stage6" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 6: External & Electrical</h2>
-                    <form id="formStage6" onsubmit="submitStage(6, event)">
-                        <div class="bg-gray-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Tyre Condition</h3>
-                            <div class="grid grid-cols-4 gap-2">
-                                <div class="bg-white p-2 rounded border">
-                                    <span class="text-sm font-medium">Front Left</span>
-                                    <input type="number" placeholder="Tread mm" class="w-full border rounded p-1 mt-1">
-                                </div>
-                                <div class="bg-white p-2 rounded border">
-                                    <span class="text-sm font-medium">Front Right</span>
-                                    <input type="number" placeholder="Tread mm" class="w-full border rounded p-1 mt-1">
-                                </div>
-                                <div class="bg-white p-2 rounded border">
-                                    <span class="text-sm font-medium">Rear Left</span>
-                                    <input type="number" placeholder="Tread mm" class="w-full border rounded p-1 mt-1">
-                                </div>
-                                <div class="bg-white p-2 rounded border">
-                                    <span class="text-sm font-medium">Rear Right</span>
-                                    <input type="number" placeholder="Tread mm" class="w-full border rounded p-1 mt-1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <h3 class="font-semibold mb-2">Lighting Check</h3>
-                            <div class="grid grid-cols-3 gap-2">
-                                <label class="flex items-center gap-2 p-2 border rounded cursor-pointer"><input type="checkbox" name="light_head"> Headlights</label>
-                                <label class="flex items-center gap-2 p-2 border rounded cursor-pointer"><input type="checkbox" name="light_brake"> Brake Lights</label>
-                                <label class="flex items-center gap-2 p-2 border rounded cursor-pointer"><input type="checkbox" name="light_indicator"> Indicators</label>
-                                <label class="flex items-center gap-2 p-2 border rounded cursor-pointer"><input type="checkbox" name="light_fog"> Fog Lights</label>
-                                <label class="flex items-center gap-2 p-2 border rounded cursor-pointer"><input type="checkbox" name="light_reverse"> Reverse</label>
-                                <label class="flex items-center gap-2 p-2 border rounded cursor-pointer"><input type="checkbox" name="light_plate"> Number Plate</label>
-                            </div>
-                        </div>
-                        <canvas id="signatureStage6" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <button type="submit" class="px-6 py-2 bg-yellow-600 text-white rounded">Complete & Send to Valeting</button>
-                    </form>
-                </div>
-
-                <!-- STAGE 7: VALETING -->
-                <div id="stage7" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 7: Interior & Valeting</h2>
-                    <form id="formStage7" onsubmit="submitStage(7, event)">
-                        <div class="grid grid-cols-3 gap-4 mb-4">
-                            <select name="assigned_valeter" class="border rounded p-2"><option>Assign Valeter</option></select>
-                            <select name="valet_type" class="border rounded p-2"><option>Standard</option><option>Full Detail</option></select>
-                            <input type="datetime-local" name="valet_start" class="border rounded p-2">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div class="bg-gray-50 p-4 rounded">
-                                <h3 class="font-semibold mb-2">Interior Clean</h3>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="clean_vacuum"> Full Vacuum</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="clean_seats"> Seats Shampooed</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="clean_carpets"> Carpets Cleaned</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="clean_dash"> Dashboard</label>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded">
-                                <h3 class="font-semibold mb-2">Exterior Clean</h3>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="clean_wash"> Hand Wash</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="clean_wheels"> Wheels Cleaned</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="clean_polish"> Hand Polish</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="clean_tyres"> Tyre Dressing</label>
-                            </div>
-                        </div>
-                        <canvas id="signatureStage7" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <button type="submit" class="px-6 py-2 bg-teal-600 text-white rounded">Complete Valeting & Notify Sales</button>
-                    </form>
-                </div>
-
-                <!-- STAGE 8: WORKSHOP SUMMARY -->
-                <div id="stage8" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 8: Workshop Summary</h2>
-                    <form id="formStage8" onsubmit="submitStage(8, event)">
-                        <div class="bg-blue-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Total Costs</h3>
-                            <div class="grid grid-cols-4 gap-4">
-                                <input type="number" name="cost_bodywork" placeholder="Bodywork £" class="border rounded p-2">
-                                <input type="number" name="cost_paint" placeholder="Paint £" class="border rounded p-2">
-                                <input type="number" name="cost_mechanical" placeholder="Mechanical £" class="border rounded p-2">
-                                <input type="number" name="cost_valeting" placeholder="Valeting £" class="border rounded p-2">
-                            </div>
-                            <div class="mt-4 text-right">
-                                <span class="font-semibold">Total: </span>
-                                <span class="text-2xl font-bold text-green-700" id="totalCost">£0.00</span>
-                            </div>
-                        </div>
-                        <canvas id="signatureStage8" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <button type="submit" class="px-6 py-2 bg-gray-800 text-white rounded">Final Sign-off & Notify Sales</button>
-                    </form>
-                </div>
-
-                <!-- STAGE 9: ADVERTISING -->
-                <div id="stage9" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 9: Ready for Advertising</h2>
-                    <form id="formStage9" onsubmit="submitStage(9, event)">
-                        <div class="bg-gray-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Photography</h3>
-                            <div class="grid grid-cols-4 gap-2">
-                                <div class="photo-upload p-4 text-center cursor-pointer"><i class="fas fa-camera text-2xl text-gray-400"></i><p class="text-xs">Front 3/4</p></div>
-                                <div class="photo-upload p-4 text-center cursor-pointer"><i class="fas fa-camera text-2xl text-gray-400"></i><p class="text-xs">Rear 3/4</p></div>
-                                <div class="photo-upload p-4 text-center cursor-pointer"><i class="fas fa-camera text-2xl text-gray-400"></i><p class="text-xs">Interior</p></div>
-                                <div class="photo-upload p-4 text-center cursor-pointer"><i class="fas fa-camera text-2xl text-gray-400"></i><p class="text-xs">Engine</p></div>
-                            </div>
-                        </div>
-                        <div class="bg-pink-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Pricing</h3>
-                            <div class="grid grid-cols-4 gap-4">
-                                <input type="number" name="cost_price" placeholder="Cost Price" class="border rounded p-2">
-                                <input type="number" name="prep_costs" placeholder="Prep Costs" class="border rounded p-2">
-                                <input type="number" name="retail_price" placeholder="Retail Price" class="border rounded p-2">
-                                <input type="number" name="min_price" placeholder="Min Price" class="border rounded p-2">
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <input type="text" name="ad_title" placeholder="Advert Title" class="w-full border rounded p-2 mb-2">
-                            <textarea name="ad_description" placeholder="Description" class="w-full border rounded p-2" rows="3"></textarea>
-                        </div>
-                        <canvas id="signatureStage9" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <button type="submit" class="px-6 py-2 bg-pink-600 text-white rounded">Publish & Go Live</button>
-                    </form>
-                </div>
-
-                <!-- STAGE 10: DELIVERY -->
-                <div id="stage10" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 10: Customer Delivery</h2>
-                    <form id="formStage10" onsubmit="submitStage(10, event)">
-                        <div class="bg-gray-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Customer Details</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <input type="text" name="customer_name" placeholder="Full Name" required class="border rounded p-2">
-                                <input type="tel" name="customer_phone" placeholder="Phone" required class="border rounded p-2">
-                                <input type="email" name="customer_email" placeholder="Email" class="border rounded p-2">
-                                <input type="text" name="customer_address" placeholder="Address" class="border rounded p-2">
-                            </div>
-                        </div>
-                        <div class="bg-green-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Sale Details</h3>
-                            <div class="grid grid-cols-4 gap-4">
-                                <input type="number" name="sale_price" placeholder="Sale Price" class="border rounded p-2">
-                                <input type="number" name="part_exchange" placeholder="Part Ex" class="border rounded p-2">
-                                <input type="number" name="deposit" placeholder="Deposit" class="border rounded p-2">
-                                <input type="date" name="delivery_date" class="border rounded p-2">
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <h3 class="font-semibold mb-2">Handover Checklist</h3>
-                            <div class="grid grid-cols-4 gap-2">
-                                <label class="flex items-center gap-2"><input type="checkbox" name="handover_v5"> V5</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="handover_mot"> MOT</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="handover_keys"> Keys</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="handover_warranty"> Warranty</label>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <canvas id="signatureStage10_sales" class="signature-pad w-full h-32"></canvas>
-                            <canvas id="signatureStage10_customer" class="signature-pad w-full h-32"></canvas>
-                        </div>
-                        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded">Complete Handover & Notify Accounts</button>
-                    </form>
-                </div>
-
-                <!-- STAGE 11: ACCOUNTS -->
-                <div id="stage11" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 11: Accounts & Warranty</h2>
-                    <form id="formStage11" onsubmit="submitStage(11, event)">
-                        <div class="bg-gray-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Payment</h3>
-                            <div class="grid grid-cols-3 gap-4">
-                                <select name="payment_method" class="border rounded p-2"><option>Bank Transfer</option><option>Finance</option><option>Cash</option></select>
-                                <input type="number" name="amount_received" placeholder="Amount Received" class="border rounded p-2">
-                                <input type="date" name="payment_date" class="border rounded p-2">
-                            </div>
-                        </div>
-                        <div class="bg-cyan-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Warranty</h3>
-                            <div class="grid grid-cols-3 gap-4">
-                                <select name="warranty_provider" class="border rounded p-2"><option>AutoProtect</option><option>Warrantywise</option><option>None</option></select>
-                                <input type="text" name="warranty_policy" placeholder="Policy Number" class="border rounded p-2">
-                                <input type="date" name="warranty_start" class="border rounded p-2">
-                            </div>
-                        </div>
-                        <div class="bg-green-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Profit Analysis</h3>
-                            <div class="grid grid-cols-4 gap-4 text-center">
-                                <div><span class="text-sm text-gray-500">Cost</span><p class="font-bold" id="profit_cost">£0</p></div>
-                                <div><span class="text-sm text-gray-500">Prep</span><p class="font-bold" id="profit_prep">£0</p></div>
-                                <div><span class="text-sm text-gray-500">Sale</span><p class="font-bold" id="profit_sale">£0</p></div>
-                                <div><span class="text-sm text-gray-500">Profit</span><p class="font-bold text-green-700" id="profit_gross">£0</p></div>
-                            </div>
-                        </div>
-                        <canvas id="signatureStage11" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <button type="submit" class="px-6 py-2 bg-cyan-600 text-white rounded">Complete Accounts & Notify Management</button>
-                    </form>
-                </div>
-
-                <!-- STAGE 12: MANAGEMENT -->
-                <div id="stage12" class="form-section">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 12: Management Overview</h2>
-                    <form id="formStage12" onsubmit="submitStage(12, event)">
-                        <div class="bg-blue-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Deal Summary</h3>
-                            <div class="grid grid-cols-4 gap-4">
-                                <div class="bg-white p-3 rounded border"><span class="text-xs text-gray-500">Stock No</span><p class="font-bold" id="mgmt_stock">-</p></div>
-                                <div class="bg-white p-3 rounded border"><span class="text-xs text-gray-500">Vehicle</span><p class="font-bold" id="mgmt_vehicle">-</p></div>
-                                <div class="bg-white p-3 rounded border"><span class="text-xs text-gray-500">Customer</span><p class="font-bold" id="mgmt_customer">-</p></div>
-                                <div class="bg-white p-3 rounded border"><span class="text-xs text-gray-500">Profit</span><p class="font-bold text-green-600" id="mgmt_profit">£0</p></div>
-                            </div>
-                        </div>
-                        <div class="bg-yellow-50 p-4 rounded mb-4">
-                            <h3 class="font-semibold mb-2">Management Sign-off</h3>
-                            <div class="grid grid-cols-3 gap-4">
-                                <label class="flex items-center gap-2"><input type="checkbox" name="mgmt_profit"> Profitability Reviewed</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="mgmt_docs"> Documents Complete</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" name="mgmt_customer"> Customer Satisfied</label>
-                            </div>
-                        </div>
-                        <canvas id="signatureStage12" class="signature-pad w-full h-32 mb-4"></canvas>
-                        <button type="submit" class="px-6 py-2 bg-gray-800 text-white rounded">Final Archive & Close Deal</button>
-                    </form>
+            <!-- Stage Form -->
+            <div class="lg:col-span-2">
+                <div id="stageFormContainer" class="glass-panel rounded-xl p-6 shadow-sm">
+                    <div class="text-center py-12 text-slate-500">
+                        <i class="fas fa-arrow-left text-4xl mb-4"></i>
+                        <p>Select a stage from the left to begin</p>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        // Configuration
-        const CONFIG = {
-            notifications: {
-                sms: '+447810778794',
-                whatsapp: '+447810778794',
-                email: 'capeye@autocapital.co.uk'
-            },
-            stages: [
-                { id: 1, name: 'Vehicle Intake', dept: 'Sales', icon: 'fa-clipboard-check' },
-                { id: 2, name: 'Bodywork', dept: 'Workshop', icon: 'fa-car-crash' },
-                { id: 3, name: 'Paint Repairs', dept: 'Paint Shop', icon: 'fa-spray-can' },
-                { id: 4, name: 'Documentation', dept: 'Admin', icon: 'fa-file-alt' },
-                { id: 5, name: 'Mechanical', dept: 'Workshop', icon: 'fa-wrench' },
-                { id: 6, name: 'External/Electrical', dept: 'Workshop', icon: 'fa-bolt' },
-                { id: 7, name: 'Valeting', dept: 'Valeting', icon: 'fa-soap' },
-                { id: 8, name: 'Workshop Summary', dept: 'Workshop Lead', icon: 'fa-clipboard-list' },
-                { id: 9, name: 'Advertising', dept: 'Sales', icon: 'fa-bullhorn' },
-                { id: 10, name: 'Delivery', dept: 'Sales', icon: 'fa-handshake' },
-                { id: 11, name: 'Accounts', dept: 'Accounts', icon: 'fa-pound-sign' },
-                { id: 12, name: 'Management', dept: 'Management', icon: 'fa-user-tie' }
-            ],
-            staff: {
-                'Sales': ['Ibrahim Ata', 'Keith Hardy'],
-                'Workshop': ['Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan', 'Sia Vajihi', 'Iman Zarien'],
-                'Bodyshop': ['Stash'],
-                'Valeting': ['Marcin Kiljan'],
-                'Accounts': ['Keith Hardy'],
-                'Management': ['Ajay Kawa', 'Keith Hardy', 'Ali Amood']
-            },
-            locations: ['Stanmore Retail', 'Stanmore 2', 'Stanmore PDI', 'With Supplier', 'ACL'],
-            manufacturers: ['Ford', 'Mercedes-Benz', 'VW', 'Vauxhall', 'Peugeot', 'Citroen', 'Renault', 'Fiat', 'Toyota', 'Nissan']
-        };
+        // Workflow stages configuration
+        const workflowStages = [
+            { id: 1, name: 'Vehicle Intake', dept: 'Sales', icon: 'fa-clipboard-check', color: 'blue' },
+            { id: 2, name: 'Bodywork & Cosmetic', dept: 'Workshop', icon: 'fa-car-crash', color: 'orange' },
+            { id: 3, name: 'Dent & Paint Repairs', dept: 'Bodyshop', icon: 'fa-spray-can', color: 'purple' },
+            { id: 4, name: 'Legal & Documentation', dept: 'Admin', icon: 'fa-file-contract', color: 'indigo' },
+            { id: 5, name: 'Mechanical & Diagnostic', dept: 'Workshop', icon: 'fa-wrench', color: 'red' },
+            { id: 6, name: 'External & Electrical', dept: 'Workshop', icon: 'fa-bolt', color: 'yellow' },
+            { id: 7, name: 'Interior & Valeting', dept: 'Valeting', icon: 'fa-broom', color: 'green' },
+            { id: 8, name: 'Fault Overview', dept: 'Workshop', icon: 'fa-clipboard-list', color: 'pink' },
+            { id: 9, name: 'Ready for Advertising', dept: 'Sales', icon: 'fa-camera', color: 'cyan' },
+            { id: 10, name: 'Customer Delivery', dept: 'Sales', icon: 'fa-handshake', color: 'teal' },
+            { id: 11, name: 'Accounts & Warranty', dept: 'Accounts', icon: 'fa-calculator', color: 'slate' },
+            { id: 12, name: 'Management Overview', dept: 'Management', icon: 'fa-chart-line', color: 'blue' }
+        ];
 
-        let currentStage = 1;
-        let currentVehicle = null;
+        let currentStage = null;
+        let currentUser = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            initPipeline();
-            initTabs();
-            populateDropdowns();
-            initSignatures();
-            checkAuth();
+            const session = JSON.parse(localStorage.getItem('capeye_session') || '{}');
+            currentUser = session;
+            
+            renderStageList();
+            loadPipelineStats();
         });
 
-        function checkAuth() {
-            const user = localStorage.getItem('capeye_user');
-            if (!user) window.location.href = 'login.html';
-            document.getElementById('currentUser').textContent = user || 'Ajay Kawa';
-        }
-
-        function logout() {
-            localStorage.removeItem('capeye_user');
-            window.location.href = 'login.html';
-        }
-
-        function initPipeline() {
-            const container = document.getElementById('pipelineStages');
-            container.innerHTML = '';
-            CONFIG.stages.forEach((stage, index) => {
-                const div = document.createElement('div');
-                div.className = `flex flex-col items-center min-w-[100px] cursor-pointer rounded-lg p-3 ${index + 1 === currentStage ? 'stage-active' : 'stage-pending'}`;
-                div.onclick = () => switchStage(stage.id);
-                div.innerHTML = `
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center mb-2 ${index + 1 === currentStage ? 'bg-white text-blue-600' : 'bg-gray-200'}">
-                        <i class="fas ${stage.icon}"></i>
+        function renderStageList() {
+            const container = document.getElementById('stageList');
+            container.innerHTML = workflowStages.map(stage => `
+                <div onclick="selectStage(${stage.id})" 
+                     class="stage-card p-4 rounded-lg border border-slate-200 bg-white hover:shadow-md ${currentStage === stage.id ? 'stage-active' : ''}"
+                     id="stage-${stage.id}">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-${stage.color}-100 flex items-center justify-center mr-3">
+                            <i class="fas ${stage.icon} text-${stage.color}-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-slate-900">Stage ${stage.id}</h4>
+                            <p class="text-sm text-slate-600">${stage.name}</p>
+                        </div>
+                        <span class="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded">${stage.dept}</span>
                     </div>
-                    <span class="text-xs font-medium text-center">${stage.name}</span>
-                `;
-                container.appendChild(div);
-                if (index < CONFIG.stages.length - 1) {
-                    container.appendChild(document.createElement('div')).innerHTML = '<i class="fas fa-chevron-right text-gray-400"></i>';
-                }
-            });
-            document.getElementById('progressBar').style.width = ((currentStage / 12) * 100) + '%';
-            document.getElementById('progressPercent').textContent = Math.round((currentStage / 12) * 100) + '%';
+                </div>
+            `).join('');
         }
 
-        function initTabs() {
-            const container = document.getElementById('stageTabs');
-            container.innerHTML = '';
-            CONFIG.stages.forEach(stage => {
-                const btn = document.createElement('button');
-                btn.className = `tab-button px-4 py-3 text-sm font-medium whitespace-nowrap ${stage.id === currentStage ? 'active text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'}`;
-                btn.textContent = stage.name;
-                btn.onclick = () => switchStage(stage.id);
-                container.appendChild(btn);
-            });
-        }
-
-        function switchStage(stageId) {
+        function selectStage(stageId) {
             currentStage = stageId;
-            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-            document.getElementById('stage' + stageId).classList.add('active');
-            initPipeline();
-            initTabs();
+            renderStageList();
+            renderStageForm(stageId);
         }
 
-        function populateDropdowns() {
-            document.querySelectorAll('select[name="manufacturer"]').forEach(select => {
-                CONFIG.manufacturers.forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
-            });
-            Object.keys(CONFIG.staff).forEach(dept => {
-                document.querySelectorAll(`select`).forEach(select => {
-                    if (select.innerHTML.includes(dept) || select.name.includes(dept.toLowerCase())) {
-                        CONFIG.staff[dept].forEach(person => select.innerHTML += `<option value="${person}">${person}</option>`);
-                    }
-                });
-            });
-        }
+        function renderStageForm(stageId) {
+            const stage = workflowStages.find(s => s.id === stageId);
+            const container = document.getElementById('stageFormContainer');
+            
+            // Stage 1: Vehicle Intake Form (Complete)
+            if (stageId === 1) {
+                container.innerHTML = `
+                    <div class="fade-in">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900">${stage.name}</h3>
+                                <p class="text-slate-600">Complete vehicle intake inspection</p>
+                            </div>
+                            <span class="px-3 py-1 bg-${stage.color}-100 text-${stage.color}-800 rounded-full text-sm font-medium">${stage.dept}</span>
+                        </div>
 
-        function initSignatures() {
-            document.querySelectorAll('canvas[id^="signature"]').forEach(canvas => {
-                const ctx = canvas.getContext('2d');
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                let drawing = false;
-                
-                function start(e) {
-                    drawing = true;
-                    ctx.beginPath();
-                    const rect = canvas.getBoundingClientRect();
-                    const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                    const y = (e.clientY || e.touches[0].clientY) - rect.top;
-                    ctx.moveTo(x, y);
-                }
-                
-                function draw(e) {
-                    if (!drawing) return;
-                    e.preventDefault();
-                    const rect = canvas.getBoundingClientRect();
-                    const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                    const y = (e.clientY || e.touches[0].clientY) - rect.top;
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
-                }
-                
-                function stop() { drawing = false; }
-                
-                canvas.addEventListener('mousedown', start);
-                canvas.addEventListener('mousemove', draw);
-                canvas.addEventListener('mouseup', stop);
-                canvas.addEventListener('touchstart', start);
-                canvas.addEventListener('touchmove', draw);
-                canvas.addEventListener('touchend', stop);
-            });
-        }
+                        <form id="intakeForm" class="space-y-6">
+                            <!-- Vehicle Search -->
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Vehicle Stock Number or Registration</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="vehicleSearch" placeholder="e.g., R0218 or RF66UBC" 
+                                           class="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <button type="button" onclick="searchVehicle()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                        <i class="fas fa-search mr-2"></i>Search
+                                    </button>
+                                </div>
+                                <div id="vehicleResult" class="mt-3 hidden"></div>
+                            </div>
 
-        function clearSignature(id) {
-            const canvas = document.getElementById(id);
-            if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-        }
+                            <!-- Inspector Details -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Inspector Name</label>
+                                    <select id="inspector" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select Inspector</option>
+                                        <option value="Ibrahim Ata">Ibrahim Ata</option>
+                                        <option value="Keith Hardy">Keith Hardy</option>
+                                        <option value="Ali Amood">Ali Amood</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Inspection Date</label>
+                                    <input type="date" id="inspectionDate" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
 
-        function submitStage(stageId, event) {
-            event.preventDefault();
-            const form = document.getElementById('formStage' + stageId);
-            const data = Object.fromEntries(new FormData(form).entries());
-            data.stage = stageId;
-            data.submittedAt = new Date().toISOString();
-            data.vehicleId = currentVehicle?.stockNo || 'NEW';
-            
-            localStorage.setItem(`capeye_stage_${stageId}_${data.vehicleId}`, JSON.stringify(data));
-            
-            // Send notifications
-            sendNotification(stageId, data);
-            
-            showToast(`Stage ${stageId} completed! Notifications sent to SMS, WhatsApp & Email`);
-            
-            if (stageId < 12) {
-                setTimeout(() => switchStage(stageId + 1), 1500);
+                            <!-- Location & Status -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Current Location</label>
+                                    <select id="location" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select Location</option>
+                                        <option value="Stanmore Retail">Stanmore Retail</option>
+                                        <option value="Stanmore 2">Stanmore 2</option>
+                                        <option value="Stanmore PDI">Stanmore PDI</option>
+                                        <option value="With Supplier">With Supplier</option>
+                                        <option value="ACL">ACL</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Vehicle Status</label>
+                                    <select id="status" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="In Stock">In Stock</option>
+                                        <option value="In Transit">In Transit</option>
+                                        <option value="Off-site R">Off-site R</option>
+                                        <option value="Subject to">Subject to</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Condition Assessment -->
+                            <div class="border-t border-slate-200 pt-4">
+                                <h4 class="font-medium text-slate-900 mb-3">Initial Condition Assessment</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                    <label class="flex items-center p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                                        <input type="checkbox" name="condition" value="bodywork" class="mr-2 text-blue-600">
+                                        <span class="text-sm">Bodywork Required</span>
+                                    </label>
+                                    <label class="flex items-center p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                                        <input type="checkbox" name="condition" value="mechanical" class="mr-2 text-blue-600">
+                                        <span class="text-sm">Mechanical Issues</span>
+                                    </label>
+                                    <label class="flex items-center p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                                        <input type="checkbox" name="condition" value="valet" class="mr-2 text-blue-600">
+                                        <span class="text-sm">Valeting Required</span>
+                                    </label>
+                                    <label class="flex items-center p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                                        <input type="checkbox" name="condition" value="documents" class="mr-2 text-blue-600">
+                                        <span class="text-sm">Documents Missing</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Photo Upload -->
+                            <div class="border-t border-slate-200 pt-4">
+                                <h4 class="font-medium text-slate-900 mb-3">Intake Photos</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                    <div class="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-blue-500 cursor-pointer" onclick="document.getElementById('photoFront').click()">
+                                        <i class="fas fa-camera text-2xl text-slate-400 mb-2"></i>
+                                        <p class="text-xs text-slate-600">Front View</p>
+                                        <input type="file" id="photoFront" accept="image/*" class="hidden" onchange="previewPhoto(this, 'previewFront')">
+                                        <img id="previewFront" class="mt-2 max-h-20 mx-auto hidden rounded">
+                                    </div>
+                                    <div class="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-blue-500 cursor-pointer" onclick="document.getElementById('photoRear').click()">
+                                        <i class="fas fa-camera text-2xl text-slate-400 mb-2"></i>
+                                        <p class="text-xs text-slate-600">Rear View</p>
+                                        <input type="file" id="photoRear" accept="image/*" class="hidden" onchange="previewPhoto(this, 'previewRear')">
+                                        <img id="previewRear" class="mt-2 max-h-20 mx-auto hidden rounded">
+                                    </div>
+                                    <div class="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-blue-500 cursor-pointer" onclick="document.getElementById('photoLeft').click()">
+                                        <i class="fas fa-camera text-2xl text-slate-400 mb-2"></i>
+                                        <p class="text-xs text-slate-600">Left Side</p>
+                                        <input type="file" id="photoLeft" accept="image/*" class="hidden" onchange="previewPhoto(this, 'previewLeft')">
+                                        <img id="previewLeft" class="mt-2 max-h-20 mx-auto hidden rounded">
+                                    </div>
+                                    <div class="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-blue-500 cursor-pointer" onclick="document.getElementById('photoRight').click()">
+                                        <i class="fas fa-camera text-2xl text-slate-400 mb-2"></i>
+                                        <p class="text-xs text-slate-600">Right Side</p>
+                                        <input type="file" id="photoRight" accept="image/*" class="hidden" onchange="previewPhoto(this, 'previewRight')">
+                                        <img id="previewRight" class="mt-2 max-h-20 mx-auto hidden rounded">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notes -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Additional Notes</label>
+                                <textarea id="notes" rows="3" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Enter any additional observations..."></textarea>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex gap-3 pt-4 border-t border-slate-200">
+                                <button type="button" onclick="saveStage(1)" class="flex-1 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+                                    <i class="fas fa-save mr-2"></i>Save & Continue
+                                </button>
+                                <button type="button" onclick="submitStage(1)" class="flex-1 px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition">
+                                    <i class="fas fa-check mr-2"></i>Complete Stage
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                
+                // Set today's date
+                document.getElementById('inspectionDate').valueAsDate = new Date();
+            } else {
+                // Other stages - placeholder
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-tools text-2xl text-slate-400"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-slate-900 mb-2">${stage.name}</h3>
+                        <p class="text-slate-600 mb-4">This stage form is under development.</p>
+                        <div class="inline-flex items-center px-4 py-2 bg-amber-50 text-amber-700 rounded-lg text-sm">
+                            <i class="fas fa-clock mr-2"></i>Coming in next update
+                        </div>
+                    </div>
+                `;
             }
-        }
-
-        function sendNotification(stageId, data) {
-            const stage = CONFIG.stages[stageId - 1];
-            const nextStage = CONFIG.stages[stageId];
-            
-            const message = {
-                to: CONFIG.notifications,
-                subject: `Capeye: ${stage.name} Completed - ${data.vehicleId}`,
-                body: `Stage: ${stage.name}\nVehicle: ${data.vehicleId}\nNext: ${nextStage ? nextStage.name : 'Complete'}`,
-                channels: ['sms', 'whatsapp', 'email']
-            };
-            
-            console.log('Sending notification:', message);
-            
-            // Store notification log
-            const logs = JSON.parse(localStorage.getItem('capeye_notifications') || '[]');
-            logs.push({...message, sentAt: new Date().toISOString()});
-            localStorage.setItem('capeye_notifications', JSON.stringify(logs));
-        }
-
-        function showToast(text) {
-            const toast = document.getElementById('notificationToast');
-            document.getElementById('notificationText').textContent = text;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 4000);
         }
 
         function searchVehicle() {
-            const search = document.getElementById('vehicleSearch').value;
+            const search = document.getElementById('vehicleSearch').value.toUpperCase();
             const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            const found = vehicles.find(v => v.stockNo === search || v.registration === search);
-            if (found) {
-                currentVehicle = found;
-                document.getElementById('vehicleDetailsCard').classList.remove('hidden');
-                document.getElementById('dispStockNo').textContent = found.stockNo;
-                document.getElementById('dispReg').textContent = found.registration;
-                document.getElementById('dispVehicle').textContent = `${found.manufacturer} ${found.model}`;
-                showToast('Vehicle loaded successfully');
+            const vehicle = vehicles.find(v => 
+                (v.stockNo && v.stockNo.toUpperCase() === search) || 
+                (v.registration && v.registration.toUpperCase() === search)
+            );
+            
+            const resultDiv = document.getElementById('vehicleResult');
+            if (vehicle) {
+                resultDiv.innerHTML = `
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center">
+                        <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-green-900">${vehicle.make} ${vehicle.model} (${vehicle.year})</p>
+                            <p class="text-sm text-green-700">Stock: ${vehicle.stockNo} | Reg: ${vehicle.registration}</p>
+                        </div>
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
             } else {
-                showToast('Vehicle not found');
+                resultDiv.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-600 mr-3"></i>
+                        <p class="text-red-900">Vehicle not found. Please check the stock number or registration.</p>
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
             }
         }
 
-        function createNewIntake() {
-            currentVehicle = null;
-            document.getElementById('vehicleSearch').value = '';
-            document.getElementById('vehicleDetailsCard').classList.add('hidden');
-            switchStage(1);
-            showToast('Starting new vehicle intake');
+        function previewPhoto(input, previewId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(previewId);
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
-        function saveDraft(stageId) {
-            const form = document.getElementById('formStage' + stageId);
-            const data = Object.fromEntries(new FormData(form).entries());
-            localStorage.setItem(`capeye_draft_${stageId}`, JSON.stringify(data));
-            showToast('Draft saved');
+        function saveStage(stageId) {
+            // Save progress to localStorage
+            const formData = collectFormData(stageId);
+            const key = `workflow_stage_${stageId}_${formData.vehicleId || 'draft'}`;
+            localStorage.setItem(key, JSON.stringify(formData));
+            
+            showNotification('Progress saved successfully', 'success');
         }
 
-        function assignToMe(stageId) {
-            showToast(`Assigned to ${document.getElementById('currentUser').textContent}`);
+        function submitStage(stageId) {
+            const formData = collectFormData(stageId);
+            
+            // Validate required fields
+            if (!validateStage(stageId, formData)) {
+                return;
+            }
+            
+            // Update vehicle status
+            updateVehicleWorkflow(formData.vehicleId, stageId, 'completed');
+            
+            // Trigger next stage
+            if (stageId < 12) {
+                showNotification(`Stage ${stageId} completed! Handing off to Stage ${stageId + 1}`, 'success');
+                setTimeout(() => selectStage(stageId + 1), 1500);
+            } else {
+                showNotification('Vehicle workflow completed!', 'success');
+            }
+            
+            loadPipelineStats();
         }
 
-        function addDamageRow() {
-            const tbody = document.getElementById('damageTableBody');
-            const row = tbody.children[0].cloneNode(true);
-            row.querySelectorAll('input').forEach(i => i.value = '');
-            tbody.appendChild(row);
+        function collectFormData(stageId) {
+            if (stageId === 1) {
+                return {
+                    stageId: stageId,
+                    vehicleId: document.getElementById('vehicleSearch').value,
+                    inspector: document.getElementById('inspector').value,
+                    inspectionDate: document.getElementById('inspectionDate').value,
+                    location: document.getElementById('location').value,
+                    status: document.getElementById('status').value,
+                    conditions: Array.from(document.querySelectorAll('input[name="condition"]:checked')).map(cb => cb.value),
+                    notes: document.getElementById('notes').value,
+                    submittedAt: new Date().toISOString()
+                };
+            }
+            return {};
         }
 
-        function addFaultCode() {
-            const div = document.createElement('div');
-            div.className = 'flex gap-2';
-            div.innerHTML = '<input type="text" placeholder="Code" class="border rounded p-2 flex-1"><input type="text" placeholder="Description" class="border rounded p-2 flex-2"><button onclick="this.parentElement.remove()" class="text-red-600"><i class="fas fa-trash"></i></button>';
-            document.getElementById('faultCodes').appendChild(div);
+        function validateStage(stageId, data) {
+            if (stageId === 1) {
+                if (!data.vehicleId) {
+                    showNotification('Please search and select a vehicle', 'error');
+                    return false;
+                }
+                if (!data.inspector) {
+                    showNotification('Please select an inspector', 'error');
+                    return false;
+                }
+            }
+            return true;
         }
 
-        function requestQuote() { showToast('Quote request sent'); }
-        function orderParts() { showToast('Parts order sent'); }
-        function previewListing() { showToast('Preview opened'); }
-        function generateReport() { showToast('Report generated'); }
+        function updateVehicleWorkflow(vehicleId, stageId, status) {
+            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            const vehicle = vehicles.find(v => v.stockNo === vehicleId || v.registration === vehicleId);
+            if (vehicle) {
+                vehicle.currentStage = stageId;
+                vehicle.stageStatus = status;
+                vehicle.lastUpdated = new Date().toISOString();
+                localStorage.setItem('capeye_vehicles', JSON.stringify(vehicles));
+            }
+        }
+
+        function loadPipelineStats() {
+            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            const activeVehicles = vehicles.filter(v => v.currentStage && v.currentStage < 12);
+            
+            document.getElementById('activeVehiclesCount').textContent = `${activeVehicles.length} Active Vehicles`;
+            
+            const stats = workflowStages.map(stage => {
+                const count = vehicles.filter(v => v.currentStage === stage.id).length;
+                return { ...stage, count };
+            });
+            
+            document.getElementById('pipelineStats').innerHTML = stats.map(stat => `
+                <div class="bg-white p-3 rounded-lg border border-slate-200 text-center cursor-pointer hover:shadow-md transition" onclick="selectStage(${stat.id})">
+                    <div class="text-2xl font-bold text-${stat.color}-600">${stat.count}</div>
+                    <div class="text-xs text-slate-600 mt-1 truncate">${stat.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in`;
+            notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check' : type === 'error' ? 'fa-exclamation' : 'fa-info'} mr-2"></i>${message}`;
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('capeye_session');
+            window.location.replace('./login.html');
+        }
     </script>
 </body>
 </html>
