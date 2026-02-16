@@ -180,4 +180,83 @@
                     datasets: [{
                         label: 'Sales',
                         data: [2, 3, 1, 4, 2, 5, 3],
-                        borderColor: '#3b82f6
+                        borderColor: '#3b82f6',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Make Chart
+            const makeCounts = {};
+            vehicles.forEach(v => {
+                if (v.make) {
+                    makeCounts[v.make] = (makeCounts[v.make] || 0) + 1;
+                }
+            });
+            
+            // Sort and take top 10
+            const sortedMakes = Object.entries(makeCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+            
+            new Chart(document.getElementById('makeChart'), {
+                type: 'bar',
+                data: {
+                    labels: sortedMakes.map(m => m[0]),
+                    datasets: [{
+                        label: 'Vehicles',
+                        data: sortedMakes.map(m => m[1]),
+                        backgroundColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Financial Summary
+            const totalCost = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
+            const totalRetail = vehicles.reduce((sum, v) => sum + (parseFloat(v.retailPrice) || 0), 0);
+            const margin = totalRetail - totalCost;
+            
+            // Calculate average days in stock
+            const now = new Date();
+            let totalDays = 0;
+            let count = 0;
+            vehicles.forEach(v => {
+                if (v.dateInStock) {
+                    const days = Math.floor((now - new Date(v.dateInStock)) / (1000 * 60 * 60 * 24));
+                    totalDays += days;
+                    count++;
+                }
+            });
+            const avgDays = count > 0 ? Math.round(totalDays / count) : 0;
+
+            document.getElementById('totalInvestment').textContent = '£' + totalCost.toLocaleString('en-GB', {maximumFractionDigits: 0});
+            document.getElementById('totalRetail').textContent = '£' + totalRetail.toLocaleString('en-GB', {maximumFractionDigits: 0});
+            document.getElementById('totalMargin').textContent = '£' + margin.toLocaleString('en-GB', {maximumFractionDigits: 0});
+            document.getElementById('avgDays').textContent = avgDays;
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('capeye_session');
+            window.location.replace('./login.html');
+        }
+    </script>
+</body>
+</html>
