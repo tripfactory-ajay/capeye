@@ -3,176 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory - CapEYE Auto Capital</title>
+    <title>Inventory - Capeye Auto Capital</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .nav-link.active {
-            background-color: #3B82F6;
-            color: white !important;
-        }
-        .nav-link.active:hover {
-            background-color: #2563EB;
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(229, 231, 235, 0.5);
-        }
-        .pulse-dot {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5;        }
-        }
-        .table-row {
-            transition: all 0.2s ease;
-        }
-        .table-row:hover {
-            background-color: #F3F4F6;
-        }
-        .status-badge {
-            transition: all 0.2s ease;
-        }
-        .status-badge:hover {
-            transform: scale(1.05);
-        }
-        /* Custom scrollbar */
-        .custom-scroll::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: #F3F4F6;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #D1D5DB;
-            border-radius: 4px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: #9CA3AF;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; }
+        .glass-panel { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Navigation Header -->
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+<body class="bg-slate-100 min-h-screen">
+    
+    <!-- Auth Check -->
+    <script>
+        (function() {
+            const session = localStorage.getItem('capeye_session');
+            if (!session) {
+                sessionStorage.setItem('redirect_after_login', window.location.href);
+                window.location.replace('./login.html');
+                return;
+            }
+        })();
+    </script>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <!-- Logo Section -->
                 <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center gap-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h1 class="text-xl font-bold text-gray-900">CapEYE</h1>
-                            <p class="text-xs text-gray-500">Auto Capital Intelligence</p>
-                        </div>
-                    </div>
+                    <img src="./autocapital-logo.png" alt="Auto Capital" class="h-10 w-auto object-contain" onerror="this.style.display='none'">
+                    <span class="ml-3 text-xl font-bold text-slate-800">Inventory</span>
                 </div>
-                
-                <!-- Navigation Links -->
-                <div class="flex items-center space-x-1">
-                    <a href="index.html" id="nav-welcome" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
-                        Dashboard
-                    </a>
-                    <a href="operations.html" id="nav-operations" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
-                        Operations
-                    </a>
-                    <a href="inventory.html" id="nav-inventory" class="nav-link active px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                        Inventory
-                    </a>
-                    <a href="workflow.html" id="nav-workflow" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
-                        Workflow
-                    </a>
-                    <a href="analytics.html" id="nav-analytics" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
-                        Analytics
-                    </a>
-                </div>
-                
-                <!-- Right Side Actions -->
-                <div class="flex items-center gap-3">
-                    <button onclick="refreshData()" class="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all" title="Refresh Data">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                        </svg>
-                    </button>
-                    <div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-200">
-                        <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
-                        <span class="text-xs font-medium text-green-700">Live</span>
-                    </div>
-                    <button onclick="logout()" class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Logout">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                        </svg>
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="./index.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Dashboard</a>
+                    <a href="./operations.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Operations</a>
+                    <a href="./inventory.html" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg border-b-2 border-blue-600">Inventory</a>
+                    <a href="./workflow.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Workflow</a>
+                    <a href="./analytics.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Analytics</a>
+                    <button onclick="logout()" class="ml-4 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
                     </button>
                 </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-slate-900 p-2">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-slate-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="./index.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Dashboard</a>
+                <a href="./operations.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Operations</a>
+                <a href="./inventory.html" class="block px-3 py-2 text-base font-medium text-blue-600 bg-blue-50 rounded-md">Inventory</a>
+                <a href="./workflow.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Workflow</a>
+                <a href="./analytics.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Analytics</a>
+                <button onclick="logout()" class="w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md">Logout</button>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header -->
-        <div class="mb-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Vehicle Inventory</h1>
-                    <p class="text-gray-600 mt-1" id="inventorySummary">Loading inventory...</p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="window.location.href='import.html'" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                        </svg>
-                        Import Stock
-                    </button>
-                    <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Add Vehicle
-                    </button>
-                </div>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <h1 class="text-3xl font-bold text-slate-900">Vehicle Inventory</h1>
+            <div class="mt-4 md:mt-0 flex gap-3">
+                <a href="./import.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
+                    <i class="fas fa-plus mr-2"></i>Import Stock
+                </a>
             </div>
         </div>
 
-        <!-- Filters & Search -->
-        <div class="glass-panel rounded-xl p-4 shadow-sm mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-                <!-- Search -->
-                <div class="lg:col-span-2">
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Search</label>
-                    <div class="relative">
-                        <input type="text" id="searchInput" placeholder="Stock No, Reg, Make, Model..." 
-                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                               onkeyup="filterInventory()">
-                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                    </div>
+        <!-- Filters -->
+        <div class="glass-panel rounded-xl p-4 mb-6 shadow-sm">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" id="searchInput" placeholder="Search by stock number, reg, make or model..." 
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                           onkeyup="filterInventory()">
                 </div>
-
-                <!-- Status Filter -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
-                    <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" onchange="filterInventory()">
-                        <option value="">All Status</option>
+                <div class="flex gap-3">
+                    <select id="statusFilter" onchange="filterInventory()" class="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Statuses</option>
                         <option value="In Stock">In Stock</option>
                         <option value="In Transit">In Transit</option>
                         <option value="Off-site R">Off-site R</option>
                         <option value="Subject to">Subject to</option>
                         <option value="Sold">Sold</option>
                     </select>
-                </div>
-
-                <!-- Location Filter -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Location</label>
-                    <select id="locationFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" onchange="filterInventory()">
+                    <select id="locationFilter" onchange="filterInventory()" class="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                         <option value="">All Locations</option>
                         <option value="Stanmore Retail">Stanmore Retail</option>
                         <option value="Stanmore 2">Stanmore 2</option>
@@ -181,182 +102,108 @@
                         <option value="ACL">ACL</option>
                     </select>
                 </div>
-
-                <!-- Make Filter -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Make</label>
-                    <select id="makeFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" onchange="filterInventory()">
-                        <option value="">All Makes</option>
-                    </select>
-                </div>
-
-                <!-- Clear Filters -->
-                <div class="flex items-end">
-                    <button onclick="clearFilters()" class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
-                        Clear Filters
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
-            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('status', 'In Stock')">
-                <p class="text-2xl font-bold text-green-600" id="statInStock">0</p>
-                <p class="text-xs text-gray-600">In Stock</p>
-            </div>
-            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('status', 'In Transit')">
-                <p class="text-2xl font-bold text-yellow-600" id="statInTransit">0</p>
-                <p class="text-xs text-gray-600">In Transit</p>
-            </div>
-            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('status', 'Off-site R')">
-                <p class="text-2xl font-bold text-red-600" id="statOffsite">0</p>
-                <p class="text-xs text-gray-600">Off-site R</p>
-            </div>
-            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('status', 'Subject to')">
-                <p class="text-2xl font-bold text-purple-600" id="statSubject">0</p>
-                <p class="text-xs text-gray-600">Subject to</p>
-            </div>
-            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('status', 'Sold')">
-                <p class="text-2xl font-bold text-gray-600" id="statSold">0</p>
-                <p class="text-xs text-gray-600">Sold</p>
-            </div>
-            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow">
-                <p class="text-2xl font-bold text-blue-600" id="statTotal">0</p>
-                <p class="text-xs text-gray-600">Total</p>
             </div>
         </div>
 
         <!-- Inventory Table -->
         <div class="glass-panel rounded-xl shadow-sm overflow-hidden">
-            <div class="overflow-x-auto custom-scroll">
+            <div class="overflow-x-auto">
                 <table class="w-full text-left">
-                    <thead class="bg-gray-50 border-b border-gray-200">
+                    <thead class="bg-slate-50 text-slate-600 text-sm uppercase">
                         <tr>
-                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('stockNo')">
-                                Stock No ↕
-                            </th>
-                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('registration')">
-                                Reg ↕
-                            </th>
-                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('make')">
-                                Vehicle ↕
-                            </th>
-                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('location')">
-                                Location ↕
-                            </th>
-                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('status')">
-                                Status ↕
-                            </th>
-                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('costPrice')">
-                                Cost Price ↕
-                            </th>
-                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('retailPrice')">
-                                Retail ↕
-                            </th>
-                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('daysInStock')">
-                                Days ↕
-                            </th>
-                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Actions
-                            </th>
+                            <th class="px-4 py-3 cursor-pointer hover:bg-slate-100" onclick="sortTable('stockNo')">Stock No <i class="fas fa-sort ml-1"></i></th>
+                            <th class="px-4 py-3 cursor-pointer hover:bg-slate-100" onclick="sortTable('registration')">Registration <i class="fas fa-sort ml-1"></i></th>
+                            <th class="px-4 py-3 cursor-pointer hover:bg-slate-100" onclick="sortTable('make')">Vehicle <i class="fas fa-sort ml-1"></i></th>
+                            <th class="px-4 py-3">Location</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3 text-right">Cost Price</th>
+                            <th class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="inventoryTableBody" class="divide-y divide-gray-200">
-                        <!-- Populated by JS -->
+                    <tbody class="divide-y divide-slate-200" id="inventoryTable">
+                        <!-- Rows injected by JS -->
                     </tbody>
                 </table>
             </div>
-            
-            <!-- Pagination -->
-            <div class="px-4 py-3 border-t border-gray-200 flex items-center justify-between">
-                <div class="text-sm text-gray-600">
-                    Showing <span id="showingFrom">0</span> to <span id="showingTo">0</span> of <span id="totalRecords">0</span> vehicles
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="changePage(-1)" id="prevBtn" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Previous
-                    </button>
-                    <span class="text-sm text-gray-600">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
-                    <button onclick="changePage(1)" id="nextBtn" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Next
-                    </button>
-                </div>
+            <div id="emptyState" class="hidden text-center py-12">
+                <i class="fas fa-car text-4xl text-slate-300 mb-4"></i>
+                <p class="text-slate-500">No vehicles found. <a href="./import.html" class="text-blue-600 hover:underline">Import stock</a> to get started.</p>
             </div>
         </div>
     </main>
 
-    <!-- Vehicle Detail Modal -->
-    <div id="vehicleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200 flex items-center justify-between">
-                <h2 class="text-xl font-bold text-gray-900" id="modalTitle">Vehicle Details</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-6" id="modalContent">
-                <!-- Populated by JS -->
-            </div>
-        </div>
-    </div>
-
     <script>
         let allVehicles = [];
-        let filteredVehicles = [];
-        let currentPage = 1;
-        const itemsPerPage = 25;
-        let sortColumn = '';
-        let sortDirection = 'asc';
+        let sortColumn = 'dateInStock';
+        let sortDirection = 'desc';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInventory();
+        });
 
         function loadInventory() {
-            // Load from localStorage
             allVehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            
-            // Check for URL params
-            const urlParams = new URLSearchParams(window.location.search);
-            const statusParam = urlParams.get('status');
-            const locationParam = urlParams.get('location');
-            const makeParam = urlParams.get('make');
-            const stockNoParam = urlParams.get('stockNo');
-            
-            if (statusParam) document.getElementById('statusFilter').value = statusParam;
-            if (locationParam) document.getElementById('locationFilter').value = locationParam;
-            if (makeParam) document.getElementById('makeFilter').value = makeParam;
-            
-            // Populate make filter
-            populateMakeFilter();
-            
-            // Apply filters
-            filterInventory();
-            
-            // If stockNo param, open that vehicle
-            if (stockNoParam) {
-                const vehicle = allVehicles.find(v => v.stockNo === stockNoParam);
-                if (vehicle) openVehicleModal(vehicle);
-            }
+            renderTable(allVehicles);
         }
 
-        function populateMakeFilter() {
-            const makes = [...new Set(allVehicles.map(v => v.make).filter(Boolean))].sort();
-            const select = document.getElementById('makeFilter');
-            makes.forEach(make => {
-                const option = document.createElement('option');
-                option.value = make;
-                option.textContent = make;
-                select.appendChild(option);
-            });
+        function renderTable(vehicles) {
+            const tbody = document.getElementById('inventoryTable');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (vehicles.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            tbody.innerHTML = vehicles.map(v => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="px-4 py-3 font-medium text-slate-900">${v.stockNo || '-'}</td>
+                    <td class="px-4 py-3 text-slate-600">${v.registration || '-'}</td>
+                    <td class="px-4 py-3">
+                        <div class="font-medium text-slate-900">${v.make} ${v.model}</div>
+                        <div class="text-sm text-slate-500">${v.year} • ${v.fuelType} • ${v.transmission}</div>
+                    </td>
+                    <td class="px-4 py-3 text-slate-600">${v.location || '-'}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(v.status)}">
+                            ${v.status || 'Unknown'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-right font-medium text-slate-900">
+                        £${parseFloat(v.costPrice || 0).toLocaleString('en-GB')}
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="viewVehicle('${v.stockNo}')" class="text-blue-600 hover:text-blue-800 mx-1" title="View">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="editVehicle('${v.stockNo}')" class="text-green-600 hover:text-green-800 mx-1" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'In Stock': 'bg-green-100 text-green-800',
+                'In Transit': 'bg-orange-100 text-orange-800',
+                'Off-site R': 'bg-red-100 text-red-800',
+                'Subject to': 'bg-purple-100 text-purple-800',
+                'Sold': 'bg-slate-100 text-slate-800'
+            };
+            return colors[status] || 'bg-gray-100 text-gray-800';
         }
 
         function filterInventory() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const status = document.getElementById('statusFilter').value;
             const location = document.getElementById('locationFilter').value;
-            const make = document.getElementById('makeFilter').value;
             
-            filteredVehicles = allVehicles.filter(v => {
+            let filtered = allVehicles.filter(v => {
                 const matchesSearch = !search || 
                     (v.stockNo && v.stockNo.toLowerCase().includes(search)) ||
                     (v.registration && v.registration.toLowerCase().includes(search)) ||
@@ -365,122 +212,11 @@
                 
                 const matchesStatus = !status || v.status === status;
                 const matchesLocation = !location || v.location === location;
-                const matchesMake = !make || v.make === make;
                 
-                return matchesSearch && matchesStatus && matchesLocation && matchesMake;
+                return matchesSearch && matchesStatus && matchesLocation;
             });
             
-            // Apply sorting
-            if (sortColumn) {
-                filteredVehicles.sort((a, b) => {
-                    let valA = a[sortColumn] || '';
-                    let valB = b[sortColumn] || '';
-                    
-                    if (typeof valA === 'string') valA = valA.toLowerCase();
-                    if (typeof valB === 'string') valB = valB.toLowerCase();
-                    
-                    if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
-                    if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
-                    return 0;
-                });
-            }
-            
-            currentPage = 1;
-            updateStats();
-            renderTable();
-        }
-
-        function updateStats() {
-            const stats = {
-                'In Stock': 0,
-                'In Transit': 0,
-                'Off-site R': 0,
-                'Subject to': 0,
-                'Sold': 0
-            };
-            
-            allVehicles.forEach(v => {
-                if (stats[v.status] !== undefined) {
-                    stats[v.status]++;
-                }
-            });
-            
-            document.getElementById('statInStock').textContent = stats['In Stock'];
-            document.getElementById('statInTransit').textContent = stats['In Transit'];
-            document.getElementById('statOffsite').textContent = stats['Off-site R'];
-            document.getElementById('statSubject').textContent = stats['Subject to'];
-            document.getElementById('statSold').textContent = stats['Sold'];
-            document.getElementById('statTotal').textContent = allVehicles.length;
-            
-            const totalValue = allVehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
-            document.getElementById('inventorySummary').textContent = 
-                `${filteredVehicles.length} vehicles showing | Total Stock Value: £${totalValue.toLocaleString()}`;
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('inventoryTableBody');
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageVehicles = filteredVehicles.slice(start, end);
-            
-            if (pageVehicles.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="9" class="px-4 py-8 text-center text-gray-500">
-                            No vehicles found matching your criteria
-                        </td>
-                    </tr>
-                `;
-            } else {
-                tbody.innerHTML = pageVehicles.map(v => {
-                    const statusColors = {
-                        'In Stock': 'bg-green-100 text-green-800',
-                        'In Transit': 'bg-yellow-100 text-yellow-800',
-                        'Off-site R': 'bg-red-100 text-red-800',
-                        'Subject to': 'bg-purple-100 text-purple-800',
-                        'Sold': 'bg-gray-100 text-gray-800'
-                    };
-                    
-                    const days = v.daysInStock || 0;
-                    const daysColor = days > 90 ? 'text-red-600 font-semibold' : days > 60 ? 'text-orange-600' : 'text-gray-600';
-                    
-                    return `
-                        <tr class="table-row cursor-pointer" onclick='openVehicleModal(${JSON.stringify(v).replace(/'/g, "&#39;")})'>
-                            <td class="px-4 py-3 text-sm font-medium text-gray-900">${v.stockNo || '-'}</td>
-                            <td class="px-4 py-3 text-sm text-gray-600">${v.registration || '-'}</td>
-                            <td class="px-4 py-3">
-                                <div class="text-sm font-medium text-gray-900">${v.make || '-'} ${v.model || '-'}</div>
-                                <div class="text-xs text-gray-500">${v.variant || ''} ${v.year || ''}</div>
-                            </td>
-                            <td class="px-4 py-3 text-sm text-gray-600">${v.location || '-'}</td>
-                            <td class="px-4 py-3">
-                                <span class="status-badge inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[v.status] || 'bg-gray-100 text-gray-800'}">
-                                    ${v.status || 'Unknown'}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3 text-sm text-gray-600">£${parseFloat(v.costPrice || 0).toLocaleString()}</td>
-                            <td class="px-4 py-3 text-sm text-gray-600">£${parseFloat(v.retailPrice || 0).toLocaleString()}</td>
-                            <td class="px-4 py-3 text-sm ${daysColor}">${days}</td>
-                            <td class="px-4 py-3">
-                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="event.stopPropagation(); window.location.href='workflow.html?stockNo=${v.stockNo}'">
-                                    View
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-            }
-            
-            // Update pagination
-            const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage) || 1;
-            document.getElementById('showingFrom').textContent = filteredVehicles.length > 0 ? start + 1 : 0;
-            document.getElementById('showingTo').textContent = Math.min(end, filteredVehicles.length);
-            document.getElementById('totalRecords').textContent = filteredVehicles.length;
-            document.getElementById('currentPage').textContent = currentPage;
-            document.getElementById('totalPages').textContent = totalPages;
-            
-            document.getElementById('prevBtn').disabled = currentPage === 1;
-            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+            renderTable(filtered);
         }
 
         function sortTable(column) {
@@ -490,138 +226,41 @@
                 sortColumn = column;
                 sortDirection = 'asc';
             }
-            filterInventory();
-        }
-
-        function changePage(direction) {
-            currentPage += direction;
-            renderTable();
-        }
-
-        function setFilter(type, value) {
-            if (type === 'status') {
-                document.getElementById('statusFilter').value = value;
-            } else if (type === 'location') {
-                document.getElementById('locationFilter').value = value;
-            } else if (type === 'make') {
-                document.getElementById('makeFilter').value = value;
-            }
-            filterInventory();
-        }
-
-        function clearFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('statusFilter').value = '';
-            document.getElementById('locationFilter').value = '';
-            document.getElementById('makeFilter').value = '';
-            filterInventory();
-        }
-
-        function openVehicleModal(vehicle) {
-            document.getElementById('modalTitle').textContent = `${vehicle.make} ${vehicle.model} - ${vehicle.stockNo}`;
             
-            const statusColors = {
-                'In Stock': 'bg-green-100 text-green-800',
-                'In Transit': 'bg-yellow-100 text-yellow-800',
-                'Off-site R': 'bg-red-100 text-red-800',
-                'Subject to': 'bg-purple-100 text-purple-800',
-                'Sold': 'bg-gray-100 text-gray-800'
-            };
-            
-            document.getElementById('modalContent').innerHTML = `
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Stock Number</p>
-                        <p class="font-medium text-gray-900">${vehicle.stockNo || '-'}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Registration</p>
-                        <p class="font-medium text-gray-900">${vehicle.registration || '-'}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Status</p>
-                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[vehicle.status] || 'bg-gray-100 text-gray-800'}">
-                            ${vehicle.status || 'Unknown'}
-                        </span>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Location</p>
-                        <p class="font-medium text-gray-900">${vehicle.location || '-'}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Cost Price</p>
-                        <p class="font-medium text-gray-900">£${parseFloat(vehicle.costPrice || 0).toLocaleString()}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Retail Price</p>
-                        <p class="font-medium text-gray-900">£${parseFloat(vehicle.retailPrice || 0).toLocaleString()}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Days in Stock</p>
-                        <p class="font-medium ${vehicle.daysInStock > 90 ? 'text-red-600' : 'text-gray-900'}">${vehicle.daysInStock || 0}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Date in Stock</p>
-                        <p class="font-medium text-gray-900">${vehicle.dateInStock || '-'}</p>
-                    </div>
-                </div>
+            allVehicles.sort((a, b) => {
+                let aVal = a[column] || '';
+                let bVal = b[column] || '';
                 
-                <div class="border-t border-gray-200 pt-4 mb-4">
-                    <h3 class="font-semibold text-gray-900 mb-3">Vehicle Details</h3>
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div><span class="text-gray-500">Year:</span> ${vehicle.year || '-'}</div>
-                        <div><span class="text-gray-500">Colour:</span> ${vehicle.colour || '-'}</div>
-                        <div><span class="text-gray-500">Fuel:</span> ${vehicle.fuelType || '-'}</div>
-                        <div><span class="text-gray-500">Transmission:</span> ${vehicle.transmission || '-'}</div>
-                        <div><span class="text-gray-500">Mileage:</span> ${vehicle.mileage ? vehicle.mileage.toLocaleString() : '-'}</div>
-                        <div><span class="text-gray-500">Body:</span> ${vehicle.body || '-'}</div>
-                    </div>
-                </div>
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
                 
-                <div class="border-t border-gray-200 pt-4 flex gap-3">
-                    <button onclick="window.location.href='workflow.html?stockNo=${vehicle.stockNo}'" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        View Workflow
-                    </button>
-                    <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                        Edit
-                    </button>
-                </div>
-            `;
+                if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
             
-            document.getElementById('vehicleModal').classList.remove('hidden');
+            filterInventory();
         }
 
-        function closeModal() {
-            document.getElementById('vehicleModal').classList.add('hidden');
+        function viewVehicle(stockNo) {
+            alert('View vehicle: ' + stockNo);
         }
 
-        function refreshData() {
-            loadInventory();
-            const btn = document.querySelector('button[onclick=\"refreshData()\"]');
-            btn.classList.add('animate-spin');
-            setTimeout(() => btn.classList.remove('animate-spin'), 1000);
+        function editVehicle(stockNo) {
+            alert('Edit vehicle: ' + stockNo);
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
         }
 
         function logout() {
             localStorage.removeItem('capeye_session');
-            window.location.href = 'login.html';
+            window.location.replace('./login.html');
         }
-
-        // Close modal on outside click
-        document.getElementById('vehicleModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-
-        // Check authentication
-        document.addEventListener('DOMContentLoaded', () => {
-            const session = localStorage.getItem('capeye_session');
-            if (!session) {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            loadInventory();
-        });
     </script>
 </body>
 </html>
