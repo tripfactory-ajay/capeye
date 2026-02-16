@@ -3,276 +3,422 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAPEYE - Vehicle Workflow</title>
+    <title>Capeye - Workflow</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
-        * { font-family: 'Inter', sans-serif; }
-        
-        body {
-            background: #0f172a;
-            color: #e2e8f0;
-        }
-        
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .nav-item {
-            transition: all 0.3s ease;
-        }
-        
-        .nav-item:hover, .nav-item.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-left: 3px solid #3b82f6;
-        }
-        
-        .workflow-stage {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .workflow-stage:hover {
-            transform: scale(1.02);
-        }
-        
-        .workflow-stage.active {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.1);
-        }
-        
-        .workflow-stage.completed {
-            border-color: #10b981;
-            background: rgba(16, 185, 129, 0.1);
-        }
-        
-        .workflow-stage.pending {
-            border-color: rgba(148, 163, 184, 0.3);
-        }
-        
-        .photo-upload {
-            border: 2px dashed rgba(148, 163, 184, 0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .photo-upload:hover {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.05);
-        }
-        
-        .form-input {
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            transition: all 0.3s;
-        }
-        
-        .form-input:focus {
-            border-color: #3b82f6;
-            outline: none;
-        }
-        
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ef4444;
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .progress-bar {
-            background: rgba(30, 41, 59, 0.9);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            transition: width 0.5s ease;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .stage-card { transition: all 0.3s ease; }
+        .stage-card:hover { transform: translateX(4px); }
+        .stage-active { border-left: 4px solid #2563eb; background: #eff6ff; }
+        .stage-complete { border-left: 4px solid #10b981; background: #ecfdf5; }
+        .stage-pending { border-left: 4px solid #cbd5e1; background: #f8fafc; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="bg-slate-50 min-h-screen">
+    <!-- Auth Check -->
+    <script src="js/auth.js"></script>
+    <script>
+        if (!Auth.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
     <!-- Header -->
-    <header class="glass-panel sticky top-0 z-50 border-b border-slate-700">
-        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+    <header class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-truck text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold gradient-text">CAPEYE</h1>
-                        <p class="text-xs text-slate-400">Auto Capital Intelligence System</p>
-                    </div>
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="flex items-center hover:opacity-80 transition">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h1 class="text-xl font-bold">Capeye</h1>
+                        </div>
+                    </a>
                 </div>
                 
-                <div class="flex items-center space-x-6">
-                    <div class="relative">
-                        <i class="fas fa-bell text-slate-400 text-lg cursor-pointer hover:text-white transition"></i>
-                        <span class="notification-badge">3</span>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium user-name">Loading...</p>
+                        <p class="text-xs text-slate-400 user-role">Loading...</p>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-white">Keith Hardy</p>
-                            <p class="text-xs text-slate-400">General Manager</p>
-                        </div>
-                        <div class="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-slate-300"></i>
-                        </div>
-                    </div>
+                    <button class="logout-btn p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="flex">
-        <!-- Sidebar Navigation -->
-        <aside class="w-64 glass-panel min-h-screen border-r border-slate-700">
-            <nav class="mt-8 px-4 space-y-2">
-                <a href="index.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-line text-slate-400"></i>
-                    <span>Dashboard</span>
-                </a>
-                
-                <a href="inventory.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-warehouse text-slate-400"></i>
-                    <span>Inventory</span>
-                </a>
-                
-                <a href="workflow.html" class="nav-item active px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-tasks text-blue-400"></i>
-                    <span class="font-medium">Workflow</span>
-                    <span class="ml-auto bg-blue-600 text-white text-xs px-2 py-1 rounded-full">12</span>
-                </a>
-                
-                <a href="analytics.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-pie text-slate-400"></i>
-                    <span>Analytics</span>
-                </a>
-                
-                <a href="alerts.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-exclamation-triangle text-slate-400"></i>
-                    <span>Alerts</span>
-                    <span class="ml-auto bg-red-600 text-white text-xs px-2 py-1 rounded-full">5</span>
-                </a>
-                
-                <a href="staff.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-users text-slate-400"></i>
-                    <span>Staff</span>
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-8 overflow-auto">
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold text-white mb-2">Vehicle Workflow</h2>
-                <p class="text-slate-400">12-stage process from intake to customer delivery</p>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center text-sm text-slate-500 mb-2">
+                <a href="dashboard.html" class="hover:text-blue-600">Dashboard</a>
+                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-slate-900">Workflow</span>
             </div>
+            <h2 class="text-2xl font-bold text-slate-900">Vehicle Workflow</h2>
+            <p class="text-slate-600 mt-1">Track vehicles through the 12-stage preparation process.</p>
+        </div>
 
-            <!-- Vehicle Selection -->
-            <div class="glass-panel rounded-xl p-6 mb-6">
-                <div class="flex flex-wrap gap-4 items-end">
-                    <div class="flex-1 min-w-[300px]">
-                        <label class="block text-sm text-slate-400 mb-2">Select Vehicle</label>
-                        <select id="vehicleSelect" class="form-input w-full px-4 py-2 rounded-lg text-white" onchange="loadVehicleWorkflow()">
-                            <option value="">Choose a vehicle...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-2">Or Search by Reg</label>
-                        <div class="flex">
-                            <input type="text" id="regSearch" placeholder="e.g. RF73 OSL" 
-                                class="form-input px-4 py-2 rounded-l-lg text-white w-48">
-                            <button onclick="searchByReg()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r-lg transition">
-                                <i class="fas fa-search"></i>
-                            </button>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left: Vehicle Selection -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sticky top-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Select Vehicle</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Search Registration</label>
+                            <div class="relative">
+                                <input type="text" id="vehicleSearch" placeholder="Enter registration..." 
+                                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <button onclick="searchVehicle()" class="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Or Select from List</label>
+                            <select id="vehicleSelect" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Choose a vehicle...</option>
+                            </select>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Vehicle Info Card (shown when vehicle selected) -->
-                <div id="vehicleInfo" class="hidden mt-6 pt-6 border-t border-slate-700">
-                    <div class="grid grid-cols-4 gap-4">
-                        <div>
-                            <p class="text-slate-400 text-xs uppercase">Registration</p>
-                            <p class="text-xl font-bold text-white" id="infoReg">-</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-400 text-xs uppercase">Vehicle</p>
-                            <p class="text-lg font-semibold text-white" id="infoVehicle">-</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-400 text-xs uppercase">Current Stage</p>
-                            <p class="text-lg font-semibold text-blue-400" id="infoStage">-</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-400 text-xs uppercase">Progress</p>
-                            <div class="flex items-center space-x-2">
-                                <div class="progress-bar flex-1 h-2">
-                                    <div class="progress-fill h-full rounded-full" id="progressBar" style="width: 0%"></div>
-                                </div>
-                                <span class="text-sm text-white" id="progressText">0%</span>
+
+                    <!-- Selected Vehicle Info -->
+                    <div id="selectedVehicle" class="hidden mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h4 class="font-semibold text-blue-900 mb-2">Selected Vehicle</h4>
+                        <p class="text-sm text-blue-800" id="vehicleInfo">-</p>
+                        <p class="text-sm text-blue-600 mt-1" id="vehicleStatus">-</p>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="mt-6 pt-6 border-t border-slate-200">
+                        <h4 class="text-sm font-medium text-slate-700 mb-3">Workflow Overview</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Total Vehicles</span>
+                                <span class="font-medium text-slate-900" id="totalVehicles">0</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">In Progress</span>
+                                <span class="font-medium text-blue-600" id="inProgress">0</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Ready for Sale</span>
+                                <span class="font-medium text-green-600" id="readyCount">0</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 12 Stage Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8" id="stageGrid">
-                <!-- Stages generated by JavaScript -->
-            </div>
-
-            <!-- Stage Form Container -->
-            <div id="stageFormContainer" class="hidden glass-panel rounded-xl p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h3 class="text-xl font-bold text-white" id="formTitle">Stage Form</h3>
-                        <p class="text-slate-400" id="formSubtitle">Complete the required information</p>
+            <!-- Right: Workflow Stages -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-slate-900">12-Stage Process</h3>
+                        <span id="currentStageBadge" class="px-3 py-1 bg-slate-100 text-slate-600 text-sm font-medium rounded-full">No vehicle selected</span>
                     </div>
-                    <div class="flex space-x-3">
-                        <button onclick="saveStageDraft()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition text-sm">
-                            <i class="fas fa-save mr-2"></i>Save Draft
-                        </button>
-                        <button onclick="submitStage()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition text-sm">
-                            <i class="fas fa-check mr-2"></i>Submit & Continue
-                        </button>
+                    
+                    <div class="p-6" id="workflowStages">
+                        <!-- Stages populated by JS -->
+                        <div class="text-center py-12 text-slate-500">
+                            <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            <p>Select a vehicle to view and manage its workflow</p>
+                        </div>
                     </div>
                 </div>
-                
-                <div id="formContent" class="space-y-6">
-                    <!-- Dynamic form content -->
+
+                <!-- Stage Detail Form -->
+                <div id="stageForm" class="hidden mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h4 class="text-lg font-semibold text-slate-900 mb-4" id="stageFormTitle">Stage Details</h4>
+                    
+                    <form id="workflowForm" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Assigned To</label>
+                                <select id="assignedTo" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select staff member...</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                                <select id="stageStatus" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="pending">Pending</option>
+                                    <option value="in_progress">In Progress</option>
+                                    <option value="complete">Complete</option>
+                                    <option value="issue">Issue/Blocked</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+                            <textarea id="stageNotes" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter notes about this stage..."></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Estimated Cost</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">£</span>
+                                    <input type="number" id="estimatedCost" class="w-full pl-7 pr-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.00">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Actual Cost</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">£</span>
+                                    <input type="number" id="actualCost" class="w-full pl-7 pr-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" onclick="closeStageForm()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium rounded-lg transition">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition">Save Progress</button>
+                        </div>
+                    </form>
                 </div>
             </div>
+        </div>
 
-            <!-- Empty State -->
-            <div id="emptyState" class="glass-panel rounded-xl p-12 text-center">
-                <i class="fas fa-tasks text-6xl text-slate-600 mb-4"></i>
-                <h3 class="text-xl font-semibold text-white mb-2">Select a Vehicle</h3>
-                <p class="text-slate-400">Choose a vehicle from the dropdown above to view or manage its workflow</p>
-            </div>
-        </main>
-    </div>
+    </main>
 
+    <script src="js/reference-data.js"></script>
+    <script src="js/vehicle-store.js"></script>
     <script src="js/data.js"></script>
-    <script src="js/workflow.js"></script>
+    <script>
+        let selectedVehicle = null;
+        let currentStage = null;
+        
+        const workflowStages = [
+            { id: 'intake', name: 'Vehicle Intake', department: 'any', icon: 'M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0' },
+            { id: 'inspection', name: 'Initial Inspection', department: 'workshop', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01' },
+            { id: 'valuation', name: 'Valuation', department: 'sales', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+            { id: 'bodywork', name: 'Bodywork', department: 'bodywork', icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01' },
+            { id: 'mechanical', name: 'Mechanical', department: 'workshop', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+            { id: 'valet', name: 'Valet', department: 'valet', icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01' },
+            { id: 'photography', name: 'Photography', department: 'sales', icon: 'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z M15 13a3 3 0 11-6 0 3 3 0 016 0z' },
+            { id: 'listing', name: 'Listing', department: 'sales', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+            { id: 'advertising', name: 'Advertising', department: 'sales', icon: 'M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z' },
+            { id: 'enquiries', name: 'Enquiries', department: 'sales', icon: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z' },
+            { id: 'sale', name: 'Sale', department: 'sales', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+            { id: 'delivery', name: 'Delivery', department: 'sales', icon: 'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            Auth.updateUI();
+            populateVehicleSelect();
+            populateStaffDropdown();
+            updateStats();
+        });
+
+        function populateVehicleSelect() {
+            const select = document.getElementById('vehicleSelect');
+            const vehicles = VehicleStore.getAll();
+            
+            vehicles.forEach(v => {
+                const option = document.createElement('option');
+                option.value = v.registration;
+                option.textContent = `${v.registration} - ${v.make} ${v.model}`;
+                select.appendChild(option);
+            });
+            
+            select.addEventListener('change', function() {
+                if (this.value) {
+                    loadVehicle(this.value);
+                }
+            });
+        }
+
+        function populateStaffDropdown() {
+            const select = document.getElementById('assignedTo');
+            const staff = ReferenceData.getActive('staff');
+            
+            staff.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.name;
+                option.textContent = `${s.name} (${s.department})`;
+                select.appendChild(option);
+            });
+        }
+
+        function searchVehicle() {
+            const reg = document.getElementById('vehicleSearch').value.trim().toUpperCase();
+            if (reg) {
+                loadVehicle(reg);
+            }
+        }
+
+        function loadVehicle(registration) {
+            const vehicle = VehicleStore.getByRegistration(registration);
+            
+            if (!vehicle) {
+                alert('Vehicle not found: ' + registration);
+                return;
+            }
+            
+            selectedVehicle = vehicle;
+            
+            // Update selected vehicle display
+            document.getElementById('selectedVehicle').classList.remove('hidden');
+            document.getElementById('vehicleInfo').textContent = 
+                `${vehicle.make} ${vehicle.model} ${vehicle.variant || ''} (${vehicle.year || 'N/A'})`;
+            document.getElementById('vehicleStatus').textContent = 
+                `Status: ${vehicle.status || 'Unknown'} | Location: ${vehicle.location || 'Unknown'}`;
+            
+            // Update badge
+            const currentStageName = vehicle.workflowStage || 'Not Started';
+            document.getElementById('currentStageBadge').textContent = 'Current: ' + currentStageName;
+            
+            // Render workflow stages
+            renderWorkflowStages(vehicle);
+        }
+
+        function renderWorkflowStages(vehicle) {
+            const container = document.getElementById('workflowStages');
+            const currentStageIndex = workflowStages.findIndex(s => s.id === vehicle.workflowStage) || 0;
+            
+            container.innerHTML = workflowStages.map((stage, index) => {
+                let statusClass = 'stage-pending';
+                let statusIcon = '○';
+                
+                if (index < currentStageIndex) {
+                    statusClass = 'stage-complete';
+                    statusIcon = '✓';
+                } else if (index === currentStageIndex) {
+                    statusClass = 'stage-active';
+                    statusIcon = '●';
+                }
+                
+                const deptStaff = ReferenceData.getStaffByDepartment(stage.department);
+                
+                return `
+                    <div class="stage-card ${statusClass} rounded-lg p-4 mb-3 cursor-pointer" onclick="openStageForm('${stage.id}')">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white flex items-center justify-center text-lg font-bold mr-4 shadow-sm">
+                                ${statusIcon}
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-semibold text-slate-900">${stage.name}</h4>
+                                        <p class="text-sm text-slate-500">${stage.department} department</p>
+                                    </div>
+                                    <span class="text-xs text-slate-400">Stage ${index + 1}</span>
+                                </div>
+                                ${deptStaff.length > 0 ? `
+                                    <div class="mt-2 flex flex-wrap gap-1">
+                                        ${deptStaff.slice(0, 3).map(s => 
+                                            `<span class="px-2 py-0.5 bg-white rounded text-xs text-slate-600">${s.name}</span>`
+                                        ).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <svg class="w-5 h-5 text-slate-400 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${stage.icon}"/>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openStageForm(stageId) {
+            if (!selectedVehicle) {
+                alert('Please select a vehicle first');
+                return;
+            }
+            
+            currentStage = workflowStages.find(s => s.id === stageId);
+            document.getElementById('stageForm').classList.remove('hidden');
+            document.getElementById('stageFormTitle').textContent = currentStage.name + ' - Update Progress';
+            
+            // Scroll to form
+            document.getElementById('stageForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closeStageForm() {
+            document.getElementById('stageForm').classList.add('hidden');
+            currentStage = null;
+        }
+
+        document.getElementById('workflowForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedVehicle || !currentStage) return;
+            
+            // Save workflow progress
+            const progress = {
+                stage: currentStage.id,
+                assignedTo: document.getElementById('assignedTo').value,
+                status: document.getElementById('stageStatus').value,
+                notes: document.getElementById('stageNotes').value,
+                estimatedCost: parseFloat(document.getElementById('estimatedCost').value) || 0,
+                actualCost: parseFloat(document.getElementById('actualCost').value) || 0,
+                updatedAt: new Date().toISOString(),
+                updatedBy: Auth.getCurrentUser()?.name || 'Unknown'
+            };
+            
+            // Update vehicle workflow
+            const updates = {
+                workflowStage: currentStage.id,
+                workflowProgress: {
+                    ...(selectedVehicle.workflowProgress || {}),
+                    [currentStage.id]: progress
+                }
+            };
+            
+            // If stage is complete, move to next
+            if (progress.status === 'complete') {
+                const nextStage = Data.getNextStage(currentStage.id);
+                if (nextStage) {
+                    updates.workflowStage = nextStage.id;
+                }
+            }
+            
+            VehicleStore.update(selectedVehicle.registration, updates);
+            
+            // Refresh display
+            loadVehicle(selectedVehicle.registration);
+            closeStageForm();
+            
+            alert('Progress saved successfully');
+        });
+
+        function updateStats() {
+            const vehicles = VehicleStore.getAll();
+            document.getElementById('totalVehicles').textContent = vehicles.length;
+            
+            const inProgress = vehicles.filter(v => v.workflowStage && v.workflowStage !== 'delivery').length;
+            document.getElementById('inProgress').textContent = inProgress;
+            
+            const ready = vehicles.filter(v => v.workflowStage === 'delivery' || v.readyForSale).length;
+            document.getElementById('readyCount').textContent = ready;
+        }
+    </script>
 </body>
 </html>
