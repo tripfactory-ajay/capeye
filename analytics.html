@@ -3,261 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAPEYE - Analytics</title>
+    <title>Capeye - Analytics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
-        * { font-family: 'Inter', sans-serif; }
-        
-        body {
-            background: #0f172a;
-            color: #e2e8f0;
-        }
-        
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .nav-item {
-            transition: all 0.3s ease;
-        }
-        
-        .nav-item:hover, .nav-item.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-left: 3px solid #3b82f6;
-        }
-        
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ef4444;
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="bg-slate-50 min-h-screen">
+    <!-- Auth Check -->
+    <script src="js/auth.js"></script>
+    <script>
+        if (!Auth.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
     <!-- Header -->
-    <header class="glass-panel sticky top-0 z-50 border-b border-slate-700">
-        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+    <header class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-truck text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold gradient-text">CAPEYE</h1>
-                        <p class="text-xs text-slate-400">Auto Capital Intelligence System</p>
-                    </div>
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="flex items-center hover:opacity-80 transition">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h1 class="text-xl font-bold">Capeye</h1>
+                        </div>
+                    </a>
                 </div>
                 
-                <div class="flex items-center space-x-6">
-                    <div class="relative">
-                        <i class="fas fa-bell text-slate-400 text-lg cursor-pointer hover:text-white transition"></i>
-                        <span class="notification-badge">3</span>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium user-name">Loading...</p>
+                        <p class="text-xs text-slate-400 user-role">Loading...</p>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-white">Keith Hardy</p>
-                            <p class="text-xs text-slate-400">General Manager</p>
-                        </div>
-                        <div class="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-slate-300"></i>
-                        </div>
-                    </div>
+                    <button class="logout-btn p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="flex">
-        <!-- Sidebar Navigation -->
-        <aside class="w-64 glass-panel min-h-screen border-r border-slate-700">
-            <nav class="mt-8 px-4 space-y-2">
-                <a href="index.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-line text-slate-400"></i>
-                    <span>Dashboard</span>
-                </a>
-                
-                <a href="inventory.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-warehouse text-slate-400"></i>
-                    <span>Inventory</span>
-                </a>
-                
-                <a href="workflow.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-tasks text-slate-400"></i>
-                    <span>Workflow</span>
-                    <span class="ml-auto bg-blue-600 text-white text-xs px-2 py-1 rounded-full">12</span>
-                </a>
-                
-                <a href="analytics.html" class="nav-item active px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-pie text-blue-400"></i>
-                    <span class="font-medium">Analytics</span>
-                </a>
-                
-                <a href="alerts.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-exclamation-triangle text-slate-400"></i>
-                    <span>Alerts</span>
-                    <span class="ml-auto bg-red-600 text-white text-xs px-2 py-1 rounded-full">5</span>
-                </a>
-                
-                <a href="staff.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-users text-slate-400"></i>
-                    <span>Staff</span>
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-8 overflow-auto">
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold text-white mb-2">Advanced Analytics</h2>
-                <p class="text-slate-400">Deep insights into stock performance and operations</p>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center text-sm text-slate-500 mb-2">
+                <a href="dashboard.html" class="hover:text-blue-600">Dashboard</a>
+                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-slate-900">Analytics</span>
             </div>
+            <h2 class="text-2xl font-bold text-slate-900">Business Analytics</h2>
+            <p class="text-slate-600 mt-1">Insights and performance metrics from your vehicle data.</p>
+        </div>
 
-            <!-- Date Range Selector -->
-            <div class="glass-panel rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center">
-                <div class="flex items-center space-x-2">
-                    <label class="text-slate-400 text-sm">From:</label>
-                    <input type="date" class="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white text-sm">
-                </div>
-                <div class="flex items-center space-x-2">
-                    <label class="text-slate-400 text-sm">To:</label>
-                    <input type="date" class="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white text-sm">
-                </div>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm transition">
-                    <i class="fas fa-sync mr-2"></i>Update
-                </button>
-                <button class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2 rounded-lg text-sm transition ml-auto">
-                    <i class="fas fa-download mr-2"></i>Export Report
-                </button>
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Avg. Days in Stock</p>
+                <p class="text-3xl font-bold text-slate-900 mt-2" id="avgDays">0</p>
+                <p class="text-xs text-slate-500 mt-1">Target: &lt;45 days</p>
             </div>
-
-            <!-- Performance Metrics -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                <div class="glass-panel rounded-xl p-6 text-center">
-                    <p class="text-4xl font-bold text-blue-400">42</p>
-                    <p class="text-sm text-slate-400 mt-2">Avg Days to Sell</p>
-                    <p class="text-xs text-green-400 mt-1"><i class="fas fa-arrow-down"></i> 3 days vs last month</p>
-                </div>
-                <div class="glass-panel rounded-xl p-6 text-center">
-                    <p class="text-4xl font-bold text-green-400">£2,450</p>
-                    <p class="text-sm text-slate-400 mt-2">Avg Gross Margin</p>
-                    <p class="text-xs text-green-400 mt-1"><i class="fas fa-arrow-up"></i> 8% vs last month</p>
-                </div>
-                <div class="glass-panel rounded-xl p-6 text-center">
-                    <p class="text-4xl font-bold text-yellow-400">18%</p>
-                    <p class="text-sm text-slate-400 mt-2">Stock Turnover</p>
-                    <p class="text-xs text-slate-400 mt-1">Monthly rate</p>
-                </div>
-                <div class="glass-panel rounded-xl p-6 text-center">
-                    <p class="text-4xl font-bold text-purple-400">£850</p>
-                    <p class="text-sm text-slate-400 mt-2">Avg Recon Cost</p>
-                    <p class="text-xs text-red-400 mt-1"><i class="fas fa-arrow-up"></i> 5% vs last month</p>
-                </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Stock Turnover</p>
+                <p class="text-3xl font-bold text-blue-600 mt-2" id="turnover">0%</p>
+                <p class="text-xs text-slate-500 mt-1">Monthly rate</p>
             </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Avg. Margin</p>
+                <p class="text-3xl font-bold text-green-600 mt-2" id="avgMargin">0%</p>
+                <p class="text-xs text-slate-500 mt-1">Gross profit</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Overdue Stock</p>
+                <p class="text-3xl font-bold text-red-600 mt-2" id="overduePct">0%</p>
+                <p class="text-xs text-slate-500 mt-1">&gt;60 days old</p>
+            </div>
+        </div>
 
-            <!-- Charts Row 1 -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="glass-panel rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-4">Stock Aging Analysis</h3>
-                    <canvas id="agingChart" height="250"></canvas>
-                </div>
+        <!-- Charts Row 1 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Stock by Make -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Stock by Manufacturer</h3>
+                <canvas id="makeChart" height="250"></canvas>
+            </div>
+            
+            <!-- Stock by Location -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Stock by Location</h3>
+                <canvas id="locationChart" height="250"></canvas>
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Days in Stock Distribution -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Days in Stock Distribution</h3>
+                <canvas id="daysChart" height="250"></canvas>
+            </div>
+            
+            <!-- Monthly Trends -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Stock Value Trend</h3>
+                <canvas id="trendChart" height="250"></canvas>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900">Performance by Make</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Make</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Count</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Avg Cost</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Avg Retail</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Avg Days</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Est. Margin</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performanceTable" class="bg-white divide-y divide-slate-200">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="js/reference-data.js"></script>
+    <script src="js/vehicle-store.js"></script>
+    <script>
+        let charts = {};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            Auth.updateUI();
+            loadAnalytics();
+        });
+
+        function loadAnalytics() {
+            const vehicles = VehicleStore.getAll();
+            
+            if (vehicles.length === 0) {
+                showNoData();
+                return;
+            }
+            
+            calculateKPIs(vehicles);
+            renderCharts(vehicles);
+            renderPerformanceTable(vehicles);
+        }
+
+        function showNoData() {
+            document.getElementById('avgDays').textContent = '-';
+            document.getElementById('turnover').textContent = '-';
+            document.getElementById('avgMargin').textContent = '-';
+            document.getElementById('overduePct').textContent = '-';
+            
+            document.getElementById('performanceTable').innerHTML = `
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                        No vehicle data available. Import data to see analytics.
+                    </td>
+                </tr>
+            `;
+        }
+
+        function calculateKPIs(vehicles) {
+            // Average days in stock
+            const totalDays = vehicles.reduce((sum, v) => sum + (v.daysInStock || 0), 0);
+            const avgDays = vehicles.length > 0 ? Math.round(totalDays / vehicles.length) : 0;
+            document.getElementById('avgDays').textContent = avgDays;
+            
+            // Stock turnover (simplified - would need historical data)
+            const sold = vehicles.filter(v => v.sold).length;
+            const turnover = vehicles.length > 0 ? Math.round((sold / vehicles.length) * 100) : 0;
+            document.getElementById('turnover').textContent = turnover + '%';
+            
+            // Average margin
+            let totalCost = 0;
+            let totalRetail = 0;
+            vehicles.forEach(v => {
+                totalCost += v.costPrice || 0;
+                totalRetail += v.retailPrice || 0;
+            });
+            const margin = totalCost > 0 ? Math.round(((totalRetail - totalCost) / totalCost) * 100) : 0;
+            document.getElementById('avgMargin').textContent = margin + '%';
+            
+            // Overdue percentage
+            const overdue = vehicles.filter(v => (v.daysInStock || 0) > 60).length;
+            const overduePct = vehicles.length > 0 ? Math.round((overdue / vehicles.length) * 100) : 0;
+            document.getElementById('overduePct').textContent = overduePct + '%';
+        }
+
+        function renderCharts(vehicles) {
+            // Stock by Make
+            const makeCounts = {};
+            vehicles.forEach(v => {
+                makeCounts[v.make] = (makeCounts[v.make] || 0) + 1;
+            });
+            
+            const makeCtx = document.getElementById('makeChart').getContext('2d');
+            charts.make = new Chart(makeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(makeCounts),
+                    datasets: [{
+                        data: Object.values(makeCounts),
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#84cc16']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+            
+            // Stock by Location
+            const locCounts = {};
+            vehicles.forEach(v => {
+                locCounts[v.location || 'Unknown'] = (locCounts[v.location || 'Unknown'] || 0) + 1;
+            });
+            
+            const locCtx = document.getElementById('locationChart').getContext('2d');
+            charts.location = new Chart(locCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(locCounts),
+                    datasets: [{
+                        label: 'Vehicles',
+                        data: Object.values(locCounts),
+                        backgroundColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+            
+            // Days in Stock Distribution
+            const daysBuckets = { '0-30': 0, '31-60': 0, '61-90': 0, '90+': 0 };
+            vehicles.forEach(v => {
+                const days = v.daysInStock || 0;
+                if (days <= 30) daysBuckets['0-30']++;
+                else if (days <= 60) daysBuckets['31-60']++;
+                else if (days <= 90) daysBuckets['61-90']++;
+                else daysBuckets['90+']++;
+            });
+            
+            const daysCtx = document.getElementById('daysChart').getContext('2d');
+            charts.days = new Chart(daysCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(daysBuckets),
+                    datasets: [{
+                        label: 'Vehicles',
+                        data: Object.values(daysBuckets),
+                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+            
+            // Trend Chart (mock data - would use import history)
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            charts.trend = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'Stock Value (£)',
+                        data: [
+                            vehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0) * 0.9,
+                            vehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0) * 0.95,
+                            vehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0) * 0.98,
+                            vehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0)
+                        ],
+                        borderColor: '#3b82f6',
+                        fill: true,
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: false } }
+                }
+            });
+        }
+
+        function renderPerformanceTable(vehicles) {
+            const makeStats = {};
+            
+            vehicles.forEach(v => {
+                if (!makeStats[v.make]) {
+                    makeStats[v.make] = { count: 0, totalCost: 0, totalRetail: 0, totalDays: 0 };
+                }
+                makeStats[v.make].count++;
+                makeStats[v.make].totalCost += v.costPrice || 0;
+                makeStats[v.make].totalRetail += v.retailPrice || 0;
+                makeStats[v.make].totalDays += v.daysInStock || 0;
+            });
+            
+            const tbody = document.getElementById('performanceTable');
+            tbody.innerHTML = Object.entries(makeStats).map(([make, stats]) => {
+                const avgCost = stats.totalCost / stats.count;
+                const avgRetail = stats.totalRetail / stats.count;
+                const avgDays = Math.round(stats.totalDays / stats.count);
+                const margin = avgCost > 0 ? Math.round(((avgRetail - avgCost) / avgCost) * 100) : 0;
                 
-                <div class="glass-panel rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-4">Sales Performance by Month</h3>
-                    <canvas id="salesChart" height="250"></canvas>
-                </div>
-            </div>
-
-            <!-- Charts Row 2 -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="glass-panel rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-4">Margin Analysis by Make</h3>
-                    <canvas id="marginChart" height="250"></canvas>
-                </div>
-                
-                <div class="glass-panel rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-4">Department Efficiency</h3>
-                    <canvas id="deptChart" height="250"></canvas>
-                </div>
-            </div>
-
-            <!-- Detailed Metrics Table -->
-            <div class="glass-panel rounded-xl p-6">
-                <h3 class="text-lg font-semibold text-white mb-4">Performance by Vehicle Category</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="border-b border-slate-700">
-                                <th class="text-left py-3 px-4 text-slate-400 text-sm">Category</th>
-                                <th class="text-right py-3 px-4 text-slate-400 text-sm">Units</th>
-                                <th class="text-right py-3 px-4 text-slate-400 text-sm">Avg Price</th>
-                                <th class="text-right py-3 px-4 text-slate-400 text-sm">Avg Margin</th>
-                                <th class="text-right py-3 px-4 text-slate-400 text-sm">Days to Sell</th>
-                                <th class="text-right py-3 px-4 text-slate-400 text-sm">Turnover</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-white">
-                            <tr class="border-b border-slate-700/50">
-                                <td class="py-3 px-4">Panel Vans</td>
-                                <td class="py-3 px-4 text-right">156</td>
-                                <td class="py-3 px-4 text-right">£22,400</td>
-                                <td class="py-3 px-4 text-right text-green-400">18.5%</td>
-                                <td class="py-3 px-4 text-right">38</td>
-                                <td class="py-3 px-4 text-right">22%</td>
-                            </tr>
-                            <tr class="border-b border-slate-700/50">
-                                <td class="py-3 px-4">Pickup Trucks</td>
-                                <td class="py-3 px-4 text-right">42</td>
-                                <td class="py-3 px-4 text-right">£31,200</td>
-                                <td class="py-3 px-4 text-right text-green-400">15.2%</td>
-                                <td class="py-3 px-4 text-right">45</td>
-                                <td class="py-3 px-4 text-right">15%</td>
-                            </tr>
-                            <tr class="border-b border-slate-700/50">
-                                <td class="py-3 px-4">Electric Vans</td>
-                                <td class="py-3 px-4 text-right">23</td>
-                                <td class="py-3 px-4 text-right">£45,800</td>
-                                <td class="py-3 px-4 text-right text-green-400">12.8%</td>
-                                <td class="py-3 px-4 text-right">52</td>
-                                <td class="py-3 px-4 text-right">8%</td>
-                            </tr>
-                            <tr class="border-b border-slate-700/50">
-                                <td class="py-3 px-4">Specialist (Fridge/Luton)</td>
-                                <td class="py-3 px-4 text-right">18</td>
-                                <td class="py-3 px-4 text-right">£38,500</td>
-                                <td class="py-3 px-4 text-right text-green-400">20.1%</td>
-                                <td class="py-3 px-4 text-right">41</td>
-                                <td class="py-3 px-4 text-right">12%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script src="js/data.js"></script>
-    <script src="js/charts.js"></script>
-    <script src="js/analytics.js"></script>
+                return `
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">${make}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${stats.count}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">£${avgCost.toLocaleString('en-GB', {maximumFractionDigits: 0})}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">£${avgRetail.toLocaleString('en-GB', {maximumFractionDigits: 0})}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${avgDays}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium ${margin >= 0 ? 'text-green-600' : 'text-red-600'}">${margin}%</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    </script>
 </body>
 </html>
