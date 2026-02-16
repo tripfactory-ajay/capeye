@@ -255,11 +255,7 @@
             </div>
 
             <div id="formContainer">
-'''
-
-# Add all 12 stages (abbreviated for file size)
-stages_content = '''
-                <!-- STAGES 1-12: All workflow stages -->
+                <!-- STAGE 1: VEHICLE INTAKE -->
                 <div id="stage1" class="form-section active">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 1: Vehicle Intake</h2>
                     <form id="formStage1" onsubmit="submitStage(1, event)">
@@ -318,6 +314,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 2: BODYWORK -->
                 <div id="stage2" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 2: Bodywork & Cosmetic</h2>
                     <form id="formStage2" onsubmit="submitStage(2, event)">
@@ -351,6 +348,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 3: PAINT -->
                 <div id="stage3" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 3: Paint Repairs</h2>
                     <form id="formStage3" onsubmit="submitStage(3, event)">
@@ -392,6 +390,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 4: DOCUMENTATION -->
                 <div id="stage4" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 4: Legal & Documentation</h2>
                     <form id="formStage4" onsubmit="submitStage(4, event)">
@@ -416,6 +415,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 5: MECHANICAL -->
                 <div id="stage5" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 5: Mechanical & Diagnostic</h2>
                     <form id="formStage5" onsubmit="submitStage(5, event)">
@@ -456,6 +456,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 6: EXTERNAL -->
                 <div id="stage6" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 6: External & Electrical</h2>
                     <form id="formStage6" onsubmit="submitStage(6, event)">
@@ -496,6 +497,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 7: VALETING -->
                 <div id="stage7" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 7: Interior & Valeting</h2>
                     <form id="formStage7" onsubmit="submitStage(7, event)">
@@ -525,6 +527,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 8: WORKSHOP SUMMARY -->
                 <div id="stage8" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 8: Workshop Summary</h2>
                     <form id="formStage8" onsubmit="submitStage(8, event)">
@@ -546,6 +549,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 9: ADVERTISING -->
                 <div id="stage9" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 9: Ready for Advertising</h2>
                     <form id="formStage9" onsubmit="submitStage(9, event)">
@@ -576,6 +580,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 10: DELIVERY -->
                 <div id="stage10" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 10: Customer Delivery</h2>
                     <form id="formStage10" onsubmit="submitStage(10, event)">
@@ -614,6 +619,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 11: ACCOUNTS -->
                 <div id="stage11" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 11: Accounts & Warranty</h2>
                     <form id="formStage11" onsubmit="submitStage(11, event)">
@@ -647,6 +653,7 @@ stages_content = '''
                     </form>
                 </div>
 
+                <!-- STAGE 12: MANAGEMENT -->
                 <div id="stage12" class="form-section">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Stage 12: Management Overview</h2>
                     <form id="formStage12" onsubmit="submitStage(12, event)">
@@ -671,10 +678,6 @@ stages_content = '''
                         <button type="submit" class="px-6 py-2 bg-gray-800 text-white rounded">Final Archive & Close Deal</button>
                     </form>
                 </div>
-'''
-
-# JavaScript section
-javascript_section = '''
             </div>
         </div>
     </main>
@@ -860,7 +863,7 @@ javascript_section = '''
             const message = {
                 to: CONFIG.notifications,
                 subject: `Capeye: ${stage.name} Completed - ${data.vehicleId}`,
-                body: `Stage: ${stage.name}\\nVehicle: ${data.vehicleId}\\nNext: ${nextStage ? nextStage.name : 'Complete'}`,
+                body: `Stage: ${stage.name}\nVehicle: ${data.vehicleId}\nNext: ${nextStage ? nextStage.name : 'Complete'}`,
                 channels: ['sms', 'whatsapp', 'email']
             };
             
