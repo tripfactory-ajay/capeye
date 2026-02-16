@@ -3,182 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capeye Login - Auto Capital Ltd</title>
+    <title>Capeye - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .input-field {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        .input-field:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        .login-btn {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            transition: all 0.3s ease;
-        }
-        .login-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
-        }
-        .logo-container {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .nav-card { transition: all 0.3s ease; }
+        .nav-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
-        <!-- Logo Section -->
-        <div class="flex justify-center mb-8">
-            <div class="logo-container">
-                <img src="autocapital.png" alt="Auto Capital Ltd" class="h-16 w-auto object-contain">
-            </div>
-        </div>
+<body class="bg-slate-50 min-h-screen">
+    <!-- Auth Check -->
+    <script src="js/auth.js"></script>
+    <script>
+        if (!Auth.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
 
-        <!-- Login Panel -->
-        <div class="glass-panel rounded-2xl p-8 shadow-2xl">
-            <div class="text-center mb-8">
-                <h1 class="text-2xl font-bold text-white mb-2">Capeye System</h1>
-                <p class="text-slate-400 text-sm">Auto Capital Ltd Management Portal</p>
-            </div>
-
-            <form id="loginForm" class="space-y-6">
-                <!-- Username -->
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-2">Username</label>
-                    <input 
-                        type="text" 
-                        id="username" 
-                        class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-slate-500 focus:outline-none"
-                        placeholder="Enter username"
-                        autocomplete="username"
-                    >
-                </div>
-
-                <!-- Password -->
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-2">Password</label>
-                    <div class="relative">
-                        <input 
-                            type="password" 
-                            id="password" 
-                            class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-slate-500 focus:outline-none"
-                            placeholder="Enter password"
-                            autocomplete="current-password"
-                        >
-                        <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
                             </svg>
-                        </button>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h1 class="text-xl font-bold">Capeye</h1>
+                        <p class="text-xs text-slate-400">Auto Capital Management</p>
                     </div>
                 </div>
-
-                <!-- Remember Me -->
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-600 focus:ring-blue-500">
-                        <span class="ml-2 text-sm text-slate-400">Remember me</span>
-                    </label>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium user-name">Loading...</p>
+                        <p class="text-xs text-slate-400 user-role">Loading...</p>
+                    </div>
+                    <button class="logout-btn p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
                 </div>
-
-                <!-- Error Message -->
-                <div id="errorMessage" class="hidden bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm text-center">
-                    Invalid username or password
-                </div>
-
-                <!-- Login Button -->
-                <button type="submit" class="login-btn w-full py-3 rounded-lg text-white font-semibold text-lg">
-                    Sign In
-                </button>
-            </form>
-
-            <!-- Footer -->
-            <div class="mt-6 text-center">
-                <p class="text-xs text-slate-500">© 2026 Auto Capital Ltd. All rights reserved.</p>
             </div>
         </div>
-    </div>
+    </header>
 
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-slate-900">Welcome back, <span class="user-name">User</span></h2>
+            <p class="text-slate-600 mt-1">Here's what's happening with your inventory today.</p>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Stock -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-600">Total Stock</p>
+                        <p class="text-3xl font-bold text-slate-900 mt-2" id="totalStock">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-green-600 font-medium" id="stockChange">+0</span>
+                    <span class="text-slate-500 ml-2">from yesterday</span>
+                </div>
+            </div>
+
+            <!-- Overdue Units -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-600">Overdue Units</p>
+                        <p class="text-3xl font-bold text-red-600 mt-2" id="overdueUnits">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-slate-500">Units > 60 days</span>
+                </div>
+            </div>
+
+            <!-- Loss Makers -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-600">Loss Makers</p>
+                        <p class="text-3xl font-bold text-orange-600 mt-2" id="lossMakers">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-slate-500">Below cost price</span>
+                </div>
+            </div>
+
+            <!-- Ready for Sale -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-600">Ready for Sale</p>
+                        <p class="text-3xl font-bold text-green-600 mt-2" id="readyForSale">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-slate-500">Completed & available</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Last Import Info -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8 flex items-center justify-between" id="importInfo">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div>
+                    <p class="text-sm font-medium text-blue-900">Last Import</p>
+                    <p class="text-xs text-blue-700" id="lastImportText">No data imported yet</p>
+                </div>
+            </div>
+            <a href="import.html" class="text-sm font-medium text-blue-600 hover:text-blue-800">Import New Data →</a>
+        </div>
+
+        <!-- Navigation Grid -->
+        <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Access</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="navGrid">
+            <!-- Navigation cards injected by JavaScript -->
+        </div>
+
+    </main>
+
+    <script src="js/vehicle-store.js"></script>
     <script>
-        // Check if already logged in
-        (function() {
-            const session = localStorage.getItem('capeye_session');
-            if (session) {
-                const parsed = JSON.parse(session);
-                if (parsed.expires > Date.now()) {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    localStorage.removeItem('capeye_session');
-                }
-            }
-        })();
-
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const type = passwordInput.type === 'password' ? 'text' : 'password';
-            passwordInput.type = type;
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            Auth.updateUI();
+            updateKPIs();
+            buildNavigation();
+            updateImportInfo();
         });
 
-        // Login handler
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        function updateKPIs() {
+            const vehicles = VehicleStore.getAll();
             
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const rememberMe = document.getElementById('rememberMe').checked;
-            const errorDiv = document.getElementById('errorMessage');
+            document.getElementById('totalStock').textContent = vehicles.length;
             
-            // Hardcoded credentials
-            const VALID_USERNAME = 'CapEye';
-            const VALID_PASSWORD = 'Ajay';
+            const overdue = vehicles.filter(v => v.daysInStock > 60).length;
+            document.getElementById('overdueUnits').textContent = overdue;
             
-            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
-                // Create session
-                const sessionDuration = rememberMe ? (7 * 24 * 60 * 60 * 1000) : (8 * 60 * 60 * 1000); // 7 days or 8 hours
-                const session = {
-                    username: username,
-                    role: 'admin',
-                    loginTime: Date.now(),
-                    expires: Date.now() + sessionDuration
-                };
+            const lossMakers = vehicles.filter(v => v.estimatedLoss && v.estimatedLoss > 0).length;
+            document.getElementById('lossMakers').textContent = lossMakers;
+            
+            const ready = vehicles.filter(v => v.status === 'In Stock' && v.readyForSale).length;
+            document.getElementById('readyForSale').textContent = ready;
+        }
+
+        function buildNavigation() {
+            const navGrid = document.getElementById('navGrid');
+            const navItems = Auth.getNavigation();
+            
+            const iconMap = {
+                'home': 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
+                'truck': 'M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0',
+                'cogs': 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
+                'chart-bar': 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+                'users': 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
+                'pound-sign': 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M12 14v7m-3-3h6M4 6h16M4 6v12a2 2 0 002 2h12a2 2 0 002-2V6',
+                'spray-can': 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01',
+                'bell': 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
+                'file-upload': 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12',
+                'database': 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4'
+            };
+
+            navItems.forEach(item => {
+                const card = document.createElement('a');
+                card.href = item.url;
+                card.className = 'nav-card bg-white rounded-xl shadow-sm p-6 border border-slate-200 block hover:border-blue-400';
                 
-                localStorage.setItem('capeye_session', JSON.stringify(session));
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconMap[item.icon] || iconMap['home']}"/>
+                            </svg>
+                        </div>
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                    <h4 class="mt-4 text-lg font-semibold text-slate-900">${item.label}</h4>
+                    <p class="mt-1 text-sm text-slate-500">Access ${item.label.toLowerCase()} module</p>
+                `;
                 
-                // Redirect to dashboard
-                window.location.href = 'dashboard.html';
-            } else {
-                // Show error
-                errorDiv.classList.remove('hidden');
-                document.getElementById('password').value = '';
-                document.getElementById('password').focus();
-            }
-        });
+                navGrid.appendChild(card);
+            });
+        }
 
-        // Hide error on input
-        document.getElementById('username').addEventListener('input', function() {
-            document.getElementById('errorMessage').classList.add('hidden');
-        });
-        document.getElementById('password').addEventListener('input', function() {
-            document.getElementById('errorMessage').classList.add('hidden');
-        });
+        function updateImportInfo() {
+            const lastImport = localStorage.getItem('capeye_last_import');
+            if (lastImport) {
+                const date = new Date(lastImport);
+                document.getElementById('lastImportText').textContent = 
+                    `Last updated: ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`;
+            }
+        }
     </script>
 </body>
 </html>
