@@ -3,77 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAPEYE - Valeting</title>
+    <title>Capeye - Valet Operations</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        * { font-family: 'Inter', sans-serif; }
-        body { background: #0f172a; color: #e2e8f0; }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .nav-item {
-            transition: all 0.3s ease;
-        }
-        .nav-item:hover, .nav-item.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-left: 3px solid #3b82f6;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .checklist-item { transition: all 0.2s ease; }
+        .checklist-item:hover { background-color: #f8fafc; }
     </style>
 </head>
-<body class="min-h-screen">
-    <header class="glass-panel sticky top-0 z-50 border-b border-slate-700">
-        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+<body class="bg-slate-50 min-h-screen">
+    <!-- Auth Check -->
+    <script src="js/auth.js"></script>
+    <script>
+        if (!Auth.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="flex items-center hover:opacity-80 transition">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h1 class="text-xl font-bold">Capeye</h1>
+                        </div>
+                    </a>
+                </div>
+                
                 <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-truck text-white text-lg"></i>
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium user-name">Loading...</p>
+                        <p class="text-xs text-slate-400 user-role">Loading...</p>
                     </div>
-                    <div>
-                        <h1 class="text-xl font-bold gradient-text">CAPEYE</h1>
-                        <p class="text-xs text-slate-400">Auto Capital Intelligence System</p>
-                    </div>
+                    <button class="logout-btn p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="flex">
-        <aside class="w-64 glass-panel min-h-screen border-r border-slate-700">
-            <nav class="mt-8 px-4 space-y-2">
-                <a href="index.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-line text-slate-400"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="inventory.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-warehouse text-slate-400"></i>
-                    <span>Inventory</span>
-                </a>
-                <a href="workflow.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-tasks text-slate-400"></i>
-                    <span>Workflow</span>
-                </a>
-            </nav>
-        </aside>
-
-        <main class="flex-1 p-8 overflow-auto">
-            <div class="glass-panel rounded-xl p-12 text-center">
-                <i class="fas fa-spray-can text-6xl text-slate-600 mb-4"></i>
-                <h2 class="text-2xl font-bold text-white mb-2">Valeting Module</h2>
-                <p class="text-slate-400 mb-6">This module is coming soon. Use the Workflow system for now.</p>
-                <a href="workflow.html" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
-                    Go to Workflow
-                </a>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center text-sm text-slate-500 mb-2">
+                <a href="dashboard.html" class="hover:text-blue-600">Dashboard</a>
+                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-slate-900">Valet</span>
             </div>
-        </main>
-    </div>
+            <h2 class="text-2xl font-bold text-slate-900">Valet Operations</h2>
+            <p class="text-slate-600 mt-1">Vehicle cleaning, preparation and quality control.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left: Vehicle Queue -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Valet Queue</h3>
+                    
+                    <div class="space-y-3" id="valetQueue">
+                        <!-- Populated by JS -->
+                    </div>
+                    
+                    <div id="emptyQueue" class="hidden text-center py-8 text-slate-500">
+                        <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p class="text-sm">No vehicles in queue</p>
+                    </div>
+                </div>
+
+                <!-- Valet Team -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-slate-900">Valet Team</h3>
+                        <a href="reference-import.html?tab=staff" class="text-sm text-blue-600 hover:text-blue-800">Manage</a>
+                    </div>
+                    <div class="space-y-2" id="valetTeam">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Valet Checklist -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-900">Valet Checklist</h3>
+                            <p class="text-sm text-slate-500" id="selectedVehicleInfo">Select a vehicle to begin</p>
+                        </div>
+                        <span id="completionBadge" class="hidden px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">0% Complete</span>
+                    </div>
+                    
+                    <div class="p-6" id="checklistContainer">
+                        <div class="text-center py-12 text-slate-400">
+                            <svg class="w-16 h-16 text-slate-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                            </svg>
+                            <p>Select a vehicle from the queue to start valet process</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div id="checklistActions" class="hidden px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <label class="text-sm text-slate-700">Assigned to:</label>
+                            <select id="assignValet" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select valet staff...</option>
+                            </select>
+                        </div>
+                        <div class="space-x-3">
+                            <button onclick="saveValetProgress()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition">Save Progress</button>
+                            <button onclick="completeValet()" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-medium rounded-lg transition">Complete Valet</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quality Standards -->
+                <div class="mt-6 bg-blue-50 rounded-xl border border-blue-200 p-6">
+                    <h4 class="font-semibold text-blue-900 mb-3">Quality Standards</h4>
+                    <ul class="space-y-2 text-sm text-blue-800">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Exterior must be free of dirt, water spots and streaks
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Interior vacuumed with all surfaces wiped clean
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Windows and mirrors cleaned inside and out
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Tyres dressed and wheels cleaned
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="js/reference-data.js"></script>
+    <script src="js/vehicle-store.js"></script>
+    <script>
+        let selectedVehicle = null;
+        let currentChecklist = {};
+        
+        const valetChecklist = [
+            { id: 'exterior_wash', category: 'Exterior', task: 'Full exterior wash and dry' },
+            { id: 'wheels', category: 'Exterior', task: 'Clean wheels and dress tyres' },
+            { id: 'windows_ext', category: 'Exterior', task: 'Clean exterior windows and mirrors' },
+            { id: 'door_shuts', category: 'Exterior', task: 'Clean door shuts and fuel cap' },
+            { id: 'interior_vacuum', category: 'Interior', task: 'Vacuum all carpets and seats' },
+            { id: 'dashboard', category: 'Interior', task: 'Clean and dress dashboard' },
+            { id: 'windows_int', category: 'Interior', task: 'Clean interior windows' },
+            { id: 'seats', category: 'Interior', task: 'Clean and condition seats' },
+            { id: 'odour', category: 'Interior', task: 'Check and treat any odours' },
+            { id: 'engine_bay', category: 'Engine', task: 'Light engine bay clean' },
+            { id: 'final_check', category: 'Final', task: 'Final quality inspection' },
+            { id: 'photos', category: 'Final', task: 'Take valet completion photos' }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            Auth.updateUI();
+            loadValetQueue();
+            loadValetTeam();
+            populateValetStaff();
+        });
+
+        function loadValetQueue() {
+            const container = document.getElementById('valetQueue');
+            const emptyState = document.getElementById('emptyQueue');
+            
+            // Get vehicles at valet stage or ready for valet
+            const vehicles = VehicleStore.getAll().filter(v => 
+                v.workflowStage === 'valet' || 
+                (v.status === 'In Stock' && !v.valetComplete)
+            );
+            
+            if (vehicles.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            container.innerHTML = vehicles.map(v => `
+                <div class="p-4 border border-slate-200 rounded-lg hover:border-blue-400 cursor-pointer transition ${selectedVehicle?.registration === v.registration ? 'bg-blue-50 border-blue-400' : 'bg-white'}" 
+                     onclick="selectVehicle('${v.registration}')">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-semibold text-slate-900">${v.registration}</p>
+                            <p class="text-sm text-slate-600">${v.make} ${v.model}</p>
+                            <p class="text-xs text-slate-500 mt-1">${v.colour || ''} • ${v.location || ''}</p>
+                        </div>
+                        <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">Pending</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadValetTeam() {
+            const container = document.getElementById('valetTeam');
+            const valetStaff = ReferenceData.getStaffByDepartment('Valet');
+            
+            if (valetStaff.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-500">No valet staff assigned</p>';
+                return;
+            }
+            
+            container.innerHTML = valetStaff.map(staff => `
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-semibold mr-3">
+                            ${staff.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                        </div>
+                        <span class="text-sm font-medium text-slate-700">${staff.name}</span>
+                    </div>
+                    <span class="text-xs text-slate-500">${staff.role || 'Valet'}</span>
+                </div>
+            `).join('');
+        }
+
+        function populateValetStaff() {
+            const select = document.getElementById('assignValet');
+            const valetStaff = ReferenceData.getStaffByDepartment('Valet');
+            
+            valetStaff.forEach(staff => {
+                const option = document.createElement('option');
+                option.value = staff.name;
+                option.textContent = staff.name;
+                select.appendChild(option);
+            });
+        }
+
+        function selectVehicle(registration) {
+            selectedVehicle = VehicleStore.getByRegistration(registration);
+            
+            if (!selectedVehicle) return;
+            
+            // Update UI
+            document.getElementById('selectedVehicleInfo').textContent = 
+                `${selectedVehicle.registration} - ${selectedVehicle.make} ${selectedVehicle.model}`;
+            
+            document.getElementById('checklistContainer').innerHTML = renderChecklist();
+            document.getElementById('checklistActions').classList.remove('hidden');
+            document.getElementById('completionBadge').classList.remove('hidden');
+            
+            updateCompletionBadge();
+            
+            // Refresh queue highlighting
+            loadValetQueue();
+        }
+
+        function renderChecklist() {
+            return valetChecklist.map((item, index) => `
+                <div class="checklist-item flex items-start p-3 rounded-lg border border-slate-200 mb-2">
+                    <input type="checkbox" id="check_${item.id}" 
+                        class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                        onchange="toggleCheck('${item.id}')">
+                    <div class="ml-3 flex-1">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs font-medium text-blue-600 uppercase tracking-wider">${item.category}</span>
+                                <p class="text-sm font-medium text-slate-900">${item.task}</p>
+                            </div>
+                            <span class="text-xs text-slate-400">#${index + 1}</span>
+                        </div>
+                        <textarea id="notes_${item.id}" placeholder="Add notes..." 
+                            class="mt-2 w-full text-sm px-2 py-1 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            rows="1"></textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCheck(itemId) {
+            const checkbox = document.getElementById(`check_${itemId}`);
+            currentChecklist[itemId] = {
+                checked: checkbox.checked,
+                notes: document.getElementById(`notes_${itemId}`).value,
+                timestamp: new Date().toISOString()
+            };
+            updateCompletionBadge();
+        }
+
+        function updateCompletionBadge() {
+            const total = valetChecklist.length;
+            const checked = Object.values(currentChecklist).filter(i => i.checked).length;
+            const percentage = Math.round((checked / total) * 100);
+            
+            const badge = document.getElementById('completionBadge');
+            badge.textContent = `${percentage}% Complete`;
+            
+            if (percentage === 100) {
+                badge.className = 'px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full';
+            } else if (percentage > 50) {
+                badge.className = 'px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full';
+            } else {
+                badge.className = 'px-3 py-1 bg-orange-100 text-orange-700 text-sm font-medium rounded-full';
+            }
+        }
+
+        function saveValetProgress() {
+            if (!selectedVehicle) return;
+            
+            const progress = {
+                checklist: currentChecklist,
+                assignedTo: document.getElementById('assignValet').value,
+                updatedAt: new Date().toISOString(),
+                completion: Object.values(currentChecklist).filter(i => i.checked).length / valetChecklist.length
+            };
+            
+            VehicleStore.update(selectedVehicle.registration, {
+                valetProgress: progress
+            });
+            
+            alert('Valet progress saved');
+        }
+
+        function completeValet() {
+            if (!selectedVehicle) return;
+            
+            const completion = Object.values(currentChecklist).filter(i => i.checked).length / valetChecklist.length;
+            
+            if (completion < 1) {
+                if (!confirm('Not all items are checked. Complete anyway?')) {
+                    return;
+                }
+            }
+            
+            VehicleStore.update(selectedVehicle.registration, {
+                valetComplete: true,
+                valetCompletedAt: new Date().toISOString(),
+                valetCompletedBy: document.getElementById('assignValet').value || 'Unknown',
+                workflowStage: 'photography',
+                readyForSale: true
+            });
+            
+            alert('Valet completed. Vehicle moved to photography stage.');
+            
+            // Reset
+            selectedVehicle = null;
+            currentChecklist = {};
+            document.getElementById('checklistContainer').innerHTML = `
+                <div class="text-center py-12 text-slate-400">
+                    <svg class="w-16 h-16 text-slate-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                    </svg>
+                    <p>Select a vehicle from the queue to start valet process</p>
+                </div>
+            `;
+            document.getElementById('checklistActions').classList.add('hidden');
+            document.getElementById('completionBadge').classList.add('hidden');
+            document.getElementById('selectedVehicleInfo').textContent = 'Select a vehicle to begin';
+            
+            loadValetQueue();
+        }
+    </script>
 </body>
 </html>
