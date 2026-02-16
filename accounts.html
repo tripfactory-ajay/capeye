@@ -3,77 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAPEYE - Accounts</title>
+    <title>Capeye - Accounts</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        * { font-family: 'Inter', sans-serif; }
-        body { background: #0f172a; color: #e2e8f0; }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .nav-item {
-            transition: all 0.3s ease;
-        }
-        .nav-item:hover, .nav-item.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-left: 3px solid #3b82f6;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="min-h-screen">
-    <header class="glass-panel sticky top-0 z-50 border-b border-slate-700">
-        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+<body class="bg-slate-50 min-h-screen">
+    <!-- Auth Check -->
+    <script src="js/auth.js"></script>
+    <script>
+        if (!Auth.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="flex items-center hover:opacity-80 transition">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h1 class="text-xl font-bold">Capeye</h1>
+                        </div>
+                    </a>
+                </div>
+                
                 <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-truck text-white text-lg"></i>
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium user-name">Loading...</p>
+                        <p class="text-xs text-slate-400 user-role">Loading...</p>
                     </div>
-                    <div>
-                        <h1 class="text-xl font-bold gradient-text">CAPEYE</h1>
-                        <p class="text-xs text-slate-400">Auto Capital Intelligence System</p>
-                    </div>
+                    <button class="logout-btn p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="flex">
-        <aside class="w-64 glass-panel min-h-screen border-r border-slate-700">
-            <nav class="mt-8 px-4 space-y-2">
-                <a href="index.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-line text-slate-400"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="inventory.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-warehouse text-slate-400"></i>
-                    <span>Inventory</span>
-                </a>
-                <a href="workflow.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-tasks text-slate-400"></i>
-                    <span>Workflow</span>
-                </a>
-            </nav>
-        </aside>
-
-        <main class="flex-1 p-8 overflow-auto">
-            <div class="glass-panel rounded-xl p-12 text-center">
-                <i class="fas fa-calculator text-6xl text-slate-600 mb-4"></i>
-                <h2 class="text-2xl font-bold text-white mb-2">Accounts Module</h2>
-                <p class="text-slate-400 mb-6">This module is coming soon. Use the Workflow system for now.</p>
-                <a href="workflow.html" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
-                    Go to Workflow
-                </a>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center text-sm text-slate-500 mb-2">
+                <a href="dashboard.html" class="hover:text-blue-600">Dashboard</a>
+                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-slate-900">Accounts</span>
             </div>
-        </main>
-    </div>
+            <h2 class="text-2xl font-bold text-slate-900">Accounts & Finance</h2>
+            <p class="text-slate-600 mt-1">Financial overview and cost centre management.</p>
+        </div>
+
+        <!-- Financial Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Total Stock Value</p>
+                <p class="text-3xl font-bold text-slate-900 mt-2" id="totalStockValue">£0</p>
+                <p class="text-xs text-slate-500 mt-1">Cost price of all vehicles</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Total Investment</p>
+                <p class="text-3xl font-bold text-blue-600 mt-2" id="totalInvestment">£0</p>
+                <p class="text-xs text-slate-500 mt-1">Including prep costs</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Potential Revenue</p>
+                <p class="text-3xl font-bold text-green-600 mt-2" id="potentialRevenue">£0</p>
+                <p class="text-xs text-slate-500 mt-1">At retail prices</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <p class="text-sm font-medium text-slate-600">Est. Gross Profit</p>
+                <p class="text-3xl font-bold text-orange-600 mt-2" id="estProfit">£0</p>
+                <p class="text-xs text-slate-500 mt-1">Before overheads</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left: Cost Analysis -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                    <div class="px-6 py-4 border-b border-slate-200">
+                        <h3 class="text-lg font-semibold text-slate-900">Cost Centre Breakdown</h3>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="space-y-4" id="costBreakdown">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loss Makers Report -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-slate-900">Loss Makers</h3>
+                        <span class="px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full" id="lossMakerCount">0 vehicles</span>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Registration</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Vehicle</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Cost</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Est. Loss</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lossMakersTable" class="bg-white divide-y divide-slate-200">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="noLossMakers" class="hidden p-8 text-center text-slate-500">
+                        No loss makers identified
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Department Costs & Parts -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Department Costs</h3>
+                    <div class="space-y-3" id="deptCosts">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-slate-900">Parts & Materials</h3>
+                        <a href="reference-import.html?tab=parts" class="text-sm text-blue-600 hover:text-blue-800">Manage →</a>
+                    </div>
+                    <div class="space-y-2" id="partsList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="js/reference-data.js"></script>
+    <script src="js/vehicle-store.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Auth.updateUI();
+            loadFinancialData();
+            loadDepartmentCosts();
+            loadPartsList();
+        });
+
+        function loadFinancialData() {
+            const vehicles = VehicleStore.getAll();
+            
+            let totalCost = 0;
+            let totalInvestment = 0;
+            let totalRetail = 0;
+            let totalLoss = 0;
+            
+            vehicles.forEach(v => {
+                totalCost += v.costPrice || 0;
+                totalInvestment += v.totalCost || v.costPrice || 0;
+                totalRetail += v.retailPrice || 0;
+                totalLoss += v.estimatedLoss || 0;
+            });
+            
+            const profit = totalRetail - totalInvestment;
+            
+            // Update cards
+            document.getElementById('totalStockValue').textContent = formatCurrency(totalCost);
+            document.getElementById('totalInvestment').textContent = formatCurrency(totalInvestment);
+            document.getElementById('potentialRevenue').textContent = formatCurrency(totalRetail);
+            document.getElementById('estProfit').textContent = formatCurrency(profit);
+            
+            // Color code profit
+            const profitEl = document.getElementById('estProfit');
+            if (profit < 0) {
+                profitEl.className = 'text-3xl font-bold text-red-600 mt-2';
+            } else {
+                profitEl.className = 'text-3xl font-bold text-green-600 mt-2';
+            }
+            
+            // Load cost breakdown
+            loadCostBreakdown(vehicles);
+            
+            // Load loss makers
+            loadLossMakers(vehicles);
+        }
+
+        function loadCostBreakdown(vehicles) {
+            const container = document.getElementById('costBreakdown');
+            
+            // Calculate costs by category
+            const categories = {
+                'Vehicle Purchase': vehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0),
+                'Preparation & Workshop': vehicles.reduce((sum, v) => sum + ((v.totalCost || 0) - (v.costPrice || 0)), 0),
+                'Advertising & Marketing': 0, // Would come from actual spend data
+                'Transport & Logistics': 0,
+                'Other Overheads': 0
+            };
+            
+            const total = Object.values(categories).reduce((a, b) => a + b, 0);
+            
+            container.innerHTML = Object.entries(categories).map(([name, amount]) => {
+                const percentage = total > 0 ? (amount / total * 100).toFixed(1) : 0;
+                return `
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-slate-700">${name}</span>
+                            <span class="font-medium text-slate-900">${formatCurrency(amount)} (${percentage}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadLossMakers(vehicles) {
+            const lossMakers = vehicles.filter(v => v.estimatedLoss && v.estimatedLoss > 0)
+                .sort((a, b) => b.estimatedLoss - a.estimatedLoss);
+            
+            document.getElementById('lossMakerCount').textContent = `${lossMakers.length} vehicles`;
+            
+            const tbody = document.getElementById('lossMakersTable');
+            const emptyState = document.getElementById('noLossMakers');
+            
+            if (lossMakers.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            tbody.innerHTML = lossMakers.map(v => `
+                <tr class="hover:bg-slate-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">${v.registration}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${v.make} ${v.model}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${formatCurrency(v.totalCost || v.costPrice)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">${formatCurrency(v.estimatedLoss)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function loadDepartmentCosts() {
+            const container = document.getElementById('deptCosts');
+            const departments = ReferenceData.getActive('departments');
+            
+            // Sample cost data - in real app would come from actual spend tracking
+            const deptCosts = {
+                'Sales': 12500,
+                'Workshop': 18900,
+                'Bodywork': 8400,
+                'Valet': 3200,
+                'Accounts': 5600,
+                'Management': 15000
+            };
+            
+            container.innerHTML = departments.map(dept => {
+                const cost = deptCosts[dept.name] || 0;
+                return `
+                    <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                        <span class="text-sm font-medium text-slate-700">${dept.name}</span>
+                        <span class="text-sm font-semibold text-slate-900">${formatCurrency(cost)}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadPartsList() {
+            const container = document.getElementById('partsList');
+            const parts = ReferenceData.getActive('parts').slice(0, 5); // Show top 5
+            
+            if (parts.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-500">No parts data available</p>';
+                return;
+            }
+            
+            container.innerHTML = parts.map(part => `
+                <div class="flex justify-between items-center py-2 border-b border-slate-100 last:border-0">
+                    <div>
+                        <p class="text-sm font-medium text-slate-700">${part.name}</p>
+                        <p class="text-xs text-slate-500">${part.code} • ${part.category}</p>
+                    </div>
+                    <span class="text-sm font-medium text-slate-900">${formatCurrency(part.cost)}</span>
+                </div>
+            `).join('');
+        }
+
+        function formatCurrency(amount) {
+            if (!amount || isNaN(amount)) return '£0.00';
+            return '£' + parseFloat(amount).toLocaleString('en-GB', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+    </script>
 </body>
 </html>
