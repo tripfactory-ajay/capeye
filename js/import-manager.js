@@ -159,19 +159,26 @@ const ImportManager = {
         const preview = CSVParser.preview(this.parsedData, 5);
         const headers = CSVParser.getHeaders(this.parsedData);
         
+        // Show key columns first
+        const priorityCols = ['stockNo', 'registration', 'make', 'model', 'status', 'location'];
+        const sortedHeaders = [
+            ...priorityCols.filter(h => headers.includes(h)),
+            ...headers.filter(h => !priorityCols.includes(h))
+        ];
+        
         let tableHtml = `
             <h3 class="text-lg font-semibold text-slate-900 mb-4">Preview (${this.parsedData.length} records found)</h3>
             <div class="overflow-x-auto border border-slate-200 rounded-lg">
                 <table class="min-w-full divide-y divide-slate-200">
                     <thead class="bg-slate-50">
                         <tr>
-                            ${headers.map(h => `<th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">${h}</th>`).join('')}
+                            ${sortedHeaders.map(h => `<th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">${h}</th>`).join('')}
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-slate-200">
                         ${preview.map((row, idx) => `
                             <tr class="${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}">
-                                ${headers.map(h => `
+                                ${sortedHeaders.map(h => `
                                     <td class="px-4 py-3 text-sm text-slate-900 truncate max-w-xs">
                                         ${row[h] || '-'}
                                     </td>
@@ -244,9 +251,9 @@ const ImportManager = {
                 </div>
                 <div class="grid grid-cols-2 gap-4 text-sm ml-7">
                     <div><span class="text-green-700">Total Records:</span> <span class="font-medium text-green-900">${stats.totalRows}</span></div>
-                    <div><span class="text-green-700">Unique Vehicles:</span> <span class="font-medium text-green-900">${stats.totalRows - stats.emptyRegs}</span></div>
-                    <div><span class="text-green-700">With Make:</span> <span class="font-medium text-green-900">${stats.totalRows - stats.missingMake}</span></div>
-                    <div><span class="text-green-700">With Model:</span> <span class="font-medium text-green-900">${stats.totalRows - stats.missingModel}</span></div>
+                    <div><span class="text-green-700">With Stock No:</span> <span class="font-medium text-green-900">${stats.totalRows - (stats.emptyIds || 0)}</span></div>
+                    <div><span class="text-green-700">With Make:</span> <span class="font-medium text-green-900">${stats.totalRows - (stats.missingMake || 0)}</span></div>
+                    <div><span class="text-green-700">With Model:</span> <span class="font-medium text-green-900">${stats.totalRows - (stats.missingModel || 0)}</span></div>
                 </div>
             </div>
         `;
@@ -321,6 +328,40 @@ const ImportManager = {
         const resultDiv = document.getElementById('resultSection');
         if (!resultDiv) return;
         
+        // Build details table
+        let detailsHtml = '';
+        if (stats.details && stats.details.length > 0) {
+            const recentDetails = stats.details.slice(0, 10); // Show first 10
+            detailsHtml = `
+                <div class="mt-4 text-left">
+                    <p class="text-sm font-medium text-slate-700 mb-2">Recent Changes:</p>
+                    <div class="overflow-x-auto max-h-48 overflow-y-auto">
+                        <table class="min-w-full text-xs">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="px-2 py-1 text-left">Action</th>
+                                    <th class="px-2 py-1 text-left">Stock No</th>
+                                    <th class="px-2 py-1 text-left">Reg</th>
+                                    <th class="px-2 py-1 text-left">Vehicle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${recentDetails.map(d => `
+                                    <tr class="${d.action === 'created' ? 'text-green-700' : 'text-blue-700'}">
+                                        <td class="px-2 py-1 font-medium">${d.action === 'created' ? 'NEW' : 'UPD'}</td>
+                                        <td class="px-2 py-1">${d.stockNo || '-'}</td>
+                                        <td class="px-2 py-1">${d.registration || '-'}</td>
+                                        <td class="px-2 py-1">${d.make} ${d.model}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    ${stats.details.length > 10 ? `<p class="text-xs text-slate-500 mt-1">... and ${stats.details.length - 10} more</p>` : ''}
+                </div>
+            `;
+        }
+        
         resultDiv.innerHTML = `
             <div class="p-6 bg-green-50 border border-green-200 rounded-lg text-center">
                 <svg class="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -341,8 +382,9 @@ const ImportManager = {
                         <p class="text-sm text-slate-500">Updated</p>
                     </div>
                 </div>
+                ${detailsHtml}
                 ${stats.errors.length > 0 ? `
-                    <div class="text-left p-4 bg-red-50 rounded-lg mb-4">
+                    <div class="text-left p-4 bg-red-50 rounded-lg mb-4 mt-4">
                         <p class="text-sm font-medium text-red-900 mb-2">Errors (${stats.errors.length}):</p>
                         <ul class="text-xs text-red-700 space-y-1">
                             ${stats.errors.slice(0, 5).map(e => `<li>Row ${e.row}: ${e.error}</li>`).join('')}
@@ -350,7 +392,7 @@ const ImportManager = {
                         </ul>
                     </div>
                 ` : ''}
-                <div class="space-x-4">
+                <div class="space-x-4 mt-4">
                     <a href="inventory.html" class="inline-block py-2 px-6 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition">
                         View Inventory
                     </a>
