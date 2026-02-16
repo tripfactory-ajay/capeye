@@ -3,388 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAPEYE - Auto Capital Dashboard</title>
+    <title>Capeye Login - Auto Capital Ltd</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
-        * { font-family: 'Inter', sans-serif; }
-        
         body {
-            background: #0f172a;
-            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         }
-        
         .glass-panel {
             background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .nav-item {
+        .input-field {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
         }
-        
-        .nav-item:hover, .nav-item.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-left: 3px solid #3b82f6;
-        }
-        
-        .kpi-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .kpi-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-            border-color: rgba(59, 130, 246, 0.3);
-        }
-        
-        .upload-zone {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-            border: 2px dashed rgba(59, 130, 246, 0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .upload-zone:hover, .upload-zone.dragover {
+        .input-field:focus {
             border-color: #3b82f6;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
-        
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
+        .login-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            transition: all 0.3s ease;
         }
-        
-        .status-instock { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .status-transit { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-        .status-offsite { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .status-supplier { background: rgba(99, 102, 241, 0.2); color: #6366f1; }
-        
-        .data-table th {
-            background: rgba(30, 41, 59, 0.9);
-            color: #94a3b8;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
         }
-        
-        .data-table td {
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        .logo-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
-        
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ef4444;
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .metric-up { color: #10b981; }
-        .metric-down { color: #ef4444; }
     </style>
 </head>
-<body class="min-h-screen">
-    <!-- Header -->
-    <header class="glass-panel sticky top-0 z-50 border-b border-slate-700">
-        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-truck text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold gradient-text">CAPEYE</h1>
-                        <p class="text-xs text-slate-400">Auto Capital Intelligence System</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-6">
-                    <div class="relative cursor-pointer" onclick="showNotifications()">
-                        <i class="fas fa-bell text-slate-400 text-lg hover:text-white transition"></i>
-                        <span class="notification-badge" id="notificationCount">3</span>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-white">Keith Hardy</p>
-                            <p class="text-xs text-slate-400">General Manager</p>
-                        </div>
-                        <div class="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-slate-300"></i>
-                        </div>
-                    </div>
-                </div>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Logo Section -->
+        <div class="flex justify-center mb-8">
+            <div class="logo-container">
+                <img src="autocapital.png" alt="Auto Capital Ltd" class="h-16 w-auto object-contain">
             </div>
         </div>
-    </header>
 
-    <div class="flex">
-        <!-- Sidebar Navigation -->
-        <aside class="w-64 glass-panel min-h-screen border-r border-slate-700">
-            <nav class="mt-8 px-4 space-y-2">
-                <a href="index.html" class="nav-item active px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-line text-blue-400"></i>
-                    <span class="font-medium">Dashboard</span>
-                </a>
-                
-                <a href="inventory.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-warehouse text-slate-400"></i>
-                    <span>Inventory</span>
-                </a>
-                
-                <a href="workflow.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-tasks text-slate-400"></i>
-                    <span>Workflow</span>
-                    <span class="ml-auto bg-blue-600 text-white text-xs px-2 py-1 rounded-full">12</span>
-                </a>
-                
-                <a href="analytics.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-chart-pie text-slate-400"></i>
-                    <span>Analytics</span>
-                </a>
-                
-                <a href="alerts.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-exclamation-triangle text-slate-400"></i>
-                    <span>Alerts</span>
-                    <span class="ml-auto bg-red-600 text-white text-xs px-2 py-1 rounded-full">5</span>
-                </a>
-                
-                <a href="staff.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
-                    <i class="fas fa-users text-slate-400"></i>
-                    <span>Staff</span>
-                </a>
-                
-                <div class="mt-8 pt-8 border-t border-slate-700">
-                    <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Departments</p>
-                    
-                    <a href="sales.html" class="nav-item px-4 py-2 rounded-lg cursor-pointer flex items-center space-x-3">
-                        <i class="fas fa-handshake text-slate-400 text-sm"></i>
-                        <span class="text-sm">Sales</span>
-                    </a>
-                    
-                    <a href="workshop.html" class="nav-item px-4 py-2 rounded-lg cursor-pointer flex items-center space-x-3">
-                        <i class="fas fa-wrench text-slate-400 text-sm"></i>
-                        <span class="text-sm">Workshop</span>
-                    </a>
-                    
-                    <a href="valet.html" class="nav-item px-4 py-2 rounded-lg cursor-pointer flex items-center space-x-3">
-                        <i class="fas fa-spray-can text-slate-400 text-sm"></i>
-                        <span class="text-sm">Valeting</span>
-                    </a>
-                    
-                    <a href="accounts.html" class="nav-item px-4 py-2 rounded-lg cursor-pointer flex items-center space-x-3">
-                        <i class="fas fa-calculator text-slate-400 text-sm"></i>
-                        <span class="text-sm">Accounts</span>
-                    </a>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-8 overflow-auto">
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold text-white mb-2">Dashboard Overview</h2>
-                <p class="text-slate-400">Real-time intelligence across your vehicle inventory and operations</p>
+        <!-- Login Panel -->
+        <div class="glass-panel rounded-2xl p-8 shadow-2xl">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-white mb-2">Capeye System</h1>
+                <p class="text-slate-400 text-sm">Auto Capital Ltd Management Portal</p>
             </div>
 
-            <!-- Upload Zone -->
-            <div class="upload-zone rounded-xl p-8 mb-8 text-center cursor-pointer" id="uploadZone">
-                <i class="fas fa-cloud-upload-alt text-5xl text-blue-400 mb-4"></i>
-                <h3 class="text-xl font-semibold text-white mb-2">Upload ClickDealer Export</h3>
-                <p class="text-slate-400 mb-4">Drag and drop your CSV file here, or click to browse</p>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition">
-                    Select File
+            <form id="loginForm" class="space-y-6">
+                <!-- Username -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-slate-500 focus:outline-none"
+                        placeholder="Enter username"
+                        autocomplete="username"
+                    >
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Password</label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-slate-500 focus:outline-none"
+                            placeholder="Enter password"
+                            autocomplete="current-password"
+                        >
+                        <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-600 focus:ring-blue-500">
+                        <span class="ml-2 text-sm text-slate-400">Remember me</span>
+                    </label>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm text-center">
+                    Invalid username or password
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="login-btn w-full py-3 rounded-lg text-white font-semibold text-lg">
+                    Sign In
                 </button>
-                <input type="file" id="csvInput" accept=".csv" class="hidden">
-                <p class="text-xs text-slate-500 mt-2">Supports: CSV exports from ClickDealer</p>
+            </form>
+
+            <!-- Footer -->
+            <div class="mt-6 text-center">
+                <p class="text-xs text-slate-500">© 2026 Auto Capital Ltd. All rights reserved.</p>
             </div>
-
-            <!-- KPI Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="kpi-card rounded-xl p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-slate-400 text-sm">Total Stock</p>
-                            <h3 class="text-3xl font-bold text-white mt-1" id="totalStock">284</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-truck text-blue-400 text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="flex items-center text-sm">
-                        <span class="metric-up flex items-center">
-                            <i class="fas fa-arrow-up mr-1"></i>12%
-                        </span>
-                        <span class="text-slate-500 ml-2">vs last month</span>
-                    </div>
-                </div>
-
-                <div class="kpi-card rounded-xl p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-slate-400 text-sm">In Stock Ready</p>
-                            <h3 class="text-3xl font-bold text-white mt-1" id="readyStock">156</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-check-circle text-green-400 text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="flex items-center text-sm">
-                        <span class="text-slate-400">55% of total inventory</span>
-                    </div>
-                </div>
-
-                <div class="kpi-card rounded-xl p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-slate-400 text-sm">Overdue Stock</p>
-                            <h3 class="text-3xl font-bold text-white mt-1" id="overdueStock">23</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-clock text-red-400 text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="flex items-center text-sm">
-                        <span class="metric-down flex items-center">
-                            <i class="fas fa-arrow-up mr-1"></i>5
-                        </span>
-                        <span class="text-slate-500 ml-2">new this week</span>
-                    </div>
-                </div>
-
-                <div class="kpi-card rounded-xl p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-slate-400 text-sm">Stock Value</p>
-                            <h3 class="text-3xl font-bold text-white mt-1" id="stockValue">£4.2M</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-pound-sign text-purple-400 text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="flex items-center text-sm">
-                        <span class="metric-up flex items-center">
-                            <i class="fas fa-arrow-up mr-1"></i>8%
-                        </span>
-                        <span class="text-slate-500 ml-2">vs last month</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="glass-panel rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-4">Stock by Manufacturer</h3>
-                    <canvas id="makeChart" height="250"></canvas>
-                </div>
-                
-                <div class="glass-panel rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-4">Stock by Location</h3>
-                    <canvas id="locationChart" height="250"></canvas>
-                </div>
-            </div>
-
-            <!-- Recent Activity & Alerts -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 glass-panel rounded-xl p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-white">Recent Vehicle Intakes</h3>
-                        <a href="inventory.html" class="text-blue-400 text-sm hover:text-blue-300">View All</a>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full data-table">
-                            <thead>
-                                <tr>
-                                    <th class="text-left py-3 px-4">Reg</th>
-                                    <th class="text-left py-3 px-4">Vehicle</th>
-                                    <th class="text-left py-3 px-4">Status</th>
-                                    <th class="text-left py-3 px-4">Location</th>
-                                    <th class="text-left py-3 px-4">Days</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentIntakes">
-                                <tr>
-                                    <td class="py-3 px-4 font-mono text-blue-400">RF73 OSL</td>
-                                    <td class="py-3 px-4">Ford Transit Custom</td>
-                                    <td class="py-3 px-4"><span class="status-badge status-instock">In Stock</span></td>
-                                    <td class="py-3 px-4 text-slate-400">Stanmore Retail</td>
-                                    <td class="py-3 px-4">2 days</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 px-4 font-mono text-blue-400">RK23 HFR</td>
-                                    <td class="py-3 px-4">Mercedes Sprinter</td>
-                                    <td class="py-3 px-4"><span class="status-badge status-transit">In Transit</span></td>
-                                    <td class="py-3 px-4 text-slate-400">With Supplier</td>
-                                    <td class="py-3 px-4">5 days</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 px-4 font-mono text-blue-400">CE22 LMV</td>
-                                    <td class="py-3 px-4">VW Transporter</td>
-                                    <td class="py-3 px-4"><span class="status-badge status-offsite">Off-site R</span></td>
-                                    <td class="py-3 px-4 text-slate-400">Workshop Bay 2</td>
-                                    <td class="py-3 px-4">12 days</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="glass-panel rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-4">Critical Alerts</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3 p-3 bg-red-500/10 border border-red-500/20 rounded-lg cursor-pointer hover:bg-red-500/20 transition">
-                            <i class="fas fa-exclamation-circle text-red-400 mt-1"></i>
-                            <div>
-                                <p class="text-sm font-medium text-white">Overdue Stock Alert</p>
-                                <p class="text-xs text-slate-400 mt-1">3 vehicles >60 days in workshop</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start space-x-3 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg cursor-pointer hover:bg-yellow-500/20 transition">
-                            <i class="fas fa-wrench text-yellow-400 mt-1"></i>
-                            <div>
-                                <p class="text-sm font-medium text-white">Mechanical Hold</p>
-                                <p class="text-xs text-slate-400 mt-1">2 vehicles awaiting parts</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start space-x-3 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg cursor-pointer hover:bg-blue-500/20 transition">
-                            <i class="fas fa-file-alt text-blue-400 mt-1"></i>
-                            <div>
-                                <p class="text-sm font-medium text-white">Documentation Required</p>
-                                <p class="text-xs text-slate-400 mt-1">5 vehicles missing V5</p>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="alerts.html" class="block text-center text-blue-400 text-sm mt-4 hover:text-blue-300">View All Alerts</a>
-                </div>
-            </div>
-        </main>
+        </div>
     </div>
 
-    <script src="js/data.js"></script>
-    <script src="js/charts.js"></script>
-    <script src="js/dashboard.js"></script>
+    <script>
+        // Check if already logged in
+        (function() {
+            const session = localStorage.getItem('capeye_session');
+            if (session) {
+                const parsed = JSON.parse(session);
+                if (parsed.expires > Date.now()) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    localStorage.removeItem('capeye_session');
+                }
+            }
+        })();
+
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+        });
+
+        // Login handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const errorDiv = document.getElementById('errorMessage');
+            
+            // Hardcoded credentials
+            const VALID_USERNAME = 'CapEye';
+            const VALID_PASSWORD = 'Ajay';
+            
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                // Create session
+                const sessionDuration = rememberMe ? (7 * 24 * 60 * 60 * 1000) : (8 * 60 * 60 * 1000); // 7 days or 8 hours
+                const session = {
+                    username: username,
+                    role: 'admin',
+                    loginTime: Date.now(),
+                    expires: Date.now() + sessionDuration
+                };
+                
+                localStorage.setItem('capeye_session', JSON.stringify(session));
+                
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } else {
+                // Show error
+                errorDiv.classList.remove('hidden');
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+            }
+        });
+
+        // Hide error on input
+        document.getElementById('username').addEventListener('input', function() {
+            document.getElementById('errorMessage').classList.add('hidden');
+        });
+        document.getElementById('password').addEventListener('input', function() {
+            document.getElementById('errorMessage').classList.add('hidden');
+        });
+    </script>
 </body>
 </html>
