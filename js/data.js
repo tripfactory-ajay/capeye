@@ -1,156 +1,374 @@
-// CAPEYE Data Management Module
-// Handles all data operations, CSV parsing, and state management
+/**
+ * Capeye Data Module
+ * Central data management with reference schemas and CSV mappings
+ */
 
-const CapeyeData = {
-    // Sample inventory data structure based on ClickDealer export
-    inventory: [
-        {stockNo: "A1234", reg: "RF73 OSL", make: "Ford", model: "Transit Custom", variant: "280 Trend", colour: "White", mileage: 15200, fuel: "Diesel", body: "Panel Van", status: "In Stock", location: "Stanmore Retail", price: 24500, regDate: "2023-09-15", cost: 18500},
-        {stockNo: "A1235", reg: "RK23 HFR", make: "Mercedes", model: "Sprinter", variant: "314 CDI", colour: "Silver", mileage: 8500, fuel: "Diesel", body: "Panel Van", status: "In Transit", location: "With Supplier", price: 38900, regDate: "2023-05-20", cost: 32000},
-        {stockNo: "A1236", reg: "CE22 LMV", make: "VW", model: "Transporter", variant: "T32 Highline", colour: "Grey", mileage: 22100, fuel: "Diesel", body: "Panel Van", status: "Off-site R", location: "Workshop Bay 2", price: 28900, regDate: "2022-11-03", cost: 24000},
-        {stockNo: "A1237", reg: "RJ23 ABC", make: "Vauxhall", model: "Vivaro", variant: "2900 Sportive", colour: "Black", mileage: 12000, fuel: "Diesel", body: "Panel Van", status: "In Stock", location: "Stanmore Retail", price: 19900, regDate: "2023-06-10", cost: 15500},
-        {stockNo: "A1238", reg: "MX23 XYZ", make: "Ford", model: "Ranger", variant: "Wildtrak", colour: "Blue", mileage: 8000, fuel: "Diesel", body: "Pickup", status: "In Stock", location: "Stanmore 2", price: 32900, regDate: "2023-08-01", cost: 27500},
-        {stockNo: "A1239", reg: "RF23 DEF", make: "Peugeot", model: "Expert", variant: "Professional", colour: "White", mileage: 18500, fuel: "Diesel", body: "Panel Van", status: "In Stock", location: "Stanmore Retail", price: 21500, regDate: "2023-07-15", cost: 17000},
-        {stockNo: "A1240", reg: "RK23 GHI", make: "Citroen", model: "Dispatch", variant: "Enterprise", colour: "Grey", mileage: 9500, fuel: "Diesel", body: "Panel Van", status: "In Stock", location: "Stanmore PDI", price: 18900, regDate: "2023-08-20", cost: 14500},
-    ],
-
-    // Staff data
-    staff: [
-        {id: 1, name: "Keith Hardy", role: "General Manager", department: "Management", email: "keith@autocapital.co.uk"},
-        {id: 2, name: "Ibrahim Ata", role: "Sales Manager", department: "Sales", email: "ibrahim@autocapital.co.uk"},
-        {id: 3, name: "Ali Soliemani", role: "Showroom Manager", department: "Sales", email: "ali.s@autocapital.co.uk"},
-        {id: 4, name: "Marcin Kiljan", role: "Workshop Lead", department: "Workshop", email: "marcin@autocapital.co.uk"},
-        {id: 5, name: "Morteza Rahamian", role: "Senior Mechanic", department: "Workshop", email: "morteza@autocapital.co.uk"},
-        {id: 6, name: "Stanslaw Marzec", role: "Procurement", department: "Intake", email: "stanslaw@autocapital.co.uk"},
-        {id: 7, name: "Gorgino Barnes", role: "Valeting Lead", department: "Valeting", email: "gorgino@autocapital.co.uk"},
-    ],
-
-    // Reference data
-    reference: {
-        manufacturers: ["Ford", "Mercedes", "VW", "Vauxhall", "Peugeot", "Citroen", "Renault", "Toyota", "Maxus"],
-        locations: ["Stanmore Retail", "Stanmore PDI", "Stanmore 2", "Workshop Bay 1", "Workshop Bay 2", "Workshop Bay 3", "Valeting", "With Supplier", "ACL"],
-        statuses: ["In Stock", "In Transit", "Off-site R", "Subject to", "With Supplier"],
-        departments: ["Management", "Sales", "Workshop", "Valeting", "Accounts", "Intake"],
-        faults: ["Suspension", "Electrical", "Cooling", "AC", "Exhaust", "Brakes", "Bodywork", "Locks", "Lighting", "Tyres", "Turbo", "Fuel"],
-        repairs: ["Inspect", "Adjust", "Clean", "Replace", "Repair", "Software Update", "Outsource", "Lubricate"],
-        parts: ["Air Filter", "Oil Filter", "Fuel Filter", "Cabin Filter", "Brake Pads", "Brake Discs", "Timing Belt", "Water Pump", "Alternator", "Battery", "Tyres"]
+const Data = {
+    // Reference data schemas for validation and forms
+    schemas: {
+        vehicle: {
+            fields: [
+                { name: 'registration', type: 'string', required: true, label: 'Registration' },
+                { name: 'make', type: 'string', required: true, label: 'Make', ref: 'manufacturers' },
+                { name: 'model', type: 'string', required: true, label: 'Model' },
+                { name: 'variant', type: 'string', required: false, label: 'Variant' },
+                { name: 'year', type: 'number', required: false, label: 'Year' },
+                { name: 'colour', type: 'string', required: false, label: 'Colour' },
+                { name: 'fuelType', type: 'string', required: false, label: 'Fuel Type', options: ['Petrol', 'Diesel', 'Electric', 'Hybrid'] },
+                { name: 'transmission', type: 'string', required: false, label: 'Transmission', options: ['Manual', 'Automatic'] },
+                { name: 'engineSize', type: 'string', required: false, label: 'Engine Size' },
+                { name: 'mileage', type: 'number', required: false, label: 'Mileage' },
+                { name: 'location', type: 'string', required: true, label: 'Location', ref: 'locations' },
+                { name: 'status', type: 'string', required: true, label: 'Status', ref: 'statuses' },
+                { name: 'dateInStock', type: 'date', required: false, label: 'Date In Stock' },
+                { name: 'costPrice', type: 'currency', required: false, label: 'Cost Price' },
+                { name: 'retailPrice', type: 'currency', required: false, label: 'Retail Price' },
+                { name: 'totalCost', type: 'currency', required: false, label: 'Total Cost' },
+                { name: 'estimatedLoss', type: 'currency', required: false, label: 'Est. Loss' },
+                { name: 'readyForSale', type: 'boolean', required: false, label: 'Ready for Sale' },
+                { name: 'reserved', type: 'boolean', required: false, label: 'Reserved' },
+                { name: 'sold', type: 'boolean', required: false, label: 'Sold' }
+            ]
+        },
+        
+        staff: {
+            fields: [
+                { name: 'name', type: 'string', required: true, label: 'Full Name' },
+                { name: 'department', type: 'string', required: true, label: 'Department', ref: 'departments' },
+                { name: 'role', type: 'string', required: false, label: 'Job Role' },
+                { name: 'email', type: 'email', required: false, label: 'Email' },
+                { name: 'phone', type: 'string', required: false, label: 'Phone' },
+                { name: 'active', type: 'boolean', required: false, label: 'Active', default: true }
+            ]
+        },
+        
+        workflow: {
+            stages: [
+                { id: 'intake', name: 'Vehicle Intake', department: 'any', order: 1 },
+                { id: 'inspection', name: 'Initial Inspection', department: 'workshop', order: 2 },
+                { id: 'valuation', name: 'Valuation', department: 'sales', order: 3 },
+                { id: 'bodywork', name: 'Bodywork', department: 'bodywork', order: 4 },
+                { id: 'mechanical', name: 'Mechanical', department: 'workshop', order: 5 },
+                { id: 'valet', name: 'Valet', department: 'valet', order: 6 },
+                { id: 'photography', name: 'Photography', department: 'sales', order: 7 },
+                { id: 'listing', name: 'Listing', department: 'sales', order: 8 },
+                { id: 'advertising', name: 'Advertising', department: 'sales', order: 9 },
+                { id: 'enquiries', name: 'Enquiries', department: 'sales', order: 10 },
+                { id: 'sale', name: 'Sale', department: 'sales', order: 11 },
+                { id: 'delivery', name: 'Delivery', department: 'sales', order: 12 }
+            ]
+        }
     },
-
-    // Calculate days in stock
-    getDaysInStock(regDate) {
-        const today = new Date();
-        const reg = new Date(regDate);
-        return Math.floor((today - reg) / (1000 * 60 * 60 * 24));
+    
+    // ClickDealer CSV column mappings
+    csvMappings: {
+        clickDealer: {
+            // Registration variations
+            'reg': 'registration',
+            'reg no': 'registration',
+            'reg number': 'registration',
+            'registration': 'registration',
+            'plate': 'registration',
+            'vrm': 'registration',
+            'vehicle reg': 'registration',
+            
+            // Make/Manufacturer
+            'make': 'make',
+            'manufacturer': 'make',
+            'brand': 'make',
+            'marque': 'make',
+            
+            // Model
+            'model': 'model',
+            'range': 'model',
+            
+            // Variant/Trim
+            'variant': 'variant',
+            'trim': 'variant',
+            'description': 'variant',
+            'spec': 'variant',
+            'derivative': 'variant',
+            
+            // Year
+            'year': 'year',
+            'reg year': 'year',
+            'registration year': 'year',
+            'manufacture year': 'year',
+            
+            // Colour
+            'colour': 'colour',
+            'color': 'colour',
+            'paint': 'colour',
+            'body colour': 'colour',
+            
+            // Fuel Type
+            'fuel': 'fuelType',
+            'fuel type': 'fuelType',
+            'fueltype': 'fuelType',
+            
+            // Transmission
+            'transmission': 'transmission',
+            'gearbox': 'transmission',
+            'trans': 'transmission',
+            
+            // Engine
+            'engine': 'engineSize',
+            'engine size': 'engineSize',
+            'cc': 'engineSize',
+            'capacity': 'engineSize',
+            
+            // Mileage
+            'mileage': 'mileage',
+            'miles': 'mileage',
+            'km': 'mileage',
+            'odometer': 'mileage',
+            
+            // Location
+            'location': 'location',
+            'site': 'location',
+            'place': 'location',
+            'yard': 'location',
+            
+            // Status
+            'status': 'status',
+            'stock status': 'status',
+            'availability': 'status',
+            'state': 'status',
+            
+            // Dates
+            'date in stock': 'dateInStock',
+            'stock date': 'dateInStock',
+            'date added': 'dateInStock',
+            'purchase date': 'dateInStock',
+            'acquisition date': 'dateInStock',
+            
+            // Financial - Cost
+            'cost': 'costPrice',
+            'cost price': 'costPrice',
+            'purchase price': 'costPrice',
+            'buy price': 'costPrice',
+            'trade': 'costPrice',
+            
+            // Financial - Retail
+            'retail': 'retailPrice',
+            'retail price': 'retailPrice',
+            'sale price': 'retailPrice',
+            'price': 'retailPrice',
+            'asking price': 'retailPrice',
+            
+            // Financial - Total/Profit
+            'total cost': 'totalCost',
+            'total investment': 'totalCost',
+            'total': 'totalCost',
+            'loss': 'estimatedLoss',
+            'est loss': 'estimatedLoss',
+            'estimated loss': 'estimatedLoss',
+            'profit': 'estimatedProfit',
+            'margin': 'estimatedProfit',
+            
+            // Flags
+            'ready': 'readyForSale',
+            'ready for sale': 'readyForSale',
+            'prepared': 'readyForSale',
+            'preped': 'readyForSale',
+            'reserved': 'reserved',
+            'on hold': 'reserved',
+            'deposit': 'reserved',
+            'sold': 'sold',
+            'sale': 'sold',
+            
+            // Source
+            'source': 'source',
+            'supplier': 'source',
+            'vendor': 'source',
+            'from': 'source',
+            'source id': 'sourceId',
+            'ref': 'sourceId',
+            'reference': 'sourceId',
+            'supplier ref': 'sourceId'
+        }
     },
-
-    // Get KPI metrics
-    getKPIs() {
-        const total = this.inventory.length;
-        const ready = this.inventory.filter(v => v.status === "In Stock").length;
-        const overdue = this.inventory.filter(v => this.getDaysInStock(v.regDate) > 60).length;
-        const totalValue = this.inventory.reduce((sum, v) => sum + (v.price || 0), 0);
+    
+    // Sample data for testing
+    sampleVehicles: [
+        {
+            registration: 'AB12CDE',
+            make: 'Ford',
+            model: 'Transit',
+            variant: '350 L3 H2',
+            year: 2021,
+            colour: 'White',
+            fuelType: 'Diesel',
+            transmission: 'Manual',
+            location: 'Stanmore Retail',
+            status: 'In Stock',
+            dateInStock: '2026-01-15T00:00:00.000Z',
+            costPrice: 18500,
+            retailPrice: 22995,
+            daysInStock: 32,
+            readyForSale: true
+        },
+        {
+            registration: 'EF34GHJ',
+            make: 'Mercedes',
+            model: 'Vito',
+            variant: '114 CDI',
+            year: 2022,
+            colour: 'Silver',
+            fuelType: 'Diesel',
+            transmission: 'Automatic',
+            location: 'Stanmore PDI',
+            status: 'In Stock',
+            dateInStock: '2026-01-20T00:00:00.000Z',
+            costPrice: 24500,
+            retailPrice: 28995,
+            daysInStock: 27,
+            readyForSale: false
+        }
+    ],
+    
+    /**
+     * Get schema for data type
+     * @param {string} type 
+     * @returns {Object}
+     */
+    getSchema(type) {
+        return this.schemas[type] || null;
+    },
+    
+    /**
+     * Get field definition
+     * @param {string} schemaType 
+     * @param {string} fieldName 
+     * @returns {Object}
+     */
+    getField(schemaType, fieldName) {
+        const schema = this.getSchema(schemaType);
+        if (!schema) return null;
+        return schema.fields.find(f => f.name === fieldName);
+    },
+    
+    /**
+     * Normalize CSV header using mappings
+     * @param {string} header 
+     * @returns {string}
+     */
+    normalizeHeader(header) {
+        const normalized = header.toString().toLowerCase().trim();
+        return this.csvMappings.clickDealer[normalized] || normalized.replace(/\s+/g, '_');
+    },
+    
+    /**
+     * Get all possible CSV headers for a field
+     * @param {string} fieldName 
+     * @returns {Array}
+     */
+    getPossibleHeaders(fieldName) {
+        const mappings = this.csvMappings.clickDealer;
+        return Object.entries(mappings)
+            .filter(([_, target]) => target === fieldName)
+            .map(([source, _]) => source);
+    },
+    
+    /**
+     * Validate data against schema
+     * @param {Object} data 
+     * @param {string} schemaType 
+     * @returns {Object}
+     */
+    validate(data, schemaType) {
+        const schema = this.getSchema(schemaType);
+        if (!schema) return { valid: false, errors: ['Unknown schema'] };
+        
+        const errors = [];
+        
+        schema.fields.forEach(field => {
+            if (field.required && !data[field.name]) {
+                errors.push(`${field.label} is required`);
+            }
+            
+            if (data[field.name] && field.type === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(data[field.name])) {
+                    errors.push(`${field.label} is not a valid email`);
+                }
+            }
+            
+            if (data[field.name] && field.type === 'number') {
+                if (isNaN(parseFloat(data[field.name]))) {
+                    errors.push(`${field.label} must be a number`);
+                }
+            }
+        });
         
         return {
-            totalStock: total,
-            readyStock: ready,
-            overdueStock: overdue,
-            stockValue: totalValue
+            valid: errors.length === 0,
+            errors: errors
         };
     },
-
-    // Get stock by manufacturer
-    getStockByMake() {
-        const makes = {};
-        this.inventory.forEach(v => {
-            makes[v.make] = (makes[v.make] || 0) + 1;
-        });
-        return makes;
-    },
-
-    // Get stock by location
-    getStockByLocation() {
-        const locations = {};
-        this.inventory.forEach(v => {
-            locations[v.location] = (locations[v.location] || 0) + 1;
-        });
-        return locations;
-    },
-
-    // Parse CSV upload
-    parseCSV(csvText) {
-        const lines = csvText.split('\n');
-        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-        const data = [];
+    
+    /**
+     * Format value for display
+     * @param {*} value 
+     * @param {string} type 
+     * @returns {string}
+     */
+    formatValue(value, type) {
+        if (value === null || value === undefined) return '-';
         
-        for (let i = 1; i < lines.length; i++) {
-            if (lines[i].trim()) {
-                const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
-                const row = {};
-                headers.forEach((header, index) => {
-                    row[header] = values[index];
-                });
-                data.push(row);
-            }
-        }
-        return data;
-    },
-
-    // Import CSV data
-    importCSV(csvText) {
-        const parsed = this.parseCSV(csvText);
-        // Map ClickDealer fields to our structure
-        this.inventory = parsed.map(row => ({
-            stockNo: row['Stock No'] || row['StockNo'] || '',
-            reg: row['Reg No'] || row['Reg'] || '',
-            make: row['Make'] || '',
-            model: row['Model'] || '',
-            variant: row['Variant'] || '',
-            colour: row['Colour'] || '',
-            mileage: parseInt(row['Mileage']) || 0,
-            fuel: row['Fuel'] || '',
-            body: row['Body'] || '',
-            status: row['Status'] || 'In Stock',
-            location: row['Location'] || 'Stanmore Retail',
-            price: parseFloat(row['Price']) || 0,
-            regDate: row['Reg Date'] || new Date().toISOString().split('T')[0],
-            cost: parseFloat(row['Cost']) || 0
-        }));
-        
-        // Save to localStorage
-        this.saveToStorage();
-        return this.inventory;
-    },
-
-    // Save to localStorage
-    saveToStorage() {
-        localStorage.setItem('capeye_inventory', JSON.stringify(this.inventory));
-    },
-
-    // Load from localStorage
-    loadFromStorage() {
-        const stored = localStorage.getItem('capeye_inventory');
-        if (stored) {
-            this.inventory = JSON.parse(stored);
+        switch (type) {
+            case 'currency':
+                return '£' + parseFloat(value).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            case 'date':
+                return new Date(value).toLocaleDateString('en-GB');
+            case 'boolean':
+                return value ? 'Yes' : 'No';
+            case 'number':
+                return parseInt(value).toLocaleString();
+            default:
+                return String(value);
         }
     },
-
-    // Get vehicle by registration
-    getVehicleByReg(reg) {
-        return this.inventory.find(v => v.reg.toLowerCase() === reg.toLowerCase());
+    
+    /**
+     * Get workflow stage by ID
+     * @param {string} stageId 
+     * @returns {Object}
+     */
+    getWorkflowStage(stageId) {
+        return this.schemas.workflow.stages.find(s => s.id === stageId);
     },
-
-    // Update vehicle
-    updateVehicle(reg, updates) {
-        const index = this.inventory.findIndex(v => v.reg.toLowerCase() === reg.toLowerCase());
-        if (index !== -1) {
-            this.inventory[index] = { ...this.inventory[index], ...updates };
-            this.saveToStorage();
-            return true;
+    
+    /**
+     * Get next workflow stage
+     * @param {string} currentStageId 
+     * @returns {Object|null}
+     */
+    getNextStage(currentStageId) {
+        const stages = this.schemas.workflow.stages;
+        const currentIndex = stages.findIndex(s => s.id === currentStageId);
+        if (currentIndex === -1 || currentIndex >= stages.length - 1) return null;
+        return stages[currentIndex + 1];
+    },
+    
+    /**
+     * Get previous workflow stage
+     * @param {string} currentStageId 
+     * @returns {Object|null}
+     */
+    getPreviousStage(currentStageId) {
+        const stages = this.schemas.workflow.stages;
+        const currentIndex = stages.findIndex(s => s.id === currentStageId);
+        if (currentIndex <= 0) return null;
+        return stages[currentIndex - 1];
+    },
+    
+    /**
+     * Load sample data for testing
+     */
+    loadSampleData() {
+        if (VehicleStore && VehicleStore.getAll().length === 0) {
+            this.sampleVehicles.forEach(v => VehicleStore.add(v));
         }
-        return false;
     }
 };
-
-// Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
-    CapeyeData.loadFromStorage();
-});
