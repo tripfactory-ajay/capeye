@@ -79,6 +79,13 @@ const CSVParser = {
      */
     normalizeClickDealerHeader(header) {
         const headerMap = {
+            // Stock Number (PRIMARY KEY)
+            'stock no': 'stockNo',
+            'stock number': 'stockNo',
+            'stockno': 'stockNo',
+            'stock_id': 'stockNo',
+            'stock': 'stockNo',
+            
             // Registration
             'reg': 'registration',
             'reg no': 'registration',
@@ -97,6 +104,7 @@ const CSVParser = {
             'description': 'variant',
             'year': 'year',
             'reg year': 'year',
+            'reg date': 'regDate',
             'colour': 'colour',
             'color': 'colour',
             'paint': 'colour',
@@ -104,11 +112,15 @@ const CSVParser = {
             'fuel type': 'fuelType',
             'transmission': 'transmission',
             'gearbox': 'transmission',
+            'gbox': 'transmission',
             'engine': 'engineSize',
             'engine size': 'engineSize',
             'cc': 'engineSize',
             'mileage': 'mileage',
             'miles': 'mileage',
+            'body': 'body',
+            'body type': 'body',
+            'doors': 'doors',
             
             // Location & Status
             'location': 'location',
@@ -123,21 +135,25 @@ const CSVParser = {
             'stock date': 'dateInStock',
             'date added': 'dateInStock',
             'purchase date': 'dateInStock',
+            'mot': 'mot',
+            'mot date': 'mot',
             
             // Financial
             'cost': 'costPrice',
             'cost price': 'costPrice',
             'purchase price': 'costPrice',
+            'price': 'retailPrice',
             'retail': 'retailPrice',
             'retail price': 'retailPrice',
             'sale price': 'retailPrice',
-            'price': 'retailPrice',
             'total cost': 'totalCost',
             'total investment': 'totalCost',
             'loss': 'estimatedLoss',
             'est loss': 'estimatedLoss',
             'estimated loss': 'estimatedLoss',
             'profit': 'estimatedProfit',
+            'rfl': 'rfl',
+            'road tax': 'rfl',
             
             // Flags
             'ready': 'readyForSale',
@@ -147,6 +163,8 @@ const CSVParser = {
             'on hold': 'reserved',
             'sold': 'sold',
             'sale': 'sold',
+            'fsh': 'fsh',
+            'full service history': 'fsh',
             
             // Source
             'source': 'source',
@@ -154,7 +172,8 @@ const CSVParser = {
             'vendor': 'source',
             'source id': 'sourceId',
             'ref': 'sourceId',
-            'reference': 'sourceId'
+            'reference': 'sourceId',
+            'keytag': 'keytag'
         };
         
         const normalized = header.toString().toLowerCase().trim();
@@ -174,10 +193,15 @@ const CSVParser = {
             transformed.registration = transformed.registration.toString().toUpperCase().replace(/\s+/g, '');
         }
         
+        // Clean stock number
+        if (transformed.stockNo) {
+            transformed.stockNo = transformed.stockNo.toString().toUpperCase().trim();
+        }
+        
         // Clean numeric fields
-        ['costPrice', 'retailPrice', 'totalCost', 'estimatedLoss', 'mileage'].forEach(field => {
+        ['costPrice', 'retailPrice', 'totalCost', 'estimatedLoss', 'mileage', 'rfl'].forEach(field => {
             if (transformed[field]) {
-                const cleaned = transformed[field].toString().replace(/[£,$,€,\s]/g, '').replace(/,/g, '');
+                const cleaned = transformed[field].toString().replace(/[£,$,€,\s,comm]/g, '').replace(/,/g, '');
                 transformed[field] = parseFloat(cleaned) || 0;
             }
         });
@@ -211,27 +235,31 @@ const CSVParser = {
             return { valid: false, errors: ['No data found in file'], warnings: [] };
         }
         
-        const requiredFields = ['registration'];
+        // Check for Stock No OR Registration (either is acceptable)
         const sampleRow = data[0];
+        const hasStockNo = 'stockNo' in sampleRow;
+        const hasReg = 'registration' in sampleRow;
         
-        // Check for required fields
-        requiredFields.forEach(field => {
-            if (!(field in sampleRow)) {
-                errors.push(`Missing required field: ${field}`);
-            }
-        });
-        
-        // Check for empty registrations
-        const emptyRegs = data.filter((row, idx) => !row.registration || row.registration.trim() === '');
-        if (emptyRegs.length > 0) {
-            errors.push(`${emptyRegs.length} rows missing registration numbers`);
+        if (!hasStockNo && !hasReg) {
+            errors.push('CSV must have either Stock No or Registration column');
         }
         
-        // Check for duplicate registrations
-        const regs = data.map(r => r.registration).filter(Boolean);
-        const duplicates = regs.filter((item, index) => regs.indexOf(item) !== index);
-        if (duplicates.length > 0) {
-            warnings.push(`Duplicate registrations found: ${[...new Set(duplicates)].join(', ')}`);
+        // Check for empty identifiers
+        const emptyIds = data.filter((row, idx) => {
+            const noStock = !row.stockNo || row.stockNo.toString().trim() === '';
+            const noReg = !row.registration || row.registration.toString().trim() === '';
+            return noStock && noReg;
+        });
+        
+        if (emptyIds.length > 0) {
+            errors.push(`${emptyIds.length} rows missing both Stock No and Registration`);
+        }
+        
+        // Check for duplicate Stock Nos
+        const stockNos = data.map(r => r.stockNo).filter(Boolean);
+        const dupStocks = stockNos.filter((item, index) => stockNos.indexOf(item) !== index);
+        if (dupStocks.length > 0) {
+            warnings.push(`Duplicate Stock Nos found: ${[...new Set(dupStocks)].slice(0, 5).join(', ')}${dupStocks.length > 5 ? '...' : ''}`);
         }
         
         // Check data quality
@@ -249,8 +277,8 @@ const CSVParser = {
             warnings,
             stats: {
                 totalRows: data.length,
-                emptyRegs: emptyRegs.length,
-                duplicates: [...new Set(duplicates)].length,
+                emptyIds: emptyIds.length,
+                duplicateStocks: [...new Set(dupStocks)].length,
                 missingMake: noMake,
                 missingModel: noModel
             }
@@ -300,7 +328,7 @@ const CSVParser = {
      * @returns {boolean}
      */
     isClickDealerFormat(headers) {
-        const clickDealerSignatures = ['reg', 'registration', 'vrm', 'make', 'model', 'cost price', 'retail price'];
+        const clickDealerSignatures = ['stock no', 'reg', 'registration', 'vrm', 'make', 'model', 'cost price', 'retail price'];
         const lowerHeaders = headers.map(h => h.toLowerCase());
         return clickDealerSignatures.some(sig => lowerHeaders.includes(sig));
     },
