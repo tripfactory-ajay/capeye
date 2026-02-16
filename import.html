@@ -3,268 +3,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capeye - Import Vehicle Data</title>
+    <title>Import Stock - Capeye Auto Capital</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .drop-zone {
-            transition: all 0.3s ease;
-            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23CBD5E1FF' stroke-width='2' stroke-dasharray='12%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-        }
-        .drop-zone:hover {
-            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%233B82F6FF' stroke-width='2' stroke-dasharray='12%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-        }
-        .drop-zone.drag-over {
-            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='%23EFF6FFFF' rx='12' ry='12' stroke='%233B82F6FF' stroke-width='2' stroke-dasharray='12%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; }
+        .glass-panel { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .drop-zone { transition: all 0.3s ease; }
+        .drop-zone.dragover { background: #eff6ff; border-color: #3b82f6; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
-    <!-- Header -->
-    <header class="bg-slate-900 text-white shadow-lg">
+<body class="bg-slate-100 min-h-screen">
+    
+    <!-- Auth Check -->
+    <script>
+        (function() {
+            const session = localStorage.getItem('capeye_session');
+            if (!session) {
+                sessionStorage.setItem('redirect_after_login', window.location.href);
+                window.location.replace('./login.html');
+                return;
+            }
+        })();
+    </script>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+            <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="dashboard.html" class="flex items-center hover:opacity-80 transition">
-                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <h1 class="text-xl font-bold">Capeye</h1>
-                        </div>
-                    </a>
+                    <img src="./autocapital-logo.png" alt="Auto Capital" class="h-10 w-auto object-contain" onerror="this.style.display='none'">
+                    <span class="ml-3 text-xl font-bold text-slate-800">Import Stock</span>
                 </div>
-                
-                <div class="flex items-center space-x-4">
-                    <div class="text-right hidden sm:block">
-                        <p class="text-sm font-medium user-name">Loading...</p>
-                        <p class="text-xs text-slate-400 user-role">Loading...</p>
-                    </div>
-                    <button class="logout-btn p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                        </svg>
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="./index.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Dashboard</a>
+                    <a href="./operations.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Operations</a>
+                    <a href="./inventory.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Inventory</a>
+                    <a href="./workflow.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Workflow</a>
+                    <a href="./analytics.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Analytics</a>
+                    <button onclick="logout()" class="ml-4 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-slate-900 p-2">
+                        <i class="fas fa-bars text-xl"></i>
                     </button>
                 </div>
             </div>
         </div>
-    </header>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-slate-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="./index.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Dashboard</a>
+                <a href="./operations.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Operations</a>
+                <a href="./inventory.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Inventory</a>
+                <a href="./workflow.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Workflow</a>
+                <a href="./analytics.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Analytics</a>
+                <button onclick="logout()" class="w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md">Logout</button>
+            </div>
+        </div>
+    </nav>
 
     <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Page Header -->
-        <div class="mb-8">
-            <div class="flex items-center text-sm text-slate-500 mb-2">
-                <a href="dashboard.html" class="hover:text-blue-600">Dashboard</a>
-                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-slate-900">Import Data</span>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 class="text-3xl font-bold text-slate-900 mb-8">Import Vehicle Stock</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Upload Section -->
+            <div class="lg:col-span-2">
+                <div class="glass-panel rounded-xl p-6 shadow-sm mb-6">
+                    <h2 class="text-lg font-semibold text-slate-900 mb-4">Upload CSV File</h2>
+                    
+                    <!-- Drop Zone -->
+                    <div id="dropZone" class="drop-zone border-2 border-dashed border-slate-300 rounded-xl p-12 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-slate-400 mb-4"></i>
+                        <p class="text-lg font-medium text-slate-700 mb-2">Drop your CSV file here</p>
+                        <p class="text-sm text-slate-500 mb-4">or click to browse</p>
+                        <input type="file" id="fileInput" accept=".csv" class="hidden" onchange="handleFileSelect(event)">
+                        <button onclick="document.getElementById('fileInput').click()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            Select File
+                        </button>
+                    </div>
+
+                    <!-- File Info -->
+                    <div id="fileInfo" class="hidden mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-file-csv text-2xl text-blue-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-slate-900" id="fileName">filename.csv</p>
+                                    <p class="text-sm text-slate-600" id="fileSize">0 KB</p>
+                                </div>
+                            </div>
+                            <button onclick="clearFile()" class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Preview Table -->
+                    <div id="previewSection" class="hidden mt-6">
+                        <h3 class="text-md font-semibold text-slate-900 mb-3">Preview (First 5 rows)</h3>
+                        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                            <table class="w-full text-sm text-left" id="previewTable">
+                                <!-- Preview content -->
+                            </table>
+                        </div>
+                        
+                        <div class="flex gap-3 mt-4">
+                            <button onclick="processImport()" class="flex-1 px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition">
+                                <i class="fas fa-check mr-2"></i>Import Data
+                            </button>
+                            <button onclick="clearFile()" class="px-6 py-3 bg-slate-200 text-slate-700 font-medium rounded-lg hover:bg-slate-300 transition">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Progress -->
+                    <div id="progressSection" class="hidden mt-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-slate-700">Importing...</span>
+                            <span class="text-sm text-slate-600" id="progressPercent">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2">
+                            <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Results -->
+                    <div id="resultsSection" class="hidden mt-6">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-check-circle text-green-600 text-2xl mr-3"></i>
+                                <div>
+                                    <h3 class="font-semibold text-green-900">Import Complete!</h3>
+                                    <p class="text-sm text-green-700" id="resultsText">Successfully imported X vehicles</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 mt-4">
+                                <div class="text-center p-3 bg-white rounded-lg">
+                                    <div class="text-2xl font-bold text-green-600" id="resultCreated">0</div>
+                                    <div class="text-xs text-slate-600">New</div>
+                                </div>
+                                <div class="text-center p-3 bg-white rounded-lg">
+                                    <div class="text-2xl font-bold text-blue-600" id="resultUpdated">0</div>
+                                    <div class="text-xs text-slate-600">Updated</div>
+                                </div>
+                                <div class="text-center p-3 bg-white rounded-lg">
+                                    <div class="text-2xl font-bold text-red-600" id="resultErrors">0</div>
+                                    <div class="text-xs text-slate-600">Errors</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex gap-3">
+                                <a href="./inventory.html" class="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                    View Inventory
+                                </a>
+                                <button onclick="clearFile()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition">
+                                    Import Another
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <h2 class="text-2xl font-bold text-slate-900">Import Vehicle Data</h2>
-            <p class="text-slate-600 mt-1">Upload your daily ClickDealer CSV export to update the system.</p>
+
+            <!-- Instructions -->
+            <div class="lg:col-span-1">
+                <div class="glass-panel rounded-xl p-6 shadow-sm">
+                    <h2 class="text-lg font-semibold text-slate-900 mb-4">Instructions</h2>
+                    <div class="space-y-4 text-sm text-slate-600">
+                        <div class="flex items-start">
+                            <i class="fas fa-info-circle text-blue-600 mt-1 mr-3"></i>
+                            <p>Upload a CSV file exported from ClickDealer or your stock management system.</p>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
+                            <p>Required columns: Stock No, Registration, Make, Model</p>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-sync text-orange-600 mt-1 mr-3"></i>
+                            <p>Existing vehicles will be updated based on Stock No match.</p>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-shield-alt text-purple-600 mt-1 mr-3"></i>
+                            <p>Data is stored locally in your browser. No data is sent to any server.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-slate-200">
+                        <h3 class="font-medium text-slate-900 mb-2">Supported Formats</h3>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>• ClickDealer exports</li>
+                            <li>• Standard CSV files</li>
+                            <li>• Excel files (save as CSV first)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Import Steps -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div class="flex items-center p-4 bg-white rounded-lg border border-slate-200">
-                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold mr-4">1</div>
-                <div>
-                    <p class="font-medium text-slate-900">Upload CSV</p>
-                    <p class="text-sm text-slate-500">Drag & drop or browse</p>
-                </div>
-            </div>
-            <div class="flex items-center p-4 bg-white rounded-lg border border-slate-200">
-                <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 font-bold mr-4">2</div>
-                <div>
-                    <p class="font-medium text-slate-900">Review</p>
-                    <p class="text-sm text-slate-500">Validate & preview data</p>
-                </div>
-            </div>
-            <div class="flex items-center p-4 bg-white rounded-lg border border-slate-200">
-                <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 font-bold mr-4">3</div>
-                <div>
-                    <p class="font-medium text-slate-900">Import</p>
-                    <p class="text-sm text-slate-500">Update system records</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Error Section -->
-        <div id="errorSection" class="hidden mb-6"></div>
-
-        <!-- Upload Section -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-6">
-            <h3 class="text-lg font-semibold text-slate-900 mb-4">Upload File</h3>
-            
-            <!-- Drop Zone -->
-            <div id="dropZone" class="drop-zone rounded-xl p-12 text-center cursor-pointer">
-                <input type="file" id="fileInput" accept=".csv" class="hidden">
-                
-                <div class="mb-4">
-                    <svg class="w-16 h-16 text-slate-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                    </svg>
-                </div>
-                
-                <p class="text-lg font-medium text-slate-700 mb-2">
-                    Drop your CSV file here, or <span class="text-blue-600">click to browse</span>
-                </p>
-                <p class="text-sm text-slate-500">
-                    Supports ClickDealer CSV exports (.csv files only)
-                </p>
-                
-                <div class="mt-6 flex justify-center space-x-4 text-xs text-slate-400">
-                    <span class="flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Auto-detects columns
-                    </span>
-                    <span class="flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                        </svg>
-                        Matches existing records
-                    </span>
-                    <span class="flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                        </svg>
-                        Secure processing
-                    </span>
-                </div>
-            </div>
-
-            <!-- File Info -->
-            <div id="fileInfo" class="hidden mt-6"></div>
-
-            <!-- Progress -->
-            <div id="progressSection" class="hidden mt-6"></div>
-        </div>
-
-        <!-- Preview Section -->
-        <div id="previewSection" class="hidden mb-6"></div>
-
-        <!-- Validation Section -->
-        <div id="validationSection" class="hidden mb-6"></div>
-
-        <!-- Action Section -->
-        <div id="actionSection" class="hidden mb-6"></div>
-
-        <!-- Result Section -->
-        <div id="resultSection" class="hidden mb-6"></div>
-
-        <!-- Import History -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 class="text-lg font-semibold text-slate-900 mb-4">Recent Imports</h3>
-            <div id="importHistory" class="overflow-x-auto">
-                <p class="text-slate-500 text-sm">No import history available.</p>
-            </div>
-        </div>
-
-        <!-- Template Download -->
-        <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <div class="flex items-start">
-                <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <div>
-                    <p class="text-sm font-medium text-blue-900">Expected CSV Format</p>
-                    <p class="text-sm text-blue-700 mt-1">
-                        The system expects ClickDealer export format with columns: Registration, Make, Model, Variant, Colour, Fuel Type, Location, Status, Date In Stock, Cost Price, Retail Price.
-                    </p>
-                    <button onclick="ImportManager.downloadTemplate()" class="mt-2 text-sm font-medium text-blue-600 hover:text-blue-800">
-                        Download template CSV →
-                    </button>
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <script src="js/auth.js"></script>
-    <script src="js/vehicle-store.js"></script>
-    <script src="js/csv-parser.js"></script>
-    <script src="js/import-manager.js"></script>
     <script>
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check auth
-            Auth.protectPage(['admin', 'management']);
-            
-            // Initialize import manager
-            ImportManager.init('dropZone', 'fileInput');
-            
-            // Load import history
-            loadImportHistory();
+        let currentFile = null;
+        let parsedData = null;
+
+        // Drag and drop
+        const dropZone = document.getElementById('dropZone');
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                handleFile(files[0]);
+            }
         });
 
-        function loadImportHistory() {
-            const history = VehicleStore.getImportHistory();
-            const container = document.getElementById('importHistory');
-            
-            if (history.length === 0) {
-                container.innerHTML = '<p class="text-slate-500 text-sm">No import history available.</p>';
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            if (!file.name.endsWith('.csv')) {
+                alert('Please upload a CSV file');
                 return;
             }
             
-            let html = `
-                <table class="min-w-full divide-y divide-slate-200">
-                    <thead class="bg-slate-50">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Date</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Total</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">New</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Updated</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-slate-200">
-            `;
+            currentFile = file;
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+            document.getElementById('fileInfo').classList.remove('hidden');
             
-            history.slice(0, 10).forEach(item => {
-                const date = new Date(item.timestamp);
-                const hasErrors = item.errors && item.errors.length > 0;
-                
-                html += `
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-slate-900">${date.toLocaleString()}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900">${item.total}</td>
-                        <td class="px-4 py-3 text-sm text-green-600 font-medium">+${item.created}</td>
-                        <td class="px-4 py-3 text-sm text-blue-600 font-medium">${item.updated}</td>
-                        <td class="px-4 py-3">
-                            ${hasErrors 
-                                ? `<span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">${item.errors.length} warnings</span>`
-                                : `<span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Success</span>`
-                            }
-                        </td>
-                    </tr>
-                `;
+            // Parse CSV
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    parsedData = results.data;
+                    showPreview(results.data.slice(0, 5), results.meta.fields);
+                },
+                error: function(error) {
+                    alert('Error parsing CSV: ' + error.message);
+                }
             });
-            
-            html += '</tbody></table>';
-            container.innerHTML = html;
         }
 
-        // Add template download method
-        ImportManager.downloadTemplate = function() {
-            const template = 'registration,make,model,variant,year,colour,fuelType,transmission,location,status,dateInStock,costPrice,retailPrice\nAB12CDE,Ford,Transit,350 L3 H2,2021,White,Diesel,Manual,Stanmore,In Stock,2026-01-15,18500,22995\nEF34GHJ,Mercedes,Vito,114 CDI,2022,Silver,Diesel,Automatic,Stanmore,In Stock,2026-01-20,24500,28995';
+        function showPreview(data, fields) {
+            const table = document.getElementById('previewTable');
+            const headers = fields.slice(0, 8); // Show first 8 columns
             
-            const blob = new Blob([template], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'capeye_import_template.csv';
-            a.click();
-            URL.revokeObjectURL(url);
-        };
+            let html = '<thead class="bg-slate-50 text-slate-600 uppercase text-xs"><tr>';
+            headers.forEach(h => {
+                html += `<th class="px-4 py-3">${h}</th>`;
+            });
+            html += '</tr></thead><tbody class="divide-y divide-slate-200">';
+            
+            data.forEach(row => {
+                html += '<tr>';
+                headers.forEach(h => {
+                    html += `<td class="px-4 py-3 text-slate-900">${row[h] || '-'}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody>';
+            table.innerHTML = html;
+            document.getElementById('previewSection').classList.remove('hidden');
+        }
+
+        function processImport() {
+            if (!parsedData) return;
+            
+            document.getElementById('previewSection').classList.add('hidden');
+            document.getElementById('progressSection').classList.remove('hidden');
+            
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            
+            // Simulate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+                progressPercent.textContent = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(completeImport, 300);
+                }
+            }, 100);
+        }
+
+        function completeImport() {
+            const existing = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            let created = 0;
+            let updated = 0;
+            let errors = 0;
+            
+            parsedData.forEach(row => {
+                if (!row['Stock No'] && !row['Registration']) {
+                    errors++;
+                    return;
+                }
+                
+                const vehicle = mapRowToVehicle(row);
+                const idx = existing.findIndex(v => 
+                    v.stockNo === vehicle.stockNo || 
+                    v.registration === vehicle.registration
+                );
+                
+                if (idx >= 0) {
+                    existing[idx] = { ...existing[idx], ...vehicle, updatedAt: new Date().toISOString() };
+                    updated++;
+                } else {
+                    vehicle.id = Date.now() + Math.random();
+                    vehicle.createdAt = new Date().toISOString();
+                    existing.push(vehicle);
+                    created++;
+                }
+            });
+            
+            localStorage.setItem('capeye_vehicles', JSON.stringify(existing));
+            
+            // Save import history
+            const history = JSON.parse(localStorage.getItem('capeye_import_history') || '[]');
+            history.push({
+                date: new Date().toISOString(),
+                total: parsedData.length,
+                created: created,
+                updated: updated,
+                errors: errors
+            });
+            localStorage.setItem('capeye_import_history', JSON.stringify(history));
+            
+            // Show results
+            document.getElementById('progressSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('resultsText').textContent = `Processed ${parsedData.length} vehicles from ${currentFile.name}`;
+            document.getElementById('resultCreated').textContent = created;
+            document.getElementById('resultUpdated').textContent = updated;
+            document.getElementById('resultErrors').textContent = errors;
+        }
+
+        function mapRowToVehicle(row) {
+            return {
+                stockNo: row['Stock No'] || row['StockNo'] || '',
+                registration: row['Registration'] || row['Reg'] || '',
+                make: row['Make'] || row['Manufacturer'] || '',
+                model: row['Model'] || '',
+                variant: row['Variant'] || '',
+                year: row['Year'] || row['Reg Year'] || '',
+                colour: row['Colour'] || row['Color'] || '',
+                fuelType: row['Fuel Type'] || row['Fuel'] || '',
+                transmission: row['Transmission'] || row['Gearbox'] || '',
+                mileage: row['Mileage'] || '',
+                body: row['Body'] || '',
+                doors: row['Doors'] || '',
+                location: row['Location'] || '',
+                status: row['Status'] || 'In Stock',
+                dateInStock: row['Date In Stock'] || row['DateInStock'] || new Date().toISOString(),
+                costPrice: parseFloat(row['Cost Price'] || row['Cost'] || 0),
+                retailPrice: parseFloat(row['Retail Price'] || row['Retail'] || 0),
+                rfl: row['RFL'] || '',
+                mot: row['MOT'] || '',
+                fsh: row['FSH'] || false,
+                keytag: row['Keytag'] || ''
+            };
+        }
+
+        function clearFile() {
+            currentFile = null;
+            parsedData = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').classList.add('hidden');
+            document.getElementById('previewSection').classList.add('hidden');
+            document.getElementById('progressSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressPercent').textContent = '0%';
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('capeye_session');
+            window.location.replace('./login.html');
+        }
     </script>
 </body>
 </html>
