@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capeye - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Logo Section -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-blue-600 mb-4 shadow-2xl">
+                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">Capeye</h1>
+            <p class="text-blue-200">Auto Capital Management System</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+            <h2 class="text-xl font-semibold text-white mb-6 text-center">Sign In</h2>
+            
+            <form id="loginForm" class="space-y-5">
+                <!-- Username -->
+                <div>
+                    <label class="block text-sm font-medium text-blue-200 mb-2">Username</label>
+                    <input type="text" id="username" required
+                        class="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                        placeholder="Enter username">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label class="block text-sm font-medium text-blue-200 mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" required
+                            class="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                            placeholder="Enter password">
+                        <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Role Selection -->
+                <div>
+                    <label class="block text-sm font-medium text-blue-200 mb-2">Department</label>
+                    <select id="department" required
+                        class="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-600 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                        <option value="">Select Department</option>
+                        <option value="admin">Administration</option>
+                        <option value="sales">Sales</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="accounts">Accounts</option>
+                        <option value="valet">Valet</option>
+                        <option value="management">Management</option>
+                    </select>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500">
+                        <span class="ml-2 text-sm text-blue-200">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm text-blue-400 hover:text-blue-300">Forgot password?</a>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden p-3 rounded-lg bg-red-900/50 border border-red-500 text-red-200 text-sm"></div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                    class="w-full py-3 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition duration-200 shadow-lg hover:shadow-xl">
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Demo Credentials -->
+            <div class="mt-6 p-4 rounded-lg bg-slate-800/50 border border-slate-700">
+                <p class="text-xs text-slate-400 mb-2 font-semibold">Demo Credentials:</p>
+                <div class="space-y-1 text-xs text-slate-500">
+                    <p>Admin: admin / admin123</p>
+                    <p>Sales: sales / sales123</p>
+                    <p>Workshop: workshop / workshop123</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <p class="text-center text-slate-500 text-sm mt-8">
+            © 2026 Capeye Auto Capital. All rights reserved.
+        </p>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const password = document.getElementById('password');
+            password.type = password.type === 'password' ? 'text' : 'password';
+        });
+
+        // Handle login form
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const department = document.getElementById('department').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const errorDiv = document.getElementById('errorMessage');
+
+            // Demo authentication (replace with real auth later)
+            const validUsers = {
+                'admin': { password: 'admin123', role: 'admin', name: 'Administrator' },
+                'sales': { password: 'sales123', role: 'sales', name: 'Sales User' },
+                'workshop': { password: 'workshop123', role: 'workshop', name: 'Workshop User' },
+                'accounts': { password: 'accounts123', role: 'accounts', name: 'Accounts User' },
+                'valet': { password: 'valet123', role: 'valet', name: 'Valet User' },
+                'keith': { password: 'keith123', role: 'management', name: 'Keith Hardy' },
+                'ibrahim': { password: 'ibrahim123', role: 'sales', name: 'Ibrahim Ata' }
+            };
+
+            const user = validUsers[username.toLowerCase()];
+
+            if (user && user.password === password) {
+                // Create session
+                const session = {
+                    username: username,
+                    name: user.name,
+                    role: user.role,
+                    department: department,
+                    loginTime: new Date().toISOString(),
+                    rememberMe: rememberMe
+                };
+
+                if (rememberMe) {
+                    localStorage.setItem('capeye_session', JSON.stringify(session));
+                } else {
+                    sessionStorage.setItem('capeye_session', JSON.stringify(session));
+                }
+
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } else {
+                errorDiv.textContent = 'Invalid username or password';
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('load', function() {
+            const session = localStorage.getItem('capeye_session') || sessionStorage.getItem('capeye_session');
+            if (session) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>
