@@ -34,6 +34,12 @@
         .kpi-card:hover {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
+        .stock-table th {
+            position: sticky;
+            top: 0;
+            background: #f8fafc;
+            z-index: 10;
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -113,74 +119,140 @@
                 <svg class="w-5 h-5 text-blue-600 mr-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4 9v10a2 2 0 002 2h12a2 2 0 002-2V9"/>
                 </svg>
-                <span class="text-sm font-medium text-blue-900">Loading reference data from CSV files...</span>
+                <span class="text-sm font-medium text-blue-900">Loading vehicle stock data...</span>
             </div>
         </div>
 
-        <!-- KPI Cards -->
+        <!-- Vehicle Stock KPI Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="kpi-card rounded-xl p-6">
+            <div class="kpi-card rounded-xl p-6 border-l-4 border-blue-500">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-600">Total Stock</p>
-                        <p class="text-3xl font-bold text-slate-900 mt-2" id="totalStock">-</p>
+                        <p class="text-sm font-medium text-slate-600">Total Vehicles</p>
+                        <p class="text-3xl font-bold text-slate-900 mt-2" id="totalVehicles">0</p>
+                        <p class="text-xs text-slate-500 mt-1">in stock system</p>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                         <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
                         </svg>
                     </div>
                 </div>
             </div>
 
-            <div class="kpi-card rounded-xl p-6">
+            <div class="kpi-card rounded-xl p-6 border-l-4 border-green-500">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-600">Staff Members</p>
-                        <p class="text-3xl font-bold text-green-600 mt-2" id="totalStaff">-</p>
+                        <p class="text-sm font-medium text-slate-600">In Stock</p>
+                        <p class="text-3xl font-bold text-green-600 mt-2" id="inStockCount">0</p>
+                        <p class="text-xs text-slate-500 mt-1">available for sale</p>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
                     </div>
                 </div>
             </div>
 
-            <div class="kpi-card rounded-xl p-6">
+            <div class="kpi-card rounded-xl p-6 border-l-4 border-orange-500">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-600">Locations</p>
-                        <p class="text-3xl font-bold text-orange-600 mt-2" id="totalLocations">-</p>
+                        <p class="text-sm font-medium text-slate-600">In Transit</p>
+                        <p class="text-3xl font-bold text-orange-600 mt-2" id="inTransitCount">0</p>
+                        <p class="text-xs text-slate-500 mt-1">on the way</p>
                     </div>
                     <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                         <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
                 </div>
             </div>
 
-            <div class="kpi-card rounded-xl p-6">
+            <div class="kpi-card rounded-xl p-6 border-l-4 border-purple-500">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-600">Parts Listed</p>
-                        <p class="text-3xl font-bold text-purple-600 mt-2" id="totalParts">-</p>
+                        <p class="text-sm font-medium text-slate-600">Total Value</p>
+                        <p class="text-3xl font-bold text-purple-600 mt-2" id="totalValue">£0</p>
+                        <p class="text-xs text-slate-500 mt-1">stock value</p>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                         <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Navigation Grid -->
-        <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Access</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="navGrid">
+        <!-- Stock by Location & Status -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Location Breakdown -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">Stock by Location</h3>
+                    <a href="inventory.html" class="text-sm text-blue-600 hover:text-blue-800">View All →</a>
+                </div>
+                <div id="locationBreakdown" class="space-y-3">
+                    <p class="text-slate-500 text-sm">Loading locations...</p>
+                </div>
+            </div>
+
+            <!-- Status Breakdown -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">Stock by Status</h3>
+                    <a href="inventory.html" class="text-sm text-blue-600 hover:text-blue-800">View All →</a>
+                </div>
+                <div id="statusBreakdown" class="space-y-3">
+                    <p class="text-slate-500 text-sm">Loading status...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Vehicles -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-slate-900">Recent Stock Additions</h3>
+                <a href="inventory.html" class="text-sm text-blue-600 hover:text-blue-800">View Full Inventory →</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Stock No</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Registration</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Vehicle</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Location</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentVehicles" class="bg-white divide-y divide-slate-200">
+                        <tr>
+                            <td colspan="6" class="px-4 py-4 text-sm text-slate-500 text-center">Loading vehicles...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Import History -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-slate-900">Recent Imports</h3>
+                <a href="import.html" class="text-sm text-blue-600 hover:text-blue-800">Import New Data →</a>
+            </div>
+            <div id="importHistory" class="overflow-x-auto">
+                <p class="text-slate-500 text-sm">No import history available.</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="navGrid">
             <!-- Navigation cards injected by JavaScript -->
         </div>
 
@@ -198,8 +270,8 @@
             // Update data status
             updateDataStatus();
             
-            // Update KPIs from loaded data
-            updateKPIs();
+            // Load and display vehicle stock data
+            loadVehicleStockData();
             
             // Build navigation
             buildNavigation();
@@ -207,9 +279,10 @@
 
         function updateDataStatus() {
             const banner = document.getElementById('dataStatus');
+            const vehicles = VehicleStore.getAll();
             const staff = ReferenceData.get('staff');
             
-            if (staff && staff.length > 0) {
+            if (vehicles.length > 0) {
                 banner.className = 'mb-6 p-4 rounded-xl border bg-green-50 border-green-200 flex items-center justify-between';
                 banner.innerHTML = `
                     <div class="flex items-center">
@@ -217,13 +290,27 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <div>
-                            <span class="text-sm font-medium text-green-900">Data loaded successfully from CSV files</span>
-                            <p class="text-xs text-green-700">${staff.length} staff members, ${ReferenceData.get('locations').length} locations found</p>
+                            <span class="text-sm font-medium text-green-900">Vehicle stock data loaded successfully</span>
+                            <p class="text-xs text-green-700">${vehicles.length} vehicles, ${staff.length} staff members</p>
                         </div>
                     </div>
                     <button onclick="location.reload()" class="text-sm text-green-700 hover:text-green-900 font-medium">Refresh</button>
                 `;
-                document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+                document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleString();
+            } else if (staff.length > 0) {
+                banner.className = 'mb-6 p-4 rounded-xl border bg-yellow-50 border-yellow-200 flex items-center justify-between';
+                banner.innerHTML = `
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <div>
+                            <span class="text-sm font-medium text-yellow-900">No vehicle stock found</span>
+                            <p class="text-xs text-yellow-700">Import your ClickDealer CSV to see stock data</p>
+                        </div>
+                    </div>
+                    <a href="import.html" class="text-sm text-yellow-700 hover:text-yellow-900 font-medium">Import Now</a>
+                `;
             } else {
                 banner.className = 'mb-6 p-4 rounded-xl border bg-yellow-50 border-yellow-200 flex items-center justify-between';
                 banner.innerHTML = `
@@ -231,47 +318,165 @@
                         <svg class="w-5 h-5 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                         </svg>
-                        <span class="text-sm font-medium text-yellow-900">No CSV data found. Ensure files are in the same folder.</span>
+                        <span class="text-sm font-medium text-yellow-900">No data found. Ensure CSV files are uploaded.</span>
                     </div>
                     <a href="reference-import.html" class="text-sm text-yellow-700 hover:text-yellow-900 font-medium">Check Files</a>
                 `;
             }
         }
 
-        function updateKPIs() {
-            const staff = ReferenceData.get('staff');
-            const locations = ReferenceData.get('locations');
-            const parts = ReferenceData.get('parts');
-            const vehicles = VehicleStore ? VehicleStore.getAll() : [];
+        function loadVehicleStockData() {
+            const vehicles = VehicleStore.getAll();
             
-            document.getElementById('totalStock').textContent = vehicles.length || '-';
-            document.getElementById('totalStaff').textContent = staff.length || '-';
-            document.getElementById('totalLocations').textContent = locations.length || '-';
-            document.getElementById('totalParts').textContent = parts.length || '-';
+            // Update KPI cards
+            document.getElementById('totalVehicles').textContent = vehicles.length;
+            
+            const inStock = vehicles.filter(v => v.status === 'In Stock').length;
+            document.getElementById('inStockCount').textContent = inStock;
+            
+            const inTransit = vehicles.filter(v => v.status === 'In Transit').length;
+            document.getElementById('inTransitCount').textContent = inTransit;
+            
+            const totalValue = vehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0);
+            document.getElementById('totalValue').textContent = '£' + totalValue.toLocaleString();
+            
+            // Location breakdown
+            const locationCounts = {};
+            vehicles.forEach(v => {
+                const loc = v.location || 'Unknown';
+                locationCounts[loc] = (locationCounts[loc] || 0) + 1;
+            });
+            
+            const locationHtml = Object.entries(locationCounts)
+                .sort((a, b) => b[1] - a[1])
+                .map(([loc, count]) => `
+                    <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                        <span class="text-sm font-medium text-slate-700">${loc}</span>
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-semibold rounded-full">${count}</span>
+                    </div>
+                `).join('');
+            
+            document.getElementById('locationBreakdown').innerHTML = locationHtml || '<p class="text-slate-500 text-sm">No location data</p>';
+            
+            // Status breakdown
+            const statusCounts = {};
+            vehicles.forEach(v => {
+                const status = v.status || 'Unknown';
+                statusCounts[status] = (statusCounts[status] || 0) + 1;
+            });
+            
+            const statusColors = {
+                'In Stock': 'bg-green-100 text-green-700',
+                'In Transit': 'bg-orange-100 text-orange-700',
+                'Off-site R': 'bg-yellow-100 text-yellow-700',
+                'Subject to': 'bg-purple-100 text-purple-700',
+                'Sold': 'bg-red-100 text-red-700'
+            };
+            
+            const statusHtml = Object.entries(statusCounts)
+                .sort((a, b) => b[1] - a[1])
+                .map(([status, count]) => {
+                    const colorClass = statusColors[status] || 'bg-slate-100 text-slate-700';
+                    return `
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-700">${status}</span>
+                            <span class="px-3 py-1 ${colorClass} text-sm font-semibold rounded-full">${count}</span>
+                        </div>
+                    `;
+                }).join('');
+            
+            document.getElementById('statusBreakdown').innerHTML = statusHtml || '<p class="text-slate-500 text-sm">No status data</p>';
+            
+            // Recent vehicles (last 10 added/updated)
+            const recentVehicles = [...vehicles]
+                .sort((a, b) => new Date(b.lastImportDate || b.createdAt) - new Date(a.lastImportDate || a.createdAt))
+                .slice(0, 10);
+            
+            const vehiclesHtml = recentVehicles.map(v => `
+                <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-3 text-sm font-medium text-slate-900">${v.stockNo || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-slate-600">${v.registration || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-slate-900">${v.make} ${v.model}</td>
+                    <td class="px-4 py-3 text-sm text-slate-600">${v.location || '-'}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${statusColors[v.status] || 'bg-slate-100 text-slate-700'}">
+                            ${v.status || 'Unknown'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm font-medium text-slate-900">
+                        ${v.costPrice ? '£' + v.costPrice.toLocaleString() : '-'}
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('recentVehicles').innerHTML = vehiclesHtml || 
+                '<tr><td colspan="6" class="px-4 py-4 text-sm text-slate-500 text-center">No vehicles found</td></tr>';
+            
+            // Import history
+            loadImportHistory();
+        }
+
+        function loadImportHistory() {
+            const history = VehicleStore.getImportHistory();
+            const container = document.getElementById('importHistory');
+            
+            if (history.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 text-sm">No import history available.</p>';
+                return;
+            }
+            
+            let html = `
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Date</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Total</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">New</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Updated</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-slate-200">
+            `;
+            
+            history.slice(0, 5).forEach(item => {
+                const date = new Date(item.timestamp);
+                const hasErrors = item.errors > 0;
+                
+                html += `
+                    <tr>
+                        <td class="px-4 py-3 text-sm text-slate-900">${date.toLocaleString()}</td>
+                        <td class="px-4 py-3 text-sm text-slate-900">${item.total}</td>
+                        <td class="px-4 py-3 text-sm text-green-600 font-medium">+${item.created}</td>
+                        <td class="px-4 py-3 text-sm text-blue-600 font-medium">${item.updated}</td>
+                        <td class="px-4 py-3">
+                            ${hasErrors 
+                                ? `<span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">${item.errors} warnings</span>`
+                                : `<span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Success</span>`
+                            }
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
         }
 
         function buildNavigation() {
             const navGrid = document.getElementById('navGrid');
             
             const navItems = [
-                { label: 'Inventory', url: 'inventory.html', icon: 'truck', desc: 'View and manage vehicle stock', color: 'blue' },
-                { label: 'Workflow', url: 'workflow.html', icon: 'cogs', desc: 'Track vehicle preparation stages', color: 'indigo' },
-                { label: 'Staff', url: 'staff.html', icon: 'users', desc: 'Manage team and departments', color: 'green' },
-                { label: 'Valet', url: 'valet.html', icon: 'sparkles', desc: 'Vehicle cleaning and prep', color: 'cyan' },
-                { label: 'Accounts', url: 'accounts.html', icon: 'currency', desc: 'Financial overview and costs', color: 'orange' },
-                { label: 'Analytics', url: 'analytics.html', icon: 'chart', desc: 'Reports and insights', color: 'purple' },
-                { label: 'Reference Data', url: 'reference-import.html', icon: 'database', desc: 'View CSV data sources', color: 'slate' },
-                { label: 'Import Vehicles', url: 'import.html', icon: 'upload', desc: 'Upload ClickDealer CSV', color: 'blue' }
+                { label: 'Import Stock', url: 'import.html', icon: 'upload', desc: 'Upload ClickDealer CSV', color: 'blue' },
+                { label: 'Inventory', url: 'inventory.html', icon: 'truck', desc: 'View and manage vehicles', color: 'indigo' },
+                { label: 'Workflow', url: 'workflow.html', icon: 'cogs', desc: 'Track preparation stages', color: 'green' },
+                { label: 'Analytics', url: 'analytics.html', icon: 'chart', desc: 'Reports and insights', color: 'purple' }
             ];
             
             const iconMap = {
                 'truck': 'M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0',
                 'cogs': 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
-                'users': 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
-                'sparkles': 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z',
-                'currency': 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
                 'chart': 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
-                'database': 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4',
                 'upload': 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12'
             };
             
@@ -279,10 +484,7 @@
                 'blue': 'bg-blue-50 text-blue-600 group-hover:bg-blue-100',
                 'indigo': 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100',
                 'green': 'bg-green-50 text-green-600 group-hover:bg-green-100',
-                'cyan': 'bg-cyan-50 text-cyan-600 group-hover:bg-cyan-100',
-                'orange': 'bg-orange-50 text-orange-600 group-hover:bg-orange-100',
-                'purple': 'bg-purple-50 text-purple-600 group-hover:bg-purple-100',
-                'slate': 'bg-slate-50 text-slate-600 group-hover:bg-slate-100'
+                'purple': 'bg-purple-50 text-purple-600 group-hover:bg-purple-100'
             };
             
             navItems.forEach(item => {
