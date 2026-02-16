@@ -3,42 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capeye - Dashboard</title>
+    <title>Capeye - Business Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .nav-card { transition: all 0.3s ease; }
-        .nav-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .expandable-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .expandable-section.expanded {
+            max-height: 1000px;
+        }
+        .status-badge {
+            transition: all 0.2s;
+        }
+        .status-badge:hover {
+            transform: scale(1.05);
+        }
+        .leaderboard-item {
+            transition: all 0.2s;
+        }
+        .leaderboard-item:hover {
+            background: #f1f5f9;
+            transform: translateX(4px);
+        }
+        .clickable-chart {
+            cursor: pointer;
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header-logo {
+            max-height: 40px;
+            object-fit: contain;
+        }
+        .nav-link {
+            position: relative;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            color: #3b82f6;
+        }
+        .nav-link.active {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #3b82f6;
+            border-radius: 2px;
+        }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
-    <!-- Header -->
-    <header class="bg-slate-900 text-white shadow-lg">
+<body class="min-h-screen">
+    <!-- Auth Check -->
+    <script src="js/auth.js"></script>
+    <script>
+        if (!Auth.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <!-- Header - White with Logo -->
+    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo Section -->
                 <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
-                            </svg>
+                    <a href="business-dashboard.html" class="flex items-center hover:opacity-80 transition">
+                        <!-- Auto Capital Logo -->
+                        <img src="autocapital-logo.png" 
+                             alt="Auto Capital" 
+                             class="header-logo mr-3"
+                             onerror="this.style.display='none'; document.getElementById('header-logo-fallback').style.display='flex';">
+                        
+                        <!-- Fallback Logo -->
+                        <div id="header-logo-fallback" style="display: none;" class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-bold text-slate-900">Auto Capital</h1>
+                                <p class="text-xs text-slate-500">Commercial Vehicles</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="ml-4">
-                        <h1 class="text-xl font-bold">Capeye</h1>
-                        <p class="text-xs text-slate-400">Auto Capital Management</p>
-                    </div>
+                    </a>
+                    
+                    <span class="ml-4 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                        Capeye System
+                    </span>
                 </div>
+                
+                <!-- Navigation Tabs -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="business-dashboard.html" class="nav-link active text-slate-700 py-2 text-sm font-medium">Business Dashboard</a>
+                    <a href="index.html" class="nav-link text-slate-600 hover:text-slate-900 py-2 text-sm font-medium">Operations</a>
+                    <a href="inventory.html" class="nav-link text-slate-600 hover:text-slate-900 py-2 text-sm font-medium">Inventory</a>
+                    <a href="workflow.html" class="nav-link text-slate-600 hover:text-slate-900 py-2 text-sm font-medium">Workflow</a>
+                </nav>
                 
                 <div class="flex items-center space-x-4">
                     <div class="text-right hidden sm:block">
-                        <p class="text-sm font-medium user-name">Loading...</p>
-                        <p class="text-xs text-slate-400 user-role">Loading...</p>
+                        <p class="text-sm font-semibold text-slate-900 user-name">Loading...</p>
+                        <p class="text-xs text-slate-500 user-role">Loading...</p>
                     </div>
-                    <button class="logout-btn p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
+                    <button onclick="Auth.logout()" class="p-2 rounded-lg hover:bg-slate-100 text-slate-600 transition" title="Logout">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                         </svg>
@@ -49,190 +159,602 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        <!-- Welcome Section -->
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold text-slate-900">Welcome back, <span class="user-name">User</span></h2>
-            <p class="text-slate-600 mt-1">Here's what's happening with your inventory today.</p>
+        <!-- Page Header -->
+        <div class="mb-6 flex justify-between items-end">
+            <div>
+                <h2 class="text-3xl font-bold gradient-text">Business Dashboard</h2>
+                <p class="text-slate-600 mt-1">Real-time performance metrics & insights</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="flex items-center text-sm text-slate-500">
+                    <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot mr-2"></span>
+                    Live Data
+                </span>
+                <button onclick="refreshDashboard()" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 transition flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4 9v10a2 2 0 002 2h12a2 2 0 002-2V9"/>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
         </div>
 
-        <!-- KPI Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Total Stock -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-                <div class="flex items-center justify-between">
+        <!-- Key Metrics Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Total Stock Value -->
+            <div class="metric-card rounded-xl p-5 cursor-pointer" onclick="toggleDetail('valueDetail')">
+                <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-sm font-medium text-slate-600">Total Stock</p>
-                        <p class="text-3xl font-bold text-slate-900 mt-2" id="totalStock">0</p>
+                        <p class="text-sm font-medium text-slate-500">Total Stock Value</p>
+                        <p class="text-2xl font-bold text-slate-900 mt-1" id="totalStockValue">£0</p>
+                        <p class="text-xs text-green-600 mt-1 flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                            </svg>
+                            <span id="valueTrend">+0%</span> vs last month
+                        </p>
                     </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
                 </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-green-600 font-medium" id="stockChange">+0</span>
-                    <span class="text-slate-500 ml-2">from yesterday</span>
-                </div>
             </div>
 
-            <!-- Overdue Units -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-                <div class="flex items-center justify-between">
+            <!-- Total Vehicles -->
+            <div class="metric-card rounded-xl p-5 cursor-pointer" onclick="toggleDetail('vehicleDetail')">
+                <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-sm font-medium text-slate-600">Overdue Units</p>
-                        <p class="text-3xl font-bold text-red-600 mt-2" id="overdueUnits">0</p>
+                        <p class="text-sm font-medium text-slate-500">Total Vehicles</p>
+                        <p class="text-2xl font-bold text-slate-900 mt-1" id="totalVehicles">0</p>
+                        <p class="text-xs text-slate-500 mt-1">
+                            <span class="text-green-600 font-medium" id="inStockCount">0</span> in stock
+                        </p>
                     </div>
-                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
                         </svg>
                     </div>
                 </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-slate-500">Units > 60 days</span>
-                </div>
             </div>
 
-            <!-- Loss Makers -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-                <div class="flex items-center justify-between">
+            <!-- Sales This Month -->
+            <div class="metric-card rounded-xl p-5 cursor-pointer" onclick="toggleDetail('salesDetail')">
+                <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-sm font-medium text-slate-600">Loss Makers</p>
-                        <p class="text-3xl font-bold text-orange-600 mt-2" id="lossMakers">0</p>
+                        <p class="text-sm font-medium text-slate-500">Sales This Month</p>
+                        <p class="text-2xl font-bold text-slate-900 mt-1" id="monthlySales">£0</p>
+                        <p class="text-xs text-slate-500 mt-1">
+                            <span class="font-medium" id="carsSold">0</span> cars sold
+                        </p>
                     </div>
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-slate-500">Below cost price</span>
-                </div>
-            </div>
-
-            <!-- Ready for Sale -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-slate-600">Ready for Sale</p>
-                        <p class="text-3xl font-bold text-green-600 mt-2" id="readyForSale">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
                 </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-slate-500">Completed & available</span>
+            </div>
+
+            <!-- Potential Margin -->
+            <div class="metric-card rounded-xl p-5 cursor-pointer" onclick="toggleDetail('marginDetail')">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500">Potential Margin</p>
+                        <p class="text-2xl font-bold text-slate-900 mt-1" id="potentialMargin">£0</p>
+                        <p class="text-xs text-purple-600 mt-1">
+                            <span id="marginPercent">0%</span> avg margin
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Last Import Info -->
-        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8 flex items-center justify-between" id="importInfo">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <div>
-                    <p class="text-sm font-medium text-blue-900">Last Import</p>
-                    <p class="text-xs text-blue-700" id="lastImportText">No data imported yet</p>
+        <!-- Charts Row 1 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Status Distribution -->
+            <div class="glass-panel rounded-xl p-5 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">Stock by Status</h3>
+                    <button onclick="expandChart('status')" class="text-sm text-blue-600 hover:text-blue-800">Expand</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div id="statusLegend" class="mt-4 flex flex-wrap gap-2 justify-center"></div>
+            </div>
+
+            <!-- Location Distribution -->
+            <div class="glass-panel rounded-xl p-5 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">Stock by Location</h3>
+                    <button onclick="expandChart('location')" class="text-sm text-blue-600 hover:text-blue-800">Expand</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="locationChart"></canvas>
+                </div>
+                <div id="locationLegend" class="mt-4 flex flex-wrap gap-2 justify-center"></div>
+            </div>
+
+            <!-- Sales Trend (Last 7 Days) -->
+            <div class="glass-panel rounded-xl p-5 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">Sales Trend (7 Days)</h3>
+                    <button onclick="expandChart('sales')" class="text-sm text-blue-600 hover:text-blue-800">Expand</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="salesTrendChart"></canvas>
                 </div>
             </div>
-            <a href="import.html" class="text-sm font-medium text-blue-600 hover:text-blue-800">Import New Data →</a>
         </div>
 
-        <!-- Navigation Grid -->
-        <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Access</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="navGrid">
-            <!-- Navigation cards injected by JavaScript -->
+        <!-- Charts Row 2 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Top Makes -->
+            <div class="glass-panel rounded-xl p-5 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">Vehicles by Make</h3>
+                    <button onclick="expandChart('makes')" class="text-sm text-blue-600 hover:text-blue-800">Expand</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="makesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Workflow Pipeline -->
+            <div class="glass-panel rounded-xl p-5 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">Workflow Pipeline</h3>
+                    <button onclick="expandChart('workflow')" class="text-sm text-blue-600 hover:text-blue-800">Expand</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="workflowChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboards & Aging Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Sales Leaderboard (Last 7 Days) -->
+            <div class="glass-panel rounded-xl p-5 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">🏆 Sales Leaderboard (Last 7 Days)</h3>
+                    <span class="text-xs text-slate-500">Top Performers</span>
+                </div>
+                <div id="salesLeaderboard" class="space-y-2">
+                    <p class="text-slate-500 text-sm text-center py-4">Loading leaderboard...</p>
+                </div>
+            </div>
+
+            <!-- Longest in Stock (Aging) -->
+            <div class="glass-panel rounded-xl p-5 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">⚠️ Longest in Stock</h3>
+                    <span class="text-xs text-red-500 font-medium">Needs Attention</span>
+                </div>
+                <div id="agingReport" class="space-y-2">
+                    <p class="text-slate-500 text-sm text-center py-4">Loading aging data...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="glass-panel rounded-xl p-5 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="import.html" class="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition group">
+                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-medium text-slate-900">Import Stock</p>
+                        <p class="text-xs text-slate-500">Upload CSV</p>
+                    </div>
+                </a>
+                
+                <a href="inventory.html" class="flex items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition group">
+                    <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-medium text-slate-900">View Inventory</p>
+                        <p class="text-xs text-slate-500">All vehicles</p>
+                    </div>
+                </a>
+                
+                <a href="workflow.html" class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition group">
+                    <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-medium text-slate-900">Workflow</p>
+                        <p class="text-xs text-slate-500">Track progress</p>
+                    </div>
+                </a>
+                
+                <a href="index.html" class="flex items-center p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition group">
+                    <div class="w-10 h-10 bg-slate-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-medium text-slate-900">Operations</p>
+                        <p class="text-xs text-slate-500">Legacy view</p>
+                    </div>
+                </a>
+            </div>
         </div>
 
     </main>
 
-    <script src="js/auth.js"></script>
+    <script src="js/reference-data.js"></script>
     <script src="js/vehicle-store.js"></script>
     <script>
-        // Initialize dashboard
+        // Chart instances
+        let charts = {};
+        
         document.addEventListener('DOMContentLoaded', function() {
-            // Update KPIs
-            updateKPIs();
-            
-            // Build navigation
-            buildNavigation();
-            
-            // Update last import info
-            updateImportInfo();
+            Auth.updateUI();
+            loadDashboardData();
         });
 
-        function updateKPIs() {
+        function loadDashboardData() {
             const vehicles = VehicleStore.getAll();
             
-            document.getElementById('totalStock').textContent = vehicles.length;
-            
-            const overdue = vehicles.filter(v => v.daysInStock > 60).length;
-            document.getElementById('overdueUnits').textContent = overdue;
-            
-            const lossMakers = vehicles.filter(v => v.estimatedLoss && v.estimatedLoss > 0).length;
-            document.getElementById('lossMakers').textContent = lossMakers;
-            
-            const ready = vehicles.filter(v => v.status === 'In Stock' && v.readyForSale).length;
-            document.getElementById('readyForSale').textContent = ready;
+            updateKeyMetrics(vehicles);
+            createStatusChart(vehicles);
+            createLocationChart(vehicles);
+            createSalesTrendChart();
+            createMakesChart(vehicles);
+            createWorkflowChart(vehicles);
+            loadSalesLeaderboard();
+            loadAgingReport(vehicles);
         }
 
-        function buildNavigation() {
-            const navGrid = document.getElementById('navGrid');
-            const navItems = Auth.getNavigation();
+        function updateKeyMetrics(vehicles) {
+            const totalCost = vehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0);
+            const totalRetail = vehicles.reduce((sum, v) => sum + (v.retailPrice || 0), 0);
+            const margin = totalRetail - totalCost;
+            const inStock = vehicles.filter(v => v.status === 'In Stock').length;
             
-            const iconMap = {
-                'home': 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
-                'truck': 'M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0',
-                'cogs': 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
-                'chart-bar': 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
-                'users': 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
-                'pound-sign': 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M12 14v7m-3-3h6M4 6h16M4 6v12a2 2 0 002 2h12a2 2 0 002-2V6',
-                'spray-can': 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01',
-                'bell': 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
-                'file-upload': 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12',
-                'database': 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4'
-            };
+            // Calculate margin percentage
+            const marginPercent = totalCost > 0 ? ((margin / totalCost) * 100).toFixed(1) : 0;
+            
+            document.getElementById('totalStockValue').textContent = '£' + totalCost.toLocaleString();
+            document.getElementById('totalVehicles').textContent = vehicles.length;
+            document.getElementById('inStockCount').textContent = inStock;
+            document.getElementById('potentialMargin').textContent = '£' + margin.toLocaleString();
+            document.getElementById('marginPercent').textContent = marginPercent + '%';
+            
+            // Mock sales data (would come from sales records)
+            document.getElementById('monthlySales').textContent = '£' + (totalCost * 0.15).toLocaleString();
+            document.getElementById('carsSold').textContent = Math.floor(vehicles.length * 0.1);
+            document.getElementById('valueTrend').textContent = '+' + (Math.random() * 10 + 5).toFixed(1) + '%';
+        }
 
-            navItems.forEach(item => {
-                const card = document.createElement('a');
-                card.href = item.url;
-                card.className = 'nav-card bg-white rounded-xl shadow-sm p-6 border border-slate-200 block hover:border-blue-400';
-                
-                card.innerHTML = `
-                    <div class="flex items-start justify-between">
-                        <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconMap[item.icon] || iconMap['home']}"/>
-                            </svg>
-                        </div>
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                    <h4 class="mt-4 text-lg font-semibold text-slate-900">${item.label}</h4>
-                    <p class="mt-1 text-sm text-slate-500">Access ${item.label.toLowerCase()} module</p>
-                `;
-                
-                navGrid.appendChild(card);
+        function createStatusChart(vehicles) {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            const statusCounts = {};
+            
+            vehicles.forEach(v => {
+                const status = v.status || 'Unknown';
+                statusCounts[status] = (statusCounts[status] || 0) + 1;
+            });
+            
+            const colors = {
+                'In Stock': '#10b981',
+                'In Transit': '#f59e0b',
+                'Off-site R': '#ef4444',
+                'Subject to': '#8b5cf6',
+                'Sold': '#6b7280'
+            };
+            
+            charts.status = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(statusCounts),
+                    datasets: [{
+                        data: Object.values(statusCounts),
+                        backgroundColor: Object.keys(statusCounts).map(s => colors[s] || '#9ca3af'),
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const status = Object.keys(statusCounts)[index];
+                            window.location.href = `inventory.html?status=${encodeURIComponent(status)}`;
+                        }
+                    }
+                }
+            });
+            
+            // Create custom legend
+            const legendHtml = Object.entries(statusCounts).map(([status, count]) => `
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 transition" 
+                      style="background-color: ${colors[status] || '#9ca3af'}20; color: ${colors[status] || '#9ca3af'}"
+                      onclick="window.location.href='inventory.html?status=${encodeURIComponent(status)}'">
+                    <span class="w-2 h-2 rounded-full mr-2" style="background-color: ${colors[status] || '#9ca3af'}"></span>
+                    ${status}: ${count}
+                </span>
+            `).join('');
+            document.getElementById('statusLegend').innerHTML = legendHtml;
+        }
+
+        function createLocationChart(vehicles) {
+            const ctx = document.getElementById('locationChart').getContext('2d');
+            const locationCounts = {};
+            
+            vehicles.forEach(v => {
+                const loc = v.location || 'Unknown';
+                locationCounts[loc] = (locationCounts[loc] || 0) + 1;
+            });
+            
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+            
+            charts.location = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(locationCounts),
+                    datasets: [{
+                        data: Object.values(locationCounts),
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const location = Object.keys(locationCounts)[index];
+                            window.location.href = `inventory.html?location=${encodeURIComponent(location)}`;
+                        }
+                    }
+                }
+            });
+            
+            const legendHtml = Object.entries(locationCounts).map(([loc, count], idx) => `
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 transition" 
+                      style="background-color: ${colors[idx % colors.length]}20; color: ${colors[idx % colors.length]}"
+                      onclick="window.location.href='inventory.html?location=${encodeURIComponent(loc)}'">
+                    <span class="w-2 h-2 rounded-full mr-2" style="background-color: ${colors[idx % colors.length]}"></span>
+                    ${loc}: ${count}
+                </span>
+            `).join('');
+            document.getElementById('locationLegend').innerHTML = legendHtml;
+        }
+
+        function createSalesTrendChart() {
+            const ctx = document.getElementById('salesTrendChart').getContext('2d');
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const data = days.map(() => Math.floor(Math.random() * 5) + 1);
+            
+            charts.salesTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Cars Sold',
+                        data: data,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
             });
         }
 
-        function updateImportInfo() {
-            const lastImport = localStorage.getItem('capeye_last_import');
-            if (lastImport) {
-                const date = new Date(lastImport);
-                document.getElementById('lastImportText').textContent = 
-                    `Last updated: ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`;
-            }
+        function createMakesChart(vehicles) {
+            const ctx = document.getElementById('makesChart').getContext('2d');
+            const makeCounts = {};
+            
+            vehicles.forEach(v => {
+                const make = v.make || 'Unknown';
+                makeCounts[make] = (makeCounts[make] || 0) + 1;
+            });
+            
+            // Sort and take top 8
+            const sortedMakes = Object.entries(makeCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 8);
+            
+            charts.makes = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedMakes.map(m => m[0]),
+                    datasets: [{
+                        label: 'Vehicles',
+                        data: sortedMakes.map(m => m[1]),
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                        x: { ticks: { maxRotation: 45 } }
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const make = sortedMakes[index][0];
+                            window.location.href = `inventory.html?make=${encodeURIComponent(make)}`;
+                        }
+                    }
+                }
+            });
+        }
+
+        function createWorkflowChart(vehicles) {
+            const ctx = document.getElementById('workflowChart').getContext('2d');
+            
+            // Mock workflow stages (would come from actual workflow data)
+            const stages = {
+                'Intake': vehicles.filter(v => !v.prepStatus).length,
+                'Workshop': vehicles.filter(v => v.workshopStatus === 'In Progress').length,
+                'Bodywork': vehicles.filter(v => v.bodyworkStatus === 'In Progress').length,
+                'Valet': vehicles.filter(v => v.valetStatus === 'In Progress').length,
+                'Ready': vehicles.filter(v => v.prepStatus === 'Complete').length
+            };
+            
+            charts.workflow = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(stages),
+                    datasets: [{
+                        label: 'Vehicles',
+                        data: Object.values(stages),
+                        backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function loadSalesLeaderboard() {
+            // Mock sales data (would come from sales records)
+            const salesPeople = [
+                { name: 'Ibrahim Ata', sales: 12, value: 245000 },
+                { name: 'Keith Hardy', sales: 8, value: 189000 },
+                { name: 'Ali Amood', sales: 6, value: 134000 },
+                { name: 'Adam Smith', sales: 5, value: 112000 },
+                { name: 'Morty Rahamian', sales: 3, value: 67000 }
+            ];
+            
+            const html = salesPeople.map((person, idx) => `
+                <div class="leaderboard-item flex items-center justify-between p-3 rounded-lg ${idx === 0 ? 'bg-yellow-50 border border-yellow-200' : ''}">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full ${idx === 0 ? 'bg-yellow-500' : idx === 1 ? 'bg-slate-400' : idx === 2 ? 'bg-orange-400' : 'bg-slate-200'} 
+                                    flex items-center justify-center text-white font-bold text-sm mr-3">
+                            ${idx + 1}
+                        </div>
+                        <div>
+                            <p class="font-medium text-slate-900 ${idx === 0 ? 'text-yellow-800' : ''}">${person.name}</p>
+                            <p class="text-xs text-slate-500">${person.sales} cars sold</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold text-slate-900">£${person.value.toLocaleString()}</p>
+                        <p class="text-xs text-green-600">+£${(person.value * 0.15).toLocaleString()} margin</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('salesLeaderboard').innerHTML = html;
+        }
+
+        function loadAgingReport(vehicles) {
+            const sorted = [...vehicles]
+                .filter(v => v.daysInStock)
+                .sort((a, b) => b.daysInStock - a.daysInStock)
+                .slice(0, 5);
+            
+            const html = sorted.map((v, idx) => `
+                <div class="leaderboard-item flex items-center justify-between p-3 rounded-lg ${v.daysInStock > 90 ? 'bg-red-50 border border-red-200' : v.daysInStock > 60 ? 'bg-orange-50' : 'bg-slate-50'}">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg ${v.daysInStock > 90 ? 'bg-red-500' : v.daysInStock > 60 ? 'bg-orange-500' : 'bg-slate-400'} 
+                                    flex items-center justify-center text-white font-bold text-xs mr-3">
+                            ${v.daysInStock}d
+                        </div>
+                        <div>
+                            <p class="font-medium text-slate-900">${v.make} ${v.model}</p>
+                            <p class="text-xs text-slate-500">${v.stockNo || v.registration || 'N/A'} • ${v.location}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold text-slate-900">£${(v.costPrice || 0).toLocaleString()}</p>
+                        <p class="text-xs ${v.daysInStock > 90 ? 'text-red-600 font-medium' : 'text-slate-500'}">
+                            ${v.daysInStock > 90 ? '⚠️ Action Required' : 'In stock'}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('agingReport').innerHTML = html || '<p class="text-slate-500 text-sm text-center py-4">No aging data available</p>';
+        }
+
+        function toggleDetail(sectionId) {
+            // Implementation for expanding metric details
+            console.log('Toggle detail:', sectionId);
+        }
+
+        function expandChart(chartType) {
+            // Implementation for expanding charts to full view
+            console.log('Expand chart:', chartType);
+            alert(`Expand ${chartType} chart - Full analytics view coming soon!`);
+        }
+
+        function refreshDashboard() {
+            const btn = document.querySelector('button[onclick="refreshDashboard()"]');
+            btn.innerHTML = '<svg class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4 9v10a2 2 0 002 2h12a2 2 0 002-2V9"/></svg>Refreshing...';
+            
+            setTimeout(() => {
+                loadDashboardData();
+                btn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4 9v10a2 2 0 002 2h12a2 2 0 002-2V9"/></svg>Refresh';
+            }, 1000);
         }
     </script>
 </body>
