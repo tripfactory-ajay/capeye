@@ -244,7 +244,7 @@ const CSVParser = {
             errors.push('CSV must have either Stock No or Registration column');
         }
         
-        // Check for empty identifiers
+        // Check for empty identifiers - WARNING only (not blocking)
         const emptyIds = data.filter((row, idx) => {
             const noStock = !row.stockNo || row.stockNo.toString().trim() === '';
             const noReg = !row.registration || row.registration.toString().trim() === '';
@@ -252,17 +252,23 @@ const CSVParser = {
         });
         
         if (emptyIds.length > 0) {
-            errors.push(`${emptyIds.length} rows missing both Stock No and Registration`);
+            // Only make this an error if more than 5% of rows are affected
+            const threshold = Math.ceil(data.length * 0.05);
+            if (emptyIds.length > threshold) {
+                errors.push(`${emptyIds.length} rows missing both Stock No and Registration (${Math.round(emptyIds.length/data.length*100)}% of data)`);
+            } else {
+                warnings.push(`${emptyIds.length} rows missing both Stock No and Registration - these will be skipped during import`);
+            }
         }
         
-        // Check for duplicate Stock Nos
+        // Check for duplicate Stock Nos - WARNING only
         const stockNos = data.map(r => r.stockNo).filter(Boolean);
         const dupStocks = stockNos.filter((item, index) => stockNos.indexOf(item) !== index);
         if (dupStocks.length > 0) {
-            warnings.push(`Duplicate Stock Nos found: ${[...new Set(dupStocks)].slice(0, 5).join(', ')}${dupStocks.length > 5 ? '...' : ''}`);
+            warnings.push(`Duplicate Stock Nos found: ${[...new Set(dupStocks)].slice(0, 5).join(', ')}${dupStocks.length > 5 ? '...' : ''} - duplicates will update the same record`);
         }
         
-        // Check data quality
+        // Check data quality - all warnings only
         const noMake = data.filter(r => !r.make).length;
         const noModel = data.filter(r => !r.model).length;
         const noPrice = data.filter(r => !r.costPrice && !r.retailPrice).length;
