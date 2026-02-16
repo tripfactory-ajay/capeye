@@ -1,22 +1,317 @@
-{
-  "name": "Capeye Auto Capital",
-  "short_name": "Capeye",
-  "description": "Auto Capital Workshop & Sales Management",
-  "start_url": "/mobile-app.html",
-  "display": "standalone",
-  "background_color": "#1e40af",
-  "theme_color": "#1e40af",
-  "orientation": "portrait",
-  "icons": [
-    {
-      "src": "autocapital-logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "autocapital-logo.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
-}
+'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Capeye Mobile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f4f6; }
+        .screen { display: none; min-height: 100vh; }
+        .screen.active { display: block; }
+        .btn { background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; border: none; font-size: 16px; width: 100%; margin: 8px 0; cursor: pointer; }
+        .btn-secondary { background: #6b7280; }
+        .btn-success { background: #059669; }
+        .card { background: white; padding: 16px; margin: 8px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; }
+        .checkbox { display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; margin: 4px 0; }
+        .checkbox input { width: auto; margin: 0; }
+        .hidden { display: none !important; }
+        #splash { position: fixed; inset: 0; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; margin-top: 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .section-title { background: #1e40af; color: white; padding: 12px; margin: -16px -16px 16px -16px; border-radius: 12px 12px 0 0; font-weight: bold; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-around; padding: 8px; }
+        .nav-btn { background: none; border: none; color: #6b7280; font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-btn.active { color: #2563eb; }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash">
+        <h1 style="color: white; font-size: 32px; font-weight: bold;">AUTO CAPITAL</h1>
+        <p style="color: #93c5fd; margin-top: 8px;">Capeye Mobile</p>
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen">
+        <div style="padding: 40px 20px; text-align: center;">
+            <h1 style="font-size: 28px; color: #1e40af; margin-bottom: 8px;">Capeye</h1>
+            <p style="color: #6b7280; margin-bottom: 32px;">Workshop & Sales App</p>
+            
+            <div class="card">
+                <select id="dept-select" onchange="updateStaff()">
+                    <option value="">Select Department</option>
+                    <option value="sales">Sales</option>
+                    <option value="workshop">Workshop</option>
+                    <option value="bodyshop">Bodyshop</option>
+                    <option value="valeting">Valeting</option>
+                    <option value="accounts">Accounts</option>
+                    <option value="management">Management</option>
+                </select>
+                
+                <select id="staff-select" disabled>
+                    <option value="">Select Staff</option>
+                </select>
+                
+                <input type="password" id="password" placeholder="Password" value="Cap">
+                
+                <button class="btn" onclick="login()">Sign In</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Screen -->
+    <div id="main-screen" class="screen" style="padding-bottom: 80px;">
+        <div style="background: #1e40af; color: white; padding: 16px;">
+            <h2 style="font-size: 20px;">Capeye</h2>
+            <p id="dept-display" style="font-size: 14px; opacity: 0.8;">Sales</p>
+        </div>
+
+        <div style="padding: 16px;">
+            <input type="text" id="search-input" placeholder="Search Stock No or Reg...">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0;">
+                <button class="btn" onclick="openForm('intake')" style="margin: 0;">New Intake</button>
+                <button class="btn btn-secondary" onclick="openForm('workflow')" style="margin: 0;">Workflow</button>
+            </div>
+
+            <h3 style="margin: 16px 8px 8px 8px; color: #374151;">Recent Vehicles</h3>
+            <div id="vehicle-list"></div>
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-btn active" onclick="showScreen('main-screen')">Home</button>
+            <button class="nav-btn" onclick="document.getElementById('search-input').focus()">Search</button>
+            <button class="nav-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- Form Screen -->
+    <div id="form-screen" class="screen" style="padding-bottom: 80px;">
+        <div style="background: #1e40af; color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <h2 id="form-title">Vehicle Form</h2>
+            <button onclick="closeForm()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 12px; border-radius: 6px;">Close</button>
+        </div>
+
+        <div style="padding: 16px;" id="form-content">
+            <!-- Dynamic form content -->
+        </div>
+
+        <div style="padding: 16px; background: white; border-top: 1px solid #e5e7eb; position: fixed; bottom: 0; left: 0; right: 0;">
+            <button class="btn btn-success" onclick="submitForm()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        // Staff database
+        const staffDB = {
+            sales: ['Ibrahim Ata', 'Sales Person 1'],
+            workshop: ['Ali', 'Morteza Rahamian', 'Marcin Kiljan', 'Sia Vajihi', 'Iman Zarien'],
+            bodyshop: ['Stash'],
+            valeting: ['Marcin'],
+            accounts: ['Keith Hardy'],
+            management: ['Ajay Kawa', 'Keith Hardy']
+        };
+
+        const deptAccess = {
+            sales: ['intake', 'ready', 'delivery'],
+            workshop: ['bodywork', 'mechanical', 'external', 'paint', 'fault'],
+            bodyshop: ['bodywork', 'paint'],
+            valeting: ['valeting'],
+            accounts: ['accounts'],
+            management: ['intake', 'bodywork', 'mechanical', 'external', 'paint', 'valeting', 'ready', 'delivery', 'accounts', 'fault']
+        };
+
+        let currentDept = null;
+        let currentUser = null;
+        let currentForm = null;
+
+        // Initialize
+        setTimeout(() => {
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('login-screen').classList.add('active');
+        }, 2000);
+
+        function updateStaff() {
+            const dept = document.getElementById('dept-select').value;
+            const staffSelect = document.getElementById('staff-select');
+            staffSelect.innerHTML = '<option value="">Select Staff</option>';
+            
+            if (staffDB[dept]) {
+                staffDB[dept].forEach(name => {
+                    staffSelect.innerHTML += `<option value="${name}">${name}</option>`;
+                });
+                staffSelect.disabled = false;
+            } else {
+                staffSelect.disabled = true;
+            }
+        }
+
+        function login() {
+            const dept = document.getElementById('dept-select').value;
+            const staff = document.getElementById('staff-select').value;
+            const password = document.getElementById('password').value;
+
+            if (!dept || !staff) { alert('Select department and staff'); return; }
+            if (password !== 'Cap') { alert('Wrong password'); return; }
+
+            currentDept = dept;
+            currentUser = staff;
+            
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('main-screen').classList.add('active');
+            document.getElementById('dept-display').textContent = dept.charAt(0).toUpperCase() + dept.slice(1);
+            
+            loadVehicles();
+        }
+
+        function logout() {
+            currentDept = null;
+            currentUser = null;
+            document.getElementById('main-screen').classList.remove('active');
+            document.getElementById('form-screen').classList.remove('active');
+            document.getElementById('login-screen').classList.add('active');
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function loadVehicles() {
+            const vehicles = [
+                {stock: 'R0218', reg: 'RF66UBC', make: 'VW', model: 'Transporter', status: 'In Workshop'},
+                {stock: 'R0461', reg: 'CU21NBO', make: 'Ford', model: 'Transit', status: 'Valeting'},
+                {stock: '11064', reg: 'ENQUIRY', make: 'Mercedes', model: 'Sprinter', status: 'In Stock'}
+            ];
+            
+            document.getElementById('vehicle-list').innerHTML = vehicles.map(v => `
+                <div class="card" onclick="selectVehicle('${v.stock}', '${v.reg}')" style="cursor: pointer;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${v.stock}</strong> - ${v.reg}<br>
+                            <small style="color: #6b7280;">${v.make} ${v.model}</small>
+                        </div>
+                        <span style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 12px; font-size: 12px;">${v.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectVehicle(stock, reg) {
+            openForm('workflow');
+        }
+
+        function openForm(type) {
+            currentForm = type;
+            const accessible = deptAccess[currentDept] || [];
+            let html = '';
+
+            // Stock/Reg input always shown
+            html += `
+                <div class="card">
+                    <div class="section-title">Vehicle Details</div>
+                    <input type="text" id="form-stock" placeholder="Stock Number (e.g., R0218)">
+                    <input type="text" id="form-reg" placeholder="Registration (e.g., RF66UBC)">
+                </div>
+            `;
+
+            if (type === 'intake' && accessible.includes('intake')) {
+                document.getElementById('form-title').textContent = 'Vehicle Intake';
+                html += `
+                    <div class="card">
+                        <div class="section-title">Intake Checklist</div>
+                        <label class="checkbox"><input type="checkbox"> Keys Received</label>
+                        <label class="checkbox"><input type="checkbox"> V5C Logbook</label>
+                        <label class="checkbox"><input type="checkbox"> Service History</label>
+                        <label class="checkbox"><input type="checkbox"> Spare Wheel</label>
+                        <select>
+                            <option>Location: Stanmore Retail</option>
+                            <option>Location: Stanmore 2</option>
+                            <option>Location: PDI</option>
+                        </select>
+                        <textarea placeholder="Initial condition notes..."></textarea>
+                    </div>
+                `;
+            }
+            else if (type === 'workflow') {
+                document.getElementById('form-title').textContent = 'Workflow Update';
+                
+                if (accessible.includes('bodywork')) {
+                    html += `
+                        <div class="card">
+                            <div class="section-title">Bodywork</div>
+                            <label class="checkbox"><input type="checkbox"> Dents checked</label>
+                            <label class="checkbox"><input type="checkbox"> Scratches noted</label>
+                            <label class="checkbox"><input type="checkbox"> Rust assessment</label>
+                            <input type="text" placeholder="Damage description">
+                        </div>
+                    `;
+                }
+                
+                if (accessible.includes('mechanical')) {
+                    html += `
+                        <div class="card">
+                            <div class="section-title">Mechanical</div>
+                            <label class="checkbox"><input type="checkbox"> Engine running</label>
+                            <label class="checkbox"><input type="checkbox"> Brakes OK</label>
+                            <label class="checkbox"><input type="checkbox"> Oil changed</label>
+                            <select>
+                                <option>Status: Running - No Issues</option>
+                                <option>Status: Needs Attention</option>
+                                <option>Status: Non-Runner</option>
+                            </select>
+                        </div>
+                    `;
+                }
+
+                if (accessible.includes('valeting')) {
+                    html += `
+                        <div class="card">
+                            <div class="section-title">Valeting</div>
+                            <label class="checkbox"><input type="checkbox"> Seats shampooed</label>
+                            <label class="checkbox"><input type="checkbox"> Carpets cleaned</label>
+                            <label class="checkbox"><input type="checkbox"> Windows cleaned</label>
+                            <label class="checkbox"><input type="checkbox"> Dashboard dressed</label>
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('form-content').innerHTML = html;
+            showScreen('form-screen');
+        }
+
+        function closeForm() {
+            showScreen('main-screen');
+        }
+
+        function submitForm() {
+            const stock = document.getElementById('form-stock').value;
+            const reg = document.getElementById('form-reg').value;
+            
+            if (!stock) { alert('Enter stock number'); return; }
+            
+            // Save to localStorage
+            const data = {
+                stock: stock,
+                reg: reg,
+                dept: currentDept,
+                user: currentUser,
+                form: currentForm,
+                time: new Date().toLocaleString()
+            };
+            
+            let saved = JSON.parse(localStorage.getItem('capeye_forms') || '[]');
+            saved.push(data);
+            localStorage.setItem('capeye_forms', JSON.stringify(saved));
+            
+            alert('Form saved!');
+            closeForm();
+        }
+    </script>
+</body>
+</html>
