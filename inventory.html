@@ -3,47 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capeye - Inventory</title>
+    <title>Inventory - CapEYE Auto Capital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .status-badge { @apply px-2 py-1 rounded-full text-xs font-medium; }
+        .nav-link.active {
+            background-color: #3B82F6;
+            color: white !important;
+        }
+        .nav-link.active:hover {
+            background-color: #2563EB;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5;        }
+        }
+        .table-row {
+            transition: all 0.2s ease;
+        }
+        .table-row:hover {
+            background-color: #F3F4F6;
+        }
+        .status-badge {
+            transition: all 0.2s ease;
+        }
+        .status-badge:hover {
+            transform: scale(1.05);
+        }
+        /* Custom scrollbar */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #F3F4F6;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF;
+        }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
-    <!-- Auth Check -->
-    <script src="js/auth.js"></script>
-    <script>
-        if (!Auth.isAuthenticated()) {
-            window.location.href = 'login.html';
-        }
-    </script>
-
-    <!-- Header -->
-    <header class="bg-slate-900 text-white shadow-lg">
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation Header -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+            <div class="flex justify-between h-16">
+                <!-- Logo Section -->
                 <div class="flex items-center">
-                    <a href="dashboard.html" class="flex items-center hover:opacity-80 transition">
-                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <div class="flex-shrink-0 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
                         </div>
-                        <div class="ml-4">
-                            <h1 class="text-xl font-bold">Capeye</h1>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">CapEYE</h1>
+                            <p class="text-xs text-gray-500">Auto Capital Intelligence</p>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-1">
+                    <a href="index.html" id="nav-welcome" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
+                        Dashboard
+                    </a>
+                    <a href="operations.html" id="nav-operations" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
+                        Operations
+                    </a>
+                    <a href="inventory.html" id="nav-inventory" class="nav-link active px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                        Inventory
+                    </a>
+                    <a href="workflow.html" id="nav-workflow" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
+                        Workflow
+                    </a>
+                    <a href="analytics.html" id="nav-analytics" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
+                        Analytics
                     </a>
                 </div>
                 
-                <div class="flex items-center space-x-4">
-                    <div class="text-right hidden sm:block">
-                        <p class="text-sm font-medium user-name">Loading...</p>
-                        <p class="text-xs text-slate-400 user-role">Loading...</p>
+                <!-- Right Side Actions -->
+                <div class="flex items-center gap-3">
+                    <button onclick="refreshData()" class="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all" title="Refresh Data">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                    </button>
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-200">
+                        <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+                        <span class="text-xs font-medium text-green-700">Live</span>
                     </div>
-                    <button class="logout-btn p-2 rounded-lg hover:bg-slate-800 transition" title="Logout">
+                    <button onclick="logout()" class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Logout">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                         </svg>
@@ -51,323 +112,516 @@
                 </div>
             </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Page Header -->
-        <div class="mb-8">
-            <div class="flex items-center text-sm text-slate-500 mb-2">
-                <a href="dashboard.html" class="hover:text-blue-600">Dashboard</a>
-                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-slate-900">Inventory</span>
-            </div>
-            <div class="flex justify-between items-center">
+        <!-- Header -->
+        <div class="mb-6">
+            <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-900">Vehicle Inventory</h2>
-                    <p class="text-slate-600 mt-1">Manage and track all vehicles in stock.</p>
+                    <h1 class="text-3xl font-bold text-gray-900">Vehicle Inventory</h1>
+                    <p class="text-gray-600 mt-1" id="inventorySummary">Loading inventory...</p>
                 </div>
-                <div class="flex space-x-3">
-                    <a href="import.html" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-3">
+                    <button onclick="window.location.href='import.html'" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                         </svg>
-                        Import CSV
-                    </a>
+                        Import Stock
+                    </button>
+                    <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Add Vehicle
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Import Status Banner -->
-        <div id="importStatus" class="hidden mb-6 p-4 rounded-lg border">
-            <!-- Populated by JS -->
-        </div>
+        <!-- Filters & Search -->
+        <div class="glass-panel rounded-xl p-4 shadow-sm mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                <!-- Search -->
+                <div class="lg:col-span-2">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Search</label>
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Stock No, Reg, Make, Model..." 
+                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                               onkeyup="filterInventory()">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                </div>
 
-        <!-- Filters -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Status Filter -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Search</label>
-                    <input type="text" id="searchInput" placeholder="Reg, Make, Model..." 
-                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                    <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" onchange="filterInventory()">
+                        <option value="">All Status</option>
+                        <option value="In Stock">In Stock</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Off-site R">Off-site R</option>
+                        <option value="Subject to">Subject to</option>
+                        <option value="Sold">Sold</option>
+                    </select>
                 </div>
+
+                <!-- Location Filter -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Location</label>
-                    <select id="locationFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Location</label>
+                    <select id="locationFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" onchange="filterInventory()">
                         <option value="">All Locations</option>
+                        <option value="Stanmore Retail">Stanmore Retail</option>
+                        <option value="Stanmore 2">Stanmore 2</option>
+                        <option value="Stanmore PDI">Stanmore PDI</option>
+                        <option value="With Supplier">With Supplier</option>
+                        <option value="ACL">ACL</option>
                     </select>
                 </div>
+
+                <!-- Make Filter -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
-                    <select id="statusFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Statuses</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Make</label>
-                    <select id="makeFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Make</label>
+                    <select id="makeFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" onchange="filterInventory()">
                         <option value="">All Makes</option>
                     </select>
                 </div>
-            </div>
-            <div class="mt-4 flex justify-between items-center">
-                <div class="text-sm text-slate-500">
-                    Showing <span id="showingCount" class="font-medium text-slate-900">0</span> of <span id="totalCount" class="font-medium text-slate-900">0</span> vehicles
+
+                <!-- Clear Filters -->
+                <div class="flex items-end">
+                    <button onclick="clearFilters()" class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                        Clear Filters
+                    </button>
                 </div>
-                <button onclick="clearFilters()" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Clear Filters</button>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
+            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('status', 'In Stock')">
+                <p class="text-2xl font-bold text-green-600" id="statInStock">0</p>
+                <p class="text-xs text-gray-600">In Stock</p>
+            </div>
+            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('status', 'In Transit')">
+                <p class="text-2xl font-bold text-yellow-600" id="statInTransit">0</p>
+                <p class="text-xs text-gray-600">In Transit</p>
+            </div>
+            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('status', 'Off-site R')">
+                <p class="text-2xl font-bold text-red-600" id="statOffsite">0</p>
+                <p class="text-xs text-gray-600">Off-site R</p>
+            </div>
+            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('status', 'Subject to')">
+                <p class="text-2xl font-bold text-purple-600" id="statSubject">0</p>
+                <p class="text-xs text-gray-600">Subject to</p>
+            </div>
+            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('status', 'Sold')">
+                <p class="text-2xl font-bold text-gray-600" id="statSold">0</p>
+                <p class="text-xs text-gray-600">Sold</p>
+            </div>
+            <div class="glass-panel rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition-shadow">
+                <p class="text-2xl font-bold text-blue-600" id="statTotal">0</p>
+                <p class="text-xs text-gray-600">Total</p>
             </div>
         </div>
 
         <!-- Inventory Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-200">
-                    <thead class="bg-slate-50">
+        <div class="glass-panel rounded-xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto custom-scroll">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Registration</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Vehicle</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Location</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Days in Stock</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Cost Price</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Retail Price</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('stockNo')">
+                                Stock No ↕
+                            </th>
+                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('registration')">
+                                Reg ↕
+                            </th>
+                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('make')">
+                                Vehicle ↕
+                            </th>
+                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('location')">
+                                Location ↕
+                            </th>
+                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('status')">
+                                Status ↕
+                            </th>
+                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('costPrice')">
+                                Cost Price ↕
+                            </th>
+                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('retailPrice')">
+                                Retail ↕
+                            </th>
+                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('daysInStock')">
+                                Days ↕
+                            </th>
+                            <th class="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Actions
+                            </th>
                         </tr>
                     </thead>
-                    <tbody id="inventoryTable" class="bg-white divide-y divide-slate-200">
+                    <tbody id="inventoryTableBody" class="divide-y divide-gray-200">
                         <!-- Populated by JS -->
                     </tbody>
                 </table>
             </div>
             
-            <!-- Empty State -->
-            <div id="emptyState" class="hidden p-12 text-center">
-                <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                </svg>
-                <p class="text-slate-500 text-lg font-medium">No vehicles found</p>
-                <p class="text-slate-400 text-sm mt-1">Import data or adjust your filters</p>
-                <a href="import.html" class="inline-block mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition">Import Vehicles</a>
+            <!-- Pagination -->
+            <div class="px-4 py-3 border-t border-gray-200 flex items-center justify-between">
+                <div class="text-sm text-gray-600">
+                    Showing <span id="showingFrom">0</span> to <span id="showingTo">0</span> of <span id="totalRecords">0</span> vehicles
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="changePage(-1)" id="prevBtn" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Previous
+                    </button>
+                    <span class="text-sm text-gray-600">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+                    <button onclick="changePage(1)" id="nextBtn" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
-
     </main>
 
-    <script src="js/reference-data.js"></script>
-    <script src="js/vehicle-store.js"></script>
+    <!-- Vehicle Detail Modal -->
+    <div id="vehicleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+                <h2 class="text-xl font-bold text-gray-900" id="modalTitle">Vehicle Details</h2>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6" id="modalContent">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Current filtered data
-        let currentData = [];
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            Auth.updateUI();
-            checkImportStatus();
-            populateFilters();
-            loadInventory();
-            
-            // Event listeners
-            document.getElementById('searchInput').addEventListener('input', debounce(loadInventory, 300));
-            document.getElementById('locationFilter').addEventListener('change', loadInventory);
-            document.getElementById('statusFilter').addEventListener('change', loadInventory);
-            document.getElementById('makeFilter').addEventListener('change', loadInventory);
-        });
-
-        function checkImportStatus() {
-            const lastImport = localStorage.getItem('capeye_last_import');
-            const banner = document.getElementById('importStatus');
-            
-            if (!lastImport) {
-                banner.classList.remove('hidden');
-                banner.className = 'mb-6 p-4 rounded-lg border bg-yellow-50 border-yellow-200';
-                banner.innerHTML = `
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                        </svg>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-yellow-900">No data imported yet</p>
-                            <p class="text-sm text-yellow-700">Import your ClickDealer CSV to see vehicles</p>
-                        </div>
-                        <a href="import.html" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white text-sm font-medium rounded-lg transition">Import Now</a>
-                    </div>
-                `;
-                return;
-            }
-            
-            const importDate = new Date(lastImport);
-            const hoursSince = (new Date() - importDate) / (1000 * 60 * 60);
-            
-            if (hoursSince > 48) {
-                banner.classList.remove('hidden');
-                banner.className = 'mb-6 p-4 rounded-lg border bg-orange-50 border-orange-200';
-                banner.innerHTML = `
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-orange-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-orange-900">Data is ${Math.floor(hoursSince / 24)} days old</p>
-                            <p class="text-sm text-orange-700">Last import: ${importDate.toLocaleDateString()}</p>
-                        </div>
-                        <a href="import.html" class="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white text-sm font-medium rounded-lg transition">Update Data</a>
-                    </div>
-                `;
-            } else {
-                banner.classList.remove('hidden');
-                banner.className = 'mb-6 p-4 rounded-lg border bg-green-50 border-green-200';
-                banner.innerHTML = `
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <div>
-                            <p class="text-sm font-medium text-green-900">Data up to date</p>
-                            <p class="text-sm text-green-700">Last import: ${importDate.toLocaleString()}</p>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        function populateFilters() {
-            // Populate from reference data
-            ReferenceData.populateSelect('locationFilter', 'locations', { includeEmpty: true, emptyLabel: 'All Locations' });
-            ReferenceData.populateSelect('statusFilter', 'statuses', { includeEmpty: true, emptyLabel: 'All Statuses' });
-            ReferenceData.populateSelect('makeFilter', 'manufacturers', { includeEmpty: true, emptyLabel: 'All Makes' });
-        }
+        let allVehicles = [];
+        let filteredVehicles = [];
+        let currentPage = 1;
+        const itemsPerPage = 25;
+        let sortColumn = '';
+        let sortDirection = 'asc';
 
         function loadInventory() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const location = document.getElementById('locationFilter').value;
-            const status = document.getElementById('statusFilter').value;
-            const make = document.getElementById('makeFilter').value;
+            // Load from localStorage
+            allVehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
             
-            // Get all vehicles
-            let vehicles = VehicleStore.getAll();
+            // Check for URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const statusParam = urlParams.get('status');
+            const locationParam = urlParams.get('location');
+            const makeParam = urlParams.get('make');
+            const stockNoParam = urlParams.get('stockNo');
+            
+            if (statusParam) document.getElementById('statusFilter').value = statusParam;
+            if (locationParam) document.getElementById('locationFilter').value = locationParam;
+            if (makeParam) document.getElementById('makeFilter').value = makeParam;
+            
+            // Populate make filter
+            populateMakeFilter();
             
             // Apply filters
-            if (search) {
-                vehicles = vehicles.filter(v => 
-                    (v.registration && v.registration.toLowerCase().includes(search)) ||
-                    (v.make && v.make.toLowerCase().includes(search)) ||
-                    (v.model && v.model.toLowerCase().includes(search)) ||
-                    (v.colour && v.colour.toLowerCase().includes(search))
-                );
+            filterInventory();
+            
+            // If stockNo param, open that vehicle
+            if (stockNoParam) {
+                const vehicle = allVehicles.find(v => v.stockNo === stockNoParam);
+                if (vehicle) openVehicleModal(vehicle);
             }
-            
-            if (location) {
-                vehicles = vehicles.filter(v => v.location === location);
-            }
-            
-            if (status) {
-                vehicles = vehicles.filter(v => v.status === status);
-            }
-            
-            if (make) {
-                vehicles = vehicles.filter(v => v.make === make);
-            }
-            
-            currentData = vehicles;
-            
-            // Update counts
-            document.getElementById('showingCount').textContent = vehicles.length;
-            document.getElementById('totalCount').textContent = VehicleStore.getAll().length;
-            
-            // Render table
-            renderTable(vehicles);
         }
 
-        function renderTable(vehicles) {
-            const tbody = document.getElementById('inventoryTable');
-            const emptyState = document.getElementById('emptyState');
+        function populateMakeFilter() {
+            const makes = [...new Set(allVehicles.map(v => v.make).filter(Boolean))].sort();
+            const select = document.getElementById('makeFilter');
+            makes.forEach(make => {
+                const option = document.createElement('option');
+                option.value = make;
+                option.textContent = make;
+                select.appendChild(option);
+            });
+        }
+
+        function filterInventory() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const location = document.getElementById('locationFilter').value;
+            const make = document.getElementById('makeFilter').value;
             
-            if (vehicles.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
+            filteredVehicles = allVehicles.filter(v => {
+                const matchesSearch = !search || 
+                    (v.stockNo && v.stockNo.toLowerCase().includes(search)) ||
+                    (v.registration && v.registration.toLowerCase().includes(search)) ||
+                    (v.make && v.make.toLowerCase().includes(search)) ||
+                    (v.model && v.model.toLowerCase().includes(search));
+                
+                const matchesStatus = !status || v.status === status;
+                const matchesLocation = !location || v.location === location;
+                const matchesMake = !make || v.make === make;
+                
+                return matchesSearch && matchesStatus && matchesLocation && matchesMake;
+            });
+            
+            // Apply sorting
+            if (sortColumn) {
+                filteredVehicles.sort((a, b) => {
+                    let valA = a[sortColumn] || '';
+                    let valB = b[sortColumn] || '';
+                    
+                    if (typeof valA === 'string') valA = valA.toLowerCase();
+                    if (typeof valB === 'string') valB = valB.toLowerCase();
+                    
+                    if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+                    if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+                    return 0;
+                });
             }
             
-            emptyState.classList.add('hidden');
+            currentPage = 1;
+            updateStats();
+            renderTable();
+        }
+
+        function updateStats() {
+            const stats = {
+                'In Stock': 0,
+                'In Transit': 0,
+                'Off-site R': 0,
+                'Subject to': 0,
+                'Sold': 0
+            };
             
-            tbody.innerHTML = vehicles.map(v => {
-                const daysClass = v.daysInStock > 60 ? 'text-red-600 font-medium' : 
-                                 v.daysInStock > 30 ? 'text-orange-600' : 'text-slate-600';
-                
-                const statusColors = {
-                    'In Stock': 'bg-green-100 text-green-800',
-                    'In Transit': 'bg-blue-100 text-blue-800',
-                    'Reserved': 'bg-yellow-100 text-yellow-800',
-                    'Sold': 'bg-slate-100 text-slate-800',
-                    'Off-site R': 'bg-orange-100 text-orange-800'
-                };
-                
-                return `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                            ${v.registration}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-slate-900">${v.make} ${v.model}</div>
-                            <div class="text-sm text-slate-500">${v.variant || ''} ${v.year || ''}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                            ${v.location || '-'}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 rounded-full text-xs font-medium ${statusColors[v.status] || 'bg-slate-100 text-slate-800'}">
-                                ${v.status || 'Unknown'}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm ${daysClass}">
-                            ${v.daysInStock || 0} days
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                            ${v.costPrice ? '£' + v.costPrice.toLocaleString() : '-'}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                            ${v.retailPrice ? '£' + v.retailPrice.toLocaleString() : '-'}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button onclick="viewVehicle('${v.registration}')" class="text-blue-600 hover:text-blue-900 mr-3">View</button>
-                            <button onclick="editVehicle('${v.registration}')" class="text-slate-600 hover:text-slate-900">Edit</button>
+            allVehicles.forEach(v => {
+                if (stats[v.status] !== undefined) {
+                    stats[v.status]++;
+                }
+            });
+            
+            document.getElementById('statInStock').textContent = stats['In Stock'];
+            document.getElementById('statInTransit').textContent = stats['In Transit'];
+            document.getElementById('statOffsite').textContent = stats['Off-site R'];
+            document.getElementById('statSubject').textContent = stats['Subject to'];
+            document.getElementById('statSold').textContent = stats['Sold'];
+            document.getElementById('statTotal').textContent = allVehicles.length;
+            
+            const totalValue = allVehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
+            document.getElementById('inventorySummary').textContent = 
+                `${filteredVehicles.length} vehicles showing | Total Stock Value: £${totalValue.toLocaleString()}`;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageVehicles = filteredVehicles.slice(start, end);
+            
+            if (pageVehicles.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-4 py-8 text-center text-gray-500">
+                            No vehicles found matching your criteria
                         </td>
                     </tr>
                 `;
-            }).join('');
+            } else {
+                tbody.innerHTML = pageVehicles.map(v => {
+                    const statusColors = {
+                        'In Stock': 'bg-green-100 text-green-800',
+                        'In Transit': 'bg-yellow-100 text-yellow-800',
+                        'Off-site R': 'bg-red-100 text-red-800',
+                        'Subject to': 'bg-purple-100 text-purple-800',
+                        'Sold': 'bg-gray-100 text-gray-800'
+                    };
+                    
+                    const days = v.daysInStock || 0;
+                    const daysColor = days > 90 ? 'text-red-600 font-semibold' : days > 60 ? 'text-orange-600' : 'text-gray-600';
+                    
+                    return `
+                        <tr class="table-row cursor-pointer" onclick='openVehicleModal(${JSON.stringify(v).replace(/'/g, "&#39;")})'>
+                            <td class="px-4 py-3 text-sm font-medium text-gray-900">${v.stockNo || '-'}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">${v.registration || '-'}</td>
+                            <td class="px-4 py-3">
+                                <div class="text-sm font-medium text-gray-900">${v.make || '-'} ${v.model || '-'}</div>
+                                <div class="text-xs text-gray-500">${v.variant || ''} ${v.year || ''}</div>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-600">${v.location || '-'}</td>
+                            <td class="px-4 py-3">
+                                <span class="status-badge inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[v.status] || 'bg-gray-100 text-gray-800'}">
+                                    ${v.status || 'Unknown'}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-600">£${parseFloat(v.costPrice || 0).toLocaleString()}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">£${parseFloat(v.retailPrice || 0).toLocaleString()}</td>
+                            <td class="px-4 py-3 text-sm ${daysColor}">${days}</td>
+                            <td class="px-4 py-3">
+                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="event.stopPropagation(); window.location.href='workflow.html?stockNo=${v.stockNo}'">
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            // Update pagination
+            const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage) || 1;
+            document.getElementById('showingFrom').textContent = filteredVehicles.length > 0 ? start + 1 : 0;
+            document.getElementById('showingTo').textContent = Math.min(end, filteredVehicles.length);
+            document.getElementById('totalRecords').textContent = filteredVehicles.length;
+            document.getElementById('currentPage').textContent = currentPage;
+            document.getElementById('totalPages').textContent = totalPages;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+        }
+
+        function sortTable(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            filterInventory();
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            renderTable();
+        }
+
+        function setFilter(type, value) {
+            if (type === 'status') {
+                document.getElementById('statusFilter').value = value;
+            } else if (type === 'location') {
+                document.getElementById('locationFilter').value = value;
+            } else if (type === 'make') {
+                document.getElementById('makeFilter').value = value;
+            }
+            filterInventory();
         }
 
         function clearFilters() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('locationFilter').value = '';
             document.getElementById('statusFilter').value = '';
+            document.getElementById('locationFilter').value = '';
             document.getElementById('makeFilter').value = '';
-            loadInventory();
+            filterInventory();
         }
 
-        function viewVehicle(registration) {
-            alert('View vehicle: ' + registration);
-            // TODO: Open vehicle detail modal or page
-        }
-
-        function editVehicle(registration) {
-            alert('Edit vehicle: ' + registration);
-            // TODO: Open vehicle edit modal or page
-        }
-
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
+        function openVehicleModal(vehicle) {
+            document.getElementById('modalTitle').textContent = `${vehicle.make} ${vehicle.model} - ${vehicle.stockNo}`;
+            
+            const statusColors = {
+                'In Stock': 'bg-green-100 text-green-800',
+                'In Transit': 'bg-yellow-100 text-yellow-800',
+                'Off-site R': 'bg-red-100 text-red-800',
+                'Subject to': 'bg-purple-100 text-purple-800',
+                'Sold': 'bg-gray-100 text-gray-800'
             };
+            
+            document.getElementById('modalContent').innerHTML = `
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Stock Number</p>
+                        <p class="font-medium text-gray-900">${vehicle.stockNo || '-'}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Registration</p>
+                        <p class="font-medium text-gray-900">${vehicle.registration || '-'}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Status</p>
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[vehicle.status] || 'bg-gray-100 text-gray-800'}">
+                            ${vehicle.status || 'Unknown'}
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Location</p>
+                        <p class="font-medium text-gray-900">${vehicle.location || '-'}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Cost Price</p>
+                        <p class="font-medium text-gray-900">£${parseFloat(vehicle.costPrice || 0).toLocaleString()}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Retail Price</p>
+                        <p class="font-medium text-gray-900">£${parseFloat(vehicle.retailPrice || 0).toLocaleString()}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Days in Stock</p>
+                        <p class="font-medium ${vehicle.daysInStock > 90 ? 'text-red-600' : 'text-gray-900'}">${vehicle.daysInStock || 0}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Date in Stock</p>
+                        <p class="font-medium text-gray-900">${vehicle.dateInStock || '-'}</p>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-200 pt-4 mb-4">
+                    <h3 class="font-semibold text-gray-900 mb-3">Vehicle Details</h3>
+                    <div class="grid grid-cols-3 gap-4 text-sm">
+                        <div><span class="text-gray-500">Year:</span> ${vehicle.year || '-'}</div>
+                        <div><span class="text-gray-500">Colour:</span> ${vehicle.colour || '-'}</div>
+                        <div><span class="text-gray-500">Fuel:</span> ${vehicle.fuelType || '-'}</div>
+                        <div><span class="text-gray-500">Transmission:</span> ${vehicle.transmission || '-'}</div>
+                        <div><span class="text-gray-500">Mileage:</span> ${vehicle.mileage ? vehicle.mileage.toLocaleString() : '-'}</div>
+                        <div><span class="text-gray-500">Body:</span> ${vehicle.body || '-'}</div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-200 pt-4 flex gap-3">
+                    <button onclick="window.location.href='workflow.html?stockNo=${vehicle.stockNo}'" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        View Workflow
+                    </button>
+                    <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        Edit
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('vehicleModal').classList.remove('hidden');
         }
+
+        function closeModal() {
+            document.getElementById('vehicleModal').classList.add('hidden');
+        }
+
+        function refreshData() {
+            loadInventory();
+            const btn = document.querySelector('button[onclick=\"refreshData()\"]');
+            btn.classList.add('animate-spin');
+            setTimeout(() => btn.classList.remove('animate-spin'), 1000);
+        }
+
+        function logout() {
+            localStorage.removeItem('capeye_session');
+            window.location.href = 'login.html';
+        }
+
+        // Close modal on outside click
+        document.getElementById('vehicleModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = localStorage.getItem('capeye_session');
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            loadInventory();
+        });
     </script>
 </body>
 </html>
