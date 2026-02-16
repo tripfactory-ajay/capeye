@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAPEYE - Vehicle Workflow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { font-family: 'Inter', sans-serif; }
+        
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-item {
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .workflow-stage {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .workflow-stage:hover {
+            transform: scale(1.02);
+        }
+        
+        .workflow-stage.active {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .workflow-stage.completed {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .workflow-stage.pending {
+            border-color: rgba(148, 163, 184, 0.3);
+        }
+        
+        .photo-upload {
+            border: 2px dashed rgba(148, 163, 184, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .photo-upload:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+        
+        .form-input {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-bar {
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="glass-panel sticky top-0 z-50 border-b border-slate-700">
+        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-truck text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold gradient-text">CAPEYE</h1>
+                        <p class="text-xs text-slate-400">Auto Capital Intelligence System</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <div class="relative">
+                        <i class="fas fa-bell text-slate-400 text-lg cursor-pointer hover:text-white transition"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-white">Keith Hardy</p>
+                            <p class="text-xs text-slate-400">General Manager</p>
+                        </div>
+                        <div class="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-slate-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 glass-panel min-h-screen border-r border-slate-700">
+            <nav class="mt-8 px-4 space-y-2">
+                <a href="index.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
+                    <i class="fas fa-chart-line text-slate-400"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <a href="inventory.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
+                    <i class="fas fa-warehouse text-slate-400"></i>
+                    <span>Inventory</span>
+                </a>
+                
+                <a href="workflow.html" class="nav-item active px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
+                    <i class="fas fa-tasks text-blue-400"></i>
+                    <span class="font-medium">Workflow</span>
+                    <span class="ml-auto bg-blue-600 text-white text-xs px-2 py-1 rounded-full">12</span>
+                </a>
+                
+                <a href="analytics.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
+                    <i class="fas fa-chart-pie text-slate-400"></i>
+                    <span>Analytics</span>
+                </a>
+                
+                <a href="alerts.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
+                    <i class="fas fa-exclamation-triangle text-slate-400"></i>
+                    <span>Alerts</span>
+                    <span class="ml-auto bg-red-600 text-white text-xs px-2 py-1 rounded-full">5</span>
+                </a>
+                
+                <a href="staff.html" class="nav-item px-4 py-3 rounded-lg cursor-pointer flex items-center space-x-3">
+                    <i class="fas fa-users text-slate-400"></i>
+                    <span>Staff</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 overflow-auto">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-white mb-2">Vehicle Workflow</h2>
+                <p class="text-slate-400">12-stage process from intake to customer delivery</p>
+            </div>
+
+            <!-- Vehicle Selection -->
+            <div class="glass-panel rounded-xl p-6 mb-6">
+                <div class="flex flex-wrap gap-4 items-end">
+                    <div class="flex-1 min-w-[300px]">
+                        <label class="block text-sm text-slate-400 mb-2">Select Vehicle</label>
+                        <select id="vehicleSelect" class="form-input w-full px-4 py-2 rounded-lg text-white" onchange="loadVehicleWorkflow()">
+                            <option value="">Choose a vehicle...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-2">Or Search by Reg</label>
+                        <div class="flex">
+                            <input type="text" id="regSearch" placeholder="e.g. RF73 OSL" 
+                                class="form-input px-4 py-2 rounded-l-lg text-white w-48">
+                            <button onclick="searchByReg()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r-lg transition">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vehicle Info Card (shown when vehicle selected) -->
+                <div id="vehicleInfo" class="hidden mt-6 pt-6 border-t border-slate-700">
+                    <div class="grid grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-slate-400 text-xs uppercase">Registration</p>
+                            <p class="text-xl font-bold text-white" id="infoReg">-</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-xs uppercase">Vehicle</p>
+                            <p class="text-lg font-semibold text-white" id="infoVehicle">-</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-xs uppercase">Current Stage</p>
+                            <p class="text-lg font-semibold text-blue-400" id="infoStage">-</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-xs uppercase">Progress</p>
+                            <div class="flex items-center space-x-2">
+                                <div class="progress-bar flex-1 h-2">
+                                    <div class="progress-fill h-full rounded-full" id="progressBar" style="width: 0%"></div>
+                                </div>
+                                <span class="text-sm text-white" id="progressText">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 12 Stage Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8" id="stageGrid">
+                <!-- Stages generated by JavaScript -->
+            </div>
+
+            <!-- Stage Form Container -->
+            <div id="stageFormContainer" class="hidden glass-panel rounded-xl p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-white" id="formTitle">Stage Form</h3>
+                        <p class="text-slate-400" id="formSubtitle">Complete the required information</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="saveStageDraft()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition text-sm">
+                            <i class="fas fa-save mr-2"></i>Save Draft
+                        </button>
+                        <button onclick="submitStage()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition text-sm">
+                            <i class="fas fa-check mr-2"></i>Submit & Continue
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="formContent" class="space-y-6">
+                    <!-- Dynamic form content -->
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="glass-panel rounded-xl p-12 text-center">
+                <i class="fas fa-tasks text-6xl text-slate-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-white mb-2">Select a Vehicle</h3>
+                <p class="text-slate-400">Choose a vehicle from the dropdown above to view or manage its workflow</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/workflow.js"></script>
+</body>
+</html>
