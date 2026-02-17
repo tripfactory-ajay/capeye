@@ -17,6 +17,10 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .pulse-dot { animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .workflow-stage-card { transition: all 0.3s ease; cursor: pointer; }
+        .workflow-stage-card:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .vehicle-row { transition: background 0.2s; }
+        .vehicle-row:hover { background: #f8fafc; }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -38,10 +42,13 @@
     <!-- Navigation -->
     <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+            <div class="flex justify-between h-20">
                 <div class="flex items-center">
-                    <img src="./autocapital-logo.png" alt="Auto Capital" class="h-10 w-auto object-contain" onerror="this.style.display='none'">
-                    <span class="ml-3 text-xl font-bold text-slate-800">Business Inteligence</span>
+                    <!-- ENLARGED LOGO - No text -->
+                    <img src="./autocapital-logo.png" alt="Auto Capital" class="h-16 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="hidden h-16 w-48 bg-blue-600 rounded-lg items-center justify-center text-white font-bold text-xl" style="display: none;">
+                        AUTO CAPITAL
+                    </div>
                 </div>
                 <div class="hidden md:flex items-center space-x-1">
                     <a href="./index.html" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg border-b-2 border-blue-600">Dashboard</a>
@@ -82,12 +89,65 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-900">Welcome back, <span id="userName">User</span></h1>
-                    <p class="text-slate-600 mt-1">This dashboard is designed to give you instant visibility over your stock, sales performance, vehicle preparation status, marketing activity, and financial position — all in one place. From tracking new arrivals and managing enquiries to monitoring conversions and profitability, everything you need to run a smooth, efficient dealership is right here.</p>
+                    <p class="text-slate-600 mt-1">Real-time visibility over stock, workflow stages, sales performance, and vehicle preparation status.</p>
                 </div>
                 <div class="flex items-center space-x-2 text-sm text-slate-500">
                     <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
                     <span>Live Data</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- FILTERS SECTION -->
+        <div class="glass-panel rounded-xl p-6 mb-8 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-slate-900"><i class="fas fa-filter mr-2 text-blue-600"></i>Vehicle Filters</h2>
+                <button onclick="resetFilters()" class="text-sm text-blue-600 hover:text-blue-500">Reset Filters</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <!-- Date Range -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Date From</label>
+                    <input type="date" id="filter-date-from" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="applyFilters()">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Date To</label>
+                    <input type="date" id="filter-date-to" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="applyFilters()">
+                </div>
+                
+                <!-- Vehicle Make -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Make</label>
+                    <select id="filter-make" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="applyFilters()">
+                        <option value="">All Makes</option>
+                    </select>
+                </div>
+                
+                <!-- Status -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Status</label>
+                    <select id="filter-status" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="applyFilters()">
+                        <option value="">All Statuses</option>
+                        <option value="In Stock">In Stock</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Off-site R">Off-site R</option>
+                        <option value="Subject to">Subject to</option>
+                        <option value="Sold">Sold</option>
+                    </select>
+                </div>
+                
+                <!-- Location -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Location</label>
+                    <select id="filter-location" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="applyFilters()">
+                        <option value="">All Locations</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Active Filters Display -->
+            <div id="active-filters" class="mt-4 flex flex-wrap gap-2 hidden">
+                <span class="text-xs text-slate-500">Active filters:</span>
             </div>
         </div>
 
@@ -161,6 +221,49 @@
             </div>
         </div>
 
+        <!-- WORKFLOW PIPELINE VIEW -->
+        <div class="glass-panel rounded-xl p-6 mb-8 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-semibold text-slate-900"><i class="fas fa-project-diagram mr-2 text-blue-600"></i>Workflow Pipeline</h2>
+                <div class="flex gap-2">
+                    <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded">On Track</span>
+                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded">Warning</span>
+                    <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded">Overdue</span>
+                </div>
+            </div>
+            
+            <div id="workflow-pipeline" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Workflow stages injected by JS -->
+            </div>
+        </div>
+
+        <!-- VEHICLES STUCK AT STAGE -->
+        <div class="glass-panel rounded-xl p-6 mb-8 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-semibold text-slate-900"><i class="fas fa-exclamation-circle mr-2 text-orange-600"></i>Vehicles Requiring Attention</h2>
+                <span id="stuck-count" class="text-sm text-slate-500">0 vehicles</span>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                        <tr>
+                            <th class="px-4 py-3 rounded-tl-lg">Stock No</th>
+                            <th class="px-4 py-3">Vehicle</th>
+                            <th class="px-4 py-3">Current Stage</th>
+                            <th class="px-4 py-3">Assigned To</th>
+                            <th class="px-4 py-3">Days at Stage</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3 rounded-tr-lg">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stuck-vehicles-table">
+                        <!-- Injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Alerts & Notifications -->
             <div class="lg:col-span-2">
@@ -211,7 +314,7 @@
                             </div>
                         </a>
                         
-                        <a href="./workflow.html" class="flex items-center p-3 bg-green-50 hover:bg-green-100 rounded-lg transition group">
+                        <a href="./workflow/stages/stage-1-intake.html" class="flex items-center p-3 bg-green-50 hover:bg-green-100 rounded-lg transition group">
                             <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition">
                                 <i class="fas fa-tasks text-white"></i>
                             </div>
@@ -263,12 +366,98 @@
             }
             
             loadDashboardData();
+            loadFilters();
+            loadWorkflowPipeline();
+            loadStuckVehicles();
             loadAlerts();
             loadRecentActivity();
         });
 
-        function loadDashboardData() {
+        function loadFilters() {
             const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            
+            // Populate Make dropdown
+            const makes = [...new Set(vehicles.map(v => v.make).filter(Boolean))].sort();
+            const makeSelect = document.getElementById('filter-make');
+            makes.forEach(make => {
+                const opt = document.createElement('option');
+                opt.value = make;
+                opt.textContent = make;
+                makeSelect.appendChild(opt);
+            });
+            
+            // Populate Location dropdown
+            const locations = [...new Set(vehicles.map(v => v.location).filter(Boolean))].sort();
+            const locSelect = document.getElementById('filter-location');
+            locations.forEach(loc => {
+                const opt = document.createElement('option');
+                opt.value = loc;
+                opt.textContent = loc;
+                locSelect.appendChild(opt);
+            });
+        }
+
+        function applyFilters() {
+            const dateFrom = document.getElementById('filter-date-from').value;
+            const dateTo = document.getElementById('filter-date-to').value;
+            const make = document.getElementById('filter-make').value;
+            const status = document.getElementById('filter-status').value;
+            const location = document.getElementById('filter-location').value;
+            
+            // Show active filters
+            const activeDiv = document.getElementById('active-filters');
+            const filters = [];
+            if (dateFrom) filters.push(`From: ${dateFrom}`);
+            if (dateTo) filters.push(`To: ${dateTo}`);
+            if (make) filters.push(`Make: ${make}`);
+            if (status) filters.push(`Status: ${status}`);
+            if (location) filters.push(`Location: ${location}`);
+            
+            if (filters.length > 0) {
+                activeDiv.innerHTML = '<span class="text-xs text-slate-500">Active filters:</span>' + 
+                    filters.map(f => `<span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">${f}</span>`).join('');
+                activeDiv.classList.remove('hidden');
+            } else {
+                activeDiv.classList.add('hidden');
+            }
+            
+            // Reload data with filters
+            loadDashboardData();
+            loadWorkflowPipeline();
+            loadStuckVehicles();
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-date-from').value = '';
+            document.getElementById('filter-date-to').value = '';
+            document.getElementById('filter-make').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-location').value = '';
+            document.getElementById('active-filters').classList.add('hidden');
+            applyFilters();
+        }
+
+        function getFilteredVehicles() {
+            let vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            
+            const dateFrom = document.getElementById('filter-date-from').value;
+            const dateTo = document.getElementById('filter-date-to').value;
+            const make = document.getElementById('filter-make').value;
+            const status = document.getElementById('filter-status').value;
+            const location = document.getElementById('filter-location').value;
+            
+            return vehicles.filter(v => {
+                if (make && v.make !== make) return false;
+                if (status && v.status !== status) return false;
+                if (location && v.location !== location) return false;
+                if (dateFrom && v.dateInStock && new Date(v.dateInStock) < new Date(dateFrom)) return false;
+                if (dateTo && v.dateInStock && new Date(v.dateInStock) > new Date(dateTo)) return false;
+                return true;
+            });
+        }
+
+        function loadDashboardData() {
+            const vehicles = getFilteredVehicles();
             
             // Calculate metrics
             const totalValue = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
@@ -308,12 +497,165 @@
             document.getElementById('subjectToCount').textContent = statusCounts['Subject to'];
         }
 
+        function loadWorkflowPipeline() {
+            const vehicles = getFilteredVehicles();
+            const container = document.getElementById('workflow-pipeline');
+            
+            const stages = [
+                { id: 1, name: 'Vehicle Intake', color: 'blue', icon: '📋' },
+                { id: 2, name: 'Bodywork', color: 'purple', icon: '🎨' },
+                { id: 3, name: 'Paint Repairs', color: 'purple', icon: '🖌️' },
+                { id: 4, name: 'Legal & Docs', color: 'slate', icon: '📄' },
+                { id: 5, name: 'Mechanical', color: 'orange', icon: '🔧' },
+                { id: 6, name: 'External/Electrical', color: 'orange', icon: '⚡' },
+                { id: 7, name: 'Valeting', color: 'green', icon: '✨' },
+                { id: 8, name: 'Fault Overview', color: 'orange', icon: '📊' },
+                { id: 9, name: 'Advertising', color: 'blue', icon: '📸' },
+                { id: 10, name: 'Delivery', color: 'blue', icon: '🚗' },
+                { id: 11, name: 'Accounts', color: 'slate', icon: '💰' },
+                { id: 12, name: 'Management', color: 'indigo', icon: '👔' }
+            ];
+            
+            // Count vehicles at each stage
+            const stageCounts = {};
+            stages.forEach(s => stageCounts[s.id] = 0);
+            
+            vehicles.forEach(v => {
+                const stage = v.workflowStage || 1;
+                if (stageCounts.hasOwnProperty(stage)) {
+                    stageCounts[stage]++;
+                }
+            });
+            
+            container.innerHTML = stages.map(stage => {
+                const count = stageCounts[stage.id] || 0;
+                const colorClasses = {
+                    blue: 'bg-blue-50 border-blue-200 hover:border-blue-400',
+                    purple: 'bg-purple-50 border-purple-200 hover:border-purple-400',
+                    slate: 'bg-slate-50 border-slate-200 hover:border-slate-400',
+                    orange: 'bg-orange-50 border-orange-200 hover:border-orange-400',
+                    green: 'bg-green-50 border-green-200 hover:border-green-400',
+                    indigo: 'bg-indigo-50 border-indigo-200 hover:border-indigo-400'
+                };
+                
+                return `
+                    <div class="workflow-stage-card ${colorClasses[stage.color]} border rounded-lg p-4" onclick="window.location.href='./workflow/stages/stage-${stage.id}-${getStageFileName(stage.id)}.html'">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <span class="text-2xl mr-3">${stage.icon}</span>
+                                <div>
+                                    <p class="font-semibold text-slate-900">Stage ${stage.id}</p>
+                                    <p class="text-sm text-slate-600">${stage.name}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-bold text-slate-900">${count}</p>
+                                <p class="text-xs text-slate-500">vehicles</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getStageFileName(stageId) {
+            const names = {
+                1: 'intake', 2: 'bodywork', 3: 'paint', 4: 'legal',
+                5: 'mechanical', 6: 'external', 7: 'valeting', 8: 'faults',
+                9: 'advertising', 10: 'delivery', 11: 'accounts', 12: 'management'
+            };
+            return names[stageId] || 'stage';
+        }
+
+        function loadStuckVehicles() {
+            const vehicles = getFilteredVehicles();
+            const tbody = document.getElementById('stuck-vehicles-table');
+            const now = new Date();
+            
+            // Find vehicles stuck at stages (not completed, older than 3 days at current stage)
+            const stuckVehicles = vehicles.filter(v => {
+                if (!v.workflowStage || v.workflowStage >= 9) return false; // Don't show sold/delivered
+                const stageData = JSON.parse(localStorage.getItem(`capeye_workflow_stage_${v.workflowStage}_${v.stockNo}`) || '{}');
+                if (!stageData.timestamp) return true; // No activity recorded
+                
+                const daysAtStage = Math.floor((now - new Date(stageData.timestamp)) / (1000 * 60 * 60 * 24));
+                return daysAtStage > 2; // Stuck if more than 2 days
+            }).map(v => {
+                const stageData = JSON.parse(localStorage.getItem(`capeye_workflow_stage_${v.workflowStage}_${v.stockNo}`) || '{}');
+                const timestamp = stageData.timestamp ? new Date(stageData.timestamp) : new Date(v.dateInStock);
+                const daysAtStage = Math.floor((now - timestamp) / (1000 * 60 * 60 * 24));
+                
+                const stages = {
+                    1: 'Intake', 2: 'Bodywork', 3: 'Paint', 4: 'Legal',
+                    5: 'Mechanical', 6: 'External', 7: 'Valeting', 8: 'Faults',
+                    9: 'Advertising', 10: 'Delivery', 11: 'Accounts', 12: 'Management'
+                };
+                
+                // Get assigned person from stage data
+                let assignedTo = 'Unassigned';
+                if (stageData.data) {
+                    assignedTo = stageData.data.inspector || stageData.data.assessor || 
+                                stageData.data.mechanic || stageData.data.valeter || 
+                                stageData.data.salesperson || 'Unassigned';
+                }
+                
+                return {
+                    ...v,
+                    stageName: stages[v.workflowStage] || 'Intake',
+                    daysAtStage: daysAtStage,
+                    assignedTo: assignedTo,
+                    isOverdue: daysAtStage > 5
+                };
+            }).sort((a, b) => b.daysAtStage - a.daysAtStage);
+            
+            document.getElementById('stuck-count').textContent = `${stuckVehicles.length} vehicles requiring attention`;
+            
+            if (stuckVehicles.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-4 py-8 text-center text-slate-500">
+                            <i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i>
+                            <p>All vehicles on track! No vehicles stuck at stages.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = stuckVehicles.map(v => {
+                const statusColor = v.isOverdue ? 'red' : v.daysAtStage > 3 ? 'yellow' : 'green';
+                const statusText = v.isOverdue ? 'Overdue' : v.daysAtStage > 3 ? 'Warning' : 'On Track';
+                
+                return `
+                    <tr class="vehicle-row border-b border-slate-100">
+                        <td class="px-4 py-3 font-medium text-slate-900">${v.stockNo}</td>
+                        <td class="px-4 py-3">${v.make} ${v.model}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${v.stageName}</span>
+                        </td>
+                        <td class="px-4 py-3 text-slate-600">${v.assignedTo}</td>
+                        <td class="px-4 py-3">
+                            <span class="${v.daysAtStage > 5 ? 'text-red-600 font-bold' : 'text-slate-600'}">${v.daysAtStage} days</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 bg-${statusColor}-100 text-${statusColor}-700 rounded text-xs">${statusText}</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <a href="./workflow/stages/stage-${v.workflowStage || 1}-${getStageFileName(v.workflowStage || 1)}.html" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                View <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
         function loadAlerts() {
-            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            const vehicles = getFilteredVehicles();
             const alerts = [];
+            const now = new Date();
             
             // Check for vehicles in stock > 90 days
-            const now = new Date();
             vehicles.forEach(v => {
                 if (v.dateInStock && v.status === 'In Stock') {
                     const daysInStock = Math.floor((now - new Date(v.dateInStock)) / (1000 * 60 * 60 * 24));
@@ -325,6 +667,25 @@
                             message: `${v.make} ${v.model} (${v.stockNo}) has been in stock for ${daysInStock} days`,
                             time: 'Just now'
                         });
+                    }
+                }
+            });
+            
+            // Check for vehicles stuck at stages > 7 days
+            vehicles.forEach(v => {
+                if (v.workflowStage && v.workflowStage < 9) {
+                    const stageData = JSON.parse(localStorage.getItem(`capeye_workflow_stage_${v.workflowStage}_${v.stockNo}`) || '{}');
+                    if (stageData.timestamp) {
+                        const daysAtStage = Math.floor((now - new Date(stageData.timestamp)) / (1000 * 60 * 60 * 24));
+                        if (daysAtStage > 7) {
+                            alerts.push({
+                                type: 'warning',
+                                icon: 'fa-clock',
+                                color: 'orange',
+                                message: `${v.stockNo} stuck at Stage ${v.workflowStage} for ${daysAtStage} days`,
+                                time: 'Just now'
+                            });
+                        }
                     }
                 }
             });
@@ -366,23 +727,43 @@
 
         function loadRecentActivity() {
             const history = JSON.parse(localStorage.getItem('capeye_import_history') || '[]');
-            const recent = history.slice(-5).reverse();
+            const workflowLog = JSON.parse(localStorage.getItem('capeye_workflow_activity_log') || '[]');
+            
+            // Combine and sort by date
+            const allActivity = [
+                ...history.map(h => ({...h, type: 'import', date: h.date})),
+                ...workflowLog.slice(0, 10).map(w => ({...w, type: 'workflow', date: w.timestamp}))
+            ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
             
             const container = document.getElementById('recentActivity');
-            if (recent.length === 0) {
-                container.innerHTML = '<p class="text-slate-500 text-sm">No recent imports</p>';
+            if (allActivity.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 text-sm">No recent activity</p>';
                 return;
             }
             
-            container.innerHTML = recent.map(item => `
-                <div class="flex items-center text-sm">
-                    <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                    <div class="flex-1">
-                        <p class="text-slate-900">Imported ${item.total} vehicles</p>
-                        <p class="text-slate-500 text-xs">${new Date(item.date).toLocaleDateString('en-GB')}</p>
-                    </div>
-                </div>
-            `).join('');
+            container.innerHTML = allActivity.map(item => {
+                if (item.type === 'import') {
+                    return `
+                        <div class="flex items-center text-sm">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                            <div class="flex-1">
+                                <p class="text-slate-900">Imported ${item.total} vehicles</p>
+                                <p class="text-slate-500 text-xs">${new Date(item.date).toLocaleDateString('en-GB')}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="flex items-center text-sm">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                            <div class="flex-1">
+                                <p class="text-slate-900">Stage ${item.data?.stage || '?'} completed</p>
+                                <p class="text-slate-500 text-xs">${new Date(item.date).toLocaleDateString('en-GB')}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
         }
 
         function markAllRead() {
@@ -405,7 +786,11 @@
         }
 
         // Refresh data every 30 seconds
-        setInterval(loadDashboardData, 30000);
+        setInterval(() => {
+            loadDashboardData();
+            loadWorkflowPipeline();
+            loadStuckVehicles();
+        }, 30000);
     </script>
 </body>
 </html>
