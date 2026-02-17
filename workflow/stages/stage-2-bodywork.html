@@ -1,3 +1,7 @@
+<!-- STAGE 2: BODYWORK & COSMETIC -->
+<!-- File: /capeye/workflow/stages/stage-2-bodywork.html -->
+<!-- Replace entire file content -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,11 +33,14 @@
             --cy-text-primary: #f9fafb;
             --cy-text-secondary: #d1d5db;
             --cy-text-muted: #9ca3af;
-            --cy-accent-purple: #8b5cf6;
-            --cy-accent-purple-soft: rgba(139, 92, 246, 0.15);
+            --cy-accent-blue: #3b82f6;
+            --cy-accent-blue-soft: rgba(59, 130, 246, 0.15);
             --cy-accent-green: #10b981;
+            --cy-accent-green-soft: rgba(16, 185, 129, 0.15);
             --cy-accent-orange: #f59e0b;
+            --cy-accent-orange-soft: rgba(245, 158, 11, 0.15);
             --cy-accent-red: #ef4444;
+            --cy-accent-purple: #8b5cf6;
             --cy-radius-sm: 6px;
             --cy-radius-md: 8px;
             --cy-radius-lg: 12px;
@@ -49,7 +56,6 @@
             line-height: 1.5;
         }
 
-        /* Header */
         .cy-header {
             background: rgba(17, 24, 39, 0.95);
             backdrop-filter: blur(10px);
@@ -79,7 +85,7 @@
         .cy-logo {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--cy-accent-purple), #ec4899);
+            background: linear-gradient(135deg, var(--cy-accent-orange), var(--cy-accent-purple));
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -107,15 +113,15 @@
             align-items: center;
             gap: 12px;
             padding: 8px 16px;
-            background: var(--cy-accent-purple-soft);
-            border: 1px solid rgba(139, 92, 246, 0.3);
+            background: var(--cy-accent-orange-soft);
+            border: 1px solid rgba(245, 158, 11, 0.3);
             border-radius: 20px;
         }
 
         .stage-number {
             width: 28px;
             height: 28px;
-            background: var(--cy-accent-purple);
+            background: var(--cy-accent-orange);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -133,14 +139,12 @@
             font-size: 11px;
         }
 
-        /* Main Container */
         .cy-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 24px;
         }
 
-        /* Loading Overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -158,14 +162,13 @@
             width: 48px;
             height: 48px;
             border: 3px solid var(--cy-border);
-            border-top-color: var(--cy-accent-purple);
+            border-top-color: var(--cy-accent-orange);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Vehicle Selector */
         .vehicle-selector {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
@@ -176,12 +179,12 @@
 
         .selector-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr auto;
+            grid-template-columns: 2fr 1fr 1fr auto;
             gap: 16px;
             align-items: end;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .selector-grid { grid-template-columns: 1fr; }
         }
 
@@ -208,12 +211,12 @@
 
         .form-input:focus, .form-select:focus {
             outline: none;
-            border-color: var(--cy-accent-purple);
+            border-color: var(--cy-accent-orange);
         }
 
         .btn-primary {
             padding: 12px 24px;
-            background: var(--cy-accent-purple);
+            background: var(--cy-accent-orange);
             border: none;
             border-radius: var(--cy-radius-md);
             color: white;
@@ -226,7 +229,7 @@
             gap: 8px;
         }
 
-        .btn-primary:hover { background: #7c3aed; }
+        .btn-primary:hover { background: #d97706; }
 
         .btn-secondary {
             padding: 12px 24px;
@@ -259,7 +262,6 @@
 
         .btn-success:hover { background: #059669; }
 
-        /* Vehicle Info Banner */
         .vehicle-banner {
             background: linear-gradient(135deg, var(--cy-bg-secondary) 0%, var(--cy-bg-tertiary) 100%);
             border: 1px solid var(--cy-border);
@@ -302,7 +304,6 @@
             margin-top: 2px;
         }
 
-        /* Form Sections */
         .form-section {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
@@ -323,12 +324,12 @@
         .section-icon {
             width: 40px;
             height: 40px;
-            background: var(--cy-accent-purple-soft);
+            background: var(--cy-accent-orange-soft);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--cy-accent-purple);
+            color: var(--cy-accent-orange);
             font-size: 18px;
         }
 
@@ -367,96 +368,51 @@
             .form-grid-2 { grid-template-columns: 1fr; }
         }
 
+        .form-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .form-grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .form-grid-4 { grid-template-columns: 1fr; }
+        }
+
         textarea.form-input {
             min-height: 100px;
             resize: vertical;
         }
 
-        /* Damage Assessment Grid */
-        .damage-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 16px;
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 8px;
         }
 
-        @media (max-width: 768px) {
-            .damage-grid { grid-template-columns: 1fr; }
-        }
-
-        .damage-zone {
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            padding: 20px;
-        }
-
-        .zone-header {
+        .checkbox-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-            font-weight: 600;
-            color: var(--cy-text-primary);
-        }
-
-        .zone-header i {
-            color: var(--cy-accent-purple);
-        }
-
-        .damage-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: var(--cy-radius-md);
-            margin-bottom: 8px;
-        }
-
-        .damage-item label {
-            font-size: 14px;
-            color: var(--cy-text-secondary);
-        }
-
-        .severity-select {
-            padding: 6px 12px;
-            border-radius: var(--cy-radius-sm);
-            border: 1px solid var(--cy-border);
-            background: var(--cy-bg-secondary);
-            color: var(--cy-text-primary);
-            font-size: 13px;
+            gap: 8px;
             cursor: pointer;
         }
 
-        /* Cost Calculator */
-        .cost-calculator {
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            padding: 20px;
-            margin-top: 20px;
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--cy-accent-orange);
         }
 
-        .cost-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--cy-border);
+        .checkbox-item label {
+            font-size: 14px;
+            color: var(--cy-text-secondary);
+            cursor: pointer;
         }
 
-        .cost-row:last-child {
-            border-bottom: none;
-            font-weight: 600;
-            font-size: 18px;
-            color: var(--cy-text-primary);
-            margin-top: 8px;
-            padding-top: 16px;
-            border-top: 2px solid var(--cy-border);
-        }
-
-        /* Photo Upload */
         .photo-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -484,8 +440,8 @@
         }
 
         .photo-slot:hover {
-            border-color: var(--cy-accent-purple);
-            background: rgba(139, 92, 246, 0.05);
+            border-color: var(--cy-accent-orange);
+            background: rgba(245, 158, 11, 0.05);
         }
 
         .photo-slot.has-image {
@@ -531,29 +487,80 @@
             color: var(--cy-text-muted);
         }
 
-        /* Signature */
+        .damage-item {
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-lg);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .damage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .damage-title {
+            font-weight: 600;
+            color: var(--cy-text-primary);
+        }
+
+        .btn-remove {
+            padding: 6px 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--cy-radius-md);
+            color: var(--cy-accent-red);
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            padding: 12px 24px;
+            background: var(--cy-accent-orange-soft);
+            border: 1px dashed var(--cy-accent-orange);
+            border-radius: var(--cy-radius-md);
+            color: var(--cy-accent-orange);
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
         .signature-container {
             background: white;
             border-radius: var(--cy-radius-lg);
-            padding: 20px;
+            padding: 12px;
             margin-top: 8px;
+            border: 2px solid var(--cy-border);
         }
 
         #signaturePad {
             width: 100%;
-            height: 200px;
+            height: 120px;
             border: 1px solid #e5e7eb;
             border-radius: var(--cy-radius-md);
             cursor: crosshair;
+            background: white;
         }
 
         .signature-actions {
             display: flex;
             gap: 12px;
-            margin-top: 12px;
+            margin-top: 8px;
+            align-items: center;
         }
 
-        /* Form Actions */
+        .signature-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--cy-text-muted);
+        }
+
         .form-actions {
             display: flex;
             justify-content: space-between;
@@ -571,7 +578,6 @@
             gap: 12px;
         }
 
-        /* Status Messages */
         .status-message {
             padding: 16px;
             border-radius: var(--cy-radius-lg);
@@ -595,34 +601,73 @@
             display: flex;
         }
 
-        /* Required Field */
         .required::after {
             content: ' *';
             color: var(--cy-accent-red);
         }
 
-        /* Previous Stage Data */
-        .previous-stage {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: var(--cy-radius-lg);
-            padding: 16px;
-            margin-bottom: 24px;
-        }
-
-        .previous-stage h4 {
-            color: #3b82f6;
-            font-size: 14px;
-            margin-bottom: 8px;
-            display: flex;
+        .date-stamp {
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            padding: 4px 12px;
+            background: var(--cy-accent-orange-soft);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--cy-accent-orange);
+            font-weight: 500;
         }
 
-        .previous-stage p {
-            color: var(--cy-text-secondary);
+        .severity-select {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .severity-option {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-md);
+            cursor: pointer;
             font-size: 13px;
-            margin: 4px 0;
+            transition: all 0.15s ease;
+        }
+
+        .severity-option:hover {
+            border-color: var(--cy-accent-orange);
+        }
+
+        .severity-option.selected {
+            background: var(--cy-accent-orange);
+            border-color: var(--cy-accent-orange);
+            color: white;
+        }
+
+        .cost-summary {
+            background: var(--cy-accent-orange-soft);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: var(--cy-radius-lg);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .cost-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .cost-row.total {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--cy-accent-orange);
+            border-top: 1px solid rgba(245, 158, 11, 0.3);
+            padding-top: 12px;
+            margin-top: 12px;
         }
     </style>
 </head>
@@ -631,7 +676,7 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="text-center">
             <div class="spinner mb-4 mx-auto"></div>
-            <p style="color: var(--cy-text-muted); font-size: 14px;">Loading bodyshop data...</p>
+            <p style="color: var(--cy-text-muted); font-size: 14px;">Loading vehicle data...</p>
         </div>
     </div>
 
@@ -672,14 +717,18 @@
         <div class="vehicle-selector">
             <div class="selector-grid">
                 <div class="form-group">
-                    <label>Select Vehicle from Queue</label>
+                    <label>Select Vehicle</label>
                     <select id="vehicleSelect" class="form-select" onchange="loadVehicleData()">
-                        <option value="">-- Select Vehicle --</option>
+                        <option value="">-- Search or Select Vehicle --</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Or Enter Stock No</label>
                     <input type="text" id="stockNoInput" class="form-input" placeholder="e.g., R0218">
+                </div>
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="regInput" class="form-input" placeholder="e.g., RF66UBC">
                 </div>
                 <button onclick="searchVehicle()" class="btn-primary">
                     <i class="fas fa-search"></i> Load Vehicle
@@ -706,463 +755,238 @@
                     <div class="sub" id="bannerStatus">-</div>
                 </div>
                 <div class="banner-item">
-                    <label>Days at Stage</label>
-                    <div class="value" id="bannerDays">-</div>
-                    <div class="sub">Since intake</div>
+                    <label>Stage 1 Complete</label>
+                    <div class="value" id="bannerStage1Date">-</div>
+                    <div class="sub" id="bannerIntakeBy">-</div>
                 </div>
             </div>
-        </div>
-
-        <!-- Previous Stage Data -->
-        <div id="previousStageData" class="previous-stage" style="display: none;">
-            <h4><i class="fas fa-info-circle"></i> Stage 1 Information</h4>
-            <p id="intakeCondition">Condition: Loading...</p>
-            <p id="intakeNotes">Notes: Loading...</p>
         </div>
 
         <!-- Bodywork Form -->
         <form id="bodyworkForm" onsubmit="saveFormData(event)">
-            <!-- Section 1: Initial Assessment -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div>
-                        <div class="section-title">Initial Assessment</div>
-                        <div class="section-subtitle">Overall bodywork condition evaluation</div>
-                    </div>
-                </div>
-                
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="required">Overall Body Condition</label>
-                        <select id="overallCondition" class="form-select" required>
-                            <option value="">Select Condition</option>
-                            <option value="Excellent">Excellent - No work required</option>
-                            <option value="Good">Good - Minor touch-ups only</option>
-                            <option value="Fair">Fair - Some repairs needed</option>
-                            <option value="Poor">Poor - Significant work required</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Previous Repairs</label>
-                        <select id="previousRepairs" class="form-select">
-                            <option value="none">None detected</option>
-                            <option value="minor">Minor repairs detected</option>
-                            <option value="major">Major repairs detected</option>
-                            <option value="respray">Full respray detected</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Rust Assessment</label>
-                        <select id="rustAssessment" class="form-select">
-                            <option value="none">No rust present</option>
-                            <option value="surface">Surface rust only</option>
-                            <option value="minor">Minor rust spots</option>
-                            <option value="major">Major rust damage</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group" style="margin-top: 20px;">
-                    <label>General Condition Notes</label>
-                    <textarea id="generalNotes" class="form-input" placeholder="Overall observations about bodywork condition..."></textarea>
-                </div>
-            </div>
-
-            <!-- Section 2: Damage Assessment by Zone -->
+            <!-- Section 1: Damage Assessment -->
             <div class="form-section">
                 <div class="section-header">
                     <div class="section-icon">
                         <i class="fas fa-car-crash"></i>
                     </div>
                     <div>
-                        <div class="section-title">Damage Assessment by Zone</div>
-                        <div class="section-subtitle">Detailed inspection of each vehicle area</div>
+                        <div class="section-title">Damage Assessment</div>
+                        <div class="section-subtitle">Record all bodywork damage and cosmetic issues</div>
                     </div>
                 </div>
                 
-                <div class="damage-grid">
-                    <!-- Front Zone -->
-                    <div class="damage-zone">
-                        <div class="zone-header">
-                            <i class="fas fa-arrow-up"></i>
-                            Front Section
-                        </div>
-                        <div class="damage-item">
-                            <label>Bonnet</label>
-                            <select class="severity-select" id="bonnetSeverity" onchange="calculateCosts()">
-                                <option value="0">No Damage</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="2">Light Dent</option>
-                                <option value="3">Heavy Dent</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Front Bumper</label>
-                            <select class="severity-select" id="frontBumperSeverity" onchange="calculateCosts()">
-                                <option value="0">No Damage</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="2">Light Dent</option>
-                                <option value="3">Heavy Dent</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Front Wings</label>
-                            <select class="severity-select" id="frontWingSeverity" onchange="calculateCosts()">
-                                <option value="0">No Damage</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="2">Light Dent</option>
-                                <option value="3">Heavy Dent</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Headlights</label>
-                            <select class="severity-select" id="headlightSeverity" onchange="calculateCosts()">
-                                <option value="0">Good</option>
-                                <option value="2">Cloudy/Scratched</option>
-                                <option value="3">Cracked</option>
-                                <option value="4">Replacement Needed</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Rear Zone -->
-                    <div class="damage-zone">
-                        <div class="zone-header">
-                            <i class="fas fa-arrow-down"></i>
-                            Rear Section
-                        </div>
-                        <div class="damage-item">
-                            <label>Rear Doors/Tailgate</label>
-                            <select class="severity-select" id="rearDoorSeverity" onchange="calculateCosts()">
-                                <option value="0">No Damage</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="2">Light Dent</option>
-                                <option value="3">Heavy Dent</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Rear Bumper</label>
-                            <select class="severity-select" id="rearBumperSeverity" onchange="calculateCosts()">
-                                <option value="0">No Damage</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="2">Light Dent</option>
-                                <option value="3">Heavy Dent</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Rear Wings</label>
-                            <select class="severity-select" id="rearWingSeverity" onchange="calculateCosts()">
-                                <option value="0">No Damage</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="2">Light Dent</option>
-                                <option value="3">Heavy Dent</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Tail Lights</label>
-                            <select class="severity-select" id="taillightSeverity" onchange="calculateCosts()">
-                                <option value="0">Good</option>
-                                <option value="2">Scratched</option>
-                                <option value="3">Cracked</option>
-                                <option value="4">Replacement Needed</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Side Zones -->
-                    <div class="damage-zone">
-                        <div class="zone-header">
-                            <i class="fas fa-arrows-alt-h"></i>
-                            Side Sections
-                        </div>
-                        <div class="damage-item">
-                            <label>Driver Side Doors</label>
-                            <select class="severity-select" id="driverDoorSeverity" onchange="calculateCosts()">
-                                <option value="0">No Damage</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="2">Light Dent</option>
-                                <option value="3">Heavy Dent</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Passenger Side Doors</label>
-                            <select class="severity-select" id="passengerDoorSeverity" onchange="calculateCosts()">
-                                <option value="0">No Damage</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="2">Light Dent</option>
-                                <option value="3">Heavy Dent</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Sills & Trim</label>
-                            <select class="severity-select" id="sillSeverity" onchange="calculateCosts()">
-                                <option value="0">Good</option>
-                                <option value="2">Scuffed</option>
-                                <option value="3">Damaged</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Door Handles</label>
-                            <select class="severity-select" id="handleSeverity" onchange="calculateCosts()">
-                                <option value="0">Good</option>
-                                <option value="1">Minor Wear</option>
-                                <option value="3">Scratched</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Roof & Glass -->
-                    <div class="damage-zone">
-                        <div class="zone-header">
-                            <i class="fas fa-square"></i>
-                            Roof & Glass
-                        </div>
-                        <div class="damage-item">
-                            <label>Roof Condition</label>
-                            <select class="severity-select" id="roofSeverity" onchange="calculateCosts()">
-                                <option value="0">No Damage</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="2">Light Dent</option>
-                                <option value="3">Heavy Dent</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Windscreen</label>
-                            <select class="severity-select" id="windscreenSeverity" onchange="calculateCosts()">
-                                <option value="0">Good</option>
-                                <option value="1">Minor Chip</option>
-                                <option value="3">Cracked</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Side Windows</label>
-                            <select class="severity-select" id="sideWindowSeverity" onchange="calculateCosts()">
-                                <option value="0">Good</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="3">Scratched</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                        <div class="damage-item">
-                            <label>Rear Window</label>
-                            <select class="severity-select" id="rearWindowSeverity" onchange="calculateCosts()">
-                                <option value="0">Good</option>
-                                <option value="1">Minor Scratch</option>
-                                <option value="3">Scratched</option>
-                                <option value="4">Replacement</option>
-                            </select>
-                        </div>
-                    </div>
+                <div id="damageList">
+                    <!-- Damage items will be added here dynamically -->
                 </div>
+                
+                <button type="button" onclick="addDamageItem()" class="btn-add">
+                    <i class="fas fa-plus"></i> Add Damage Item
+                </button>
 
-                <!-- Cost Calculator -->
-                <div class="cost-calculator">
-                    <div class="cost-row">
-                        <span>Estimated Repair Hours</span>
-                        <span id="estimatedHours">0 hours</span>
-                    </div>
-                    <div class="cost-row">
-                        <span>Estimated Labour Cost (£45/hr)</span>
-                        <span id="labourCost">£0</span>
-                    </div>
-                    <div class="cost-row">
-                        <span>Estimated Parts/Materials</span>
-                        <span id="partsCost">£0</span>
-                    </div>
-                    <div class="cost-row">
-                        <span>Total Estimated Cost</span>
-                        <span id="totalCost">£0</span>
-                    </div>
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Overall Bodywork Condition Summary</label>
+                    <textarea id="bodyworkSummary" class="form-input" placeholder="Summarize overall bodywork condition, priorities, and recommendations..."></textarea>
                 </div>
             </div>
 
-            <!-- Section 3: Detailed Damage Description -->
+            <!-- Section 2: Repair Estimates -->
             <div class="form-section">
                 <div class="section-header">
                     <div class="section-icon">
-                        <i class="fas fa-clipboard-list"></i>
+                        <i class="fas fa-calculator"></i>
                     </div>
                     <div>
-                        <div class="section-title">Detailed Damage Description</div>
-                        <div class="section-subtitle">Specific details about required repairs</div>
+                        <div class="section-title">Repair Cost Estimates</div>
+                        <div class="section-subtitle">Labour and material costs for bodywork repairs</div>
                     </div>
                 </div>
                 
-                <div class="form-grid-2">
+                <div class="form-grid">
                     <div class="form-group">
-                        <label>Dent Removal Required</label>
-                        <select id="dentRemoval" class="form-select">
-                            <option value="none">None required</option>
-                            <option value="pd">Paintless Dent Removal (PDR)</option>
-                            <option value="minor">Minor dent repair (1-2 panels)</option>
-                            <option value="major">Major dent repair (3+ panels)</option>
-                            <option value="extensive">Extensive damage - multiple areas</option>
-                        </select>
+                        <label>Estimated Labour Hours</label>
+                        <input type="number" id="labourHours" class="form-input" step="0.5" onchange="calculateCosts()">
                     </div>
                     <div class="form-group">
-                        <label>Scratch Repair Required</label>
-                        <select id="scratchRepair" class="form-select">
-                            <option value="none">None required</option>
-                            <option value="polish">Machine polish only</option>
-                            <option value="local">Localised touch-up</option>
-                            <option value="panel">Panel respray</option>
-                            <option value="multiple">Multiple panel respray</option>
-                        </select>
+                        <label>Labour Rate (£/hr)</label>
+                        <input type="number" id="labourRate" class="form-input" step="0.01" value="45.00" onchange="calculateCosts()">
                     </div>
                     <div class="form-group">
-                        <label>Panel Replacement Required</label>
-                        <select id="panelReplace" class="form-select">
-                            <option value="none">None required</option>
-                            <option value="1">1 panel</option>
-                            <option value="2">2 panels</option>
-                            <option value="3">3 panels</option>
-                            <option value="4">4+ panels</option>
-                        </select>
+                        <label>Materials Cost (£)</label>
+                        <input type="number" id="materialsCost" class="form-input" step="0.01" onchange="calculateCosts()">
                     </div>
                     <div class="form-group">
-                        <label>Glass Replacement Required</label>
-                        <select id="glassReplace" class="form-select">
-                            <option value="none">None required</option>
-                            <option value="windscreen">Windscreen only</option>
-                            <option value="side">Side window(s)</option>
-                            <option value="rear">Rear window</option>
-                            <option value="multiple">Multiple windows</option>
-                        </select>
+                        <label>Paint & Blending (£)</label>
+                        <input type="number" id="paintCost" class="form-input" step="0.01" onchange="calculateCosts()">
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Parts (£)</label>
+                        <input type="number" id="partsCost" class="form-input" step="0.01" onchange="calculateCosts()">
+                    </div>
+                    <div class="form-group">
+                        <label>VAT Amount (£)</label>
+                        <input type="number" id="vatAmount" class="form-input" step="0.01" readonly style="background: rgba(245, 158, 11, 0.1);">
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-top: 20px;">
-                    <label>Detailed Repair Notes</label>
-                    <textarea id="repairNotes" class="form-input" placeholder="Describe specific damage locations, sizes, and recommended repair methods..."></textarea>
+                <div class="cost-summary">
+                    <div class="cost-row">
+                        <span>Labour Total:</span>
+                        <span id="labourTotal">£0.00</span>
+                    </div>
+                    <div class="cost-row">
+                        <span>Materials:</span>
+                        <span id="materialsTotal">£0.00</span>
+                    </div>
+                    <div class="cost-row">
+                        <span>Paint & Blending:</span>
+                        <span id="paintTotal">£0.00</span>
+                    </div>
+                    <div class="cost-row">
+                        <span>Parts:</span>
+                        <span id="partsTotal">£0.00</span>
+                    </div>
+                    <div class="cost-row">
+                        <span>VAT (20%):</span>
+                        <span id="vatTotal">£0.00</span>
+                    </div>
+                    <div class="cost-row total">
+                        <span>Total Repair Estimate:</span>
+                        <span id="grandTotal">£0.00</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Section 4: Photographic Evidence -->
+            <!-- Section 3: Photographs -->
             <div class="form-section">
                 <div class="section-header">
                     <div class="section-icon">
                         <i class="fas fa-camera"></i>
                     </div>
                     <div>
-                        <div class="section-title">Photographic Evidence</div>
-                        <div class="section-subtitle">Document all damage before repair</div>
+                        <div class="section-title">Damage Photographs</div>
+                        <div class="section-subtitle">Before repair photos of all damage areas</div>
                     </div>
                 </div>
                 
                 <div class="photo-grid">
-                    <div class="photo-slot" onclick="triggerPhotoUpload('photo1')">
-                        <input type="file" id="photo1" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo1Slot')">
+                    <div class="photo-slot" onclick="triggerPhotoUpload('damage1')">
+                        <input type="file" id="damage1" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'damage1')">
                         <i class="fas fa-plus"></i>
-                        <span>Front Damage</span>
+                        <span>Damage Area 1</span>
                     </div>
-                    <div class="photo-slot" onclick="triggerPhotoUpload('photo2')">
-                        <input type="file" id="photo2" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo2Slot')">
+                    <div class="photo-slot" onclick="triggerPhotoUpload('damage2')">
+                        <input type="file" id="damage2" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'damage2')">
                         <i class="fas fa-plus"></i>
-                        <span>Rear Damage</span>
+                        <span>Damage Area 2</span>
                     </div>
-                    <div class="photo-slot" onclick="triggerPhotoUpload('photo3')">
-                        <input type="file" id="photo3" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo3Slot')">
+                    <div class="photo-slot" onclick="triggerPhotoUpload('damage3')">
+                        <input type="file" id="damage3" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'damage3')">
                         <i class="fas fa-plus"></i>
-                        <span>Driver Side</span>
+                        <span>Damage Area 3</span>
                     </div>
-                    <div class="photo-slot" onclick="triggerPhotoUpload('photo4')">
-                        <input type="file" id="photo4" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo4Slot')">
+                    <div class="photo-slot" onclick="triggerPhotoUpload('damage4')">
+                        <input type="file" id="damage4" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'damage4')">
                         <i class="fas fa-plus"></i>
-                        <span>Passenger Side</span>
+                        <span>Damage Area 4</span>
                     </div>
-                    <div class="photo-slot" onclick="triggerPhotoUpload('photo5')">
-                        <input type="file" id="photo5" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo5Slot')">
+                    <div class="photo-slot" onclick="triggerPhotoUpload('overview1')">
+                        <input type="file" id="overview1" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'overview1')">
                         <i class="fas fa-plus"></i>
-                        <span>Close-up 1</span>
+                        <span>Overview Front</span>
                     </div>
-                    <div class="photo-slot" onclick="triggerPhotoUpload('photo6')">
-                        <input type="file" id="photo6" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo6Slot')">
+                    <div class="photo-slot" onclick="triggerPhotoUpload('overview2')">
+                        <input type="file" id="overview2" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'overview2')">
                         <i class="fas fa-plus"></i>
-                        <span>Close-up 2</span>
+                        <span>Overview Rear</span>
                     </div>
-                    <div class="photo-slot" onclick="triggerPhotoUpload('photo7')">
-                        <input type="file" id="photo7" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo7Slot')">
+                    <div class="photo-slot" onclick="triggerPhotoUpload('overview3')">
+                        <input type="file" id="overview3" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'overview3')">
                         <i class="fas fa-plus"></i>
-                        <span>Close-up 3</span>
+                        <span>Overview Side</span>
                     </div>
-                    <div class="photo-slot" onclick="triggerPhotoUpload('photo8')">
-                        <input type="file" id="photo8" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo8Slot')">
+                    <div class="photo-slot" onclick="triggerPhotoUpload('overview4')">
+                        <input type="file" id="overview4" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'overview4')">
                         <i class="fas fa-plus"></i>
-                        <span>Additional</span>
+                        <span>Overview Other</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Section 5: Work Authorization -->
+            <!-- Section 4: Assignment & Sign-off -->
             <div class="form-section">
                 <div class="section-header">
                     <div class="section-icon">
-                        <i class="fas fa-check-double"></i>
+                        <i class="fas fa-user-check"></i>
                     </div>
                     <div>
-                        <div class="section-title">Work Authorization & Sign-off</div>
-                        <div class="section-subtitle">Approve work and assign to next stage</div>
+                        <div class="section-title">Assignment & Sign-off</div>
+                        <div class="section-subtitle">Assign to next stage and confirm completion</div>
                     </div>
                 </div>
                 
                 <div class="form-grid-2">
                     <div class="form-group">
-                        <label class="required">Work Authorized By</label>
-                        <select id="authorizedBy" class="form-select" required>
+                        <label class="required">Assessed By</label>
+                        <select id="assessedBy" class="form-select" required>
+                            <option value="">Select Staff Member</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Assign to Next Stage</label>
+                        <select id="nextStage" class="form-select" required>
+                            <option value="3">Stage 3: Dent & Paint Repairs</option>
+                            <option value="5">Stage 5: Mechanical (Skip Paint)</option>
+                            <option value="7">Stage 7: Valeting (Bodywork Complete)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label>Repair Approved By</label>
+                        <select id="approvedBy" class="form-select">
                             <option value="">Select Manager</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="required">Work Assigned To</label>
-                        <select id="assignedTo" class="form-select" required>
-                            <option value="">Select Technician</option>
-                        </select>
+                        <label>Approval Date</label>
+                        <input type="date" id="approvalDate" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="required">Priority Level</label>
-                        <select id="priority" class="form-select" required>
-                            <option value="normal">Normal</option>
-                            <option value="high">High - Delayed Sale</option>
-                            <option value="urgent">Urgent - Customer Waiting</option>
-                            <option value="low">Low - Stock Vehicle</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="required">Estimated Completion</label>
-                        <input type="date" id="estimatedCompletion" class="form-input" required>
+                        <label>Expected Completion</label>
+                        <input type="date" id="expectedCompletion" class="form-input">
                     </div>
                 </div>
 
                 <div class="form-group" style="margin-top: 20px;">
-                    <label>Work Instructions</label>
-                    <textarea id="workInstructions" class="form-input" placeholder="Specific instructions for the technician..."></textarea>
+                    <label>Workshop Notes</label>
+                    <textarea id="workshopNotes" class="form-input" placeholder="Notes for the paint shop or next department..."></textarea>
                 </div>
 
+                <!-- COMPACT SIGNATURE SECTION WITH AUTO DATE STAMP -->
                 <div style="margin-top: 24px;">
-                    <label>Digital Signature - Bodyshop Manager</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label>Digital Signature</label>
+                        <div class="date-stamp" id="dateStampDisplay" style="display: none;">
+                            <i class="fas fa-clock"></i>
+                            <span id="dateStampText"></span>
+                        </div>
+                    </div>
                     <div class="signature-container">
                         <canvas id="signaturePad"></canvas>
                     </div>
                     <div class="signature-actions">
-                        <button type="button" onclick="clearSignature()" class="btn-secondary">Clear Signature</button>
-                        <span style="color: var(--cy-text-muted); font-size: 13px; align-self: center;">
-                            <i class="fas fa-info-circle"></i> Sign to authorize bodywork assessment
+                        <button type="button" onclick="clearSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                        <span style="color: var(--cy-text-muted); font-size: 13px;">
+                            <i class="fas fa-info-circle"></i> Sign to confirm assessment
                         </span>
+                    </div>
+                    <div class="signature-meta">
+                        <span><i class="fas fa-calendar"></i> Auto-stamped on submit</span>
+                        <span><i class="fas fa-shield-alt"></i> Legally binding</span>
                     </div>
                 </div>
             </div>
@@ -1179,7 +1003,7 @@
                 </div>
                 <div class="action-group">
                     <button type="submit" class="btn-success">
-                        <i class="fas fa-check-circle"></i> Complete Assessment & Forward to Paint
+                        <i class="fas fa-check-circle"></i> Complete Stage & Forward
                     </button>
                 </div>
             </div>
@@ -1193,16 +1017,8 @@
         let currentVehicle = null;
         let uploadedPhotos = {};
         let signaturePad = null;
-        let vehicleProfile = null;
-
-        // Cost Matrix (hours per severity level)
-        const costMatrix = {
-            0: { hours: 0, parts: 0 },      // No damage
-            1: { hours: 0.5, parts: 20 },   // Minor scratch
-            2: { hours: 2, parts: 50 },     // Light dent
-            3: { hours: 5, parts: 150 },    // Heavy dent
-            4: { hours: 8, parts: 400 }     // Replacement
-        };
+        let signatureContext = null;
+        let damageCount = 0;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1213,13 +1029,13 @@
         // Initialize Signature Pad
         function initSignaturePad() {
             const canvas = document.getElementById('signaturePad');
-            const ctx = canvas.getContext('2d');
+            signatureContext = canvas.getContext('2d');
             
             canvas.width = canvas.offsetWidth;
-            canvas.height = 200;
+            canvas.height = 120;
             
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, canvas.width, canvas.height);
             
             let isDrawing = false;
             let lastX = 0;
@@ -1247,13 +1063,13 @@
                 e.preventDefault();
                 
                 const pos = getPos(e);
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(pos.x, pos.y);
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                ctx.lineCap = 'round';
-                ctx.stroke();
+                signatureContext.beginPath();
+                signatureContext.moveTo(lastX, lastY);
+                signatureContext.lineTo(pos.x, pos.y);
+                signatureContext.strokeStyle = '#000';
+                signatureContext.lineWidth = 2;
+                signatureContext.lineCap = 'round';
+                signatureContext.stroke();
                 
                 lastX = pos.x;
                 lastY = pos.y;
@@ -1276,9 +1092,137 @@
         }
 
         function clearSignature() {
-            const ctx = signaturePad.getContext('2d');
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, signaturePad.width, signaturePad.height);
+            if (!signatureContext) return;
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, signaturePad.width, signaturePad.height);
+        }
+
+        function isSignatureEmpty() {
+            if (!signatureContext) return true;
+            const pixelData = signatureContext.getImageData(0, 0, signaturePad.width, signaturePad.height).data;
+            return !pixelData.some((pixel, index) => index % 4 === 3 && pixel < 255);
+        }
+
+        // Damage Assessment Functions
+        function addDamageItem() {
+            damageCount++;
+            const damageList = document.getElementById('damageList');
+            
+            const damageItem = document.createElement('div');
+            damageItem.className = 'damage-item';
+            damageItem.id = `damage-${damageCount}`;
+            
+            damageItem.innerHTML = `
+                <div class="damage-header">
+                    <span class="damage-title">Damage Item #${damageCount}</span>
+                    <button type="button" onclick="removeDamageItem(${damageCount})" class="btn-remove">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Panel/Area</label>
+                        <select id="damagePanel_${damageCount}" class="form-select">
+                            <option value="">Select Panel</option>
+                            <option value="Front Bumper">Front Bumper</option>
+                            <option value="Rear Bumper">Rear Bumper</option>
+                            <option value="Bonnet">Bonnet</option>
+                            <option value="Boot Lid">Boot Lid</option>
+                            <option value="Roof">Roof</option>
+                            <option value="Front Wing LH">Front Wing LH</option>
+                            <option value="Front Wing RH">Front Wing RH</option>
+                            <option value="Rear Wing LH">Rear Wing LH</option>
+                            <option value="Rear Wing RH">Rear Wing RH</option>
+                            <option value="Door Front LH">Door Front LH</option>
+                            <option value="Door Front RH">Door Front RH</option>
+                            <option value="Door Rear LH">Door Rear LH</option>
+                            <option value="Door Rear RH">Door Rear RH</option>
+                            <option value="Sill LH">Sill LH</option>
+                            <option value="Sill RH">Sill RH</option>
+                            <option value="Quarter Panel LH">Quarter Panel LH</option>
+                            <option value="Quarter Panel RH">Quarter Panel RH</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Damage Type</label>
+                        <select id="damageType_${damageCount}" class="form-select">
+                            <option value="">Select Type</option>
+                            <option value="Dent">Dent</option>
+                            <option value="Scratch">Scratch</option>
+                            <option value="Scuff">Scuff</option>
+                            <option value="Crack">Crack</option>
+                            <option value="Rust">Rust</option>
+                            <option value="Hole">Hole</option>
+                            <option value="Misalignment">Misalignment</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Size</label>
+                        <select id="damageSize_${damageCount}" class="form-select">
+                            <option value="">Select Size</option>
+                            <option value="Small (<5cm)">Small (<5cm)</option>
+                            <option value="Medium (5-15cm)">Medium (5-15cm)</option>
+                            <option value="Large (>15cm)">Large (>15cm)</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top: 12px;">
+                    <label>Severity</label>
+                    <div class="severity-select">
+                        <div class="severity-option" onclick="selectSeverity(${damageCount}, 'Minor')" data-severity="Minor">Minor</div>
+                        <div class="severity-option" onclick="selectSeverity(${damageCount}, 'Moderate')" data-severity="Moderate">Moderate</div>
+                        <div class="severity-option" onclick="selectSeverity(${damageCount}, 'Major')" data-severity="Major">Major</div>
+                    </div>
+                    <input type="hidden" id="damageSeverity_${damageCount}" value="">
+                </div>
+                <div class="form-group" style="margin-top: 12px;">
+                    <label>Description</label>
+                    <input type="text" id="damageDesc_${damageCount}" class="form-input" placeholder="Describe the damage...">
+                </div>
+            `;
+            
+            damageList.appendChild(damageItem);
+        }
+
+        function removeDamageItem(id) {
+            const item = document.getElementById(`damage-${id}`);
+            if (item) {
+                item.remove();
+            }
+        }
+
+        function selectSeverity(damageId, severity) {
+            const item = document.getElementById(`damage-${damageId}`);
+            const options = item.querySelectorAll('.severity-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            const selected = item.querySelector(`[data-severity="${severity}"]`);
+            if (selected) {
+                selected.classList.add('selected');
+                document.getElementById(`damageSeverity_${damageId}`).value = severity;
+            }
+        }
+
+        // Cost Calculations
+        function calculateCosts() {
+            const hours = parseFloat(document.getElementById('labourHours').value) || 0;
+            const rate = parseFloat(document.getElementById('labourRate').value) || 0;
+            const materials = parseFloat(document.getElementById('materialsCost').value) || 0;
+            const paint = parseFloat(document.getElementById('paintCost').value) || 0;
+            const parts = parseFloat(document.getElementById('partsCost').value) || 0;
+            
+            const labourTotal = hours * rate;
+            const subtotal = labourTotal + materials + paint + parts;
+            const vat = subtotal * 0.20;
+            const grandTotal = subtotal + vat;
+            
+            document.getElementById('labourTotal').textContent = formatCurrency(labourTotal);
+            document.getElementById('materialsTotal').textContent = formatCurrency(materials);
+            document.getElementById('paintTotal').textContent = formatCurrency(paint);
+            document.getElementById('partsTotal').textContent = formatCurrency(parts);
+            document.getElementById('vatTotal').textContent = formatCurrency(vat);
+            document.getElementById('vatAmount').value = vat.toFixed(2);
+            document.getElementById('grandTotal').textContent = formatCurrency(grandTotal);
         }
 
         // Load CSV Data
@@ -1292,19 +1236,20 @@
                     skipEmptyLines: true,
                     complete: function(results) {
                         allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
+                        populateVehicleSelect();
                         loadStaffData();
                     },
                     error: function(err) {
-                        showStatus('Error loading vehicle data', 'error');
+                        showStatus('Error loading vehicle data: ' + err.message, 'error');
                         document.getElementById('loadingOverlay').style.display = 'none';
                     }
                 });
             } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
                 document.getElementById('loadingOverlay').style.display = 'none';
             }
         }
 
-        // Load Staff Data
         async function loadStaffData() {
             try {
                 const staffResponse = await fetch('../Auto Capital - Staff List-639068391990284525.csv');
@@ -1316,9 +1261,7 @@
                     complete: function(results) {
                         staffList = results.data.filter(s => s.Name);
                         populateStaffSelects();
-                        populateVehicleSelect();
                         
-                        // Check URL params
                         const urlParams = new URLSearchParams(window.location.search);
                         const stockNo = urlParams.get('stock');
                         if (stockNo) {
@@ -1337,7 +1280,6 @@
             }
         }
 
-        // Normalize Vehicle
         function normalizeVehicle(row) {
             const getValue = (keys) => {
                 for (let key of keys) {
@@ -1351,52 +1293,31 @@
                 registration: getValue(['Registration', 'Reg', 'Reg No', 'RegNo']),
                 make: getValue(['Make', 'Manufacturer', 'Brand']),
                 model: getValue(['Model', 'Model Name']),
+                variant: getValue(['Variant', 'Trim', 'Spec']),
                 year: getValue(['Year', 'Year Reg', 'Reg Year']),
+                colour: getValue(['Colour', 'Color', 'Body Colour']),
                 location: getValue(['Location', 'Vehicle Location', 'Current Location']),
                 status: getValue(['Status', 'Vehicle Status', 'Stock Status']),
                 dateInStock: getValue(['Date In Stock', 'DateInStock', 'In Stock Date']),
-                colour: getValue(['Colour', 'Color', 'Body Colour']),
-                body: getValue(['Body', 'Body Type', 'Body Style'])
+                costPrice: parseFloat(getValue(['Cost Price', 'CostPrice', 'Cost'])?.toString().replace(/[£,]/g, '')) || 0,
+                retailPrice: parseFloat(getValue(['Retail Price', 'RetailPrice', 'Retail'])?.toString().replace(/[£,]/g, '')) || 0,
+                fuelType: getValue(['Fuel Type', 'Fuel', 'FuelType']),
+                transmission: getValue(['Transmission', 'Gearbox', 'Trans']),
+                mileage: getValue(['Mileage', 'Miles', 'Odometer']),
+                body: getValue(['Body', 'Body Type', 'Body Style']),
+                mot: getValue(['MOT', 'MOT Date', 'MOT Expiry'])
             };
         }
 
-        // Populate Staff Selects
-        function populateStaffSelects() {
-            const managers = staffList.filter(s => 
-                s.Department === 'Management' || s.Role?.includes('Manager')
-            );
-            const bodyshopStaff = staffList.filter(s => 
-                s.Department === 'Bodyshop' || s.Department === 'Workshop'
-            );
-            
-            const authSelect = document.getElementById('authorizedBy');
-            managers.forEach(s => {
-                const option = document.createElement('option');
-                option.value = s.Name;
-                option.textContent = `${s.Name} (${s.Department})`;
-                authSelect.appendChild(option);
-            });
-            
-            const assignSelect = document.getElementById('assignedTo');
-            bodyshopStaff.forEach(s => {
-                const option = document.createElement('option');
-                option.value = s.Name;
-                option.textContent = `${s.Name} (${s.Department})`;
-                assignSelect.appendChild(option);
-            });
-        }
-
-        // Populate Vehicle Select (only Stage 2 vehicles)
         function populateVehicleSelect() {
             const select = document.getElementById('vehicleSelect');
-            
-            // Get vehicles that are in Stage 2 from localStorage profiles
-            const stage2Vehicles = allVehicles.filter(v => {
+            // Filter vehicles that have completed stage 1
+            const eligibleVehicles = allVehicles.filter(v => {
                 const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
-                return profile.currentStage === 2 || (!profile.currentStage && v.location?.toLowerCase().includes('bodyshop'));
+                return profile.currentStage === 2 || profile.stage1?.isComplete;
             });
             
-            stage2Vehicles.forEach(v => {
+            eligibleVehicles.forEach(v => {
                 const option = document.createElement('option');
                 option.value = v.stockNo;
                 option.textContent = `${v.stockNo} - ${v.make} ${v.model} (${v.registration || 'No Reg'})`;
@@ -1404,79 +1325,110 @@
             });
         }
 
-        // Search Vehicle
+        function populateStaffSelects() {
+            const assessedBy = document.getElementById('assessedBy');
+            const approvedBy = document.getElementById('approvedBy');
+            
+            const workshopStaff = staffList.filter(s => 
+                s.Department === 'Workshop' || s.Department === 'Bodyshop' || s.Department === 'Management'
+            );
+            
+            const managers = staffList.filter(s => 
+                s.Department === 'Management' || s.Role?.toLowerCase().includes('manager')
+            );
+            
+            workshopStaff.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.Name;
+                option.textContent = `${s.Name} (${s.Department})`;
+                assessedBy.appendChild(option);
+            });
+            
+            managers.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.Name;
+                option.textContent = `${s.Name} (${s.Department})`;
+                approvedBy.appendChild(option);
+            });
+        }
+
         function searchVehicle() {
             const stockNo = document.getElementById('stockNoInput').value.trim().toUpperCase();
+            const reg = document.getElementById('regInput').value.trim().toUpperCase();
             
             currentVehicle = allVehicles.find(v => 
-                v.stockNo?.toUpperCase() === stockNo
+                (stockNo && v.stockNo?.toUpperCase() === stockNo) ||
+                (reg && v.registration?.toUpperCase() === reg)
             );
             
             if (currentVehicle) {
-                loadVehicleProfile(currentVehicle.stockNo);
+                loadVehicleIntoForm(currentVehicle);
+                showStatus(`Loaded vehicle: ${currentVehicle.make} ${currentVehicle.model}`, 'success');
             } else {
-                showStatus('Vehicle not found', 'error');
+                showStatus('Vehicle not found. Please check Stock No or Registration.', 'error');
             }
         }
 
-        // Load Vehicle from Select
         function loadVehicleData() {
             const stockNo = document.getElementById('vehicleSelect').value;
             if (!stockNo) return;
             
             currentVehicle = allVehicles.find(v => v.stockNo === stockNo);
             if (currentVehicle) {
-                loadVehicleProfile(stockNo);
+                loadVehicleIntoForm(currentVehicle);
             }
         }
 
-        // Load Vehicle Profile
-        function loadVehicleProfile(stockNo) {
-            vehicleProfile = JSON.parse(localStorage.getItem(`capeye_vehicle_${stockNo}`) || '{}');
-            
-            // Update banner
+        function loadVehicleIntoForm(vehicle) {
             document.getElementById('vehicleBanner').classList.add('active');
-            document.getElementById('bannerStockNo').textContent = currentVehicle.stockNo;
-            document.getElementById('bannerReg').textContent = currentVehicle.registration || 'No Reg';
-            document.getElementById('bannerVehicle').textContent = `${currentVehicle.make} ${currentVehicle.model}`;
-            document.getElementById('bannerDetails').textContent = `${currentVehicle.year} • ${currentVehicle.colour} • ${currentVehicle.body}`;
-            document.getElementById('bannerLocation').textContent = currentVehicle.location || 'Unknown';
-            document.getElementById('bannerStatus').textContent = currentVehicle.status || 'Unknown';
+            document.getElementById('bannerStockNo').textContent = vehicle.stockNo;
+            document.getElementById('bannerReg').textContent = vehicle.registration || 'No Reg';
+            document.getElementById('bannerVehicle').textContent = `${vehicle.make} ${vehicle.model}`;
+            document.getElementById('bannerDetails').textContent = `${vehicle.year} • ${vehicle.fuelType} • ${vehicle.transmission}`;
+            document.getElementById('bannerLocation').textContent = vehicle.location || 'Unknown';
             
-            // Calculate days
-            const days = vehicleProfile.stage1 ? 
-                Math.floor((new Date() - new Date(vehicleProfile.stage1.completedAt)) / (1000 * 60 * 60 * 24)) : 0;
-            document.getElementById('bannerDays').textContent = days + ' days';
-            
-            // Show Stage 1 data if available
-            if (vehicleProfile.stage1) {
-                document.getElementById('previousStageData').style.display = 'block';
-                document.getElementById('intakeCondition').textContent = 
-                    `Condition: ${vehicleProfile.stage1.overallCondition || 'Not specified'}`;
-                document.getElementById('intakeNotes').textContent = 
-                    `Notes: ${vehicleProfile.stage1.conditionDescription || 'No notes'}`;
+            // Load Stage 1 info
+            const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${vehicle.stockNo}`) || '{}');
+            if (profile.stage1) {
+                const stage1Date = new Date(profile.stage1.completedAt);
+                document.getElementById('bannerStage1Date').textContent = stage1Date.toLocaleDateString('en-GB');
+                document.getElementById('bannerIntakeBy').textContent = `By: ${profile.stage1.inspectedBy || 'Unknown'}`;
             }
             
-            // Load existing Stage 2 data if available
-            if (vehicleProfile.stage2) {
-                populateFormFields(vehicleProfile.stage2);
+            // Load saved draft if exists
+            const savedData = localStorage.getItem(`capeye_stage2_${vehicle.stockNo}`);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                populateFormFields(data);
+                showStatus('Previous draft data loaded', 'success');
             }
-            
-            showStatus(`Loaded vehicle: ${currentVehicle.make} ${currentVehicle.model}`, 'success');
         }
 
-        // Populate Form Fields
         function populateFormFields(data) {
-            Object.keys(data).forEach(key => {
-                const el = document.getElementById(key);
-                if (el && el.type !== 'file') {
-                    if (el.type === 'select-one') {
-                        el.value = data[key];
-                    } else {
-                        el.value = data[key];
+            // Restore damage items
+            if (data.damageItems && data.damageItems.length > 0) {
+                data.damageItems.forEach((damage, index) => {
+                    addDamageItem();
+                    const count = index + 1;
+                    document.getElementById(`damagePanel_${count}`).value = damage.panel || '';
+                    document.getElementById(`damageType_${count}`).value = damage.type || '';
+                    document.getElementById(`damageSize_${count}`).value = damage.size || '';
+                    document.getElementById(`damageDesc_${count}`).value = damage.description || '';
+                    if (damage.severity) {
+                        selectSeverity(count, damage.severity);
                     }
-                }
+                });
+            }
+            
+            // Restore other fields
+            const fields = ['bodyworkSummary', 'labourHours', 'labourRate', 'materialsCost', 'paintCost', 'partsCost', 
+                          'assessedBy', 'nextStage', 'approvedBy', 'approvalDate', 'expectedCompletion', 'workshopNotes'];
+            fields.forEach(field => {
+                const el = document.getElementById(field);
+                if (el && data[field]) el.value = data[field];
             });
+            
+            calculateCosts();
             
             // Restore photos
             if (data.photos) {
@@ -1490,47 +1442,39 @@
                             <button type="button" class="remove-photo" onclick="event.stopPropagation(); removePhoto('${photoId}')">
                                 <i class="fas fa-times"></i>
                             </button>
-                            <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${photoId}Slot')">
                         `;
                     }
                 });
             }
             
-            calculateCosts();
+            // Restore signature
+            if (data.signature && signatureContext) {
+                const img = new Image();
+                img.onload = function() {
+                    signatureContext.drawImage(img, 0, 0);
+                };
+                img.src = data.signature;
+            }
         }
 
-        // Calculate Costs
-        function calculateCosts() {
-            const severityIds = [
-                'bonnetSeverity', 'frontBumperSeverity', 'frontWingSeverity', 'headlightSeverity',
-                'rearDoorSeverity', 'rearBumperSeverity', 'rearWingSeverity', 'taillightSeverity',
-                'driverDoorSeverity', 'passengerDoorSeverity', 'sillSeverity', 'handleSeverity',
-                'roofSeverity', 'windscreenSeverity', 'sideWindowSeverity', 'rearWindowSeverity'
-            ];
-            
-            let totalHours = 0;
-            let totalParts = 0;
-            
-            severityIds.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    const severity = parseInt(el.value) || 0;
-                    totalHours += costMatrix[severity].hours;
-                    totalParts += costMatrix[severity].parts;
+        function collectDamageItems() {
+            const items = [];
+            for (let i = 1; i <= damageCount; i++) {
+                const panel = document.getElementById(`damagePanel_${i}`);
+                if (panel) {
+                    items.push({
+                        panel: panel.value,
+                        type: document.getElementById(`damageType_${i}`)?.value,
+                        size: document.getElementById(`damageSize_${i}`)?.value,
+                        severity: document.getElementById(`damageSeverity_${i}`)?.value,
+                        description: document.getElementById(`damageDesc_${i}`)?.value
+                    });
                 }
-            });
-            
-            const labourRate = 45;
-            const labourCost = totalHours * labourRate;
-            const totalCost = labourCost + totalParts;
-            
-            document.getElementById('estimatedHours').textContent = totalHours.toFixed(1) + ' hours';
-            document.getElementById('labourCost').textContent = '£' + labourCost.toFixed(0);
-            document.getElementById('partsCost').textContent = '£' + totalParts.toFixed(0);
-            document.getElementById('totalCost').textContent = '£' + totalCost.toFixed(0);
+            }
+            return items;
         }
 
-        // Photo Functions
+        // Photo Upload Functions
         function triggerPhotoUpload(inputId) {
             document.getElementById(inputId).click();
         }
@@ -1561,17 +1505,20 @@
             const slot = document.querySelector(`[onclick="triggerPhotoUpload('${photoId}')"]`);
             if (slot) {
                 slot.classList.remove('has-image');
-                const labels = ['Front Damage', 'Rear Damage', 'Driver Side', 'Passenger Side', 'Close-up 1', 'Close-up 2', 'Close-up 3', 'Additional'];
-                const index = parseInt(photoId.replace('photo', '')) - 1;
+                const labels = {
+                    'damage1': 'Damage Area 1', 'damage2': 'Damage Area 2',
+                    'damage3': 'Damage Area 3', 'damage4': 'Damage Area 4',
+                    'overview1': 'Overview Front', 'overview2': 'Overview Rear',
+                    'overview3': 'Overview Side', 'overview4': 'Overview Other'
+                };
                 slot.innerHTML = `
                     <i class="fas fa-plus"></i>
-                    <span>${labels[index]}</span>
-                    <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${photoId}Slot')">
+                    <span>${labels[photoId]}</span>
+                    <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${photoId}')">
                 `;
             }
         }
 
-        // Save Draft
         function saveDraft() {
             if (!currentVehicle) {
                 showStatus('Please select a vehicle first', 'error');
@@ -1582,54 +1529,32 @@
             formData.lastSaved = new Date().toISOString();
             formData.isDraft = true;
             
-            if (!vehicleProfile.stage2) vehicleProfile.stage2 = {};
-            Object.assign(vehicleProfile.stage2, formData);
-            
-            localStorage.setItem(`capeye_vehicle_${currentVehicle.stockNo}`, JSON.stringify(vehicleProfile));
+            localStorage.setItem(`capeye_stage2_${currentVehicle.stockNo}`, JSON.stringify(formData));
             showStatus('Draft saved successfully', 'success');
         }
 
-        // Collect Form Data
         function collectFormData() {
-            const severityIds = [
-                'bonnetSeverity', 'frontBumperSeverity', 'frontWingSeverity', 'headlightSeverity',
-                'rearDoorSeverity', 'rearBumperSeverity', 'rearWingSeverity', 'taillightSeverity',
-                'driverDoorSeverity', 'passengerDoorSeverity', 'sillSeverity', 'handleSeverity',
-                'roofSeverity', 'windscreenSeverity', 'sideWindowSeverity', 'rearWindowSeverity'
-            ];
-            
-            const damageAssessment = {};
-            severityIds.forEach(id => {
-                damageAssessment[id] = document.getElementById(id)?.value || '0';
-            });
-            
             return {
                 stockNo: currentVehicle?.stockNo,
-                overallCondition: document.getElementById('overallCondition').value,
-                previousRepairs: document.getElementById('previousRepairs').value,
-                rustAssessment: document.getElementById('rustAssessment').value,
-                generalNotes: document.getElementById('generalNotes').value,
-                damageAssessment: damageAssessment,
-                estimatedHours: document.getElementById('estimatedHours').textContent,
-                labourCost: document.getElementById('labourCost').textContent,
-                partsCost: document.getElementById('partsCost').textContent,
-                totalCost: document.getElementById('totalCost').textContent,
-                dentRemoval: document.getElementById('dentRemoval').value,
-                scratchRepair: document.getElementById('scratchRepair').value,
-                panelReplace: document.getElementById('panelReplace').value,
-                glassReplace: document.getElementById('glassReplace').value,
-                repairNotes: document.getElementById('repairNotes').value,
-                authorizedBy: document.getElementById('authorizedBy').value,
-                assignedTo: document.getElementById('assignedTo').value,
-                priority: document.getElementById('priority').value,
-                estimatedCompletion: document.getElementById('estimatedCompletion').value,
-                workInstructions: document.getElementById('workInstructions').value,
+                damageItems: collectDamageItems(),
+                bodyworkSummary: document.getElementById('bodyworkSummary').value,
+                labourHours: document.getElementById('labourHours').value,
+                labourRate: document.getElementById('labourRate').value,
+                materialsCost: document.getElementById('materialsCost').value,
+                paintCost: document.getElementById('paintCost').value,
+                partsCost: document.getElementById('partsCost').value,
+                vatAmount: document.getElementById('vatAmount').value,
+                assessedBy: document.getElementById('assessedBy').value,
+                nextStage: document.getElementById('nextStage').value,
+                approvedBy: document.getElementById('approvedBy').value,
+                approvalDate: document.getElementById('approvalDate').value,
+                expectedCompletion: document.getElementById('expectedCompletion').value,
+                workshopNotes: document.getElementById('workshopNotes').value,
                 photos: uploadedPhotos,
-                signature: signaturePad ? signaturePad.toDataURL() : null
+                signature: isSignatureEmpty() ? null : signaturePad.toDataURL()
             };
         }
 
-        // Save Form Data
         function saveFormData(event) {
             event.preventDefault();
             
@@ -1638,42 +1563,79 @@
                 return;
             }
             
-            // Validate signature
-            const ctx = signaturePad.getContext('2d');
-            const pixelData = ctx.getImageData(0, 0, signaturePad.width, signaturePad.height).data;
-            const hasSignature = pixelData.some((pixel, index) => index % 4 === 3 && pixel < 255);
-            
-            if (!hasSignature) {
+            if (isSignatureEmpty()) {
                 showStatus('Please provide a signature', 'error');
                 return;
             }
             
+            const submissionDateTime = new Date();
+            const formattedDateTime = submissionDateTime.toLocaleString('en-GB', {
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+            
             const formData = collectFormData();
-            formData.completedAt = new Date().toISOString();
+            formData.completedAt = submissionDateTime.toISOString();
+            formData.formattedCompletedAt = formattedDateTime;
             formData.isComplete = true;
             formData.stage = 2;
             formData.stageName = 'Bodywork & Cosmetic';
             
-            // Update vehicle profile
+            document.getElementById('dateStampText').textContent = formattedDateTime;
+            document.getElementById('dateStampDisplay').style.display = 'inline-flex';
+            
+            // Save to vehicle profile
+            const vehicleProfile = JSON.parse(localStorage.getItem(`capeye_vehicle_${currentVehicle.stockNo}`) || '{}');
             vehicleProfile.stage2 = formData;
-            vehicleProfile.currentStage = 3; // Forward to Paint
-            vehicleProfile.lastUpdated = new Date().toISOString();
+            vehicleProfile.currentStage = parseInt(formData.nextStage);
+            vehicleProfile.lastUpdated = submissionDateTime.toISOString();
+            vehicleProfile.stageHistory = vehicleProfile.stageHistory || [];
+            vehicleProfile.stageHistory.push({
+                stage: 2,
+                stageName: 'Bodywork & Cosmetic',
+                completedAt: submissionDateTime.toISOString(),
+                completedBy: formData.assessedBy,
+                nextStage: parseInt(formData.nextStage),
+                repairCost: parseFloat(document.getElementById('grandTotal').textContent.replace(/[£,]/g, '')) || 0
+            });
             
             localStorage.setItem(`capeye_vehicle_${currentVehicle.stockNo}`, JSON.stringify(vehicleProfile));
+            localStorage.removeItem(`capeye_stage2_${currentVehicle.stockNo}`);
             
-            showStatus('Stage 2 completed! Vehicle forwarded to Paint Repairs.', 'success');
+            // Update workflow dashboard
+            const vehicleIndex = allVehicles.findIndex(v => v.stockNo === currentVehicle.stockNo);
+            if (vehicleIndex >= 0) {
+                allVehicles[vehicleIndex].workflowStage = parseInt(formData.nextStage);
+                allVehicles[vehicleIndex].currentStage = parseInt(formData.nextStage);
+                allVehicles[vehicleIndex].lastUpdated = submissionDateTime.toISOString();
+                allVehicles[vehicleIndex].bodyworkCost = parseFloat(document.getElementById('grandTotal').textContent.replace(/[£,]/g, '')) || 0;
+                localStorage.setItem('capeye_all_vehicles', JSON.stringify(allVehicles));
+            }
+            
+            localStorage.setItem('capeye_workflow_update', JSON.stringify({
+                stockNo: currentVehicle.stockNo,
+                fromStage: 2,
+                toStage: parseInt(formData.nextStage),
+                timestamp: submissionDateTime.toISOString(),
+                action: 'stage_complete',
+                repairCost: parseFloat(document.getElementById('grandTotal').textContent.replace(/[£,]/g, '')) || 0
+            }));
+            
+            showStatus(`Stage 2 completed at ${formattedDateTime}! Vehicle forwarded to Stage ${formData.nextStage}.`, 'success');
+            
+            document.getElementById('bodyworkForm').querySelectorAll('input, select, textarea, button').forEach(el => {
+                el.disabled = true;
+            });
             
             setTimeout(() => {
                 window.location.href = '../workflow.html';
-            }, 2000);
+            }, 2500);
         }
 
-        // Print Form
         function printForm() {
             window.print();
         }
 
-        // Show Status
         function showStatus(message, type) {
             const statusEl = document.getElementById('statusMessage');
             const textEl = document.getElementById('statusText');
@@ -1684,6 +1646,20 @@
             setTimeout(() => {
                 statusEl.className = 'status-message';
             }, 5000);
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-GB', { 
+                style: 'currency', 
+                currency: 'GBP',
+                minimumFractionDigits: 2
+            }).format(value || 0);
+        }
+
+        function formatDateForInput(dateString) {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '';
+            return date.toISOString().split('T')[0];
         }
     </script>
 </body>
