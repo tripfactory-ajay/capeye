@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Inspection | Capeye Auto Capital</title>
+    <title>Stage 1: Vehicle Intake | Capeye Auto Capital</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,10 +34,7 @@
             --cy-accent-green: #10b981;
             --cy-accent-green-soft: rgba(16, 185, 129, 0.15);
             --cy-accent-orange: #f59e0b;
-            --cy-accent-orange-soft: rgba(245, 158, 11, 0.15);
             --cy-accent-red: #ef4444;
-            --cy-accent-purple: #8b5cf6;
-            --cy-accent-purple-soft: rgba(139, 92, 246, 0.15);
             --cy-radius-sm: 6px;
             --cy-radius-md: 8px;
             --cy-radius-lg: 12px;
@@ -106,32 +103,35 @@
             color: var(--cy-text-muted);
         }
 
-        .cy-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .cy-nav-link {
+        .stage-indicator {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             padding: 8px 16px;
-            border-radius: var(--cy-radius-md);
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--cy-text-secondary);
-            text-decoration: none;
-            transition: all 0.15s ease;
-        }
-
-        .cy-nav-link:hover {
-            color: var(--cy-text-primary);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .cy-nav-link.active {
-            color: var(--cy-text-primary);
             background: var(--cy-accent-blue-soft);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+        }
+
+        .stage-number {
+            width: 28px;
+            height: 28px;
+            background: var(--cy-accent-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .stage-info {
+            font-size: 13px;
+        }
+
+        .stage-info .label {
+            color: var(--cy-text-muted);
+            font-size: 11px;
         }
 
         /* Main Container */
@@ -166,67 +166,44 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Page Header */
-        .page-header {
-            text-align: center;
-            margin-bottom: 32px;
-            padding: 32px 0;
-            border-bottom: 1px solid var(--cy-border);
-        }
-
-        .page-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .page-subtitle {
-            font-size: 16px;
-            color: var(--cy-text-muted);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Vehicle Search Section */
-        .search-section {
+        /* Vehicle Selector */
+        .vehicle-selector {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
             border-radius: var(--cy-radius-xl);
-            padding: 32px;
-            margin-bottom: 32px;
+            padding: 20px;
+            margin-bottom: 24px;
         }
 
-        .search-grid {
+        .selector-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr auto;
             gap: 16px;
             align-items: end;
-            margin-bottom: 24px;
         }
 
-        @media (max-width: 768px) {
-            .search-grid { grid-template-columns: 1fr; }
+        @media (max-width: 1024px) {
+            .selector-grid { grid-template-columns: 1fr; }
         }
 
         .form-group label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--cy-text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .form-input, .form-select {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: var(--cy-bg-tertiary);
             border: 1px solid var(--cy-border);
             border-radius: var(--cy-radius-md);
             color: var(--cy-text-primary);
-            font-size: 15px;
+            font-size: 14px;
             transition: all 0.15s ease;
         }
 
@@ -236,29 +213,29 @@
         }
 
         .btn-primary {
-            padding: 14px 32px;
+            padding: 12px 24px;
             background: var(--cy-accent-blue);
             border: none;
             border-radius: var(--cy-radius-md);
             color: white;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.15s ease;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn-primary:hover { background: #2563eb; }
 
         .btn-secondary {
-            padding: 14px 24px;
+            padding: 12px 24px;
             background: var(--cy-bg-tertiary);
             border: 1px solid var(--cy-border);
             border-radius: var(--cy-radius-md);
             color: var(--cy-text-secondary);
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.15s ease;
@@ -270,12 +247,12 @@
         }
 
         .btn-success {
-            padding: 14px 32px;
+            padding: 12px 32px;
             background: var(--cy-accent-green);
             border: none;
             border-radius: var(--cy-radius-md);
             color: white;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.15s ease;
@@ -283,30 +260,29 @@
 
         .btn-success:hover { background: #059669; }
 
-        /* Vehicle Result Card */
-        .vehicle-result {
-            display: none;
-            background: linear-gradient(135deg, var(--cy-bg-tertiary) 0%, var(--cy-bg-secondary) 100%);
+        /* Vehicle Info Banner */
+        .vehicle-banner {
+            background: linear-gradient(135deg, var(--cy-bg-secondary) 0%, var(--cy-bg-tertiary) 100%);
             border: 1px solid var(--cy-border);
             border-radius: var(--cy-radius-xl);
             padding: 24px;
-            margin-top: 24px;
+            margin-bottom: 24px;
+            display: none;
         }
 
-        .vehicle-result.active { display: block; }
+        .vehicle-banner.active { display: block; }
 
-        .result-grid {
+        .banner-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 24px;
-            margin-bottom: 24px;
         }
 
         @media (max-width: 768px) {
-            .result-grid { grid-template-columns: repeat(2, 1fr); }
+            .banner-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
-        .result-item label {
+        .banner-item label {
             font-size: 11px;
             color: var(--cy-text-muted);
             text-transform: uppercase;
@@ -315,116 +291,25 @@
             display: block;
         }
 
-        .result-item .value {
-            font-size: 20px;
+        .banner-item .value {
+            font-size: 18px;
             font-weight: 600;
             color: var(--cy-text-primary);
         }
 
-        .result-item .sub {
-            font-size: 14px;
+        .banner-item .sub {
+            font-size: 13px;
             color: var(--cy-text-secondary);
             margin-top: 2px;
         }
 
-        /* Stage Navigation */
-        .stage-nav {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 32px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-        }
-
-        .stage-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 16px 20px;
-            background: var(--cy-bg-secondary);
-            border: 2px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            min-width: 100px;
-            text-align: center;
-        }
-
-        .stage-nav-item:hover {
-            border-color: var(--cy-border-hover);
-            transform: translateY(-2px);
-        }
-
-        .stage-nav-item.active {
-            border-color: var(--cy-accent-blue);
-            background: var(--cy-accent-blue-soft);
-        }
-
-        .stage-nav-item.completed {
-            border-color: var(--cy-accent-green);
-            background: var(--cy-accent-green-soft);
-        }
-
-        .stage-nav-item.locked {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .stage-nav-number {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--cy-bg-tertiary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--cy-text-muted);
-        }
-
-        .stage-nav-item.active .stage-nav-number {
-            background: var(--cy-accent-blue);
-            color: white;
-        }
-
-        .stage-nav-item.completed .stage-nav-number {
-            background: var(--cy-accent-green);
-            color: white;
-        }
-
-        .stage-nav-name {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--cy-text-secondary);
-        }
-
-        .stage-nav-item.active .stage-nav-name {
-            color: var(--cy-text-primary);
-        }
-
-        /* Form Container */
-        .form-container {
+        /* Form Sections */
+        .form-section {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
             border-radius: var(--cy-radius-xl);
-            padding: 32px;
-            display: none;
-        }
-
-        .form-container.active { display: block; }
-
-        .form-section {
-            margin-bottom: 32px;
-            padding-bottom: 32px;
-            border-bottom: 1px solid var(--cy-border);
-        }
-
-        .form-section:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
+            padding: 24px;
+            margin-bottom: 24px;
         }
 
         .section-header {
@@ -432,28 +317,30 @@
             align-items: center;
             gap: 12px;
             margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--cy-border);
         }
 
         .section-icon {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             background: var(--cy-accent-blue-soft);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--cy-accent-blue);
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .section-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             color: var(--cy-text-primary);
         }
 
         .section-subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--cy-text-muted);
         }
 
@@ -481,8 +368,22 @@
             .form-grid-2 { grid-template-columns: 1fr; }
         }
 
+        .form-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .form-grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .form-grid-4 { grid-template-columns: 1fr; }
+        }
+
         textarea.form-input {
-            min-height: 120px;
+            min-height: 100px;
             resize: vertical;
         }
 
@@ -497,17 +398,8 @@
         .checkbox-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             cursor: pointer;
-            padding: 10px 16px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-md);
-            transition: all 0.15s ease;
-        }
-
-        .checkbox-item:hover {
-            border-color: var(--cy-border-hover);
         }
 
         .checkbox-item input[type="checkbox"] {
@@ -572,8 +464,8 @@
             position: absolute;
             top: 8px;
             right: 8px;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             background: rgba(239, 68, 68, 0.9);
             border: none;
             border-radius: 50%;
@@ -582,41 +474,58 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 12px;
             z-index: 10;
         }
 
         .photo-slot i {
-            font-size: 28px;
+            font-size: 24px;
             color: var(--cy-text-muted);
             margin-bottom: 8px;
         }
 
         .photo-slot span {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--cy-text-muted);
         }
 
-        /* Signature */
+        /* Signature Pad - COMPACT VERSION */
         .signature-container {
             background: white;
             border-radius: var(--cy-radius-lg);
-            padding: 20px;
+            padding: 12px;
             margin-top: 8px;
+            border: 2px solid var(--cy-border);
         }
 
         #signaturePad {
             width: 100%;
-            height: 200px;
+            height: 120px;
             border: 1px solid #e5e7eb;
             border-radius: var(--cy-radius-md);
             cursor: crosshair;
+            background: white;
         }
 
         .signature-actions {
             display: flex;
             gap: 12px;
-            margin-top: 12px;
+            margin-top: 8px;
+            align-items: center;
+        }
+
+        .signature-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--cy-text-muted);
+        }
+
+        .signature-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         /* Form Actions */
@@ -624,9 +533,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 24px;
-            border-top: 1px solid var(--cy-border);
-            margin-top: 32px;
+            padding: 24px;
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            position: sticky;
+            bottom: 24px;
         }
 
         .action-group {
@@ -636,7 +548,7 @@
 
         /* Status Messages */
         .status-message {
-            padding: 16px 20px;
+            padding: 16px;
             border-radius: var(--cy-radius-lg);
             margin-bottom: 24px;
             display: none;
@@ -658,71 +570,23 @@
             display: flex;
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--cy-text-muted);
-        }
-
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            font-size: 20px;
-            color: var(--cy-text-primary);
-            margin-bottom: 8px;
-        }
-
         /* Required Field */
         .required::after {
             content: ' *';
             color: var(--cy-accent-red);
         }
 
-        /* Previous Stage Summary */
-        .previous-summary {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: var(--cy-radius-lg);
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-
-        .previous-summary h4 {
-            color: var(--cy-accent-green);
-            font-size: 14px;
-            margin-bottom: 12px;
-            display: flex;
+        /* Date Stamp Display */
+        .date-stamp {
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .previous-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        @media (max-width: 768px) {
-            .previous-summary-grid { grid-template-columns: 1fr; }
-        }
-
-        .prev-item {
-            font-size: 13px;
-        }
-
-        .prev-item label {
-            color: var(--cy-text-muted);
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .prev-item .value {
-            color: var(--cy-text-primary);
+            gap: 6px;
+            padding: 4px 12px;
+            background: var(--cy-accent-blue-soft);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--cy-accent-blue);
             font-weight: 500;
         }
     </style>
@@ -739,7 +603,7 @@
     <!-- Header -->
     <header class="cy-header">
         <div class="cy-header-content">
-            <a href="index.html" class="cy-brand">
+            <a href="../workflow.html" class="cy-brand">
                 <div class="cy-logo">AC</div>
                 <div class="cy-brand-text">
                     <h1>CAPEYE</h1>
@@ -747,26 +611,17 @@
                 </div>
             </a>
             
-            <nav class="cy-nav">
-                <a href="index.html" class="cy-nav-link">
-                    <i class="fas fa-home"></i> Dashboard
-                </a>
-                <a href="operations.html" class="cy-nav-link">
-                    <i class="fas fa-cogs"></i> Operations
-                </a>
-                <a href="inventory.html" class="cy-nav-link">
-                    <i class="fas fa-car"></i> Inventory
-                </a>
-                <a href="workflow.html" class="cy-nav-link">
-                    <i class="fas fa-tasks"></i> Workflow
-                </a>
-                <a href="vehicle-inspection.html" class="cy-nav-link active">
-                    <i class="fas fa-clipboard-check"></i> Inspection
-                </a>
-                <a href="analytics.html" class="cy-nav-link">
-                    <i class="fas fa-chart-bar"></i> Analytics
-                </a>
-            </nav>
+            <div class="stage-indicator">
+                <div class="stage-number">1</div>
+                <div class="stage-info">
+                    <div class="label">Current Stage</div>
+                    <div style="font-weight: 600;">Vehicle Intake</div>
+                </div>
+            </div>
+
+            <a href="../workflow.html" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Pipeline
+            </a>
         </div>
     </header>
 
@@ -778,19 +633,13 @@
             <span id="statusText"></span>
         </div>
 
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">Vehicle Inspection</h1>
-            <p class="page-subtitle">Complete multi-stage vehicle inspection and preparation process. Search for a vehicle to begin.</p>
-        </div>
-
-        <!-- Vehicle Search -->
-        <div class="search-section">
-            <div class="search-grid">
+        <!-- Vehicle Selector -->
+        <div class="vehicle-selector">
+            <div class="selector-grid">
                 <div class="form-group">
-                    <label>Search Vehicle</label>
-                    <select id="vehicleSelect" class="form-select" onchange="selectVehicle()">
-                        <option value="">-- Select from list or search below --</option>
+                    <label>Select Vehicle</label>
+                    <select id="vehicleSelect" class="form-select" onchange="loadVehicleData()">
+                        <option value="">-- Search or Select Vehicle --</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -798,101 +647,523 @@
                     <input type="text" id="stockNoInput" class="form-input" placeholder="e.g., R0218">
                 </div>
                 <div class="form-group">
-                    <label>Or Registration</label>
+                    <label>Registration</label>
                     <input type="text" id="regInput" class="form-input" placeholder="e.g., RF66UBC">
                 </div>
                 <button onclick="searchVehicle()" class="btn-primary">
-                    <i class="fas fa-search"></i> Find Vehicle
+                    <i class="fas fa-search"></i> Load Vehicle
                 </button>
             </div>
+        </div>
 
-            <!-- Vehicle Result -->
-            <div id="vehicleResult" class="vehicle-result">
-                <div class="result-grid">
-                    <div class="result-item">
-                        <label>Stock Number</label>
-                        <div class="value" id="resStockNo">-</div>
-                        <div class="sub" id="resReg">-</div>
-                    </div>
-                    <div class="result-item">
-                        <label>Vehicle</label>
-                        <div class="value" id="resVehicle">-</div>
-                        <div class="sub" id="resDetails">-</div>
-                    </div>
-                    <div class="result-item">
-                        <label>Current Stage</label>
-                        <div class="value" id="resStage">-</div>
-                        <div class="sub" id="resStatus">-</div>
-                    </div>
-                    <div class="result-item">
-                        <label>Location</label>
-                        <div class="value" id="resLocation">-</div>
-                        <div class="sub" id="resDays">-</div>
-                    </div>
+        <!-- Vehicle Info Banner -->
+        <div id="vehicleBanner" class="vehicle-banner">
+            <div class="banner-grid">
+                <div class="banner-item">
+                    <label>Stock Number</label>
+                    <div class="value" id="bannerStockNo">-</div>
+                    <div class="sub" id="bannerReg">-</div>
                 </div>
-                <div style="display: flex; gap: 12px; justify-content: center;">
-                    <button onclick="startInspection()" class="btn-success">
-                        <i class="fas fa-play-circle"></i> Start Inspection
-                    </button>
-                    <button onclick="resetSearch()" class="btn-secondary">
-                        <i class="fas fa-redo"></i> Search Again
-                    </button>
+                <div class="banner-item">
+                    <label>Vehicle</label>
+                    <div class="value" id="bannerVehicle">-</div>
+                    <div class="sub" id="bannerDetails">-</div>
+                </div>
+                <div class="banner-item">
+                    <label>Location</label>
+                    <div class="value" id="bannerLocation">-</div>
+                    <div class="sub" id="bannerStatus">-</div>
+                </div>
+                <div class="banner-item">
+                    <label>Investment</label>
+                    <div class="value" id="bannerCost">-</div>
+                    <div class="sub" id="bannerRetail">-</div>
                 </div>
             </div>
         </div>
 
-        <!-- Empty State (before vehicle selected) -->
-        <div id="emptyState" class="empty-state">
-            <i class="fas fa-search"></i>
-            <h3>Search for a Vehicle</h3>
-            <p>Use the search above to find a vehicle and begin the inspection process</p>
-        </div>
+        <!-- Intake Form -->
+        <form id="intakeForm" onsubmit="saveFormData(event)">
+            <!-- Section 1: Basic Information -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Basic Information</div>
+                        <div class="section-subtitle">Verify and complete vehicle details</div>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">Make</label>
+                        <input type="text" id="make" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Model</label>
+                        <input type="text" id="model" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Variant</label>
+                        <input type="text" id="variant" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Year</label>
+                        <input type="number" id="year" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Fuel Type</label>
+                        <select id="fuelType" class="form-select" required>
+                            <option value="">Select Fuel Type</option>
+                            <option value="Diesel">Diesel</option>
+                            <option value="Petrol">Petrol</option>
+                            <option value="Electric">Electric</option>
+                            <option value="Hybrid">Hybrid</option>
+                            <option value="Plug-in Hybrid">Plug-in Hybrid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Transmission</label>
+                        <select id="transmission" class="form-select" required>
+                            <option value="">Select Transmission</option>
+                            <option value="Manual">Manual</option>
+                            <option value="Automatic">Automatic</option>
+                            <option value="Semi-Automatic">Semi-Automatic</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Stage Navigation (hidden until vehicle selected) -->
-        <div id="stageNav" class="stage-nav" style="display: none;">
-            <!-- Generated by JS -->
-        </div>
+            <!-- Section 2: Acquisition Details -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Acquisition Details</div>
+                        <div class="section-subtitle">Purchase and supplier information</div>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">Date Acquired</label>
+                        <input type="date" id="dateAcquired" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Source</label>
+                        <select id="source" class="form-select" required>
+                            <option value="">Select Source</option>
+                            <option value="Auction">Auction</option>
+                            <option value="Trade">Trade</option>
+                            <option value="Private">Private</option>
+                            <option value="Part Exchange">Part Exchange</option>
+                            <option value="Finance Company">Finance Company</option>
+                            <option value="Lease Company">Lease Company</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier Name</label>
+                        <input type="text" id="supplierName" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Purchase Price</label>
+                        <input type="number" id="purchasePrice" class="form-input" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Costs</label>
+                        <input type="number" id="additionalCosts" class="form-input" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Total Investment</label>
+                        <input type="text" id="totalInvestment" class="form-input" readonly style="background: rgba(59, 130, 246, 0.1);">
+                    </div>
+                </div>
 
-        <!-- Dynamic Form Container -->
-        <div id="formContainer" class="form-container">
-            <!-- Forms injected by JS based on stage -->
-        </div>
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Auction/Supplier Notes</label>
+                    <textarea id="supplierNotes" class="form-input" placeholder="Enter any relevant details about the acquisition..."></textarea>
+                </div>
+            </div>
+
+            <!-- Section 3: Initial Condition Assessment -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Initial Condition Assessment</div>
+                        <div class="section-subtitle">Document vehicle condition at intake</div>
+                    </div>
+                </div>
+                
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Overall Condition</label>
+                        <select id="overallCondition" class="form-select">
+                            <option value="">Select Condition</option>
+                            <option value="Excellent">Excellent</option>
+                            <option value="Good">Good</option>
+                            <option value="Fair">Fair</option>
+                            <option value="Poor">Poor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mileage at Intake</label>
+                        <input type="number" id="intakeMileage" class="form-input">
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <label>Condition Notes</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bodyworkNeeded" name="conditionIssues" value="bodywork">
+                            <label for="bodyworkNeeded">Bodywork Required</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="mechanicalIssues" name="conditionIssues" value="mechanical">
+                            <label for="mechanicalIssues">Mechanical Issues</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="interiorWork" name="conditionIssues" value="interior">
+                            <label for="interiorWork">Interior Work Needed</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tyresNeeded" name="conditionIssues" value="tyres">
+                            <label for="tyresNeeded">Tyres Required</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="serviceDue" name="conditionIssues" value="service">
+                            <label for="serviceDue">Service Due</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="motDue" name="conditionIssues" value="mot">
+                            <label for="motDue">MOT Due</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Detailed Condition Description</label>
+                    <textarea id="conditionDescription" class="form-input" placeholder="Describe any damage, issues, or special notes about the vehicle condition..."></textarea>
+                </div>
+            </div>
+
+            <!-- Section 4: Documentation -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Documentation Checklist</div>
+                        <div class="section-subtitle">Verify all required documents</div>
+                    </div>
+                </div>
+                
+                <div class="form-grid-4">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="v5Present" name="documents" value="v5">
+                        <label for="v5Present">V5 Present</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="motPresent" name="documents" value="mot">
+                        <label for="motPresent">MOT Certificate</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="serviceHistory" name="documents" value="service">
+                        <label for="serviceHistory">Service History</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="spareKeys" name="documents" value="keys">
+                        <label for="spareKeys">Spare Keys</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="handbook" name="documents" value="handbook">
+                        <label for="handbook">Owner's Handbook</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="lockingWheelNut" name="documents" value="lockingNut">
+                        <label for="lockingWheelNut">Locking Wheel Nut</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="purchaseInvoice" name="documents" value="invoice">
+                        <label for="purchaseInvoice">Purchase Invoice</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hpiClear" name="documents" value="hpi">
+                        <label for="hpiClear">HPI Clear</label>
+                    </div>
+                </div>
+
+                <div class="form-grid" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label>MOT Expiry Date</label>
+                        <input type="date" id="motExpiry" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Service Date</label>
+                        <input type="date" id="lastServiceDate" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Service Interval</label>
+                        <select id="serviceInterval" class="form-select">
+                            <option value="">Select Interval</option>
+                            <option value="12000">12,000 miles</option>
+                            <option value="18000">18,000 miles</option>
+                            <option value="20000">20,000 miles</option>
+                            <option value="24000">24,000 miles</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Photographs -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Intake Photographs</div>
+                        <div class="section-subtitle">Minimum 4 exterior and 4 interior photos required</div>
+                    </div>
+                </div>
+                
+                <div class="photo-grid">
+                    <div class="photo-slot" onclick="triggerPhotoUpload('photo1')">
+                        <input type="file" id="photo1" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo1Slot')">
+                        <i class="fas fa-plus"></i>
+                        <span>Front View</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('photo2')">
+                        <input type="file" id="photo2" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo2Slot')">
+                        <i class="fas fa-plus"></i>
+                        <span>Rear View</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('photo3')">
+                        <input type="file" id="photo3" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo3Slot')">
+                        <i class="fas fa-plus"></i>
+                        <span>Driver Side</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('photo4')">
+                        <input type="file" id="photo4" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo4Slot')">
+                        <i class="fas fa-plus"></i>
+                        <span>Passenger Side</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('photo5')">
+                        <input type="file" id="photo5" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo5Slot')">
+                        <i class="fas fa-plus"></i>
+                        <span>Interior Front</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('photo6')">
+                        <input type="file" id="photo6" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo6Slot')">
+                        <i class="fas fa-plus"></i>
+                        <span>Interior Rear</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('photo7')">
+                        <input type="file" id="photo7" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo7Slot')">
+                        <i class="fas fa-plus"></i>
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('photo8')">
+                        <input type="file" id="photo8" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo8Slot')">
+                        <i class="fas fa-plus"></i>
+                        <span>Load Area</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Assignment & Sign-off -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Assignment & Sign-off</div>
+                        <div class="section-subtitle">Assign to next stage and confirm completion</div>
+                    </div>
+                </div>
+                
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="required">Inspected By</label>
+                        <select id="inspectedBy" class="form-select" required>
+                            <option value="">Select Staff Member</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Assign to Next Stage</label>
+                        <select id="nextStage" class="form-select" required>
+                            <option value="2">Stage 2: Bodywork & Cosmetic</option>
+                            <option value="5">Stage 5: Mechanical (Skip Bodywork)</option>
+                            <option value="7">Stage 7: Valeting (Ready for Prep)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Internal Notes</label>
+                    <textarea id="internalNotes" class="form-input" placeholder="Any notes for the next department..."></textarea>
+                </div>
+
+                <!-- COMPACT SIGNATURE SECTION WITH AUTO DATE STAMP -->
+                <div style="margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label>Digital Signature</label>
+                        <div class="date-stamp" id="dateStampDisplay" style="display: none;">
+                            <i class="fas fa-clock"></i>
+                            <span id="dateStampText"></span>
+                        </div>
+                    </div>
+                    <div class="signature-container">
+                        <canvas id="signaturePad"></canvas>
+                    </div>
+                    <div class="signature-actions">
+                        <button type="button" onclick="clearSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                        <span style="color: var(--cy-text-muted); font-size: 13px;">
+                            <i class="fas fa-info-circle"></i> Sign above to confirm inspection
+                        </span>
+                    </div>
+                    <div class="signature-meta">
+                        <span><i class="fas fa-calendar"></i> Auto-stamped on submit</span>
+                        <span><i class="fas fa-shield-alt"></i> Legally binding</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="action-group">
+                    <button type="button" onclick="saveDraft()" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button type="button" onclick="printForm()" class="btn-secondary">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
+                <div class="action-group">
+                    <button type="submit" class="btn-success">
+                        <i class="fas fa-check-circle"></i> Complete Stage & Forward
+                    </button>
+                </div>
+            </div>
+        </form>
     </main>
 
     <script>
-        // Stage Definitions
-        const stages = [
-            { id: 1, name: 'Intake', fullName: 'Vehicle Intake', dept: 'Sales', icon: 'fa-clipboard-check', color: '#3b82f6' },
-            { id: 2, name: 'Bodywork', fullName: 'Bodywork & Cosmetic', dept: 'Bodyshop', icon: 'fa-spray-can', color: '#8b5cf6' },
-            { id: 3, name: 'Paint', fullName: 'Dent & Paint Repairs', dept: 'Bodyshop', icon: 'fa-paint-roller', color: '#8b5cf6' },
-            { id: 4, name: 'Legal', fullName: 'Legal & Documentation', dept: 'Accounts', icon: 'fa-file-contract', color: '#64748b' },
-            { id: 5, name: 'Mechanical', fullName: 'Mechanical & Diagnostic', dept: 'Workshop', icon: 'fa-wrench', color: '#f59e0b' },
-            { id: 6, name: 'External', fullName: 'External & Electrical', dept: 'Workshop', icon: 'fa-bolt', color: '#f59e0b' },
-            { id: 7, name: 'Valeting', fullName: 'Interior & Valeting', dept: 'Valeting', icon: 'fa-sparkles', color: '#10b981' },
-            { id: 8, name: 'Faults', fullName: 'Fault Overview', dept: 'Workshop', icon: 'fa-clipboard-list', color: '#f59e0b' },
-            { id: 9, name: 'Advertising', fullName: 'Ready for Advertising', dept: 'Sales', icon: 'fa-camera', color: '#3b82f6' },
-            { id: 10, name: 'Delivery', fullName: 'Customer Delivery', dept: 'Sales', icon: 'fa-handshake', color: '#3b82f6' },
-            { id: 11, name: 'Accounts', fullName: 'Accounts & Warranty', dept: 'Accounts', icon: 'fa-calculator', color: '#64748b' },
-            { id: 12, name: 'Management', fullName: 'Management Overview', dept: 'Management', icon: 'fa-user-tie', color: '#6366f1' }
-        ];
-
+        // Global Variables
         let allVehicles = [];
         let staffList = [];
         let currentVehicle = null;
-        let vehicleProfile = null;
-        let currentStage = 1;
         let uploadedPhotos = {};
         let signaturePad = null;
+        let signatureContext = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            initSignaturePad();
             loadData();
+            
+            // Calculate total investment when costs change
+            document.getElementById('purchasePrice').addEventListener('input', calculateTotal);
+            document.getElementById('additionalCosts').addEventListener('input', calculateTotal);
         });
 
-        // Load Data
+        // Initialize Signature Pad - COMPACT VERSION
+        function initSignaturePad() {
+            const canvas = document.getElementById('signaturePad');
+            signatureContext = canvas.getContext('2d');
+            
+            // Set canvas size - COMPACT HEIGHT
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 120;
+            
+            // Set white background
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, canvas.width, canvas.height);
+            
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+            }
+            
+            function startDraw(e) {
+                isDrawing = true;
+                const pos = getPos(e);
+                lastX = pos.x;
+                lastY = pos.y;
+            }
+            
+            function draw(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                
+                const pos = getPos(e);
+                signatureContext.beginPath();
+                signatureContext.moveTo(lastX, lastY);
+                signatureContext.lineTo(pos.x, pos.y);
+                signatureContext.strokeStyle = '#000';
+                signatureContext.lineWidth = 2;
+                signatureContext.lineCap = 'round';
+                signatureContext.stroke();
+                
+                lastX = pos.x;
+                lastY = pos.y;
+            }
+            
+            function endDraw() {
+                isDrawing = false;
+            }
+            
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', endDraw);
+            canvas.addEventListener('mouseout', endDraw);
+            
+            canvas.addEventListener('touchstart', startDraw);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', endDraw);
+            
+            signaturePad = canvas;
+        }
+
+        // Clear Signature
+        function clearSignature() {
+            if (!signatureContext) return;
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, signaturePad.width, signaturePad.height);
+        }
+
+        // Check if signature is empty
+        function isSignatureEmpty() {
+            if (!signatureContext) return true;
+            const pixelData = signatureContext.getImageData(0, 0, signaturePad.width, signaturePad.height).data;
+            return !pixelData.some((pixel, index) => index % 4 === 3 && pixel < 255);
+        }
+
+        // Load CSV Data
         async function loadData() {
             try {
-                const stockResponse = await fetch('Auto Capital - Stock List-639068391990284525.csv');
+                // Load stock data
+                const stockResponse = await fetch('../Auto Capital - Stock List-639068391990284525.csv');
                 const stockCsv = await stockResponse.text();
                 
                 Papa.parse(stockCsv, {
@@ -901,8 +1172,33 @@
                     complete: function(results) {
                         allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
                         populateVehicleSelect();
+                        loadStaffData();
+                    },
+                    error: function(err) {
+                        showStatus('Error loading vehicle data: ' + err.message, 'error');
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                    }
+                });
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+
+        // Load Staff Data
+        async function loadStaffData() {
+            try {
+                const staffResponse = await fetch('../Auto Capital - Staff List-639068391990284525.csv');
+                const staffCsv = await staffResponse.text();
+                
+                Papa.parse(staffCsv, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        staffList = results.data.filter(s => s.Name);
+                        populateStaffSelect();
                         
-                        // Check URL params
+                        // Check for existing form data in URL
                         const urlParams = new URLSearchParams(window.location.search);
                         const stockNo = urlParams.get('stock');
                         if (stockNo) {
@@ -912,8 +1208,7 @@
                         
                         document.getElementById('loadingOverlay').style.display = 'none';
                     },
-                    error: function(err) {
-                        showStatus('Error loading data', 'error');
+                    error: function() {
                         document.getElementById('loadingOverlay').style.display = 'none';
                     }
                 });
@@ -947,7 +1242,8 @@
                 fuelType: getValue(['Fuel Type', 'Fuel', 'FuelType']),
                 transmission: getValue(['Transmission', 'Gearbox', 'Trans']),
                 mileage: getValue(['Mileage', 'Miles', 'Odometer']),
-                body: getValue(['Body', 'Body Type', 'Body Style'])
+                body: getValue(['Body', 'Body Type', 'Body Style']),
+                mot: getValue(['MOT', 'MOT Date', 'MOT Expiry'])
             };
         }
 
@@ -962,13 +1258,19 @@
             });
         }
 
-        // Select from Dropdown
-        function selectVehicle() {
-            const stockNo = document.getElementById('vehicleSelect').value;
-            if (stockNo) {
-                document.getElementById('stockNoInput').value = stockNo;
-                searchVehicle();
-            }
+        // Populate Staff Select
+        function populateStaffSelect() {
+            const select = document.getElementById('inspectedBy');
+            const salesStaff = staffList.filter(s => 
+                s.Department === 'Sales' || s.Department === 'Management'
+            );
+            
+            salesStaff.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.Name;
+                option.textContent = `${s.Name} (${s.Department})`;
+                select.appendChild(option);
+            });
         }
 
         // Search Vehicle
@@ -982,546 +1284,67 @@
             );
             
             if (currentVehicle) {
-                loadVehicleProfile();
+                loadVehicleIntoForm(currentVehicle);
+                showStatus(`Loaded vehicle: ${currentVehicle.make} ${currentVehicle.model}`, 'success');
             } else {
                 showStatus('Vehicle not found. Please check Stock No or Registration.', 'error');
             }
         }
 
-        // Load Vehicle Profile
-        function loadVehicleProfile() {
-            vehicleProfile = JSON.parse(localStorage.getItem(`capeye_vehicle_${currentVehicle.stockNo}`) || '{}');
-            currentStage = vehicleProfile.currentStage || 1;
+        // Load Vehicle from Select
+        function loadVehicleData() {
+            const stockNo = document.getElementById('vehicleSelect').value;
+            if (!stockNo) return;
             
-            // Update result card
-            document.getElementById('vehicleResult').classList.add('active');
-            document.getElementById('resStockNo').textContent = currentVehicle.stockNo;
-            document.getElementById('resReg').textContent = currentVehicle.registration || 'No Reg';
-            document.getElementById('resVehicle').textContent = `${currentVehicle.make} ${currentVehicle.model}`;
-            document.getElementById('resDetails').textContent = `${currentVehicle.year} • ${currentVehicle.fuelType} • ${currentVehicle.transmission}`;
-            
-            const stage = stages.find(s => s.id === currentStage);
-            document.getElementById('resStage').textContent = stage ? stage.fullName : 'Not Started';
-            document.getElementById('resStage').style.color = stage ? stage.color : 'var(--cy-text-muted)';
-            document.getElementById('resStatus').textContent = currentVehicle.status || 'Unknown';
-            
-            document.getElementById('resLocation').textContent = currentVehicle.location || 'Unknown';
-            
-            const days = vehicleProfile.stage1 ? 
-                Math.floor((new Date() - new Date(vehicleProfile.stage1.completedAt)) / (1000 * 60 * 60 * 24)) : 
-                (currentVehicle.dateInStock ? Math.floor((new Date() - new Date(currentVehicle.dateInStock)) / (1000 * 60 * 60 * 24)) : 0);
-            document.getElementById('resDays').textContent = `${days} days in system`;
-        }
-
-        // Start Inspection
-        function startInspection() {
-            document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('vehicleResult').classList.remove('active');
-            document.getElementById('stageNav').style.display = 'flex';
-            document.getElementById('formContainer').classList.add('active');
-            
-            renderStageNav();
-            loadStageForm(currentStage);
-        }
-
-        // Reset Search
-        function resetSearch() {
-            document.getElementById('vehicleSelect').value = '';
-            document.getElementById('stockNoInput').value = '';
-            document.getElementById('regInput').value = '';
-            document.getElementById('vehicleResult').classList.remove('active');
-            document.getElementById('emptyState').style.display = 'block';
-            document.getElementById('stageNav').style.display = 'none';
-            document.getElementById('formContainer').classList.remove('active');
-            currentVehicle = null;
-            vehicleProfile = null;
-        }
-
-        // Render Stage Navigation
-        function renderStageNav() {
-            const container = document.getElementById('stageNav');
-            container.innerHTML = stages.map(stage => {
-                let status = '';
-                if (stage.id < currentStage) status = 'completed';
-                else if (stage.id === currentStage) status = 'active';
-                else status = 'locked';
-                
-                const isClickable = stage.id <= currentStage ? `onclick="switchToStage(${stage.id})"` : '';
-                
-                return `
-                    <div class="stage-nav-item ${status}" ${isClickable}>
-                        <div class="stage-nav-number">
-                            ${status === 'completed' ? '<i class="fas fa-check"></i>' : stage.id}
-                        </div>
-                        <div class="stage-nav-name">${stage.name}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Switch to Stage
-        function switchToStage(stageId) {
-            if (stageId > currentStage) return;
-            currentStage = stageId;
-            renderStageNav();
-            loadStageForm(stageId);
-        }
-
-        // Load Stage Form
-        function loadStageForm(stageId) {
-            const container = document.getElementById('formContainer');
-            const stage = stages.find(s => s.id === stageId);
-            
-            // Load existing data if available
-            const existingData = vehicleProfile[`stage${stageId}`] || {};
-            
-            let formHTML = '';
-            
-            switch(stageId) {
-                case 1:
-                    formHTML = renderStage1Form(existingData);
-                    break;
-                case 2:
-                    formHTML = renderStage2Form(existingData);
-                    break;
-                default:
-                    formHTML = `<div class="empty-state"><h3>Stage ${stageId} Form</h3><p>This stage form is under development</p></div>`;
-            }
-            
-            container.innerHTML = formHTML;
-            
-            // Initialize signature pad if needed
-            if (document.getElementById('signaturePad')) {
-                initSignaturePad();
-            }
-            
-            // Populate existing data
-            populateFormData(existingData);
-        }
-
-        // Render Stage 1 Form (Vehicle Intake)
-        function renderStage1Form(existingData) {
-            const isComplete = existingData.isComplete;
-            
-            return `
-                <div class="form-section">
-                    <div class="section-header">
-                        <div class="section-icon"><i class="fas fa-info-circle"></i></div>
-                        <div>
-                            <div class="section-title">Vehicle Intake - Basic Information</div>
-                            <div class="section-subtitle">Stage 1 of 12 - Sales Department</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="required">Make</label>
-                            <input type="text" id="make" class="form-input" value="${currentVehicle.make || ''}" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="required">Model</label>
-                            <input type="text" id="model" class="form-input" value="${currentVehicle.model || ''}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Variant</label>
-                            <input type="text" id="variant" class="form-input" value="${currentVehicle.variant || ''}">
-                        </div>
-                        <div class="form-group">
-                            <label class="required">Year</label>
-                            <input type="number" id="year" class="form-input" value="${currentVehicle.year || ''}" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="required">Fuel Type</label>
-                            <select id="fuelType" class="form-select" required>
-                                <option value="">Select</option>
-                                <option value="Diesel" ${currentVehicle.fuelType === 'Diesel' ? 'selected' : ''}>Diesel</option>
-                                <option value="Petrol" ${currentVehicle.fuelType === 'Petrol' ? 'selected' : ''}>Petrol</option>
-                                <option value="Electric" ${currentVehicle.fuelType === 'Electric' ? 'selected' : ''}>Electric</option>
-                                <option value="Hybrid" ${currentVehicle.fuelType === 'Hybrid' ? 'selected' : ''}>Hybrid</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="required">Transmission</label>
-                            <select id="transmission" class="form-select" required>
-                                <option value="">Select</option>
-                                <option value="Manual" ${currentVehicle.transmission === 'Manual' ? 'selected' : ''}>Manual</option>
-                                <option value="Automatic" ${currentVehicle.transmission === 'Automatic' ? 'selected' : ''}>Automatic</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="section-header">
-                        <div class="section-icon"><i class="fas fa-clipboard-check"></i></div>
-                        <div>
-                            <div class="section-title">Condition Assessment</div>
-                            <div class="section-subtitle">Initial vehicle condition at intake</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-grid-2">
-                        <div class="form-group">
-                            <label>Overall Condition</label>
-                            <select id="overallCondition" class="form-select">
-                                <option value="Excellent">Excellent</option>
-                                <option value="Good" selected>Good</option>
-                                <option value="Fair">Fair</option>
-                                <option value="Poor">Poor</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Mileage at Intake</label>
-                            <input type="number" id="intakeMileage" class="form-input" value="${currentVehicle.mileage || ''}">
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 20px;">
-                        <label>Condition Issues</label>
-                        <div class="checkbox-group">
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="bodyworkNeeded" name="conditionIssues" value="bodywork">
-                                <label for="bodyworkNeeded">Bodywork Required</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="mechanicalIssues" name="conditionIssues" value="mechanical">
-                                <label for="mechanicalIssues">Mechanical Issues</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="interiorWork" name="conditionIssues" value="interior">
-                                <label for="interiorWork">Interior Work</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="tyresNeeded" name="conditionIssues" value="tyres">
-                                <label for="tyresNeeded">Tyres Required</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="margin-top: 20px;">
-                        <label>Condition Description</label>
-                        <textarea id="conditionDescription" class="form-input" placeholder="Describe any damage, issues, or special notes..."></textarea>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="section-header">
-                        <div class="section-icon"><i class="fas fa-camera"></i></div>
-                        <div>
-                            <div class="section-title">Intake Photographs</div>
-                            <div class="section-subtitle">Minimum 4 exterior and 4 interior photos</div>
-                        </div>
-                    </div>
-                    
-                    <div class="photo-grid">
-                        ${[1,2,3,4,5,6,7,8].map(i => `
-                            <div class="photo-slot" onclick="triggerPhotoUpload('photo${i}')" id="photo${i}Slot">
-                                <input type="file" id="photo${i}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo${i}')">
-                                <i class="fas fa-plus"></i>
-                                <span>${['Front', 'Rear', 'Driver Side', 'Passenger Side', 'Interior Front', 'Interior Rear', 'Dashboard', 'Load Area'][i-1]}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="section-header">
-                        <div class="section-icon"><i class="fas fa-user-check"></i></div>
-                        <div>
-                            <div class="section-title">Sign-off</div>
-                            <div class="section-subtitle">Complete intake and forward to next stage</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-grid-2">
-                        <div class="form-group">
-                            <label class="required">Inspected By</label>
-                            <input type="text" id="inspectedBy" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="required">Forward To</label>
-                            <select id="nextStage" class="form-select" required>
-                                <option value="2">Stage 2: Bodywork & Cosmetic</option>
-                                <option value="5">Stage 5: Mechanical (Skip Bodywork)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 24px;">
-                        <label>Digital Signature</label>
-                        <div class="signature-container">
-                            <canvas id="signaturePad"></canvas>
-                        </div>
-                        <div class="signature-actions">
-                            <button type="button" onclick="clearSignature()" class="btn-secondary">Clear</button>
-                            <span style="color: var(--cy-text-muted); font-size: 13px;">Sign to confirm inspection completion</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <div class="action-group">
-                        <button type="button" onclick="saveDraft()" class="btn-secondary">Save Draft</button>
-                    </div>
-                    <div class="action-group">
-                        <button type="button" onclick="submitStage1()" class="btn-success">
-                            ${isComplete ? '<i class="fas fa-redo"></i> Update Stage' : '<i class="fas fa-check-circle"></i> Complete Stage 1'}
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Render Stage 2 Form (Bodywork) - Simplified version
-        function renderStage2Form(existingData) {
-            // Check if Stage 1 is complete
-            if (!vehicleProfile.stage1 || !vehicleProfile.stage1.isComplete) {
-                return `
-                    <div class="empty-state" style="padding: 40px;">
-                        <i class="fas fa-lock" style="color: var(--cy-accent-orange);"></i>
-                        <h3>Stage 1 Not Complete</h3>
-                        <p>Please complete Stage 1 (Vehicle Intake) before proceeding to Bodywork assessment.</p>
-                        <button onclick="switchToStage(1)" class="btn-primary" style="margin-top: 16px;">
-                            Go to Stage 1
-                        </button>
-                    </div>
-                `;
-            }
-
-            // Show Stage 1 summary
-            const s1 = vehicleProfile.stage1;
-            
-            return `
-                <div class="previous-summary">
-                    <h4><i class="fas fa-check-circle"></i> Stage 1 Completed</h4>
-                    <div class="previous-summary-grid">
-                        <div class="prev-item">
-                            <label>Condition</label>
-                            <div class="value">${s1.overallCondition || 'Not specified'}</div>
-                        </div>
-                        <div class="prev-item">
-                            <label>Issues</label>
-                            <div class="value">${s1.bodyworkNeeded ? 'Bodywork needed' : 'No major issues'}</div>
-                        </div>
-                        <div class="prev-item">
-                            <label>Inspected By</label>
-                            <div class="value">${s1.inspectedBy || 'Unknown'}</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="section-header">
-                        <div class="section-icon" style="background: var(--cy-accent-purple-soft); color: var(--cy-accent-purple);">
-                            <i class="fas fa-car-crash"></i>
-                        </div>
-                        <div>
-                            <div class="section-title">Bodywork Assessment</div>
-                            <div class="section-subtitle">Stage 2 of 12 - Bodyshop Department</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-grid-2">
-                        <div class="form-group">
-                            <label class="required">Overall Body Condition</label>
-                            <select id="bodyCondition" class="form-select" required>
-                                <option value="Excellent">Excellent - No work required</option>
-                                <option value="Good">Good - Minor touch-ups</option>
-                                <option value="Fair" selected>Fair - Repairs needed</option>
-                                <option value="Poor">Poor - Significant work</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Estimated Repair Cost</label>
-                            <input type="number" id="repairCost" class="form-input" placeholder="0.00" step="0.01">
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="margin-top: 20px;">
-                        <label>Damage Description</label>
-                        <textarea id="damageDescription" class="form-input" placeholder="Describe all bodywork damage and required repairs..."></textarea>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="section-header">
-                        <div class="section-icon" style="background: var(--cy-accent-purple-soft); color: var(--cy-accent-purple);">
-                            <i class="fas fa-camera"></i>
-                        </div>
-                        <div>
-                            <div class="section-title">Damage Photos</div>
-                            <div class="section-subtitle">Document all damage before repair</div>
-                        </div>
-                    </div>
-                    
-                    <div class="photo-grid">
-                        ${[1,2,3,4,5,6,7,8].map(i => `
-                            <div class="photo-slot" onclick="triggerPhotoUpload('photo${i}')" id="photo${i}Slot">
-                                <input type="file" id="photo${i}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'photo${i}')">
-                                <i class="fas fa-plus"></i>
-                                <span>Photo ${i}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="section-header">
-                        <div class="section-icon" style="background: var(--cy-accent-purple-soft); color: var(--cy-accent-purple);">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                        <div>
-                            <div class="section-title">Authorization</div>
-                            <div class="section-subtitle">Approve work and assign technician</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-grid-2">
-                        <div class="form-group">
-                            <label class="required">Authorized By</label>
-                            <input type="text" id="authorizedBy" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="required">Assigned To</label>
-                            <input type="text" id="assignedTo" class="form-input" required>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 24px;">
-                        <label>Digital Signature - Bodyshop Manager</label>
-                        <div class="signature-container">
-                            <canvas id="signaturePad"></canvas>
-                        </div>
-                        <div class="signature-actions">
-                            <button type="button" onclick="clearSignature()" class="btn-secondary">Clear</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <div class="action-group">
-                        <button type="button" onclick="saveDraft()" class="btn-secondary">Save Draft</button>
-                    </div>
-                    <div class="action-group">
-                        <button type="button" onclick="submitStage2()" class="btn-success">
-                            <i class="fas fa-check-circle"></i> Complete Stage 2 & Forward to Paint
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Initialize Signature Pad
-        function initSignaturePad() {
-            const canvas = document.getElementById('signaturePad');
-            if (!canvas) return;
-            
-            const ctx = canvas.getContext('2d');
-            canvas.width = canvas.offsetWidth;
-            canvas.height = 200;
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            let isDrawing = false;
-            let lastX = 0;
-            let lastY = 0;
-            
-            function getPos(e) {
-                const rect = canvas.getBoundingClientRect();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return {
-                    x: clientX - rect.left,
-                    y: clientY - rect.top
-                };
-            }
-            
-            function startDraw(e) {
-                isDrawing = true;
-                const pos = getPos(e);
-                lastX = pos.x;
-                lastY = pos.y;
-            }
-            
-            function draw(e) {
-                if (!isDrawing) return;
-                e.preventDefault();
-                const pos = getPos(e);
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(pos.x, pos.y);
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                ctx.lineCap = 'round';
-                ctx.stroke();
-                lastX = pos.x;
-                lastY = pos.y;
-            }
-            
-            function endDraw() { isDrawing = false; }
-            
-            canvas.addEventListener('mousedown', startDraw);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', endDraw);
-            canvas.addEventListener('mouseout', endDraw);
-            canvas.addEventListener('touchstart', startDraw);
-            canvas.addEventListener('touchmove', draw);
-            canvas.addEventListener('touchend', endDraw);
-            
-            signaturePad = canvas;
-        }
-
-        function clearSignature() {
-            if (!signaturePad) return;
-            const ctx = signaturePad.getContext('2d');
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, signaturePad.width, signaturePad.height);
-        }
-
-        // Photo Functions
-        function triggerPhotoUpload(inputId) {
-            document.getElementById(inputId).click();
-        }
-
-        function handlePhotoUpload(input, photoId) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedPhotos[photoId] = e.target.result;
-                    const slot = document.getElementById(photoId + 'Slot');
-                    slot.classList.add('has-image');
-                    slot.innerHTML = `
-                        <img src="${e.target.result}" alt="Photo">
-                        <button type="button" class="remove-photo" onclick="event.stopPropagation(); removePhoto('${photoId}')">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${photoId}')">
-                    `;
-                };
-                reader.readAsDataURL(input.files[0]);
+            currentVehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (currentVehicle) {
+                loadVehicleIntoForm(currentVehicle);
             }
         }
 
-        function removePhoto(photoId) {
-            delete uploadedPhotos[photoId];
-            const slot = document.getElementById(photoId + 'Slot');
-            slot.classList.remove('has-image');
-            const labels = {
-                photo1: 'Front', photo2: 'Rear', photo3: 'Driver Side', photo4: 'Passenger Side',
-                photo5: 'Interior Front', photo6: 'Interior Rear', photo7: 'Dashboard', photo8: 'Load Area'
-            };
-            slot.innerHTML = `
-                <i class="fas fa-plus"></i>
-                <span>${labels[photoId] || 'Photo'}</span>
-                <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${photoId}')">
-            `;
+        // Load Vehicle Data into Form
+        function loadVehicleIntoForm(vehicle) {
+            // Update banner
+            document.getElementById('vehicleBanner').classList.add('active');
+            document.getElementById('bannerStockNo').textContent = vehicle.stockNo;
+            document.getElementById('bannerReg').textContent = vehicle.registration || 'No Reg';
+            document.getElementById('bannerVehicle').textContent = `${vehicle.make} ${vehicle.model}`;
+            document.getElementById('bannerDetails').textContent = `${vehicle.year} • ${vehicle.fuelType} • ${vehicle.transmission}`;
+            document.getElementById('bannerLocation').textContent = vehicle.location || 'Unknown';
+            document.getElementById('bannerStatus').textContent = vehicle.status || 'Unknown';
+            document.getElementById('bannerCost').textContent = formatCurrency(vehicle.costPrice);
+            document.getElementById('bannerRetail').textContent = `Retail: ${formatCurrency(vehicle.retailPrice)}`;
+            
+            // Fill form fields
+            document.getElementById('make').value = vehicle.make || '';
+            document.getElementById('model').value = vehicle.model || '';
+            document.getElementById('variant').value = vehicle.variant || '';
+            document.getElementById('year').value = vehicle.year || '';
+            document.getElementById('fuelType').value = vehicle.fuelType || '';
+            document.getElementById('transmission').value = vehicle.transmission || '';
+            document.getElementById('purchasePrice').value = vehicle.costPrice || '';
+            document.getElementById('intakeMileage').value = vehicle.mileage || '';
+            
+            if (vehicle.dateInStock) {
+                document.getElementById('dateAcquired').value = formatDateForInput(vehicle.dateInStock);
+            }
+            
+            // Check for existing saved data
+            const savedData = localStorage.getItem(`capeye_stage1_${vehicle.stockNo}`);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                populateFormFields(data);
+                showStatus('Previous draft data loaded', 'success');
+            }
+            
+            calculateTotal();
         }
 
-        // Populate Form Data
-        function populateFormData(data) {
+        // Populate Form Fields from Saved Data
+        function populateFormFields(data) {
             Object.keys(data).forEach(key => {
                 const el = document.getElementById(key);
-                if (el && key !== 'photos' && key !== 'signature') {
+                if (el) {
                     if (el.type === 'checkbox') {
                         el.checked = data[key];
                     } else {
@@ -1534,7 +1357,7 @@
             if (data.photos) {
                 uploadedPhotos = data.photos;
                 Object.keys(data.photos).forEach(photoId => {
-                    const slot = document.getElementById(photoId + 'Slot');
+                    const slot = document.querySelector(`[onclick="triggerPhotoUpload('${photoId}')"]`);
                     if (slot && data.photos[photoId]) {
                         slot.classList.add('has-image');
                         slot.innerHTML = `
@@ -1542,112 +1365,226 @@
                             <button type="button" class="remove-photo" onclick="event.stopPropagation(); removePhoto('${photoId}')">
                                 <i class="fas fa-times"></i>
                             </button>
-                            <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${photoId}')">
                         `;
                     }
                 });
             }
+
+            // Restore signature if exists
+            if (data.signature && signatureContext) {
+                const img = new Image();
+                img.onload = function() {
+                    signatureContext.drawImage(img, 0, 0);
+                };
+                img.src = data.signature;
+            }
+        }
+
+        // Calculate Total Investment
+        function calculateTotal() {
+            const price = parseFloat(document.getElementById('purchasePrice').value) || 0;
+            const additional = parseFloat(document.getElementById('additionalCosts').value) || 0;
+            const total = price + additional;
+            document.getElementById('totalInvestment').value = formatCurrency(total);
+        }
+
+        // Photo Upload Functions
+        function triggerPhotoUpload(inputId) {
+            document.getElementById(inputId).click();
+        }
+
+        function handlePhotoUpload(input, slotId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const photoId = input.id;
+                    uploadedPhotos[photoId] = e.target.result;
+                    
+                    const slot = input.parentElement;
+                    slot.classList.add('has-image');
+                    slot.innerHTML = `
+                        <img src="${e.target.result}" alt="Photo">
+                        <button type="button" class="remove-photo" onclick="event.stopPropagation(); removePhoto('${photoId}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${slotId}')">
+                    `;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removePhoto(photoId) {
+            delete uploadedPhotos[photoId];
+            const slot = document.querySelector(`[onclick="triggerPhotoUpload('${photoId}')"]`);
+            if (slot) {
+                slot.classList.remove('has-image');
+                const label = photoId.replace('photo', '');
+                const labels = ['Front View', 'Rear View', 'Driver Side', 'Passenger Side', 'Interior Front', 'Interior Rear', 'Dashboard', 'Load Area'];
+                slot.innerHTML = `
+                    <i class="fas fa-plus"></i>
+                    <span>${labels[parseInt(label) - 1]}</span>
+                    <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${photoId}Slot')">
+                `;
+            }
+        }
+
+        // Save Draft
+        function saveDraft() {
+            if (!currentVehicle) {
+                showStatus('Please select a vehicle first', 'error');
+                return;
+            }
+            
+            const formData = collectFormData();
+            formData.lastSaved = new Date().toISOString();
+            formData.isDraft = true;
+            
+            localStorage.setItem(`capeye_stage1_${currentVehicle.stockNo}`, JSON.stringify(formData));
+            showStatus('Draft saved successfully', 'success');
         }
 
         // Collect Form Data
         function collectFormData() {
             const data = {
-                photos: uploadedPhotos,
-                signature: signaturePad ? signaturePad.toDataURL() : null
+                stockNo: currentVehicle?.stockNo,
+                make: document.getElementById('make').value,
+                model: document.getElementById('model').value,
+                variant: document.getElementById('variant').value,
+                year: document.getElementById('year').value,
+                fuelType: document.getElementById('fuelType').value,
+                transmission: document.getElementById('transmission').value,
+                dateAcquired: document.getElementById('dateAcquired').value,
+                source: document.getElementById('source').value,
+                supplierName: document.getElementById('supplierName').value,
+                purchasePrice: document.getElementById('purchasePrice').value,
+                additionalCosts: document.getElementById('additionalCosts').value,
+                totalInvestment: document.getElementById('totalInvestment').value,
+                supplierNotes: document.getElementById('supplierNotes').value,
+                overallCondition: document.getElementById('overallCondition').value,
+                intakeMileage: document.getElementById('intakeMileage').value,
+                conditionDescription: document.getElementById('conditionDescription').value,
+                motExpiry: document.getElementById('motExpiry').value,
+                lastServiceDate: document.getElementById('lastServiceDate').value,
+                serviceInterval: document.getElementById('serviceInterval').value,
+                inspectedBy: document.getElementById('inspectedBy').value,
+                nextStage: document.getElementById('nextStage').value,
+                internalNotes: document.getElementById('internalNotes').value,
+                photos: uploadedPhotos
             };
             
-            // Get all input values
-            document.querySelectorAll('.form-input, .form-select').forEach(el => {
-                if (el.id) data[el.id] = el.value;
+            // Checkboxes
+            document.querySelectorAll('input[name="conditionIssues"]:checked').forEach(cb => {
+                data[cb.id] = true;
             });
             
-            // Get checkboxes
-            document.querySelectorAll('input[type="checkbox"]:checked').forEach(el => {
-                if (el.id) data[el.id] = true;
+            document.querySelectorAll('input[name="documents"]:checked').forEach(cb => {
+                data[cb.id] = true;
             });
+            
+            // Signature
+            if (signaturePad && !isSignatureEmpty()) {
+                data.signature = signaturePad.toDataURL();
+            }
             
             return data;
         }
 
-        // Save Draft
-        function saveDraft() {
-            if (!currentVehicle) return;
+        // Save Form Data (Submit) - WITH AUTO DATE STAMP AND WORKFLOW UPDATE
+        function saveFormData(event) {
+            event.preventDefault();
             
-            const data = collectFormData();
-            data.lastSaved = new Date().toISOString();
-            data.isDraft = true;
+            if (!currentVehicle) {
+                showStatus('Please select a vehicle first', 'error');
+                return;
+            }
             
-            if (!vehicleProfile[`stage${currentStage}`]) vehicleProfile[`stage${currentStage}`] = {};
-            Object.assign(vehicleProfile[`stage${currentStage}`], data);
-            
-            localStorage.setItem(`capeye_vehicle_${currentVehicle.stockNo}`, JSON.stringify(vehicleProfile));
-            showStatus('Draft saved successfully', 'success');
-        }
-
-        // Submit Stage 1
-        function submitStage1() {
-            if (!validateSignature()) {
+            // Validate signature
+            if (isSignatureEmpty()) {
                 showStatus('Please provide a signature', 'error');
                 return;
             }
             
-            const data = collectFormData();
-            data.completedAt = new Date().toISOString();
-            data.isComplete = true;
-            data.stage = 1;
+            // AUTO DATE STAMP - Capture current date/time at submission
+            const submissionDateTime = new Date();
+            const formattedDateTime = submissionDateTime.toLocaleString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
             
-            vehicleProfile.stage1 = data;
-            vehicleProfile.currentStage = parseInt(data.nextStage) || 2;
-            vehicleProfile.lastUpdated = new Date().toISOString();
+            const formData = collectFormData();
+            formData.completedAt = submissionDateTime.toISOString();
+            formData.formattedCompletedAt = formattedDateTime;
+            formData.isComplete = true;
+            formData.stage = 1;
+            formData.stageName = 'Vehicle Intake';
+            
+            // Show date stamp in UI
+            document.getElementById('dateStampText').textContent = formattedDateTime;
+            document.getElementById('dateStampDisplay').style.display = 'inline-flex';
+            
+            // Save to vehicle profile
+            const vehicleProfile = JSON.parse(localStorage.getItem(`capeye_vehicle_${currentVehicle.stockNo}`) || '{}');
+            vehicleProfile.stage1 = formData;
+            vehicleProfile.currentStage = parseInt(formData.nextStage);
+            vehicleProfile.lastUpdated = submissionDateTime.toISOString();
+            vehicleProfile.stageHistory = vehicleProfile.stageHistory || [];
+            vehicleProfile.stageHistory.push({
+                stage: 1,
+                stageName: 'Vehicle Intake',
+                completedAt: submissionDateTime.toISOString(),
+                completedBy: formData.inspectedBy,
+                nextStage: parseInt(formData.nextStage)
+            });
             
             localStorage.setItem(`capeye_vehicle_${currentVehicle.stockNo}`, JSON.stringify(vehicleProfile));
             
-            showStatus('Stage 1 completed! Vehicle forwarded to next stage.', 'success');
+            // Remove draft
+            localStorage.removeItem(`capeye_stage1_${currentVehicle.stockNo}`);
             
-            setTimeout(() => {
-                currentStage = vehicleProfile.currentStage;
-                renderStageNav();
-                loadStageForm(currentStage);
-            }, 1500);
-        }
-
-        // Submit Stage 2
-        function submitStage2() {
-            if (!validateSignature()) {
-                showStatus('Please provide a signature', 'error');
-                return;
+            // UPDATE WORKFLOW DASHBOARD - Update vehicle in main list with new stage
+            const vehicleIndex = allVehicles.findIndex(v => v.stockNo === currentVehicle.stockNo);
+            if (vehicleIndex >= 0) {
+                allVehicles[vehicleIndex].workflowStage = parseInt(formData.nextStage);
+                allVehicles[vehicleIndex].currentStage = parseInt(formData.nextStage);
+                allVehicles[vehicleIndex].lastUpdated = submissionDateTime.toISOString();
+                allVehicles[vehicleIndex].status = 'In Progress';
+                
+                // Save updated vehicle list to localStorage for dashboard sync
+                localStorage.setItem('capeye_all_vehicles', JSON.stringify(allVehicles));
             }
             
-            const data = collectFormData();
-            data.completedAt = new Date().toISOString();
-            data.isComplete = true;
-            data.stage = 2;
+            // Trigger workflow update event for other pages
+            localStorage.setItem('capeye_workflow_update', JSON.stringify({
+                stockNo: currentVehicle.stockNo,
+                fromStage: 1,
+                toStage: parseInt(formData.nextStage),
+                timestamp: submissionDateTime.toISOString(),
+                action: 'stage_complete'
+            }));
             
-            vehicleProfile.stage2 = data;
-            vehicleProfile.currentStage = 3; // Forward to Paint
-            vehicleProfile.lastUpdated = new Date().toISOString();
+            showStatus(`Stage 1 completed at ${formattedDateTime}! Vehicle forwarded to Stage ${formData.nextStage}.`, 'success');
             
-            localStorage.setItem(`capeye_vehicle_${currentVehicle.stockNo}`, JSON.stringify(vehicleProfile));
+            // Disable form to prevent double submission
+            document.getElementById('intakeForm').querySelectorAll('input, select, textarea, button').forEach(el => {
+                el.disabled = true;
+            });
             
-            showStatus('Stage 2 completed! Vehicle forwarded to Paint.', 'success');
-            
+            // Redirect after delay
             setTimeout(() => {
-                currentStage = 3;
-                renderStageNav();
-                loadStageForm(currentStage);
-            }, 1500);
+                window.location.href = '../workflow.html';
+            }, 2500);
         }
 
-        // Validate Signature
-        function validateSignature() {
-            if (!signaturePad) return true; // Skip if no signature field
-            
-            const ctx = signaturePad.getContext('2d');
-            const pixelData = ctx.getImageData(0, 0, signaturePad.width, signaturePad.height).data;
-            return pixelData.some((pixel, index) => index % 4 === 3 && pixel < 255);
+        // Print Form
+        function printForm() {
+            window.print();
         }
 
-        // Show Status
+        // Show Status Message
         function showStatus(message, type) {
             const statusEl = document.getElementById('statusMessage');
             const textEl = document.getElementById('statusText');
@@ -1658,6 +1595,21 @@
             setTimeout(() => {
                 statusEl.className = 'status-message';
             }, 5000);
+        }
+
+        // Utility Functions
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-GB', { 
+                style: 'currency', 
+                currency: 'GBP',
+                maximumFractionDigits: 0 
+            }).format(value || 0);
+        }
+
+        function formatDateForInput(dateString) {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '';
+            return date.toISOString().split('T')[0];
         }
     </script>
 </body>
