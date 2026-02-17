@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 1: Vehicle Intake - Capeye Workflow</title>
+    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
+    <script src="../../data/staff/staff-list.js"></script>
+    <script src="../../data/locations/location-list.js"></script>
+    <script src="../../js/workflow/workflow-engine.js"></script>
+    <script src="../../js/workflow/form-components.js"></script>
+</head>
+<body>
+    <div class="workflow-container">
+        <!-- Stage Navigation -->
+        <div id="stage-nav-container"></div>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div id="header-container"></div>
+            
+            <!-- Stage Form -->
+            <div class="stage-container">
+                <div class="stage-header">
+                    <h1 class="stage-title">
+                        <span style="font-size: 2rem;">📋</span>
+                        Stage 1: Vehicle Intake
+                    </h1>
+                    <p class="stage-description">
+                        Initial vehicle reception and documentation. Record vehicle details, condition, and assign to preparation pipeline.
+                    </p>
+                </div>
+                
+                <!-- Vehicle Search -->
+                <div id="vehicle-search-section">
+                    <h2 style="margin-bottom: 1rem; color: var(--color-text);">Select Vehicle</h2>
+                    <div id="vehicle-search-component"></div>
+                </div>
+                
+                <!-- Vehicle Info Display (hidden until selected) -->
+                <div id="vehicle-info-display" class="vehicle-info-card" style="display: none;">
+                    <div class="vehicle-info-header">
+                        <div class="vehicle-info-title">Vehicle Details</div>
+                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+                    </div>
+                    <div class="vehicle-details-grid" id="vehicle-details-content">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                
+                <!-- Intake Form -->
+                <form id="stage-1-form" style="display: none;">
+                    <div class="form-grid">
+                        <!-- Inspector -->
+                        <div class="form-group">
+                            <label class="form-label" for="inspector">
+                                Inspector <span class="required">*</span>
+                            </label>
+                            <select id="inspector" name="inspector" class="form-select" required>
+                                <option value="">Select Inspector...</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Location -->
+                        <div class="form-group">
+                            <label class="form-label" for="location">
+                                Current Location <span class="required">*</span>
+                            </label>
+                            <select id="location" name="location" class="form-select" required>
+                                <option value="">Select Location...</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Status -->
+                        <div class="form-group">
+                            <label class="form-label" for="status">
+                                Vehicle Status <span class="required">*</span>
+                            </label>
+                            <select id="status" name="status" class="form-select" required>
+                                <option value="">Select Status...</option>
+                                <option value="In Stock">In Stock</option>
+                                <option value="In Transit">In Transit</option>
+                                <option value="Off-site R">Off-site R</option>
+                                <option value="Subject to">Subject to</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Date In Stock -->
+                        <div class="form-group">
+                            <label class="form-label" for="date-in-stock">
+                                Date In Stock <span class="required">*</span>
+                            </label>
+                            <input type="date" id="date-in-stock" name="dateInStock" class="form-input" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Condition Assessment -->
+                    <div class="form-group">
+                        <label class="form-label">Initial Condition</label>
+                        <div class="checkbox-grid cols-3">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="condition[]" value="clean">
+                                <span>Clean Exterior</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="condition[]" value="damage">
+                                <span>Visible Damage</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="condition[]" value="tyres">
+                                <span>Tyres OK</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="condition[]" value="lights">
+                                <span>Lights Working</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="condition[]" value="keys">
+                                <span>Keys Present</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="condition[]" value="documents">
+                                <span>Documents Present</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Photos -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            Intake Photos <span class="required">*</span>
+                            <span style="font-weight: normal; color: var(--color-text-secondary);">(Min 4: Front, Rear, Left, Right)</span>
+                        </label>
+                        <div id="photo-upload-container"></div>
+                        <input type="hidden" id="photos" name="photos" required>
+                    </div>
+                    
+                    <!-- Notes -->
+                    <div class="form-group">
+                        <label class="form-label" for="notes">Additional Notes</label>
+                        <textarea id="notes" name="notes" class="form-textarea" rows="4" 
+                            placeholder="Any special requirements, damage notes, or observations..."></textarea>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                                💾 Save Draft
+                            </button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">
+                                ✓ Complete & Send to Bodywork →
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Initialize
+        let currentVehicle = null;
+        let photoUploadComponent = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current stage
+            WorkflowEngine.setStage(1);
+            
+            // Load components
+            loadComponents();
+            
+            // Populate dropdowns
+            populateDropdowns();
+            
+            // Initialize vehicle search
+            initVehicleSearch();
+            
+            // Load saved data if exists
+            loadSavedData();
+        });
+        
+        function loadComponents() {
+            // Load header
+            fetch('../../workflow/components/header.html')
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('header-container').innerHTML = html;
+                });
+            
+            // Load stage nav
+            fetch('../../workflow/components/stage-nav.html')
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('stage-nav-container').innerHTML = html;
+                });
+        }
+        
+        function populateDropdowns() {
+            // Inspector dropdown - Sales staff
+            const inspectorSelect = document.getElementById('inspector');
+            if (STAFF_DATA) {
+                const salesStaff = STAFF_DATA.getStaffByDept('sales');
+                salesStaff.forEach(staff => {
+                    const opt = document.createElement('option');
+                    opt.value = staff.id;
+                    opt.textContent = staff.name;
+                    inspectorSelect.appendChild(opt);
+                });
+            }
+            
+            // Location dropdown
+            const locationSelect = document.getElementById('location');
+            if (LOCATION_DATA) {
+                LOCATION_DATA.locations.forEach(loc => {
+                    const opt = document.createElement('option');
+                    opt.value = loc.id;
+                    opt.textContent = loc.name;
+                    locationSelect.appendChild(opt);
+                });
+            }
+            
+            // Set default date
+            document.getElementById('date-in-stock').valueAsDate = new Date();
+        }
+        
+        function initVehicleSearch() {
+            const container = document.getElementById('vehicle-search-component');
+            const searchComponent = FormComponents.createVehicleSearch({
+                onSelect: function(vehicle) {
+                    currentVehicle = vehicle;
+                    WorkflowEngine.setVehicle(vehicle);
+                    displayVehicleInfo(vehicle);
+                    document.getElementById('stage-1-form').style.display = 'block';
+                    loadSavedData();
+                }
+            });
+            container.appendChild(searchComponent);
+        }
+        
+        function displayVehicleInfo(vehicle) {
+            document.getElementById('vehicle-info-display').style.display = 'block';
+            document.getElementById('display-stock-no').textContent = vehicle.stockNo;
+            
+            const detailsHtml = `
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Make & Model</span>
+                    <span class="vehicle-detail-value">${vehicle.make} ${vehicle.model}</span>
+                </div>
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Registration</span>
+                    <span class="vehicle-detail-value">${vehicle.registration}</span>
+                </div>
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Year</span>
+                    <span class="vehicle-detail-value">${vehicle.year}</span>
+                </div>
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Colour</span>
+                    <span class="vehicle-detail-value">${vehicle.colour}</span>
+                </div>
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Fuel Type</span>
+                    <span class="vehicle-detail-value">${vehicle.fuelType}</span>
+                </div>
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Mileage</span>
+                    <span class="vehicle-detail-value">${vehicle.mileage?.toLocaleString() || 'N/A'}</span>
+                </div>
+            `;
+            
+            document.getElementById('vehicle-details-content').innerHTML = detailsHtml;
+        }
+        
+        function loadSavedData() {
+            if (!currentVehicle) return;
+            
+            const saved = WorkflowEngine.loadStageData(1, currentVehicle.stockNo);
+            if (saved && saved.data) {
+                const data = saved.data;
+                
+                // Populate form
+                if (data.inspector) document.getElementById('inspector').value = data.inspector;
+                if (data.location) document.getElementById('location').value = data.location;
+                if (data.status) document.getElementById('status').value = data.status;
+                if (data.dateInStock) document.getElementById('date-in-stock').value = data.dateInStock;
+                if (data.notes) document.getElementById('notes').value = data.notes;
+                
+                // Checkboxes
+                if (data.condition) {
+                    data.condition.forEach(val => {
+                        const cb = document.querySelector(`input[name="condition[]"][value="${val}"]`);
+                        if (cb) cb.checked = true;
+                    });
+                }
+                
+                // Photos
+                if (data.photos && photoUploadComponent) {
+                    // Restore photos
+                }
+            }
+        }
+        
+        function getFormData() {
+            const form = document.getElementById('stage-1-form');
+            const formData = new FormData(form);
+            
+            // Get checkboxes
+            const conditions = [];
+            form.querySelectorAll('input[name="condition[]"]:checked').forEach(cb => {
+                conditions.push(cb.value);
+            });
+            
+            return {
+                inspector: formData.get('inspector'),
+                location: formData.get('location'),
+                status: formData.get('status'),
+                dateInStock: formData.get('dateInStock'),
+                condition: conditions,
+                photos: document.getElementById('photos').value,
+                notes: formData.get('notes')
+            };
+        }
+        
+        function saveDraft() {
+            if (!currentVehicle) {
+                alert('Please select a vehicle first');
+                return;
+            }
+            
+            const data = getFormData();
+            WorkflowEngine.saveStageData(1, data);
+            
+            // Show success
+            showAlert('Draft saved successfully', 'success');
+        }
+        
+        function completeStage() {
+            if (!currentVehicle) {
+                alert('Please select a vehicle first');
+                return;
+            }
+            
+            // Validate
+            const data = getFormData();
+            const validation = WorkflowEngine.validateStage(1, data, [
+                { field: 'inspector', required: true, message: 'Inspector is required' },
+                { field: 'location', required: true, message: 'Location is required' },
+                { field: 'status', required: true, message: 'Status is required' },
+                { field: 'dateInStock', required: true, message: 'Date is required' }
+            ]);
+            
+            if (!validation.valid) {
+                showAlert('Please fix errors: ' + validation.errors.join(', '), 'danger');
+                return;
+            }
+            
+            // Check photos
+            const photos = JSON.parse(data.photos || '[]');
+            if (photos.length < 4) {
+                if (!confirm('Minimum 4 photos recommended. Continue anyway?')) {
+                    return;
+                }
+            }
+            
+            // Complete stage
+            const nextStage = WorkflowEngine.completeStage(1, data);
+            
+            showAlert('Stage 1 completed! Redirecting to Stage 2...', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'stage-2-bodywork.html';
+            }, 1500);
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <span>${type === 'success' ? '✓' : type === 'danger' ? '✕' : '⚠'}</span>
+                <span>${message}</span>
+            `;
+            
+            const container = document.querySelector('.stage-container');
+            container.insertBefore(alert, container.firstChild);
+            
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        // Auto-save listener
+        document.addEventListener('workflowAutosave', function() {
+            if (currentVehicle && document.getElementById('stage-1-form').style.display !== 'none') {
+                saveDraft();
+            }
+        });
+        
+        // Save before unload
+        window.addEventListener('beforeunload', function() {
+            if (currentVehicle) {
+                saveDraft();
+            }
+        });
+    </script>
+</body>
+</html>
