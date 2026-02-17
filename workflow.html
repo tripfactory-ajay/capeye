@@ -37,6 +37,7 @@
             --cy-accent-green: #10b981;
             --cy-accent-orange: #f59e0b;
             --cy-accent-red: #ef4444;
+            --cy-accent-red-soft: rgba(239, 68, 68, 0.15);
             --cy-accent-purple: #8b5cf6;
             --cy-radius-sm: 6px;
             --cy-radius-md: 8px;
@@ -374,6 +375,7 @@
             cursor: pointer;
             transition: all 0.15s ease;
             white-space: nowrap;
+            text-decoration: none;
         }
 
         .action-chip:hover {
@@ -383,6 +385,23 @@
         }
 
         .action-chip i { color: var(--cy-accent-blue); }
+
+        /* RED NEW INTAKE BUTTON */
+        .action-chip.new-intake {
+            background: var(--cy-accent-red);
+            border-color: var(--cy-accent-red);
+            color: white;
+            font-weight: 600;
+        }
+
+        .action-chip.new-intake:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .action-chip.new-intake i {
+            color: white;
+        }
 
         /* Pipeline Stats */
         .pipeline-header {
@@ -916,6 +935,9 @@
                 <a href="workflow.html" class="cy-nav-link active">
                     <i class="fas fa-tasks"></i> Workflow
                 </a>
+                <a href="vehicle-inspection.html" class="cy-nav-link">
+                    <i class="fas fa-clipboard-check"></i> Inspection
+                </a>
                 <a href="analytics.html" class="cy-nav-link">
                     <i class="fas fa-chart-bar"></i> Analytics
                 </a>
@@ -986,9 +1008,10 @@
 
         <!-- Quick Actions -->
         <div class="actions-bar">
-            <div class="action-chip" onclick="openIntakeModal()">
+            <!-- RED NEW INTAKE BUTTON - Links to vehicle-inspection.html -->
+            <a href="vehicle-inspection.html" class="action-chip new-intake">
                 <i class="fas fa-plus-circle"></i> New Intake
-            </div>
+            </a>
             <div class="action-chip" onclick="quickAction('search')">
                 <i class="fas fa-search"></i> Find Vehicle
             </div>
@@ -1091,20 +1114,20 @@
     </main>
 
     <script>
-        // Stage definitions with CORRECT file paths
+        // Stage definitions - simplified without file paths (using vehicle-inspection.html instead)
         const stages = [
-            { id: 1, name: 'Vehicle Intake', dept: 'Sales', icon: 'fa-clipboard-check', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)', file: 'stage-1-vehicle-intake.html' },
-            { id: 2, name: 'Bodywork', dept: 'Bodyshop', icon: 'fa-spray-can', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)', file: 'stage-2-bodywork.html' },
-            { id: 3, name: 'Paint Repairs', dept: 'Bodyshop', icon: 'fa-paint-roller', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)', file: 'stage-3-paint.html' },
-            { id: 4, name: 'Legal & Docs', dept: 'Accounts', icon: 'fa-file-contract', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.15)', file: 'stage-4-legal.html' },
-            { id: 5, name: 'Mechanical', dept: 'Workshop', icon: 'fa-wrench', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)', file: 'stage-5-mechanical.html' },
-            { id: 6, name: 'External', dept: 'Workshop', icon: 'fa-bolt', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)', file: 'stage-6-external.html' },
-            { id: 7, name: 'Valeting', dept: 'Valeting', icon: 'fa-sparkles', color: '#10b981', colorSoft: 'rgba(16, 185, 129, 0.15)', file: 'stage-7-valeting.html' },
-            { id: 8, name: 'Fault Overview', dept: 'Workshop', icon: 'fa-clipboard-list', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)', file: 'stage-8-faults.html' },
-            { id: 9, name: 'Advertising', dept: 'Sales', icon: 'fa-camera', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)', file: 'stage-9-advertising.html' },
-            { id: 10, name: 'Delivery', dept: 'Sales', icon: 'fa-handshake', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)', file: 'stage-10-delivery.html' },
-            { id: 11, name: 'Accounts', dept: 'Accounts', icon: 'fa-calculator', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.15)', file: 'stage-11-accounts.html' },
-            { id: 12, name: 'Management', dept: 'Management', icon: 'fa-user-tie', color: '#6366f1', colorSoft: 'rgba(99, 102, 241, 0.15)', file: 'stage-12-management.html' }
+            { id: 1, name: 'Vehicle Intake', dept: 'Sales', icon: 'fa-clipboard-check', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)' },
+            { id: 2, name: 'Bodywork', dept: 'Bodyshop', icon: 'fa-spray-can', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)' },
+            { id: 3, name: 'Paint Repairs', dept: 'Bodyshop', icon: 'fa-paint-roller', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)' },
+            { id: 4, name: 'Legal & Docs', dept: 'Accounts', icon: 'fa-file-contract', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.15)' },
+            { id: 5, name: 'Mechanical', dept: 'Workshop', icon: 'fa-wrench', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)' },
+            { id: 6, name: 'External', dept: 'Workshop', icon: 'fa-bolt', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)' },
+            { id: 7, name: 'Valeting', dept: 'Valeting', icon: 'fa-sparkles', color: '#10b981', colorSoft: 'rgba(16, 185, 129, 0.15)' },
+            { id: 8, name: 'Fault Overview', dept: 'Workshop', icon: 'fa-clipboard-list', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)' },
+            { id: 9, name: 'Advertising', dept: 'Sales', icon: 'fa-camera', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)' },
+            { id: 10, name: 'Delivery', dept: 'Sales', icon: 'fa-handshake', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)' },
+            { id: 11, name: 'Accounts', dept: 'Accounts', icon: 'fa-calculator', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.15)' },
+            { id: 12, name: 'Management', dept: 'Management', icon: 'fa-user-tie', color: '#6366f1', colorSoft: 'rgba(99, 102, 241, 0.15)' }
         ];
 
         let allVehicles = [];
@@ -1223,14 +1246,12 @@
             if (status === 'in transit') return 1;
             if (status === 'off-site r') return 4;
             
-            // Default to Stage 1 for new stock not yet processed
             return 1;
         }
 
         // Calculate Days in Stage
         function calculateDaysInStage(vehicle, profile) {
             if (profile && profile.stage1 && profile.stage1.completedAt) {
-                // Calculate from last stage completion
                 return Math.floor((new Date() - new Date(profile.stage1.completedAt)) / (1000 * 60 * 60 * 24));
             }
             if (vehicle.dateInStock) {
@@ -1401,29 +1422,27 @@
             }).join('');
         }
 
-        // OPEN STAGE - FIXED FILE PATHS
+        // OPEN STAGE - Now links to vehicle-inspection.html
         function openStage(stageId) {
             const stage = stages.find(s => s.id === stageId);
             if (!stage) return;
             
-            // Check if file exists by trying to fetch it, otherwise show alert
-            const filePath = `./workflow/stages/${stage.file}`;
-            
-            // For Stage 1, show intake modal if no specific vehicle selected
-            if (stageId === 1) {
-                openIntakeModal();
-                return;
-            }
-            
-            // For other stages, check if there are vehicles in that stage
+            // Get vehicles in this stage
             const vehiclesInStage = filteredVehicles.filter(v => v.workflowStage === stageId);
+            
             if (vehiclesInStage.length === 0) {
                 showDataStatus(`No vehicles currently in ${stage.name}`, 'error');
                 return;
             }
             
-            // Navigate to stage form
-            window.location.href = filePath;
+            // If multiple vehicles, show first one with option to change
+            // If Stage 1, allow new intake selection
+            if (stageId === 1) {
+                openIntakeModal();
+            } else {
+                // For other stages, go to inspection page with first vehicle
+                window.location.href = `vehicle-inspection.html?stock=${vehiclesInStage[0].stockNo}`;
+            }
         }
 
         // Open Intake Modal
@@ -1458,7 +1477,7 @@
 
         // Start Intake for Specific Vehicle
         function startIntake(stockNo) {
-            window.location.href = `./workflow/stages/stage-1-vehicle-intake.html?stock=${stockNo}`;
+            window.location.href = `vehicle-inspection.html?stock=${stockNo}`;
         }
 
         // Load Vehicle Queue
@@ -1509,15 +1528,9 @@
             }).join('');
         }
 
-        // View Vehicle Detail
+        // View Vehicle Detail - Links to inspection page
         function viewVehicle(stockNo) {
-            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
-            if (!vehicle) return;
-            
-            const stage = stages.find(s => s.id === vehicle.workflowStage);
-            if (stage) {
-                window.location.href = `./workflow/stages/${stage.file}?stock=${stockNo}`;
-            }
+            window.location.href = `vehicle-inspection.html?stock=${stockNo}`;
         }
 
         // Load Activity Feed
