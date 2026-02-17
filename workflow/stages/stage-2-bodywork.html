@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 2: Bodywork & Cosmetic - Capeye Workflow</title>
+    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
+    <script src="../../data/staff/staff-list.js"></script>
+    <script src="../../data/faults/fault-types.js"></script>
+    <script src="../../js/workflow/workflow-engine.js"></script>
+    <script src="../../js/workflow/form-components.js"></script>
+</head>
+<body>
+    <div class="workflow-container">
+        <div id="stage-nav-container"></div>
+        
+        <main class="main-content">
+            <div id="header-container"></div>
+            
+            <div class="stage-container">
+                <div class="stage-header">
+                    <h1 class="stage-title">
+                        <span style="font-size: 2rem;">🎨</span>
+                        Stage 2: Bodywork & Cosmetic
+                    </h1>
+                    <p class="stage-description">
+                        Assess bodywork condition, identify dents, scratches, rust, and panel alignment issues. Document all cosmetic damage.
+                    </p>
+                </div>
+                
+                <!-- Vehicle Info (Read-only) -->
+                <div id="vehicle-info-display" class="vehicle-info-card">
+                    <div class="vehicle-info-header">
+                        <div class="vehicle-info-title">Vehicle Details</div>
+                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+                    </div>
+                    <div class="vehicle-details-grid" id="vehicle-details-content">
+                        <p>Loading vehicle information...</p>
+                    </div>
+                </div>
+                
+                <form id="stage-2-form">
+                    <!-- Assessment Overview -->
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="assessor">
+                                Assessor <span class="required">*</span>
+                            </label>
+                            <select id="assessor" name="assessor" class="form-select" required>
+                                <option value="">Select Assessor...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="assessment-date">
+                                Assessment Date <span class="required">*</span>
+                            </label>
+                            <input type="date" id="assessment-date" name="assessmentDate" class="form-input" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Damage Assessment -->
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">
+                        Damage Assessment
+                    </h3>
+                    
+                    <!-- Dents -->
+                    <div class="form-group">
+                        <label class="form-label">Dent Locations</label>
+                        <div class="checkbox-grid cols-4">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="dents[]" value="front-bumper">
+                                <span>Front Bumper</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="dents[]" value="rear-bumper">
+                                <span>Rear Bumper</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="dents[]" value="driver-door">
+                                <span>Driver Door</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="dents[]" value="passenger-door">
+                                <span>Passenger Door</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="dents[]" value="bonnet">
+                                <span>Bonnet</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="dents[]" value="boot">
+                                <span>Boot</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="dents[]" value="roof">
+                                <span>Roof</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="dents[]" value="wings">
+                                <span>Wings</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Scratch Severity -->
+                    <div class="form-group">
+                        <label class="form-label">Overall Scratch Condition</label>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 2px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; flex: 1; min-width: 150px;">
+                                <input type="radio" name="scratchSeverity" value="none" style="width: 20px; height: 20px;">
+                                <div>
+                                    <div style="font-weight: 600;">None</div>
+                                    <div style="font-size: 0.875rem; color: var(--color-text-secondary);">No visible scratches</div>
+                                </div>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 2px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; flex: 1; min-width: 150px;">
+                                <input type="radio" name="scratchSeverity" value="minor" style="width: 20px; height: 20px;">
+                                <div>
+                                    <div style="font-weight: 600;">Minor</div>
+                                    <div style="font-size: 0.875rem; color: var(--color-text-secondary);">Light surface marks</div>
+                                </div>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 2px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; flex: 1; min-width: 150px;">
+                                <input type="radio" name="scratchSeverity" value="moderate" style="width: 20px; height: 20px;">
+                                <div>
+                                    <div style="font-weight: 600;">Moderate</div>
+                                    <div style="font-size: 0.875rem; color: var(--color-text-secondary);">Visible scratches</div>
+                                </div>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 2px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; flex: 1; min-width: 150px;">
+                                <input type="radio" name="scratchSeverity" value="severe" style="width: 20px; height: 20px;">
+                                <div>
+                                    <div style="font-weight: 600;">Severe</div>
+                                    <div style="font-size: 0.875rem; color: var(--color-text-secondary);">Deep scratches</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Rust Assessment -->
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="rust-present">Rust Present?</label>
+                            <select id="rust-present" name="rustPresent" class="form-select" onchange="toggleRustDetails()">
+                                <option value="no">No Rust</option>
+                                <option value="yes">Yes - Details Required</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="rust-severity-group" style="display: none;">
+                            <label class="form-label" for="rust-severity">Rust Severity</label>
+                            <select id="rust-severity" name="rustSeverity" class="form-select">
+                                <option value="surface">Surface Only</option>
+                                <option value="moderate">Moderate Penetration</option>
+                                <option value="severe">Severe/Structural</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="rust-location-group" style="display: none;">
+                        <label class="form-label">Rust Locations</label>
+                        <div class="checkbox-grid cols-3">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="rustLocations[]" value="door-edges">
+                                <span>Door Edges</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="rustLocations[]" value="wheel-arches">
+                                <span>Wheel Arches</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="rustLocations[]" value="sills">
+                                <span>Sills</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="rustLocations[]" value="boot-floor">
+                                <span>Boot Floor</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="rustLocations[]" value="underbody">
+                                <span>Underbody</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="rustLocations[]" value="other">
+                                <span>Other</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Panel Alignment -->
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="panel-alignment">Panel Alignment OK?</label>
+                            <select id="panel-alignment" name="panelAlignment" class="form-select" onchange="toggleAlignmentNotes()">
+                                <option value="yes">Yes - All Panels Aligned</option>
+                                <option value="no">No - Issues Found</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="alignment-notes-group" style="display: none;">
+                        <label class="form-label" for="alignment-notes">Alignment Issues Detail</label>
+                        <textarea id="alignment-notes" name="alignmentNotes" class="form-textarea" rows="3" 
+                            placeholder="Describe panel misalignment issues..."></textarea>
+                    </div>
+                    
+                    <!-- Previous Repairs -->
+                    <div class="form-group">
+                        <label class="form-label" for="previous-repairs">Evidence of Previous Repairs?</label>
+                        <select id="previous-repairs" name="previousRepairs" class="form-select" onchange="toggleRepairDetails()">
+                            <option value="no">No Evidence</option>
+                            <option value="yes">Yes - Details Required</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="repair-details-group" style="display: none;">
+                        <label class="form-label" for="repair-details">Repair Details</label>
+                        <textarea id="repair-details" name="repairDetails" class="form-textarea" rows="3" 
+                            placeholder="Describe previous repair work, filler, paint mismatch, etc..."></textarea>
+                    </div>
+                    
+                    <!-- Photos -->
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">
+                        Documentation Photos
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            Damage Close-ups <span class="required">*</span>
+                            <span style="font-weight: normal; color: var(--color-text-secondary);">(Minimum 4 photos)</span>
+                        </label>
+                        <div id="damage-photos-container"></div>
+                        <input type="hidden" id="damage-photos" name="damagePhotos" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            Overall Body Shots
+                            <span style="font-weight: normal; color: var(--color-text-secondary);">(All angles)</span>
+                        </label>
+                        <div id="body-photos-container"></div>
+                        <input type="hidden" id="body-photos" name="bodyPhotos">
+                    </div>
+                    
+                    <!-- Estimates -->
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">
+                        Repair Estimates
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="cost-estimate">Estimated Repair Cost (£)</label>
+                            <input type="number" id="cost-estimate" name="costEstimate" class="form-input" 
+                                placeholder="0.00" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="time-estimate">Estimated Time</label>
+                            <select id="time-estimate" name="timeEstimate" class="form-select">
+                                <option value="">Select Duration...</option>
+                                <option value="1-2-days">1-2 Days</option>
+                                <option value="3-5-days">3-5 Days</option>
+                                <option value="1-week">1 Week</option>
+                                <option value="2-weeks">2 Weeks+</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Assignment -->
+                    <div class="form-group">
+                        <label class="form-label" for="assigned-technician">
+                            Assign to Technician <span class="required">*</span>
+                        </label>
+                        <select id="assigned-technician" name="assignedTechnician" class="form-select" required>
+                            <option value="">Select Technician...</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Notes -->
+                    <div class="form-group">
+                        <label class="form-label" for="bodywork-notes">Additional Notes</label>
+                        <textarea id="bodywork-notes" name="bodyworkNotes" class="form-textarea" rows="4" 
+                            placeholder="Any additional observations or special instructions..."></textarea>
+                    </div>
+                    
+                    <!-- Signature -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            Assessor Signature <span class="required">*</span>
+                        </label>
+                        <div id="signature-container"></div>
+                        <input type="hidden" id="signature" name="signature" required>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <a href="stage-1-intake.html" class="btn btn-secondary">← Back to Intake</a>
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                                💾 Save Draft
+                            </button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">
+                                ✓ Complete & Send to Paint →
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentVehicle = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            WorkflowEngine.setStage(2);
+            loadComponents();
+            populateDropdowns();
+            initPhotoUploads();
+            initSignaturePad();
+            loadVehicleData();
+            loadSavedData();
+        });
+        
+        function loadComponents() {
+            fetch('../../workflow/components/header.html')
+                .then(r => r.text())
+                .then(html => document.getElementById('header-container').innerHTML = html);
+            
+            fetch('../../workflow/components/stage-nav.html')
+                .then(r => r.text())
+                .then(html => document.getElementById('stage-nav-container').innerHTML = html);
+        }
+        
+        function populateDropdowns() {
+            // Bodyshop staff
+            const assessorSelect = document.getElementById('assessor');
+            const techSelect = document.getElementById('assigned-technician');
+            
+            if (STAFF_DATA) {
+                const bodyshopStaff = STAFF_DATA.getStaffByDept('bodyshop');
+                const workshopStaff = STAFF_DATA.getStaffByDept('workshop');
+                
+                bodyshopStaff.forEach(staff => {
+                    const opt = document.createElement('option');
+                    opt.value = staff.id;
+                    opt.textContent = staff.name;
+                    assessorSelect.appendChild(opt.cloneNode(true));
+                    techSelect.appendChild(opt);
+                });
+                
+                workshopStaff.forEach(staff => {
+                    const opt = document.createElement('option');
+                    opt.value = staff.id;
+                    opt.textContent = `${staff.name} (Workshop)`;
+                    techSelect.appendChild(opt);
+                });
+            }
+            
+            // Default date
+            document.getElementById('assessment-date').valueAsDate = new Date();
+        }
+        
+        function initPhotoUploads() {
+            // Damage photos
+            const damageContainer = document.getElementById('damage-photos-container');
+            const damageUpload = FormComponents.createPhotoUpload({
+                id: 'damage-photos',
+                label: 'Damage Photos',
+                maxPhotos: 12,
+                minPhotos: 4,
+                required: true
+            });
+            damageContainer.appendChild(damageUpload);
+            
+            // Body photos
+            const bodyContainer = document.getElementById('body-photos-container');
+            const bodyUpload = FormComponents.createPhotoUpload({
+                id: 'body-photos',
+                label: 'Body Photos',
+                maxPhotos: 8,
+                required: false
+            });
+            bodyContainer.appendChild(bodyUpload);
+        }
+        
+        function initSignaturePad() {
+            const container = document.getElementById('signature-container');
+            const sigPad = FormComponents.createSignaturePad({
+                id: 'signature',
+                label: '',
+                required: true
+            });
+            container.appendChild(sigPad);
+        }
+        
+        function loadVehicleData() {
+            currentVehicle = WorkflowEngine.getVehicle();
+            
+            if (!currentVehicle) {
+                // Redirect to intake if no vehicle selected
+                if (confirm('No vehicle selected. Go to Stage 1 to select a vehicle?')) {
+                    window.location.href = 'stage-1-intake.html';
+                }
+                return;
+            }
+            
+            // Display vehicle info
+            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
+            document.getElementById('vehicle-details-content').innerHTML = `
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Make & Model</span>
+                    <span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span>
+                </div>
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Registration</span>
+                    <span class="vehicle-detail-value">${currentVehicle.registration}</span>
+                </div>
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Year</span>
+                    <span class="vehicle-detail-value">${currentVehicle.year}</span>
+                </div>
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Colour</span>
+                    <span class="vehicle-detail-value">${currentVehicle.colour}</span>
+                </div>
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Current Location</span>
+                    <span class="vehicle-detail-value">${currentVehicle.location}</span>
+                </div>
+                <div class="vehicle-detail">
+                    <span class="vehicle-detail-label">Status</span>
+                    <span class="vehicle-detail-value">${currentVehicle.status}</span>
+                </div>
+            `;
+        }
+        
+        function toggleRustDetails() {
+            const show = document.getElementById('rust-present').value === 'yes';
+            document.getElementById('rust-severity-group').style.display = show ? 'block' : 'none';
+            document.getElementById('rust-location-group').style.display = show ? 'block' : 'none';
+        }
+        
+        function toggleAlignmentNotes() {
+            const show = document.getElementById('panel-alignment').value === 'no';
+            document.getElementById('alignment-notes-group').style.display = show ? 'block' : 'none';
+        }
+        
+        function toggleRepairDetails() {
+            const show = document.getElementById('previous-repairs').value === 'yes';
+            document.getElementById('repair-details-group').style.display = show ? 'block' : 'none';
+        }
+        
+        function getFormData() {
+            const form = document.getElementById('stage-2-form');
+            const formData = new FormData(form);
+            
+            return {
+                assessor: formData.get('assessor'),
+                assessmentDate: formData.get('assessmentDate'),
+                dents: formData.getAll('dents[]'),
+                scratchSeverity: formData.get('scratchSeverity'),
+                rustPresent: formData.get('rustPresent'),
+                rustSeverity: formData.get('rustSeverity'),
+                rustLocations: formData.getAll('rustLocations[]'),
+                panelAlignment: formData.get('panelAlignment'),
+                alignmentNotes: formData.get('alignmentNotes'),
+                previousRepairs: formData.get('previousRepairs'),
+                repairDetails: formData.get('repairDetails'),
+                damagePhotos: document.getElementById('damage-photos').value,
+                bodyPhotos: document.getElementById('body-photos').value,
+                costEstimate: formData.get('costEstimate'),
+                timeEstimate: formData.get('timeEstimate'),
+                assignedTechnician: formData.get('assignedTechnician'),
+                bodyworkNotes: formData.get('bodyworkNotes'),
+                signature: document.getElementById('signature').value
+            };
+        }
+        
+        function loadSavedData() {
+            if (!currentVehicle) return;
+            
+            const saved = WorkflowEngine.loadStageData(2, currentVehicle.stockNo);
+            if (saved && saved.data) {
+                const data = saved.data;
+                
+                // Populate fields
+                if (data.assessor) document.getElementById('assessor').value = data.assessor;
+                if (data.assessmentDate) document.getElementById('assessment-date').value = data.assessmentDate;
+                if (data.scratchSeverity) {
+                    const radio = document.querySelector(`input[name="scratchSeverity"][value="${data.scratchSeverity}"]`);
+                    if (radio) radio.checked = true;
+                }
+                if (data.rustPresent) {
+                    document.getElementById('rust-present').value = data.rustPresent;
+                    toggleRustDetails();
+                }
+                if (data.rustSeverity) document.getElementById('rust-severity').value = data.rustSeverity;
+                if (data.panelAlignment) {
+                    document.getElementById('panel-alignment').value = data.panelAlignment;
+                    toggleAlignmentNotes();
+                }
+                if (data.previousRepairs) {
+                    document.getElementById('previous-repairs').value = data.previousRepairs;
+                    toggleRepairDetails();
+                }
+                if (data.costEstimate) document.getElementById('cost-estimate').value = data.costEstimate;
+                if (data.timeEstimate) document.getElementById('time-estimate').value = data.timeEstimate;
+                if (data.assignedTechnician) document.getElementById('assigned-technician').value = data.assignedTechnician;
+                if (data.bodyworkNotes) document.getElementById('bodywork-notes').value = data.bodyworkNotes;
+                if (data.alignmentNotes) document.getElementById('alignment-notes').value = data.alignmentNotes;
+                if (data.repairDetails) document.getElementById('repair-details').value = data.repairDetails;
+                
+                // Checkboxes
+                if (data.dents) {
+                    data.dents.forEach(val => {
+                        const cb = document.querySelector(`input[name="dents[]"][value="${val}"]`);
+                        if (cb) cb.checked = true;
+                    });
+                }
+                if (data.rustLocations) {
+                    data.rustLocations.forEach(val => {
+                        const cb = document.querySelector(`input[name="rustLocations[]"][value="${val}"]`);
+                        if (cb) cb.checked = true;
+                    });
+                }
+            }
+        }
+        
+        function saveDraft() {
+            if (!currentVehicle) return;
+            const data = getFormData();
+            WorkflowEngine.saveStageData(2, data);
+            showAlert('Draft saved', 'success');
+        }
+        
+        function completeStage() {
+            if (!currentVehicle) return;
+            
+            const data = getFormData();
+            const validation = WorkflowEngine.validateStage(2, data, [
+                { field: 'assessor', required: true },
+                { field: 'assessmentDate', required: true },
+                { field: 'assignedTechnician', required: true },
+                { field: 'signature', required: true, message: 'Signature is required' }
+            ]);
+            
+            if (!validation.valid) {
+                showAlert('Please complete required fields', 'danger');
+                return;
+            }
+            
+            const damagePhotos = JSON.parse(data.damagePhotos || '[]');
+            if (damagePhotos.length < 4) {
+                if (!confirm('Minimum 4 damage photos recommended. Continue?')) return;
+            }
+            
+            WorkflowEngine.completeStage(2, data);
+            showAlert('Stage 2 complete! Moving to Paint...', 'success');
+            setTimeout(() => window.location.href = 'stage-3-paint.html', 1500);
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${message}</span>`;
+            const container = document.querySelector('.stage-container');
+            container.insertBefore(alert, container.firstChild);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        document.addEventListener('workflowAutosave', () => {
+            if (currentVehicle) saveDraft();
+        });
+    </script>
+</body>
+</html>
