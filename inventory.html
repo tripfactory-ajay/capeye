@@ -16,8 +16,8 @@
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Vehicle Store -->
-    <script src="./js/vehicle-store.js"></script>
+    <!-- Papa Parse for CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     
     <style>
         :root {
@@ -206,6 +206,34 @@
             max-width: 1600px;
             margin: 0 auto;
             padding: 24px;
+        }
+        
+        /* Loading State */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 15, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         /* Vehicle Table */
@@ -457,6 +485,30 @@
         .badge-sold { background: rgba(100, 116, 139, 0.1); color: #64748b; }
         .badge-stuck { background: rgba(220, 38, 38, 0.1); color: #dc2626; }
         
+        /* Data Status Banner */
+        .data-status {
+            padding: 12px 24px;
+            background: rgba(16, 185, 129, 0.1);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .data-status.error {
+            background: rgba(220, 38, 38, 0.1);
+            border-bottom-color: rgba(220, 38, 38, 0.2);
+        }
+        
+        .data-status-text {
+            font-size: 13px;
+            color: #10b981;
+        }
+        
+        .data-status.error .data-status-text {
+            color: #dc2626;
+        }
+        
         /* Responsive */
         @media (max-width: 1200px) {
             .vehicle-table { font-size: 12px; }
@@ -474,6 +526,12 @@
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p style="margin-top: 16px; color: #94a3b8; font-size: 14px;">Loading inventory data...</p>
+    </div>
+
     <!-- Header -->
     <header class="cy-header">
         <div class="cy-header-content">
@@ -506,6 +564,11 @@
             </div>
             
             <div style="display: flex; align-items: center; gap: 12px;">
+                <button onclick="refreshData()" style="padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 13px; font-weight: 500; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+                
                 <button onclick="exportInventory()" style="padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 13px; font-weight: 500; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-download"></i>
                     Export
@@ -517,6 +580,13 @@
             </div>
         </div>
     </header>
+
+    <!-- Data Status -->
+    <div id="dataStatus" class="data-status" style="display: none;">
+        <i class="fas fa-check-circle"></i>
+        <span class="data-status-text">Data loaded successfully</span>
+        <span id="recordCount" style="margin-left: auto; color: #64748b; font-size: 12px;"></span>
+    </div>
 
     <!-- Filter Section - Top Positioned -->
     <div class="filter-section">
@@ -571,11 +641,6 @@
                 <label class="filter-label">Location</label>
                 <select id="filterLocation" class="filter-input filter-select" onchange="applyFilters()">
                     <option value="">All Locations</option>
-                    <option value="Stanmore Retail">Stanmore Retail</option>
-                    <option value="Stanmore 2">Stanmore 2</option>
-                    <option value="Stanmore PDI">Stanmore PDI</option>
-                    <option value="With Supplier">With Supplier</option>
-                    <option value="ACL">ACL</option>
                 </select>
             </div>
             
@@ -698,39 +763,222 @@
             SOLD: { name: 'Sold', color: '#64748b', bg: 'rgba(100, 116, 139, 0.1)' }
         };
 
+        // CSV Column Mapping for Auto Capital format
+        const columnMap = {
+            'Stock No': 'stockNo',
+            'Registration': 'registration',
+            'Make': 'make',
+            'Model': 'model',
+            'Variant': 'variant',
+            'Year': 'year',
+            'Colour': 'colour',
+            'Fuel Type': 'fuelType',
+            'Transmission': 'transmission',
+            'Mileage': 'mileage',
+            'Body': 'body',
+            'Doors': 'doors',
+            'Location': 'location',
+            'Status': 'status',
+            'Date In Stock': 'dateInStock',
+            'Reg Date': 'regDate',
+            'MOT': 'mot',
+            'Cost Price': 'costPrice',
+            'Retail Price': 'retailPrice',
+            'RFL': 'rfl',
+            'FSH': 'fsh',
+            'Keytag': 'keytag'
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
-            VehicleStore.init();
-            loadData();
-            populateFilters();
-            applyFilters();
-            
-            // Search input listener
-            document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
+            loadCSVData();
         });
 
-        function loadData() {
-            allVehicles = VehicleStore.getAll();
+        function loadCSVData() {
+            showLoading(true);
+            
+            // Find the stock list CSV file (it has a dynamic number in the filename)
+            const stockFile = 'Auto Capital - Stock List-639068391990284525.csv';
+            
+            Papa.parse(stockFile, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                transformHeader: function(header) {
+                    return header.trim();
+                },
+                complete: function(results) {
+                    console.log('CSV loaded:', results.data.length, 'rows');
+                    console.log('Headers:', results.meta.fields);
+                    
+                    if (results.data && results.data.length > 0) {
+                        allVehicles = results.data.map((row, index) => {
+                            return normalizeVehicleData(row, index);
+                        }).filter(v => v.stockNo || v.registration); // Remove empty rows
+                        
+                        showLoading(false);
+                        showDataStatus(true, allVehicles.length);
+                        populateFilters();
+                        applyFilters();
+                    } else {
+                        showLoading(false);
+                        showDataStatus(false, 0, 'No data found in CSV');
+                    }
+                },
+                error: function(error) {
+                    console.error('Error loading CSV:', error);
+                    showLoading(false);
+                    showDataStatus(false, 0, 'Error loading data: ' + error.message);
+                }
+            });
+        }
+
+        function normalizeVehicleData(row, index) {
+            // Helper to get value from row regardless of column name variations
+            const getValue = (...possibleNames) => {
+                for (let name of possibleNames) {
+                    if (row[name] !== undefined && row[name] !== null && row[name] !== '') {
+                        return row[name];
+                    }
+                }
+                return '';
+            };
+
+            // Parse price - handle various formats
+            const parsePrice = (val) => {
+                if (!val) return 0;
+                const cleaned = String(val).replace(/[£,]/g, '').trim();
+                const num = parseFloat(cleaned);
+                return isNaN(num) ? 0 : num;
+            };
+
+            // Parse date
+            const parseDate = (val) => {
+                if (!val) return null;
+                const date = new Date(val);
+                return isNaN(date.getTime()) ? null : date;
+            };
+
+            // Calculate days in stock
+            const dateInStock = parseDate(getValue('Date In Stock', 'DateInStock', 'dateInStock'));
+            const daysInStock = dateInStock ? Math.floor((new Date() - dateInStock) / (1000 * 60 * 60 * 24)) : 0;
+
+            return {
+                id: index + 1,
+                stockNo: getValue('Stock No', 'StockNo', 'stockNo', 'Stock Number') || '',
+                registration: getValue('Registration', 'registration', 'Reg', 'Reg No') || '',
+                make: getValue('Make', 'make', 'Manufacturer') || '',
+                model: getValue('Model', 'model') || '',
+                variant: getValue('Variant', 'variant', 'Trim') || '',
+                year: parseInt(getValue('Year', 'year')) || 0,
+                colour: getValue('Colour', 'Color', 'colour', 'color') || '',
+                fuelType: getValue('Fuel Type', 'FuelType', 'fuel', 'Fuel') || '',
+                transmission: getValue('Transmission', 'transmission', 'Gearbox') || '',
+                mileage: parseInt(getValue('Mileage', 'mileage')) || 0,
+                body: getValue('Body', 'body', 'Body Type') || '',
+                doors: getValue('Doors', 'doors') || '',
+                location: getValue('Location', 'location', 'Site') || '',
+                status: getValue('Status', 'status') || 'In Stock',
+                dateInStock: dateInStock,
+                regDate: parseDate(getValue('Reg Date', 'RegDate', 'Registration Date')),
+                mot: getValue('MOT', 'mot', 'MOT Date') || '',
+                costPrice: parsePrice(getValue('Cost Price', 'CostPrice', 'costPrice', 'Cost')),
+                retailPrice: parsePrice(getValue('Retail Price', 'RetailPrice', 'retailPrice', 'Retail')),
+                rfl: parsePrice(getValue('RFL', 'rfl', 'Road Tax', 'Tax')),
+                fsh: getValue('FSH', 'fsh', 'Full Service History') || '',
+                keytag: getValue('Keytag', 'keytag', 'Key Tag') || '',
+                daysInStock: daysInStock,
+                // Default values for workflow
+                stage: 'INTAKE',
+                assignedTo: '',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+        }
+
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.style.display = show ? 'flex' : 'none';
+        }
+
+        function showDataStatus(success, count, errorMessage) {
+            const status = document.getElementById('dataStatus');
+            const text = status.querySelector('.data-status-text');
+            const countEl = document.getElementById('recordCount');
+            
+            status.style.display = 'flex';
+            status.className = 'data-status' + (success ? '' : ' error');
+            
+            if (success) {
+                text.textContent = `Loaded ${count} vehicles from CSV`;
+                countEl.textContent = new Date().toLocaleTimeString();
+            } else {
+                text.textContent = errorMessage || 'Error loading data';
+                countEl.textContent = '';
+            }
         }
 
         function populateFilters() {
-            // Get unique makes and models
-            const makes = [...new Set(allVehicles.map(v => v.make))].sort();
-            const models = [...new Set(allVehicles.map(v => v.model))].sort();
-            const staff = VehicleStore.getStaff();
-            
+            // Get unique makes
+            const makes = [...new Set(allVehicles.map(v => v.make).filter(Boolean))].sort();
             const makeSelect = document.getElementById('filterMake');
+            makeSelect.innerHTML = '<option value="">All Makes</option>';
             makes.forEach(make => {
                 makeSelect.innerHTML += `<option value="${make}">${make}</option>`;
             });
-            
+
+            // Get unique models
+            const models = [...new Set(allVehicles.map(v => v.model).filter(Boolean))].sort();
             const modelSelect = document.getElementById('filterModel');
+            modelSelect.innerHTML = '<option value="">All Models</option>';
             models.forEach(model => {
                 modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
             });
-            
+
+            // Get unique locations
+            const locations = [...new Set(allVehicles.map(v => v.location).filter(Boolean))].sort();
+            const locationSelect = document.getElementById('filterLocation');
+            locationSelect.innerHTML = '<option value="">All Locations</option>';
+            locations.forEach(loc => {
+                locationSelect.innerHTML += `<option value="${loc}">${loc}</option>`;
+            });
+
+            // Load staff from staff CSV if available, otherwise use defaults
+            loadStaffList();
+        }
+
+        function loadStaffList() {
             const staffSelect = document.getElementById('filterStaff');
-            staff.forEach(s => {
-                staffSelect.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+            staffSelect.innerHTML = '<option value="">All Staff</option>';
+            
+            // Try to load from staff CSV
+            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    if (results.data && results.data.length > 0) {
+                        const staff = results.data
+                            .map(row => row.Name || row.name || row.Staff || row.staff)
+                            .filter(Boolean)
+                            .sort();
+                        
+                        staff.forEach(name => {
+                            staffSelect.innerHTML += `<option value="${name}">${name}</option>`;
+                        });
+                    } else {
+                        // Default staff list
+                        const defaultStaff = ['Keith Hardy', 'Ibrahim Ata', 'Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan'];
+                        defaultStaff.forEach(name => {
+                            staffSelect.innerHTML += `<option value="${name}">${name}</option>`;
+                        });
+                    }
+                },
+                error: function() {
+                    // Default staff list on error
+                    const defaultStaff = ['Keith Hardy', 'Ibrahim Ata', 'Ali Amood'];
+                    defaultStaff.forEach(name => {
+                        staffSelect.innerHTML += `<option value="${name}">${name}</option>`;
+                    });
+                }
             });
         }
 
@@ -749,10 +997,10 @@
             filteredVehicles = allVehicles.filter(v => {
                 // Search filter
                 if (search && !(
-                    v.registration.toLowerCase().includes(search) ||
-                    v.stockNo.toLowerCase().includes(search) ||
-                    v.make.toLowerCase().includes(search) ||
-                    v.model.toLowerCase().includes(search) ||
+                    (v.registration && v.registration.toLowerCase().includes(search)) ||
+                    (v.stockNo && v.stockNo.toLowerCase().includes(search)) ||
+                    (v.make && v.make.toLowerCase().includes(search)) ||
+                    (v.model && v.model.toLowerCase().includes(search)) ||
                     (v.assignedTo && v.assignedTo.toLowerCase().includes(search))
                 )) return false;
                 
@@ -770,7 +1018,7 @@
                 
                 // Days filter
                 if (daysFilter) {
-                    const days = VehicleStore.getDaysInStage(v);
+                    const days = v.daysInStock || 0;
                     if (daysFilter === '0-7' && days > 7) return false;
                     if (daysFilter === '8-14' && (days < 8 || days > 14)) return false;
                     if (daysFilter === '15-30' && (days < 15 || days > 30)) return false;
@@ -786,6 +1034,7 @@
             // Update display
             updateStats();
             updateActiveFilters();
+            currentPage = 1;
             renderTable();
             renderPagination();
         }
@@ -796,24 +1045,24 @@
                 
                 switch(currentSort.field) {
                     case 'registration':
-                        valA = a.registration;
-                        valB = b.registration;
+                        valA = a.registration || '';
+                        valB = b.registration || '';
                         break;
                     case 'vehicle':
-                        valA = `${a.make} ${a.model}`;
-                        valB = `${b.make} ${b.model}`;
+                        valA = `${a.make || ''} ${a.model || ''}`;
+                        valB = `${b.make || ''} ${b.model || ''}`;
                         break;
                     case 'stage':
-                        valA = a.stage;
-                        valB = b.stage;
+                        valA = a.stage || '';
+                        valB = b.stage || '';
                         break;
                     case 'price':
                         valA = a.retailPrice || 0;
                         valB = b.retailPrice || 0;
                         break;
                     case 'days':
-                        valA = VehicleStore.getDaysInStage(a);
-                        valB = VehicleStore.getDaysInStage(b);
+                        valA = a.daysInStock || 0;
+                        valB = b.daysInStock || 0;
                         break;
                     case 'staff':
                         valA = a.assignedTo || '';
@@ -824,8 +1073,8 @@
                         valB = b.location || '';
                         break;
                     default:
-                        valA = a.dateInStock;
-                        valB = b.dateInStock;
+                        valA = a.dateInStock || new Date(0);
+                        valB = b.dateInStock || new Date(0);
                 }
                 
                 if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
@@ -848,7 +1097,7 @@
             const total = filteredVehicles.length;
             const totalValue = filteredVehicles.reduce((sum, v) => sum + (v.retailPrice || 0), 0);
             const avgDays = total > 0 
-                ? Math.round(filteredVehicles.reduce((sum, v) => sum + VehicleStore.getDaysInStage(v), 0) / total)
+                ? Math.round(filteredVehicles.reduce((sum, v) => sum + (v.daysInStock || 0), 0) / total)
                 : 0;
             
             const totalCost = filteredVehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0);
@@ -938,21 +1187,24 @@
             
             tbody.innerHTML = pageVehicles.map(v => {
                 const stage = stages[v.stage] || stages.INTAKE;
-                const days = VehicleStore.getDaysInStage(v);
-                const daysClass = days > 14 ? 'days-danger' : days > 7 ? 'days-warning' : 'days-normal';
+                const days = v.daysInStock || 0;
+                const daysClass = days > 60 ? 'days-danger' : days > 30 ? 'days-warning' : 'days-normal';
                 const margin = v.retailPrice && v.costPrice ? (((v.retailPrice - v.costPrice) / v.retailPrice) * 100).toFixed(1) : 0;
                 
                 let statusBadge = '';
                 if (v.status === 'Sold') statusBadge = '<span class="badge badge-sold">Sold</span>';
-                else if (days > 14) statusBadge = '<span class="badge badge-stuck">Stuck</span>';
+                else if (days > 60) statusBadge = '<span class="badge badge-stuck">Stuck</span>';
                 else if (v.location === 'With Supplier') statusBadge = '<span class="badge badge-intransit">In Transit</span>';
                 else statusBadge = '<span class="badge badge-instock">In Stock</span>';
+                
+                const staffInitial = v.assignedTo ? v.assignedTo.charAt(0).toUpperCase() : '?';
+                const staffFirstName = v.assignedTo ? v.assignedTo.split(' ')[0] : 'Unassigned';
                 
                 return `
                     <tr onclick="viewVehicle('${v.stockNo}')" style="cursor: pointer;">
                         <td>
-                            <div class="cell-reg">${v.registration}</div>
-                            <div style="font-size: 11px; color: var(--cy-text-muted);">${v.stockNo}</div>
+                            <div class="cell-reg">${v.registration || 'N/A'}</div>
+                            <div style="font-size: 11px; color: var(--cy-text-muted);">${v.stockNo || 'No Stock No'}</div>
                         </td>
                         <td>
                             <div class="cell-vehicle">
@@ -960,8 +1212,8 @@
                                     <i class="fas fa-car"></i>
                                 </div>
                                 <div class="vehicle-info">
-                                    <div class="vehicle-name">${v.make} ${v.model}</div>
-                                    <div class="vehicle-details">${v.year} • ${v.fuel} • ${v.mileage?.toLocaleString()} mi</div>
+                                    <div class="vehicle-name">${v.make || 'Unknown'} ${v.model || ''}</div>
+                                    <div class="vehicle-details">${v.year || '-'} • ${v.fuelType || '-'} • ${v.mileage ? v.mileage.toLocaleString() + ' mi' : '-'}</div>
                                 </div>
                             </div>
                         </td>
@@ -980,12 +1232,12 @@
                         </td>
                         <td>
                             <div class="cell-days ${daysClass}">${days} days</div>
-                            <div style="font-size: 11px; color: var(--cy-text-muted);">in stage</div>
+                            <div style="font-size: 11px; color: var(--cy-text-muted);">in stock</div>
                         </td>
                         <td>
                             <div class="cell-staff">
-                                <div class="staff-avatar">${v.assignedTo?.charAt(0) || '?'}</div>
-                                <span>${v.assignedTo?.split(' ')[0] || 'Unassigned'}</span>
+                                <div class="staff-avatar">${staffInitial}</div>
+                                <span>${staffFirstName}</span>
                             </div>
                         </td>
                         <td>
@@ -1000,11 +1252,8 @@
                                 <button class="action-btn" onclick="editVehicle('${v.stockNo}')" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn" onclick="window.location.href='./workflow/stages/stage-${stage.num}-${v.stage.toLowerCase()}.html?stock=${v.stockNo}'" title="Workflow">
-                                    <i class="fas fa-tasks"></i>
-                                </button>
-                                <button class="action-btn" onclick="advanceVehicle('${v.stockNo}')" title="Advance Stage">
-                                    <i class="fas fa-arrow-right"></i>
+                                <button class="action-btn" onclick="viewVehicle('${v.stockNo}')" title="View">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </td>
@@ -1013,7 +1262,7 @@
             }).join('');
             
             // Update showing info
-            document.getElementById('showingFrom').textContent = start + 1;
+            document.getElementById('showingFrom').textContent = filteredVehicles.length > 0 ? start + 1 : 0;
             document.getElementById('showingTo').textContent = Math.min(end, filteredVehicles.length);
             document.getElementById('totalItems').textContent = filteredVehicles.length;
         }
@@ -1061,70 +1310,72 @@
         }
 
         function viewVehicle(stockNo) {
-            const vehicle = VehicleStore.get(stockNo);
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
             if (!vehicle) return;
             
             const details = `
-Registration: ${vehicle.registration}
-Stock No: ${vehicle.stockNo}
-Make/Model: ${vehicle.make} ${vehicle.model}
-Year: ${vehicle.year}
+Registration: ${vehicle.registration || 'N/A'}
+Stock No: ${vehicle.stockNo || 'N/A'}
+Make/Model: ${vehicle.make || 'Unknown'} ${vehicle.model || ''}
+Year: ${vehicle.year || '-'}
+Colour: ${vehicle.colour || '-'}
+Fuel: ${vehicle.fuelType || '-'}
+Mileage: ${vehicle.mileage ? vehicle.mileage.toLocaleString() + ' mi' : '-'}
 Stage: ${vehicle.stage}
 Price: £${(vehicle.retailPrice || 0).toLocaleString()}
-Assigned: ${vehicle.assignedTo}
-Location: ${vehicle.location}
+Cost: £${(vehicle.costPrice || 0).toLocaleString()}
+Location: ${vehicle.location || '-'}
+Days in Stock: ${vehicle.daysInStock || 0}
+Status: ${vehicle.status || 'In Stock'}
             `.trim();
             
             alert(details);
         }
 
         function editVehicle(stockNo) {
-            window.location.href = `./workflow/stages/stage-1-intake.html?stock=${stockNo}&edit=true`;
-        }
-
-        function advanceVehicle(stockNo) {
-            const result = VehicleStore.advance(stockNo, {
-                staff: 'Current User',
-                notes: 'Advanced from Inventory'
-            });
-            
-            if (result.success) {
-                alert(`Advanced to ${stages[result.vehicle.stage]?.name || result.vehicle.stage}`);
-                loadData();
-                applyFilters();
-            } else {
-                alert('Error: ' + result.error);
-            }
+            // For now, just view - you can link to workflow later
+            viewVehicle(stockNo);
         }
 
         function addNewVehicle() {
             window.location.href = './workflow/stages/stage-1-intake.html';
         }
 
+        function refreshData() {
+            loadCSVData();
+        }
+
         function exportInventory() {
+            const headers = ['Stock No', 'Registration', 'Make', 'Model', 'Year', 'Colour', 'Fuel Type', 'Mileage', 'Location', 'Status', 'Cost Price', 'Retail Price', 'Days in Stock'];
+            
             const csv = [
-                ['Stock No', 'Registration', 'Make', 'Model', 'Year', 'Stage', 'Cost Price', 'Retail Price', 'Assigned To', 'Location', 'Days in Stock'].join(','),
+                headers.join(','),
                 ...filteredVehicles.map(v => [
                     v.stockNo,
                     v.registration,
                     v.make,
                     v.model,
                     v.year,
-                    v.stage,
+                    v.colour,
+                    v.fuelType,
+                    v.mileage,
+                    v.location,
+                    v.status,
                     v.costPrice,
                     v.retailPrice,
-                    v.assignedTo,
-                    v.location,
-                    VehicleStore.getDaysInStage(v)
-                ].join(','))
+                    v.daysInStock
+                ].map(field => `"${String(field || '').replace(/"/g, '""')}"`).join(','))
             ].join('\n');
             
-            const blob = new Blob([csv], { type: 'text/csv' });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `inventory_export_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
         }
 
         function debounce(func, wait) {
@@ -1141,7 +1392,7 @@ Location: ${vehicle.location}
 
         function animateValue(id, value, prefix) {
             const el = document.getElementById(id);
-            const current = parseInt(el.textContent) || 0;
+            const current = parseInt(el.textContent.replace(/[^0-9]/g, '')) || 0;
             if (current === value) return;
             
             const diff = value - current;
@@ -1152,7 +1403,7 @@ Location: ${vehicle.location}
             const timer = setInterval(() => {
                 step++;
                 const newVal = Math.round(current + (increment * step));
-                el.textContent = prefix + newVal;
+                el.textContent = prefix + newVal.toLocaleString();
                 if (step >= steps) clearInterval(timer);
             }, 30);
         }
@@ -1161,6 +1412,9 @@ Location: ${vehicle.location}
             localStorage.removeItem('capeye_session');
             window.location.href = './login.html';
         }
+
+        // Search input listener with debounce
+        document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
     </script>
 </body>
 </html>
