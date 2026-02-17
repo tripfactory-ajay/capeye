@@ -16,11 +16,11 @@
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <!-- Capeye Design System -->
     <link rel="stylesheet" href="./css/capeye-system.css">
+    
+    <!-- Vehicle Store -->
+    <script src="./js/vehicle-store.js"></script>
     
     <style>
         /* Operations Specific Styles */
@@ -570,6 +570,104 @@
             margin-top: 2px;
         }
         
+        /* Search Styles */
+        .search-container {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: 8px;
+            color: var(--cy-text-primary);
+            font-size: 13px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 4px;
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+        
+        .search-result-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--cy-border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-result-item:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-stage-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .result-info {
+            flex: 1;
+        }
+        
+        .result-reg {
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            font-size: 13px;
+        }
+        
+        .result-details {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+        }
+        
+        /* Global Header Search */
+        .global-search-container {
+            position: relative;
+        }
+        
+        .global-search-results {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 4px;
+            width: 320px;
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
         /* Responsive */
         @media (max-width: 1200px) {
             .pipeline-container { grid-template-columns: repeat(3, 1fr); }
@@ -615,7 +713,7 @@
                         <i class="fas fa-tasks"></i> Workflow
                     </a>
                     <a href="./analytics.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-chart-bar"></i> Analytics
+                        <i class="fas fa-chart-bar"></i> Intelligence
                     </a>
                 </nav>
             </div>
@@ -624,6 +722,13 @@
                 <div class="live-indicator" style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 20px; font-size: 12px; color: #10b981; font-weight: 600;">
                     <span class="pulse-dot" style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></span>
                     LIVE
+                </div>
+                
+                <!-- Global Vehicle Search -->
+                <div class="global-search-container">
+                    <input type="text" id="globalSearch" placeholder="Find vehicle..." 
+                           style="padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; color: #f8fafc; font-size: 13px; width: 180px;">
+                    <div id="globalSearchResults" class="global-search-results"></div>
                 </div>
                 
                 <button onclick="refreshOperations()" style="padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 13px; font-weight: 500; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px;">
@@ -642,7 +747,7 @@
     <main class="cy-container" style="padding: 24px; max-width: 1600px; margin: 0 auto;">
         
         <!-- Page Header -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
             <div>
                 <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #f8fafc; margin-bottom: 6px;">
                     Live <span style="color: #3b82f6;">Operations</span>
@@ -664,6 +769,22 @@
                 <div style="text-align: right;">
                     <div style="font-family: 'Space Grotesk'; font-size: 28px; font-weight: 700; color: #10b981;" id="readyToAdvertise">0</div>
                     <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Ready to Advertise</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Vehicle Search Section -->
+        <div style="background: var(--cy-bg-secondary); border: 1px solid var(--cy-border); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+            <div style="display: flex; gap: 16px; align-items: end;">
+                <div style="flex: 1;">
+                    <label style="font-size: 11px; color: var(--cy-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block;">Quick Vehicle Search</label>
+                    <div class="search-container" style="position: relative;">
+                        <input type="text" id="quickSearch" class="search-input" placeholder="Enter stock number, registration, make or model...">
+                        <div id="quickSearchResults" class="search-results"></div>
+                    </div>
+                </div>
+                <div id="selectedVehicle" style="flex: 1; display: none;">
+                    <!-- Shows selected vehicle quick actions -->
                 </div>
             </div>
         </div>
@@ -694,13 +815,11 @@
                             <i class="fas fa-download"></i>
                             Intake / Yard
                         </div>
-                        <div class="pipeline-time">Avg: 2.3 days</div>
+                        <div class="pipeline-time" id="avgIntakeTime">Avg: -- days</div>
                     </div>
                     <span class="pipeline-count" id="countIntake">0</span>
                 </div>
-                <div class="pipeline-vehicles" id="intakeVehicles">
-                    <!-- Populated by JS -->
-                </div>
+                <div class="pipeline-vehicles" id="intakeVehicles"></div>
             </div>
 
             <!-- Stage 2: Workshop -->
@@ -711,13 +830,11 @@
                             <i class="fas fa-wrench"></i>
                             Workshop
                         </div>
-                        <div class="pipeline-time">Avg: 4.1 days</div>
+                        <div class="pipeline-time" id="avgWorkshopTime">Avg: -- days</div>
                     </div>
                     <span class="pipeline-count" id="countWorkshop">0</span>
                 </div>
-                <div class="pipeline-vehicles" id="workshopVehicles">
-                    <!-- Populated by JS -->
-                </div>
+                <div class="pipeline-vehicles" id="workshopVehicles"></div>
             </div>
 
             <!-- Stage 3: Prep/Valeting -->
@@ -728,13 +845,11 @@
                             <i class="fas fa-spray-can"></i>
                             Prep / Valeting
                         </div>
-                        <div class="pipeline-time">Avg: 1.8 days</div>
+                        <div class="pipeline-time" id="avgPrepTime">Avg: -- days</div>
                     </div>
                     <span class="pipeline-count" id="countPrep">0</span>
                 </div>
-                <div class="pipeline-vehicles" id="prepVehicles">
-                    <!-- Populated by JS -->
-                </div>
+                <div class="pipeline-vehicles" id="prepVehicles"></div>
             </div>
 
             <!-- Stage 4: Ready -->
@@ -749,9 +864,7 @@
                     </div>
                     <span class="pipeline-count" id="countReady">0</span>
                 </div>
-                <div class="pipeline-vehicles" id="readyVehicles">
-                    <!-- Populated by JS -->
-                </div>
+                <div class="pipeline-vehicles" id="readyVehicles"></div>
             </div>
 
             <!-- Stage 5: Advertised -->
@@ -766,9 +879,7 @@
                     </div>
                     <span class="pipeline-count" id="countAdvertised">0</span>
                 </div>
-                <div class="pipeline-vehicles" id="advertisedVehicles">
-                    <!-- Populated by JS -->
-                </div>
+                <div class="pipeline-vehicles" id="advertisedVehicles"></div>
             </div>
         </div>
 
@@ -780,14 +891,12 @@
                         <i class="fas fa-wrench" style="color: #f59e0b;"></i>
                         Workshop Jobs Queue
                     </div>
-                    <button style="padding: 6px 12px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; font-size: 12px; font-weight: 600; color: #3b82f6; cursor: pointer;">
-                        + Add Job
+                    <button onclick="window.location.href='./workflow/stages/stage-1-intake.html'" style="padding: 6px 12px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; font-size: 12px; font-weight: 600; color: #3b82f6; cursor: pointer;">
+                        + New Intake
                     </button>
                 </div>
                 
-                <div id="workshopQueue">
-                    <!-- Populated by JS -->
-                </div>
+                <div id="workshopQueue"></div>
             </div>
 
             <div class="queue-card">
@@ -798,17 +907,15 @@
                     </div>
                 </div>
                 
-                <div class="workload-grid" id="staffWorkload">
-                    <!-- Populated by JS -->
-                </div>
+                <div class="workload-grid" id="staffWorkload"></div>
                 
                 <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cy-border);">
                     <div style="font-size: 12px; color: var(--cy-text-muted); margin-bottom: 8px;">Department Capacity</div>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <div style="flex: 1; height: 6px; background: var(--cy-bg-tertiary); border-radius: 3px; overflow: hidden;">
-                            <div style="width: 75%; height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); border-radius: 3px;"></div>
+                            <div id="capacityBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); border-radius: 3px; transition: width 0.5s;"></div>
                         </div>
-                        <span style="font-size: 12px; font-weight: 600; color: #3b82f6;">75%</span>
+                        <span id="capacityText" style="font-size: 12px; font-weight: 600; color: #3b82f6;">0%</span>
                     </div>
                 </div>
             </div>
@@ -822,18 +929,13 @@
                     Ready for Photography / Advertising
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <button style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; font-size: 12px; color: var(--cy-text-secondary); cursor: pointer;">
-                        <i class="fas fa-filter"></i> Filter
-                    </button>
-                    <button style="padding: 6px 12px; background: #10b981; color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
-                        Schedule All
+                    <button onclick="advertiseAll()" style="padding: 6px 12px; background: #10b981; color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                        Advertise All
                     </button>
                 </div>
             </div>
             
-            <div class="ready-grid" id="readyToAdGrid">
-                <!-- Populated by JS -->
-            </div>
+            <div class="ready-grid" id="readyToAdGrid"></div>
         </div>
 
     </main>
@@ -847,119 +949,67 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div id="modalContent">
-                    <!-- Populated by JS -->
-                </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Populated by JS -->
             </div>
         </div>
     </div>
 
-    <script src="./js/capeye-core.js"></script>
     <script>
-        let allVehicles = [];
-        let stuckVehicles = [];
-        
         // Stage definitions
         const stages = {
-            INTAKE: { name: 'Intake', color: '#3b82f6', icon: 'fa-download' },
-            WORKSHOP: { name: 'Workshop', color: '#f59e0b', icon: 'fa-wrench' },
-            PREP: { name: 'Prep', color: '#8b5cf6', icon: 'fa-spray-can' },
-            READY: { name: 'Ready', color: '#10b981', icon: 'fa-check-circle' },
-            ADVERTISED: { name: 'Advertised', color: '#06b6d4', icon: 'fa-bullhorn' }
+            INTAKE: { name: 'Intake', color: '#3b82f6', icon: 'fa-download', num: 1, next: 'WORKSHOP' },
+            WORKSHOP: { name: 'Workshop', color: '#f59e0b', icon: 'fa-wrench', num: 2, next: 'PREP' },
+            PREP: { name: 'Prep', color: '#8b5cf6', icon: 'fa-spray-can', num: 3, next: 'READY' },
+            READY: { name: 'Ready', color: '#10b981', icon: 'fa-check-circle', num: 4, next: 'ADVERTISED' },
+            ADVERTISED: { name: 'Advertised', color: '#06b6d4', icon: 'fa-bullhorn', num: 5, next: 'SOLD' },
+            SOLD: { name: 'Sold', color: '#64748b', icon: 'fa-check', num: 6, next: null }
         };
 
+        let allVehicles = [];
+        let stuckVehicles = [];
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize VehicleStore
+            VehicleStore.init();
+            
+            // Load data
             loadData();
+            
+            // Initialize search
+            initQuickSearch();
+            initGlobalSearch();
+            
+            // Render all
             renderAll();
-            setInterval(refreshOperations, 30000); // Auto-refresh every 30s
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshOperations, 30000);
+            
+            // Listen for updates from other pages
+            window.addEventListener('vehicleUpdated', function(e) {
+                refreshOperations();
+            });
         });
 
         function loadData() {
-            // Load from localStorage or generate sample data
-            allVehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            
-            if (allVehicles.length === 0) {
-                allVehicles = generateSampleOperationsData();
-                localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
-            }
+            allVehicles = VehicleStore.getAll();
             
             // Identify stuck vehicles (>7 days in current stage)
             stuckVehicles = allVehicles.filter(v => {
-                const daysInStage = calculateDaysInStage(v);
-                return daysInStage > 7 && v.stage !== 'ADVERTISED';
+                const days = VehicleStore.getDaysInStage(v);
+                return days > 7 && v.stage !== 'SOLD';
             });
             
             // Show alert if stuck vehicles exist
+            const alertBanner = document.getElementById('alertBanner');
             if (stuckVehicles.length > 0) {
-                document.getElementById('alertBanner').style.display = 'flex';
+                alertBanner.style.display = 'flex';
                 document.getElementById('alertMessage').textContent = 
                     `${stuckVehicles.length} vehicle${stuckVehicles.length > 1 ? 's have' : ' has'} been stuck for over 7 days`;
+            } else {
+                alertBanner.style.display = 'none';
             }
-        }
-
-        function generateSampleOperationsData() {
-            const makes = ['Ford', 'VW', 'Mercedes', 'Peugeot', 'Renault', 'Vauxhall'];
-            const models = ['Transit', 'Crafter', 'Sprinter', 'Boxer', 'Master', 'Movano'];
-            const staff = ['Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan', 'Sia Vajihi', 'Iman Zarien', 'Stash'];
-            
-            const vehicles = [];
-            const now = new Date();
-            
-            for (let i = 0; i < 45; i++) {
-                const stageKeys = Object.keys(stages);
-                const stage = stageKeys[Math.floor(Math.random() * stageKeys.length)];
-                const daysInStage = Math.floor(Math.random() * 12);
-                
-                vehicles.push({
-                    stockNo: `R${String(1000 + i).padStart(4, '0')}`,
-                    registration: `${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${Math.floor(Math.random() * 90 + 10)} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
-                    make: makes[Math.floor(Math.random() * makes.length)],
-                    model: models[Math.floor(Math.random() * models.length)],
-                    stage: stage,
-                    stageEntered: new Date(now.getTime() - daysInStage * 24 * 60 * 60 * 1000).toISOString(),
-                    assignedTo: staff[Math.floor(Math.random() * staff.length)],
-                    location: ['Stanmore Retail', 'Stanmore 2', 'Stanmore PDI'][Math.floor(Math.random() * 3)],
-                    status: daysInStage > 7 ? 'STUCK' : 'NORMAL',
-                    jobs: stage === 'WORKSHOP' ? generateJobs() : [],
-                    history: generateHistory(stage, daysInStage)
-                });
-            }
-            
-            return vehicles;
-        }
-
-        function generateJobs() {
-            const jobTypes = ['Mechanical Repair', 'Bodywork', 'Diagnostics', 'Service', 'MOT Prep'];
-            return [{
-                type: jobTypes[Math.floor(Math.random() * jobTypes.length)],
-                description: 'Replace brake pads, check suspension',
-                estimatedHours: Math.floor(Math.random() * 4 + 1),
-                started: new Date().toISOString()
-            }];
-        }
-
-        function generateHistory(currentStage, daysInStage) {
-            const history = [];
-            const stages = ['INTAKE', 'WORKSHOP', 'PREP', 'READY', 'ADVERTISED'];
-            const currentIndex = stages.indexOf(currentStage);
-            
-            for (let i = 0; i <= currentIndex; i++) {
-                history.push({
-                    stage: stages[i],
-                    date: new Date(Date.now() - (daysInStage + (currentIndex - i) * 2) * 24 * 60 * 60 * 1000).toISOString(),
-                    person: ['Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan'][Math.floor(Math.random() * 3)],
-                    action: i === currentIndex ? 'Current stage' : 'Completed'
-                });
-            }
-            
-            return history;
-        }
-
-        function calculateDaysInStage(vehicle) {
-            const entered = new Date(vehicle.stageEntered);
-            const now = new Date();
-            return Math.floor((now - entered) / (1000 * 60 * 60 * 24));
         }
 
         function renderAll() {
@@ -968,6 +1018,7 @@
             renderStaffWorkload();
             renderReadyToAd();
             updateHeaderStats();
+            updateAvgTimes();
         }
 
         function renderPipeline() {
@@ -979,18 +1030,20 @@
                 ADVERTISED: document.getElementById('advertisedVehicles')
             };
             
-            const stageCounts = {
-                INTAKE: 0, WORKSHOP: 0, PREP: 0, READY: 0, ADVERTISED: 0
-            };
+            const stageCounts = { INTAKE: 0, WORKSHOP: 0, PREP: 0, READY: 0, ADVERTISED: 0 };
             
             // Clear containers
             Object.values(stageContainers).forEach(el => el.innerHTML = '');
             
             // Sort vehicles by days in stage (oldest first)
-            allVehicles.sort((a, b) => calculateDaysInStage(b) - calculateDaysInStage(a));
+            const sortedVehicles = [...allVehicles].sort((a, b) => 
+                VehicleStore.getDaysInStage(b) - VehicleStore.getDaysInStage(a)
+            );
             
-            allVehicles.forEach(vehicle => {
-                const days = calculateDaysInStage(vehicle);
+            sortedVehicles.forEach(vehicle => {
+                if (!stageContainers[vehicle.stage]) return;
+                
+                const days = VehicleStore.getDaysInStage(vehicle);
                 const isStuck = days > 7;
                 const isWarning = days > 5;
                 
@@ -1014,9 +1067,7 @@
                     </div>
                 `;
                 
-                if (stageContainers[vehicle.stage]) {
-                    stageContainers[vehicle.stage].appendChild(card);
-                }
+                stageContainers[vehicle.stage].appendChild(card);
             });
             
             // Update counts
@@ -1036,30 +1087,29 @@
             }
             
             container.innerHTML = workshopVehicles.map(v => {
-                const days = calculateDaysInStage(v);
+                const days = VehicleStore.getDaysInStage(v);
                 const isUrgent = days > 7;
-                const job = v.jobs?.[0] || { type: 'General Repair', description: 'Awaiting assessment' };
                 
                 return `
-                    <div class="job-row ${isUrgent ? 'urgent' : ''}">
+                    <div class="job-row ${isUrgent ? 'urgent' : ''}" onclick="openVehicleModalById('${v.stockNo}')">
                         <div class="job-vehicle">
                             <div class="job-reg">${v.registration}</div>
-                            <div class="job-desc">${job.type} - ${job.description}</div>
+                            <div class="job-desc">${v.make} ${v.model} • ${v.assignedTo}</div>
                         </div>
                         <div class="job-mechanic">
                             <div class="mechanic-avatar">${v.assignedTo?.charAt(0) || '?'}</div>
-                            <span class="mechanic-name">${v.assignedTo || 'Unassigned'}</span>
+                            <span class="mechanic-name">${v.assignedTo?.split(' ')[0] || 'Unassigned'}</span>
                         </div>
                         <div class="job-time">
                             <div class="time-elapsed ${isUrgent ? 'text-red-500' : ''}">${days}d</div>
                             <div class="time-label">in stage</div>
                         </div>
-                        <div class="job-actions">
-                            <button class="job-btn" onclick="event.stopPropagation(); advanceVehicle('${v.stockNo}')" title="Complete & Move">
+                        <div class="job-actions" onclick="event.stopPropagation()">
+                            <button class="job-btn" onclick="advanceVehicle('${v.stockNo}')" title="Complete & Move">
                                 <i class="fas fa-check"></i>
                             </button>
-                            <button class="job-btn" onclick="event.stopPropagation(); openVehicleModalById('${v.stockNo}')" title="Details">
-                                <i class="fas fa-ellipsis-h"></i>
+                            <button class="job-btn" onclick="window.location.href='./workflow/stages/stage-2-workshop.html?stock=${v.stockNo}'" title="Open Form">
+                                <i class="fas fa-edit"></i>
                             </button>
                         </div>
                     </div>
@@ -1068,19 +1118,27 @@
         }
 
         function renderStaffWorkload() {
-            const staff = ['Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan', 'Sia Vajihi', 'Iman Zarien', 'Stash'];
+            const staff = VehicleStore.getStaff();
             const container = document.getElementById('staffWorkload');
             
             container.innerHTML = staff.map(person => {
-                const count = allVehicles.filter(v => v.assignedTo === person).length;
+                const count = allVehicles.filter(v => v.assignedTo === person.name && v.stage !== 'SOLD').length;
                 return `
                     <div class="workload-item">
-                        <div class="workload-name">${person.split(' ')[0]}</div>
+                        <div class="workload-name">${person.name.split(' ')[0]}</div>
                         <div class="workload-count">${count}</div>
                         <div class="workload-label">vehicles</div>
                     </div>
                 `;
             }).join('');
+            
+            // Update capacity bar
+            const totalStaff = staff.length;
+            const avgLoad = totalStaff > 0 ? allVehicles.filter(v => v.stage !== 'SOLD').length / totalStaff : 0;
+            const capacityPercent = Math.min(100, Math.round((avgLoad / 8) * 100)); // Assume 8 is max load
+            
+            document.getElementById('capacityBar').style.width = capacityPercent + '%';
+            document.getElementById('capacityText').textContent = capacityPercent + '%';
         }
 
         function renderReadyToAd() {
@@ -1109,13 +1167,328 @@
         }
 
         function updateHeaderStats() {
-            const active = allVehicles.filter(v => v.stage !== 'ADVERTISED' && v.stage !== 'SOLD').length;
+            const active = allVehicles.filter(v => v.stage !== 'SOLD').length;
             const workshop = allVehicles.filter(v => v.stage === 'WORKSHOP').length;
             const ready = allVehicles.filter(v => v.stage === 'READY').length;
             
             animateValue('totalActiveVehicles', active, '');
             animateValue('workshopLoad', workshop, '');
             animateValue('readyToAdvertise', ready, '');
+        }
+
+        function updateAvgTimes() {
+            const stages = ['INTAKE', 'WORKSHOP', 'PREP'];
+            stages.forEach(stage => {
+                const vehicles = allVehicles.filter(v => v.stage === stage);
+                const avg = vehicles.length > 0 
+                    ? Math.round(vehicles.reduce((sum, v) => sum + VehicleStore.getDaysInStage(v), 0) / vehicles.length)
+                    : 0;
+                const el = document.getElementById(`avg${stage.charAt(0) + stage.slice(1).toLowerCase()}Time`);
+                if (el) el.textContent = `Avg: ${avg} days`;
+            });
+        }
+
+        function initQuickSearch() {
+            const input = document.getElementById('quickSearch');
+            const results = document.getElementById('quickSearchResults');
+            
+            let searchTimeout;
+            
+            input.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length < 2) {
+                    results.style.display = 'none';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    const vehicles = VehicleStore.search(query);
+                    showQuickResults(vehicles, results, input);
+                }, 200);
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!input.contains(e.target) && !results.contains(e.target)) {
+                    results.style.display = 'none';
+                }
+            });
+        }
+
+        function showQuickResults(vehicles, resultsDiv, input) {
+            if (vehicles.length === 0) {
+                resultsDiv.innerHTML = '<div style="padding: 12px; color: #64748b; font-size: 13px;">No vehicles found</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            resultsDiv.innerHTML = vehicles.slice(0, 5).map(v => {
+                const stage = stages[v.stage];
+                return `
+                    <div class="search-result-item" onclick="selectQuickVehicle('${v.stockNo}')">
+                        <div class="result-stage-icon" style="background: ${stage?.color || '#3b82f6'};">
+                            <i class="fas ${stage?.icon || 'fa-car'}"></i>
+                        </div>
+                        <div class="result-info">
+                            <div class="result-reg">${v.registration}</div>
+                            <div class="result-details">${v.make} ${v.model} • ${stage?.name || v.stage} • ${v.assignedTo}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            resultsDiv.style.display = 'block';
+        }
+
+        function selectQuickVehicle(stockNo) {
+            const vehicle = VehicleStore.get(stockNo);
+            if (!vehicle) return;
+            
+            document.getElementById('quickSearchResults').style.display = 'none';
+            document.getElementById('quickSearch').value = vehicle.registration;
+            
+            const div = document.getElementById('selectedVehicle');
+            div.style.display = 'block';
+            const stage = stages[vehicle.stage];
+            
+            div.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(59,130,246,0.1); border-radius: 8px; border: 1px solid rgba(59,130,246,0.2);">
+                    <div style="width: 40px; height: 40px; background: ${stage?.color || '#3b82f6'}; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas ${stage?.icon || 'fa-car'}"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; color: #f8fafc; font-size: 14px;">${vehicle.registration}</div>
+                        <div style="font-size: 11px; color: #94a3b8;">${vehicle.make} ${vehicle.model} | ${stage?.name || vehicle.stage}</div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="openVehicleModalById('${vehicle.stockNo}')" style="padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600;">View</button>
+                        ${vehicle.stage !== 'SOLD' ? `
+                            <button onclick="advanceVehicle('${vehicle.stockNo}')" style="padding: 6px 12px; background: #10b981; color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600;">Advance</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function initGlobalSearch() {
+            const input = document.getElementById('globalSearch');
+            const results = document.getElementById('globalSearchResults');
+            
+            let searchTimeout;
+            
+            input.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length < 2) {
+                    results.style.display = 'none';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    const vehicles = VehicleStore.search(query);
+                    showGlobalResults(vehicles, results);
+                }, 200);
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!input.contains(e.target) && !results.contains(e.target)) {
+                    results.style.display = 'none';
+                }
+            });
+        }
+
+        function showGlobalResults(vehicles, resultsDiv) {
+            if (vehicles.length === 0) {
+                resultsDiv.innerHTML = '<div style="padding: 12px; color: #64748b; font-size: 13px;">No vehicles found</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            resultsDiv.innerHTML = vehicles.slice(0, 6).map(v => {
+                const stage = stages[v.stage];
+                return `
+                    <div onclick="goToVehicle('${v.stockNo}', '${v.stage}')" style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 32px; height: 32px; background: ${stage?.color || '#3b82f6'}; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">
+                                <i class="fas ${stage?.icon || 'fa-car'}"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: #f8fafc; font-size: 13px;">${v.registration}</div>
+                                <div style="font-size: 11px; color: #64748b;">${v.make} ${v.model} | ${stage?.name || v.stage}</div>
+                            </div>
+                            <i class="fas fa-chevron-right" style="color: #64748b; font-size: 10px;"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            resultsDiv.style.display = 'block';
+        }
+
+        function goToVehicle(stockNo, stage) {
+            const stageNum = stages[stage]?.num || 1;
+            const stageName = stage.toLowerCase();
+            window.location.href = `./workflow/stages/stage-${stageNum}-${stageName}.html?stock=${stockNo}`;
+        }
+
+        function openVehicleModal(vehicle) {
+            document.getElementById('modalTitle').textContent = `${vehicle.registration} - ${vehicle.make} ${vehicle.model}`;
+            
+            const days = VehicleStore.getDaysInStage(vehicle);
+            const stage = stages[vehicle.stage];
+            const history = VehicleStore.getHistory(vehicle.stockNo);
+            
+            let historyHtml = '';
+            if (history && history.length > 0) {
+                historyHtml = history.map(h => {
+                    const histStage = stages[h.stage] || stages[h.fromStage] || stages[h.toStage];
+                    return `
+                        <div class="timeline-item" style="--stage-color: ${histStage?.color || '#3b82f6'}">
+                            <div class="timeline-date">${new Date(h.timestamp).toLocaleDateString('en-GB')}</div>
+                            <div class="timeline-action">${histStage?.name || h.stage} ${h.action ? `(${h.action})` : ''}</div>
+                            <div class="timeline-person">by ${h.staff}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            document.getElementById('modalBody').innerHTML = `
+                <div style="display: grid; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                        <div style="background: var(--cy-bg-tertiary); padding: 16px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Current Stage</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; color: ${stage?.color || '#3b82f6'};">
+                                ${stage?.name || vehicle.stage}
+                            </div>
+                        </div>
+                        <div style="background: var(--cy-bg-tertiary); padding: 16px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Days in Stage</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; color: ${days > 7 ? '#dc2626' : days > 5 ? '#f59e0b' : '#10b981'};">
+                                ${days} days
+                            </div>
+                        </div>
+                        <div style="background: var(--cy-bg-tertiary); padding: 16px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Assigned To</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; color: var(--cy-text-primary);">
+                                ${vehicle.assignedTo?.split(' ')[0] || 'Unassigned'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
+                        <div><strong>Stock No:</strong> ${vehicle.stockNo}</div>
+                        <div><strong>Location:</strong> ${vehicle.location || 'Unknown'}</div>
+                        <div><strong>Year:</strong> ${vehicle.year || 'N/A'}</div>
+                        <div><strong>Mileage:</strong> ${vehicle.mileage?.toLocaleString() || 'N/A'}</div>
+                        <div><strong>Color:</strong> ${vehicle.color || 'N/A'}</div>
+                        <div><strong>Fuel:</strong> ${vehicle.fuel || 'N/A'}</div>
+                    </div>
+                    
+                    <div>
+                        <div style="font-size: 12px; font-weight: 600; color: var(--cy-text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Stage History</div>
+                        <div class="timeline">
+                            ${historyHtml || '<div style="color: var(--cy-text-muted); font-size: 13px;">No history available</div>'}
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; padding-top: 16px; border-top: 1px solid var(--cy-border);">
+                        ${vehicle.stage !== 'SOLD' ? `
+                            <button onclick="advanceVehicle('${vehicle.stockNo}'); closeModal();" style="flex: 1; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                <i class="fas fa-arrow-right"></i> Advance to ${stages[stage?.next]?.name || 'Next'}
+                            </button>
+                        ` : ''}
+                        <button onclick="window.location.href='./workflow/stages/stage-${stage?.num}-${vehicle.stage.toLowerCase()}.html?stock=${vehicle.stockNo}'" style="padding: 12px 20px; background: #3b82f6; border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            Open Form
+                        </button>
+                        <button onclick="reassignVehicle('${vehicle.stockNo}');" style="padding: 12px 20px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); color: var(--cy-text-primary); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            Reassign
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('vehicleModal').classList.add('active');
+        }
+
+        function openVehicleModalById(stockNo) {
+            const vehicle = VehicleStore.get(stockNo);
+            if (vehicle) openVehicleModal(vehicle);
+        }
+
+        function closeModal() {
+            document.getElementById('vehicleModal').classList.remove('active');
+        }
+
+        function advanceVehicle(stockNo) {
+            const result = VehicleStore.advance(stockNo, {
+                staff: 'Current User',
+                notes: 'Advanced from Operations dashboard'
+            });
+            
+            if (result.success) {
+                alert(`Vehicle advanced to ${stages[result.vehicle.stage]?.name || result.vehicle.stage}`);
+                refreshOperations();
+            } else {
+                alert('Error: ' + result.error);
+            }
+        }
+
+        function advertiseVehicle(stockNo) {
+            const result = VehicleStore.advance(stockNo, {
+                staff: 'Current User',
+                notes: 'Sent to advertising'
+            });
+            
+            if (result.success) {
+                alert('Vehicle sent to advertising!');
+                refreshOperations();
+            }
+        }
+
+        function advertiseAll() {
+            const ready = allVehicles.filter(v => v.stage === 'READY');
+            if (ready.length === 0) {
+                alert('No vehicles ready to advertise');
+                return;
+            }
+            
+            if (confirm(`Advertise all ${ready.length} ready vehicles?`)) {
+                ready.forEach(v => {
+                    VehicleStore.advance(v.stockNo, { staff: 'System', notes: 'Bulk advertise' });
+                });
+                refreshOperations();
+                alert(`${ready.length} vehicles sent to advertising`);
+            }
+        }
+
+        function reassignVehicle(stockNo) {
+            const staff = VehicleStore.getStaff();
+            const names = staff.map(s => s.name);
+            const newAssignee = prompt(`Reassign to:\n${names.join('\n')}\n\nCurrent: ${VehicleStore.get(stockNo)?.assignedTo}`);
+            
+            if (newAssignee && names.includes(newAssignee)) {
+                VehicleStore.update(stockNo, { assignedTo: newAssignee });
+                refreshOperations();
+            }
+        }
+
+        function viewStuckVehicles() {
+            if (stuckVehicles.length === 0) return;
+            const list = stuckVehicles.map(v => `${v.registration} (${v.stage}, ${VehicleStore.getDaysInStage(v)} days)`).join('\n');
+            alert(`Stuck Vehicles:\n\n${list}`);
+        }
+
+        function refreshOperations() {
+            loadData();
+            renderAll();
+            
+            const btn = document.querySelector('button[onclick="refreshOperations()"] i');
+            if (btn) {
+                btn.style.animation = 'spin 1s linear';
+                setTimeout(() => btn.style.animation = '', 1000);
+            }
         }
 
         function animateValue(id, value, prefix) {
@@ -1134,132 +1507,6 @@
                 el.textContent = prefix + newVal;
                 if (step >= steps) clearInterval(timer);
             }, 30);
-        }
-
-        function openVehicleModal(vehicle) {
-            document.getElementById('modalTitle').textContent = `${vehicle.registration} - ${vehicle.make} ${vehicle.model}`;
-            
-            const days = calculateDaysInStage(vehicle);
-            const stageInfo = stages[vehicle.stage];
-            
-            let historyHtml = '';
-            if (vehicle.history) {
-                historyHtml = vehicle.history.map(h => `
-                    <div class="timeline-item" style="--stage-color: ${stages[h.stage]?.color || '#3b82f6'}">
-                        <div class="timeline-date">${new Date(h.date).toLocaleDateString('en-GB')}</div>
-                        <div class="timeline-action">${stages[h.stage]?.name || h.stage}</div>
-                        <div class="timeline-person">by ${h.person}</div>
-                    </div>
-                `).join('');
-            }
-            
-            document.getElementById('modalContent').innerHTML = `
-                <div style="display: grid; gap: 20px;">
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                        <div style="background: var(--cy-bg-tertiary); padding: 16px; border-radius: 10px; text-align: center;">
-                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Current Stage</div>
-                            <div style="font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; color: ${stageInfo.color};">
-                                ${stageInfo.name}
-                            </div>
-                        </div>
-                        <div style="background: var(--cy-bg-tertiary); padding: 16px; border-radius: 10px; text-align: center;">
-                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Days in Stage</div>
-                            <div style="font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; color: ${days > 7 ? '#dc2626' : days > 5 ? '#f59e0b' : '#10b981'};">
-                                ${days} days
-                            </div>
-                        </div>
-                        <div style="background: var(--cy-bg-tertiary); padding: 16px; border-radius: 10px; text-align: center;">
-                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Assigned To</div>
-                            <div style="font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; color: var(--cy-text-primary);">
-                                ${vehicle.assignedTo?.split(' ')[0] || 'Unassigned'}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <div style="font-size: 12px; font-weight: 600; color: var(--cy-text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Stage History</div>
-                        <div class="timeline">
-                            ${historyHtml || '<div style="color: var(--cy-text-muted); font-size: 13px;">No history available</div>'}
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 10px; padding-top: 16px; border-top: 1px solid var(--cy-border);">
-                        ${vehicle.stage !== 'ADVERTISED' ? `
-                            <button onclick="advanceVehicle('${vehicle.stockNo}'); closeModal();" style="flex: 1; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                                <i class="fas fa-arrow-right"></i> Advance to Next Stage
-                            </button>
-                        ` : ''}
-                        <button onclick="reassignVehicle('${vehicle.stockNo}'); closeModal();" style="padding: 12px 20px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); color: var(--cy-text-primary); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                            Reassign
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('vehicleModal').classList.add('active');
-        }
-
-        function openVehicleModalById(stockNo) {
-            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
-            if (vehicle) openVehicleModal(vehicle);
-        }
-
-        function closeModal() {
-            document.getElementById('vehicleModal').classList.remove('active');
-        }
-
-        function advanceVehicle(stockNo) {
-            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
-            if (!vehicle) return;
-            
-            const stageOrder = ['INTAKE', 'WORKSHOP', 'PREP', 'READY', 'ADVERTISED'];
-            const currentIndex = stageOrder.indexOf(vehicle.stage);
-            
-            if (currentIndex < stageOrder.length - 1) {
-                vehicle.stage = stageOrder[currentIndex + 1];
-                vehicle.stageEntered = new Date().toISOString();
-                vehicle.history.push({
-                    stage: vehicle.stage,
-                    date: new Date().toISOString(),
-                    person: 'Current User',
-                    action: 'Advanced'
-                });
-                
-                localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
-                renderAll();
-            }
-        }
-
-        function advertiseVehicle(stockNo) {
-            advanceVehicle(stockNo);
-            alert('Vehicle scheduled for advertising!');
-        }
-
-        function reassignVehicle(stockNo) {
-            const staff = ['Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan', 'Sia Vajihi', 'Iman Zarien', 'Stash'];
-            const newAssignee = staff[Math.floor(Math.random() * staff.length)];
-            
-            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
-            if (vehicle) {
-                vehicle.assignedTo = newAssignee;
-                localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
-                renderAll();
-            }
-        }
-
-        function viewStuckVehicles() {
-            // Filter to show only stuck vehicles
-            alert(`${stuckVehicles.length} vehicles stuck:\n${stuckVehicles.map(v => v.registration).join(', ')}`);
-        }
-
-        function refreshOperations() {
-            loadData();
-            renderAll();
-            
-            // Visual feedback
-            const btn = document.querySelector('button[onclick="refreshOperations()"] i');
-            btn.style.animation = 'spin 1s linear';
-            setTimeout(() => btn.style.animation = '', 1000);
         }
 
         function logout() {
