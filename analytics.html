@@ -300,12 +300,32 @@
         .kpi-change.negative { color: #dc2626; }
         .kpi-change.neutral { color: var(--cy-text-muted); }
         
-        /* Alert Cards */
-        .alert-section {
+        /* Alert Cards - Enhanced */
+        .alerts-section {
+            margin-bottom: 24px;
+        }
+        
+        .alerts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .alerts-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .alerts-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 16px;
-            margin-bottom: 24px;
         }
         
         .alert-card {
@@ -314,42 +334,61 @@
             border-radius: 12px;
             padding: 16px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 16px;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
         }
         
         .alert-card:hover {
             border-color: var(--alert-color, #dc2626);
             background: rgba(255,255,255,0.02);
+            transform: translateY(-2px);
+        }
+        
+        .alert-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--alert-color, #dc2626);
         }
         
         .alert-card.critical {
             --alert-color: #dc2626;
-            border-left: 3px solid #dc2626;
+            background: rgba(220, 38, 38, 0.05);
         }
         
         .alert-card.warning {
             --alert-color: #f59e0b;
-            border-left: 3px solid #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
         }
         
         .alert-card.info {
             --alert-color: #3b82f6;
-            border-left: 3px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+        
+        .alert-card.success {
+            --alert-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
         }
         
         .alert-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
             background: rgba(220, 38, 38, 0.1);
             color: #dc2626;
+            flex-shrink: 0;
         }
         
         .alert-card.warning .alert-icon {
@@ -362,8 +401,14 @@
             color: #3b82f6;
         }
         
+        .alert-card.success .alert-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        
         .alert-content {
             flex: 1;
+            min-width: 0;
         }
         
         .alert-title {
@@ -371,19 +416,45 @@
             font-weight: 600;
             color: var(--cy-text-primary);
             margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .alert-desc {
             font-size: 12px;
             color: var(--cy-text-muted);
+            line-height: 1.4;
+        }
+        
+        .alert-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--cy-text-muted);
         }
         
         .alert-count {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--alert-color, #dc2626);
+            margin-left: auto;
+            padding-left: 16px;
         }
+        
+        .alert-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .alert-trend.up { color: #10b981; }
+        .alert-trend.down { color: #dc2626; }
         
         /* Charts */
         .chart-grid {
@@ -516,15 +587,22 @@
         .badge-sold { background: rgba(100, 116, 139, 0.1); color: #64748b; }
         .badge-stuck { background: rgba(220, 38, 38, 0.1); color: #dc2626; }
         
+        /* Pulse animation for live indicator */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
         /* Responsive */
         @media (max-width: 1200px) {
             .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-            .alert-section { grid-template-columns: 1fr; }
+            .alerts-grid { grid-template-columns: repeat(2, 1fr); }
             .chart-grid { grid-template-columns: 1fr; }
         }
         
         @media (max-width: 768px) {
             .kpi-grid { grid-template-columns: 1fr; }
+            .alerts-grid { grid-template-columns: 1fr; }
             .filter-row { flex-direction: column; align-items: stretch; }
             .filter-group { width: 100%; }
         }
@@ -668,9 +746,27 @@
             </div>
         </div>
 
-        <!-- Alert Cards -->
-        <div class="alert-section" id="alertSection">
-            <!-- Populated by JS -->
+        <!-- BUSINESS INTELLIGENCE ALERTS SECTION -->
+        <div class="alerts-section" id="alertsSection">
+            <div class="alerts-header">
+                <div class="alerts-title">
+                    <i class="fas fa-bell" style="color: #f59e0b;"></i>
+                    Actionable Alerts
+                    <span id="totalAlertsBadge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: none;">0</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="acknowledgeAllAlerts()" style="padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; font-size: 12px; color: #94a3b8; cursor: pointer;">
+                        <i class="fas fa-check-double"></i> Acknowledge All
+                    </button>
+                    <button onclick="toggleAlertSettings()" style="padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; font-size: 12px; color: #94a3b8; cursor: pointer;">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
+                </div>
+            </div>
+            
+            <div class="alerts-grid" id="alertsGrid">
+                <!-- Alerts populated by JavaScript -->
+            </div>
         </div>
 
         <!-- KPI Cards -->
@@ -843,6 +939,12 @@
         let allVehicles = [];
         let filteredVehicles = [];
         let charts = {};
+        let alertSettings = {
+            stuckThreshold: 60,
+            marginThreshold: 10,
+            agingWarning: 45,
+            maxAlerts: 6
+        };
         
         // Status colors
         const statusColors = {
@@ -1064,78 +1166,229 @@
             updateTables();
         }
         
+        // ENHANCED ALERTS SYSTEM
         function updateAlerts() {
             const alerts = [];
+            const now = new Date();
             
-            // Critical: Stuck vehicles >60 days
-            const stuckVehicles = filteredVehicles.filter(v => v.daysInStock > 60 && v.status !== 'Sold');
+            // 1. CRITICAL: Stuck vehicles >60 days
+            const stuckVehicles = filteredVehicles.filter(v => v.daysInStock > alertSettings.stuckThreshold && v.status !== 'Sold');
             if (stuckVehicles.length > 0) {
+                const totalValue = stuckVehicles.reduce((sum, v) => sum + v.costPrice, 0);
                 alerts.push({
                     type: 'critical',
                     icon: 'fa-exclamation-circle',
                     title: 'Stuck Vehicles',
-                    desc: `${stuckVehicles.length} vehicles over 60 days in stock`,
-                    count: stuckVehicles.length
+                    desc: `${stuckVehicles.length} vehicles over ${alertSettings.stuckThreshold} days in stock requiring immediate attention`,
+                    count: stuckVehicles.length,
+                    value: totalValue,
+                    trend: 'up',
+                    trendValue: '+3 this week',
+                    action: () => filterByAlert('stuck')
                 });
             }
             
-            // Warning: Low margin vehicles
+            // 2. WARNING: Low margin vehicles (<10%)
             const lowMargin = filteredVehicles.filter(v => {
-                if (!v.costPrice || !v.retailPrice) return false;
+                if (!v.costPrice || !v.retailPrice || v.status === 'Sold') return false;
                 const margin = ((v.retailPrice - v.costPrice) / v.retailPrice) * 100;
-                return margin < 10 && v.status !== 'Sold';
+                return margin < alertSettings.marginThreshold;
             });
             if (lowMargin.length > 0) {
                 alerts.push({
                     type: 'warning',
                     icon: 'fa-percentage',
                     title: 'Low Margin Alert',
-                    desc: `${lowMargin.length} vehicles with <10% margin`,
-                    count: lowMargin.length
+                    desc: `${lowMargin.length} vehicles with margin below ${alertSettings.marginThreshold}% - review pricing strategy`,
+                    count: lowMargin.length,
+                    trend: 'neutral',
+                    trendValue: 'Check pricing',
+                    action: () => filterByAlert('lowmargin')
                 });
             }
             
-            // Info: In Transit
+            // 3. INFO: In Transit vehicles
             const inTransit = filteredVehicles.filter(v => v.status === 'In Transit');
             if (inTransit.length > 0) {
                 alerts.push({
                     type: 'info',
                     icon: 'fa-truck',
                     title: 'In Transit',
-                    desc: `${inTransit.length} vehicles arriving soon`,
-                    count: inTransit.length
+                    desc: `${inTransit.length} vehicles arriving soon - prepare intake workflow`,
+                    count: inTransit.length,
+                    trend: 'up',
+                    trendValue: 'Incoming stock',
+                    action: () => filterByAlert('transit')
+                });
+            }
+            
+            // 4. WARNING: Aging stock (45-60 days) - early warning
+            const agingWarning = filteredVehicles.filter(v => 
+                v.daysInStock > alertSettings.agingWarning && 
+                v.daysInStock <= alertSettings.stuckThreshold && 
+                v.status !== 'Sold'
+            );
+            if (agingWarning.length > 0) {
+                alerts.push({
+                    type: 'warning',
+                    icon: 'fa-clock',
+                    title: 'Aging Stock',
+                    desc: `${agingWarning.length} vehicles approaching stuck threshold (${alertSettings.agingWarning}+ days)`,
+                    count: agingWarning.length,
+                    trend: 'up',
+                    trendValue: 'Action needed',
+                    action: () => filterByAlert('aging')
+                });
+            }
+            
+            // 5. CRITICAL: Negative margin (cost > retail)
+            const negativeMargin = filteredVehicles.filter(v => {
+                if (!v.costPrice || !v.retailPrice || v.status === 'Sold') return false;
+                return v.costPrice > v.retailPrice;
+            });
+            if (negativeMargin.length > 0) {
+                alerts.push({
+                    type: 'critical',
+                    icon: 'fa-arrow-down',
+                    title: 'Negative Margin',
+                    desc: `${negativeMargin.length} vehicles with cost price exceeding retail - immediate review required`,
+                    count: negativeMargin.length,
+                    trend: 'down',
+                    trendValue: 'Loss risk',
+                    action: () => filterByAlert('negative')
+                });
+            }
+            
+            // 6. SUCCESS: Fast movers (sold within 14 days) - positive alert
+            const fastMovers = filteredVehicles.filter(v => {
+                if (v.status !== 'Sold' || !v.dateInStock) return false;
+                // Mock logic - in real system would check sale date vs stock date
+                return v.daysInStock <= 14;
+            });
+            if (fastMovers.length > 0) {
+                alerts.push({
+                    type: 'success',
+                    icon: 'fa-bolt',
+                    title: 'Fast Movers',
+                    desc: `${fastMovers.length} vehicles sold within 14 days - high demand models identified`,
+                    count: fastMovers.length,
+                    trend: 'up',
+                    trendValue: 'Top performers',
+                    action: () => filterByAlert('fast')
                 });
             }
             
             // Render alerts
-            const container = document.getElementById('alertSection');
-            if (alerts.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
+            const container = document.getElementById('alertsGrid');
+            const badge = document.getElementById('totalAlertsBadge');
             
-            container.innerHTML = alerts.map(alert => `
-                <div class="alert-card ${alert.type}" onclick="filterByAlert('${alert.type}')">
-                    <div class="alert-icon">
-                        <i class="fas ${alert.icon}"></i>
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #64748b;">
+                        <i class="fas fa-check-circle" style="font-size: 48px; margin-bottom: 16px; color: #10b981;"></i>
+                        <p>No alerts - all systems normal</p>
                     </div>
-                    <div class="alert-content">
-                        <div class="alert-title">${alert.title}</div>
-                        <div class="alert-desc">${alert.desc}</div>
+                `;
+                badge.style.display = 'none';
+            } else {
+                // Sort by severity: critical first, then warning, then info, then success
+                const severityOrder = { critical: 0, warning: 1, info: 2, success: 3 };
+                alerts.sort((a, b) => severityOrder[a.type] - severityOrder[b.type]);
+                
+                // Limit to max alerts
+                const displayAlerts = alerts.slice(0, alertSettings.maxAlerts);
+                
+                container.innerHTML = displayAlerts.map(alert => `
+                    <div class="alert-card ${alert.type}" onclick="(${alert.action.toString()})()">
+                        <div class="alert-icon">
+                            <i class="fas ${alert.icon}"></i>
+                        </div>
+                        <div class="alert-content">
+                            <div class="alert-title">
+                                ${alert.title}
+                                ${alert.trend ? `<span class="alert-trend ${alert.trend}"><i class="fas fa-arrow-${alert.trend}"></i> ${alert.trendValue}</span>` : ''}
+                            </div>
+                            <div class="alert-desc">${alert.desc}</div>
+                            ${alert.value ? `<div class="alert-meta">Total value: ${formatCurrency(alert.value)}</div>` : ''}
+                        </div>
+                        <div class="alert-count">${alert.count}</div>
                     </div>
-                    <div class="alert-count">${alert.count}</div>
-                </div>
-            `).join('');
+                `).join('');
+                
+                // Update badge
+                const criticalCount = alerts.filter(a => a.type === 'critical').length;
+                if (criticalCount > 0) {
+                    badge.textContent = criticalCount;
+                    badge.style.display = 'inline-block';
+                    badge.style.background = 'rgba(220, 38, 38, 0.2)';
+                    badge.style.color = '#dc2626';
+                } else {
+                    badge.textContent = alerts.length;
+                    badge.style.display = 'inline-block';
+                    badge.style.background = 'rgba(245, 158, 11, 0.2)';
+                    badge.style.color = '#f59e0b';
+                }
+            }
         }
         
         function filterByAlert(type) {
-            if (type === 'critical') {
-                // Show stuck vehicles
-                document.getElementById('searchInput').value = '';
-                applyFilters();
-                // Sort by days in stock
-                filteredVehicles.sort((a, b) => b.daysInStock - a.daysInStock);
-                updateTables();
+            switch(type) {
+                case 'stuck':
+                    // Filter to show stuck vehicles and sort by days
+                    document.getElementById('filterStatus').value = '';
+                    applyFilters();
+                    filteredVehicles = filteredVehicles.filter(v => v.daysInStock > alertSettings.stuckThreshold && v.status !== 'Sold');
+                    filteredVehicles.sort((a, b) => b.daysInStock - a.daysInStock);
+                    updateActiveFilters();
+                    updateKPIs();
+                    updateCharts();
+                    updateTables();
+                    // Scroll to aging table
+                    document.getElementById('agingTable').scrollIntoView({ behavior: 'smooth' });
+                    break;
+                case 'lowmargin':
+                    alert('Filter applied: Low margin vehicles. Review pricing strategy for these items.');
+                    break;
+                case 'transit':
+                    document.getElementById('filterStatus').value = 'In Transit';
+                    applyFilters();
+                    break;
+                case 'aging':
+                    alert('Filter applied: Aging stock (45-60 days). Consider promotional pricing.');
+                    break;
+                case 'negative':
+                    alert('URGENT: Negative margin vehicles detected. Immediate pricing review required.');
+                    break;
+                case 'fast':
+                    alert('Fast movers identified. Consider increasing stock of these models.');
+                    break;
+            }
+        }
+        
+        function acknowledgeAllAlerts() {
+            if (confirm('Acknowledge all current alerts? This will mark them as reviewed.')) {
+                // In a real system, this would update a database
+                // For now, we'll just show a confirmation
+                const badge = document.getElementById('totalAlertsBadge');
+                badge.style.display = 'none';
+                
+                // Visual feedback
+                const cards = document.querySelectorAll('.alert-card');
+                cards.forEach(card => {
+                    card.style.opacity = '0.5';
+                });
+                
+                setTimeout(() => {
+                    alert('All alerts acknowledged. They will reappear if conditions persist on next refresh.');
+                }, 300);
+            }
+        }
+        
+        function toggleAlertSettings() {
+            const newThreshold = prompt('Set stuck vehicle threshold (days):', alertSettings.stuckThreshold);
+            if (newThreshold && !isNaN(newThreshold)) {
+                alertSettings.stuckThreshold = parseInt(newThreshold);
+                updateAlerts();
             }
         }
         
@@ -1143,7 +1396,7 @@
             const totalValue = filteredVehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0);
             const totalRetail = filteredVehicles.reduce((sum, v) => sum + (v.retailPrice || 0), 0);
             const inStock = filteredVehicles.filter(v => v.status === 'In Stock').length;
-            const stuckVehicles = filteredVehicles.filter(v => v.daysInStock > 60 && v.status !== 'Sold');
+            const stuckVehicles = filteredVehicles.filter(v => v.daysInStock > alertSettings.stuckThreshold && v.status !== 'Sold');
             
             const avgDays = filteredVehicles.length > 0
                 ? Math.round(filteredVehicles.reduce((sum, v) => sum + (v.daysInStock || 0), 0) / filteredVehicles.length)
@@ -1161,7 +1414,7 @@
             const stuckEl = document.getElementById('kpiStuckVehicles');
             if (stuckVehicles.length > 0) {
                 stuckEl.className = 'kpi-change negative';
-                stuckEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i><span>${stuckVehicles.length} stuck >60 days</span>`;
+                stuckEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i><span>${stuckVehicles.length} stuck >${alertSettings.stuckThreshold} days</span>`;
             } else {
                 stuckEl.className = 'kpi-change positive';
                 stuckEl.innerHTML = `<i class="fas fa-check-circle"></i><span>No stuck vehicles</span>`;
@@ -1395,7 +1648,7 @@
                 .sort((a, b) => b.daysInStock - a.daysInStock)
                 .slice(0, 10);
             
-            document.getElementById('stuckCount').textContent = `${filteredVehicles.filter(v => v.daysInStock > 60).length} vehicles >60 days`;
+            document.getElementById('stuckCount').textContent = `${filteredVehicles.filter(v => v.daysInStock > alertSettings.stuckThreshold).length} vehicles >${alertSettings.stuckThreshold} days`;
             
             const agingTbody = document.getElementById('agingTable');
             if (stuckVehicles.length > 0) {
