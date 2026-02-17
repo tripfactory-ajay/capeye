@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 11: Accounts & Warranty - Capeye Workflow</title>
+    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
+    <script src="../../data/staff/staff-list.js"></script>
+    <script src="../../js/workflow/workflow-engine.js"></script>
+    <script src="../../js/workflow/form-components.js"></script>
+</head>
+<body>
+    <div class="workflow-container">
+        <div id="stage-nav-container"></div>
+        <main class="main-content">
+            <div id="header-container"></div>
+            <div class="stage-container">
+                <div class="stage-header">
+                    <h1 class="stage-title"><span style="font-size: 2rem;">💰</span> Stage 11: Accounts & Warranty</h1>
+                    <p class="stage-description">Process payment, activate warranty, and complete financial documentation.</p>
+                </div>
+                
+                <div id="vehicle-info-display" class="vehicle-info-card">
+                    <div class="vehicle-info-header">
+                        <div class="vehicle-info-title">Vehicle Details</div>
+                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+                    </div>
+                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                </div>
+                
+                <form id="stage-11-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="accounts-person">Accounts Handler <span class="required">*</span></label>
+                            <select id="accounts-person" name="accountsPerson" class="form-select" required>
+                                <option value="">Select...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="process-date">Process Date</label>
+                            <input type="date" id="process-date" name="processDate" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Payment Details</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="sale-price">Final Sale Price (£)</label>
+                            <input type="number" id="sale-price" name="salePrice" class="form-input" step="0.01" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="deposit">Deposit (£)</label>
+                            <input type="number" id="deposit" name="deposit" class="form-input" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="payment-method">Payment Method</label>
+                            <select id="payment-method" name="paymentMethod" class="form-select">
+                                <option value="cash">Cash</option>
+                                <option value="card">Card</option>
+                                <option value="finance">Finance</option>
+                                <option value="transfer">Bank Transfer</option>
+                                <option value="part-exchange">Part Exchange</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="balance">Balance Outstanding (£)</label>
+                            <input type="number" id="balance" name="balance" class="form-input" step="0.01" readonly>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Warranty</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="warranty-provider">Warranty Provider</label>
+                            <select id="warranty-provider" name="warrantyProvider" class="form-select">
+                                <option value="none">No Warranty</option>
+                                <option value="capeye">Capeye Warranty</option>
+                                <option value="third-party">Third Party</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="warranty-duration">Duration</label>
+                            <select id="warranty-duration" name="warrantyDuration" class="form-select">
+                                <option value="3">3 Months</option>
+                                <option value="6">6 Months</option>
+                                <option value="12">12 Months</option>
+                                <option value="24">24 Months</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="warranty-policy">Policy Number</label>
+                        <input type="text" id="warranty-policy" name="warrantyPolicy" class="form-input" placeholder="Enter policy number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="accounts-notes">Accounts Notes</label>
+                        <textarea id="accounts-notes" name="accountsNotes" class="form-textarea" rows="3" placeholder="Payment references, special arrangements..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Accounts Signature <span class="required">*</span></label>
+                        <div id="signature-container"></div>
+                        <input type="hidden" id="signature" name="signature" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <a href="stage-10-delivery.html" class="btn btn-secondary">← Back</a>
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete & Send to Management →</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentVehicle = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            WorkflowEngine.setStage(11);
+            loadComponents();
+            populateAccounts();
+            initSignature();
+            loadVehicle();
+            loadPreviousData();
+            loadSavedData();
+            document.getElementById('process-date').valueAsDate = new Date();
+        });
+        
+        function loadComponents() {
+            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
+            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+        }
+        
+        function populateAccounts() {
+            const select = document.getElementById('accounts-person');
+            if (STAFF_DATA) {
+                STAFF_DATA.getStaffByDept('accounts').forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = s.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+        
+        function initSignature() {
+            document.getElementById('signature-container').appendChild(
+                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
+            );
+        }
+        
+        function loadVehicle() {
+            currentVehicle = WorkflowEngine.getVehicle();
+            if (!currentVehicle) {
+                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
+                return;
+            }
+            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
+            document.getElementById('vehicle-details-content').innerHTML = `
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
+            `;
+        }
+        
+        function loadPreviousData() {
+            if (!currentVehicle) return;
+            const delivery = WorkflowEngine.loadStageData(10, currentVehicle.stockNo);
+            if (delivery?.data?.salePrice) {
+                document.getElementById('sale-price').value = delivery.data.salePrice;
+            }
+        }
+        
+        function getFormData() {
+            const form = document.getElementById('stage-11-form');
+            const fd = new FormData(form);
+            return {
+                accountsPerson: fd.get('accountsPerson'),
+                processDate: fd.get('processDate'),
+                salePrice: fd.get('salePrice'),
+                deposit: fd.get('deposit'),
+                paymentMethod: fd.get('paymentMethod'),
+                balance: fd.get('balance'),
+                warrantyProvider: fd.get('warrantyProvider'),
+                warrantyDuration: fd.get('warrantyDuration'),
+                warrantyPolicy: fd.get('warrantyPolicy'),
+                accountsNotes: fd.get('accountsNotes'),
+                signature: document.getElementById('signature').value
+            };
+        }
+        
+        function loadSavedData() {
+            if (!currentVehicle) return;
+            const saved = WorkflowEngine.loadStageData(11, currentVehicle.stockNo);
+            if (saved?.data) {
+                const d = saved.data;
+                if (d.accountsPerson) document.getElementById('accounts-person').value = d.accountsPerson;
+                if (d.deposit) document.getElementById('deposit').value = d.deposit;
+                if (d.paymentMethod) document.getElementById('payment-method').value = d.paymentMethod;
+                if (d.warrantyProvider) document.getElementById('warranty-provider').value = d.warrantyProvider;
+                if (d.warrantyDuration) document.getElementById('warranty-duration').value = d.warrantyDuration;
+                if (d.warrantyPolicy) document.getElementById('warranty-policy').value = d.warrantyPolicy;
+                if (d.accountsNotes) document.getElementById('accounts-notes').value = d.accountsNotes;
+            }
+        }
+        
+        function saveDraft() {
+            if (!currentVehicle) return;
+            WorkflowEngine.saveStageData(11, getFormData());
+            showAlert('Draft saved', 'success');
+        }
+        
+        function completeStage() {
+            if (!currentVehicle) return;
+            const data = getFormData();
+            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
+            WorkflowEngine.completeStage(11, data);
+            showAlert('Accounts complete!', 'success');
+            setTimeout(() => window.location.href = 'stage-12-management.html', 1500);
+        }
+        
+        function showAlert(msg, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${msg}</span>`;
+            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
+    </script>
+</body>
+</html>
