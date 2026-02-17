@@ -489,26 +489,43 @@
             color: var(--cy-text-muted);
         }
 
-        /* Signature Pad */
+        /* Signature Pad - COMPACT VERSION */
         .signature-container {
             background: white;
             border-radius: var(--cy-radius-lg);
-            padding: 20px;
+            padding: 12px;
             margin-top: 8px;
+            border: 2px solid var(--cy-border);
         }
 
         #signaturePad {
             width: 100%;
-            height: 200px;
+            height: 120px;
             border: 1px solid #e5e7eb;
             border-radius: var(--cy-radius-md);
             cursor: crosshair;
+            background: white;
         }
 
         .signature-actions {
             display: flex;
             gap: 12px;
-            margin-top: 12px;
+            margin-top: 8px;
+            align-items: center;
+        }
+
+        .signature-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--cy-text-muted);
+        }
+
+        .signature-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         /* Form Actions */
@@ -557,6 +574,20 @@
         .required::after {
             content: ' *';
             color: var(--cy-accent-red);
+        }
+
+        /* Date Stamp Display */
+        .date-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: var(--cy-accent-blue-soft);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--cy-accent-blue);
+            font-weight: 500;
         }
     </style>
 </head>
@@ -982,16 +1013,29 @@
                     <textarea id="internalNotes" class="form-input" placeholder="Any notes for the next department..."></textarea>
                 </div>
 
+                <!-- COMPACT SIGNATURE SECTION WITH AUTO DATE STAMP -->
                 <div style="margin-top: 24px;">
-                    <label>Digital Signature</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label>Digital Signature</label>
+                        <div class="date-stamp" id="dateStampDisplay" style="display: none;">
+                            <i class="fas fa-clock"></i>
+                            <span id="dateStampText"></span>
+                        </div>
+                    </div>
                     <div class="signature-container">
                         <canvas id="signaturePad"></canvas>
                     </div>
                     <div class="signature-actions">
-                        <button type="button" onclick="clearSignature()" class="btn-secondary">Clear Signature</button>
-                        <span style="color: var(--cy-text-muted); font-size: 13px; align-self: center;">
+                        <button type="button" onclick="clearSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                        <span style="color: var(--cy-text-muted); font-size: 13px;">
                             <i class="fas fa-info-circle"></i> Sign above to confirm inspection
                         </span>
+                    </div>
+                    <div class="signature-meta">
+                        <span><i class="fas fa-calendar"></i> Auto-stamped on submit</span>
+                        <span><i class="fas fa-shield-alt"></i> Legally binding</span>
                     </div>
                 </div>
             </div>
@@ -1022,6 +1066,7 @@
         let currentVehicle = null;
         let uploadedPhotos = {};
         let signaturePad = null;
+        let signatureContext = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1033,18 +1078,18 @@
             document.getElementById('additionalCosts').addEventListener('input', calculateTotal);
         });
 
-        // Initialize Signature Pad
+        // Initialize Signature Pad - COMPACT VERSION
         function initSignaturePad() {
             const canvas = document.getElementById('signaturePad');
-            const ctx = canvas.getContext('2d');
+            signatureContext = canvas.getContext('2d');
             
-            // Set canvas size
+            // Set canvas size - COMPACT HEIGHT
             canvas.width = canvas.offsetWidth;
-            canvas.height = 200;
+            canvas.height = 120;
             
             // Set white background
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, canvas.width, canvas.height);
             
             let isDrawing = false;
             let lastX = 0;
@@ -1072,13 +1117,13 @@
                 e.preventDefault();
                 
                 const pos = getPos(e);
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(pos.x, pos.y);
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                ctx.lineCap = 'round';
-                ctx.stroke();
+                signatureContext.beginPath();
+                signatureContext.moveTo(lastX, lastY);
+                signatureContext.lineTo(pos.x, pos.y);
+                signatureContext.strokeStyle = '#000';
+                signatureContext.lineWidth = 2;
+                signatureContext.lineCap = 'round';
+                signatureContext.stroke();
                 
                 lastX = pos.x;
                 lastY = pos.y;
@@ -1102,9 +1147,16 @@
 
         // Clear Signature
         function clearSignature() {
-            const ctx = signaturePad.getContext('2d');
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, signaturePad.width, signaturePad.height);
+            if (!signatureContext) return;
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, signaturePad.width, signaturePad.height);
+        }
+
+        // Check if signature is empty
+        function isSignatureEmpty() {
+            if (!signatureContext) return true;
+            const pixelData = signatureContext.getImageData(0, 0, signaturePad.width, signaturePad.height).data;
+            return !pixelData.some((pixel, index) => index % 4 === 3 && pixel < 255);
         }
 
         // Load CSV Data
@@ -1317,6 +1369,15 @@
                     }
                 });
             }
+
+            // Restore signature if exists
+            if (data.signature && signatureContext) {
+                const img = new Image();
+                img.onload = function() {
+                    signatureContext.drawImage(img, 0, 0);
+                };
+                img.src = data.signature;
+            }
         }
 
         // Calculate Total Investment
@@ -1422,14 +1483,14 @@
             });
             
             // Signature
-            if (signaturePad) {
+            if (signaturePad && !isSignatureEmpty()) {
                 data.signature = signaturePad.toDataURL();
             }
             
             return data;
         }
 
-        // Save Form Data (Submit)
+        // Save Form Data (Submit) - WITH AUTO DATE STAMP AND WORKFLOW UPDATE
         function saveFormData(event) {
             event.preventDefault();
             
@@ -1439,50 +1500,83 @@
             }
             
             // Validate signature
-            const signatureData = signaturePad.toDataURL();
-            if (signaturePad && signatureData === signaturePad.toDataURL()) {
-                // Check if signature is empty (just white canvas)
-                const ctx = signaturePad.getContext('2d');
-                const pixelData = ctx.getImageData(0, 0, signaturePad.width, signaturePad.height).data;
-                const hasSignature = pixelData.some((pixel, index) => {
-                    return index % 4 === 3 && pixel < 255; // Check alpha channel
-                });
-                
-                if (!hasSignature) {
-                    showStatus('Please provide a signature', 'error');
-                    return;
-                }
+            if (isSignatureEmpty()) {
+                showStatus('Please provide a signature', 'error');
+                return;
             }
             
+            // AUTO DATE STAMP - Capture current date/time at submission
+            const submissionDateTime = new Date();
+            const formattedDateTime = submissionDateTime.toLocaleString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
             const formData = collectFormData();
-            formData.completedAt = new Date().toISOString();
+            formData.completedAt = submissionDateTime.toISOString();
+            formData.formattedCompletedAt = formattedDateTime;
             formData.isComplete = true;
             formData.stage = 1;
             formData.stageName = 'Vehicle Intake';
+            
+            // Show date stamp in UI
+            document.getElementById('dateStampText').textContent = formattedDateTime;
+            document.getElementById('dateStampDisplay').style.display = 'inline-flex';
             
             // Save to vehicle profile
             const vehicleProfile = JSON.parse(localStorage.getItem(`capeye_vehicle_${currentVehicle.stockNo}`) || '{}');
             vehicleProfile.stage1 = formData;
             vehicleProfile.currentStage = parseInt(formData.nextStage);
-            vehicleProfile.lastUpdated = new Date().toISOString();
+            vehicleProfile.lastUpdated = submissionDateTime.toISOString();
+            vehicleProfile.stageHistory = vehicleProfile.stageHistory || [];
+            vehicleProfile.stageHistory.push({
+                stage: 1,
+                stageName: 'Vehicle Intake',
+                completedAt: submissionDateTime.toISOString(),
+                completedBy: formData.inspectedBy,
+                nextStage: parseInt(formData.nextStage)
+            });
             
             localStorage.setItem(`capeye_vehicle_${currentVehicle.stockNo}`, JSON.stringify(vehicleProfile));
             
             // Remove draft
             localStorage.removeItem(`capeye_stage1_${currentVehicle.stockNo}`);
             
-            // Update vehicle in main list
+            // UPDATE WORKFLOW DASHBOARD - Update vehicle in main list with new stage
             const vehicleIndex = allVehicles.findIndex(v => v.stockNo === currentVehicle.stockNo);
             if (vehicleIndex >= 0) {
                 allVehicles[vehicleIndex].workflowStage = parseInt(formData.nextStage);
+                allVehicles[vehicleIndex].currentStage = parseInt(formData.nextStage);
+                allVehicles[vehicleIndex].lastUpdated = submissionDateTime.toISOString();
+                allVehicles[vehicleIndex].status = 'In Progress';
+                
+                // Save updated vehicle list to localStorage for dashboard sync
+                localStorage.setItem('capeye_all_vehicles', JSON.stringify(allVehicles));
             }
             
-            showStatus('Stage 1 completed successfully! Vehicle forwarded to next stage.', 'success');
+            // Trigger workflow update event for other pages
+            localStorage.setItem('capeye_workflow_update', JSON.stringify({
+                stockNo: currentVehicle.stockNo,
+                fromStage: 1,
+                toStage: parseInt(formData.nextStage),
+                timestamp: submissionDateTime.toISOString(),
+                action: 'stage_complete'
+            }));
+            
+            showStatus(`Stage 1 completed at ${formattedDateTime}! Vehicle forwarded to Stage ${formData.nextStage}.`, 'success');
+            
+            // Disable form to prevent double submission
+            document.getElementById('intakeForm').querySelectorAll('input, select, textarea, button').forEach(el => {
+                el.disabled = true;
+            });
             
             // Redirect after delay
             setTimeout(() => {
                 window.location.href = '../workflow.html';
-            }, 2000);
+            }, 2500);
         }
 
         // Print Form
