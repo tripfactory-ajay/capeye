@@ -91,6 +91,105 @@
             margin-top: 4px;
         }
         
+        /* Filter Bar - Matching Dashboard */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 12px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 140px;
+        }
+        
+        .filter-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .filter-input {
+            padding: 10px 12px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--cy-text-primary);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .filter-input::placeholder {
+            color: var(--cy-text-muted);
+        }
+        
+        .filter-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: fit-content;
+        }
+        
+        .filter-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        
+        .filter-btn-secondary {
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            color: var(--cy-text-secondary);
+        }
+        
+        .filter-btn-secondary:hover {
+            background: var(--cy-bg-secondary);
+            border-color: var(--cy-border-hover);
+            color: var(--cy-text-primary);
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+        
         /* KPI Section - Uniform 4-Column Grid */
         .kpi-section {
             display: grid;
@@ -423,6 +522,42 @@
             color: var(--cy-text-primary);
         }
         
+        /* Active Filters Display */
+        .active-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+        
+        .filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #3b82f6;
+            font-weight: 500;
+        }
+        
+        .filter-tag button {
+            background: none;
+            border: none;
+            color: #3b82f6;
+            cursor: pointer;
+            padding: 0;
+            font-size: 14px;
+            line-height: 1;
+        }
+        
+        .filter-tag button:hover {
+            color: #dc2626;
+        }
+        
         /* Responsive */
         @media (max-width: 1200px) {
             .kpi-section { grid-template-columns: repeat(2, 1fr); }
@@ -431,6 +566,10 @@
             .charts-row-3,
             .data-section { grid-template-columns: 1fr; }
             .header-stats { display: none; }
+            .filter-bar { flex-direction: column; }
+            .filter-group { width: 100%; }
+            .filter-actions { width: 100%; margin-left: 0; }
+            .filter-actions button { flex: 1; justify-content: center; }
         }
         
         @media (max-width: 768px) {
@@ -524,6 +663,64 @@
                 </div>
             </div>
         </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label class="filter-label">Date From</label>
+                <input type="date" id="filterDateFrom" class="filter-input">
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Date To</label>
+                <input type="date" id="filterDateTo" class="filter-input">
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Make</label>
+                <select id="filterMake" class="filter-input filter-select">
+                    <option value="">All Makes</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Status</label>
+                <select id="filterStatus" class="filter-input filter-select">
+                    <option value="">All Statuses</option>
+                    <option value="In Stock">In Stock</option>
+                    <option value="In Transit">In Transit</option>
+                    <option value="Sold">Sold</option>
+                    <option value="Off-site R">Off-site R</option>
+                    <option value="Subject to">Subject to</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Location</label>
+                <select id="filterLocation" class="filter-input filter-select">
+                    <option value="">All Locations</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Registration</label>
+                <input type="text" id="filterReg" class="filter-input" placeholder="Search reg...">
+            </div>
+            
+            <div class="filter-actions">
+                <button class="filter-btn" onclick="applyFilters()">
+                    <i class="fas fa-filter"></i>
+                    Apply
+                </button>
+                <button class="filter-btn filter-btn-secondary" onclick="resetFilters()">
+                    <i class="fas fa-undo"></i>
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Active Filters Display -->
+        <div class="active-filters" id="activeFilters"></div>
 
         <!-- KPI Cards - Uniform 180px Height -->
         <div class="kpi-section">
@@ -770,42 +967,351 @@
     <script src="./js/capeye-core.js"></script>
     <script>
         let charts = {};
+        let allVehicles = [];
+        let filteredVehicles = [];
         
         document.addEventListener('DOMContentLoaded', function() {
-            loadKPIs();
-            initCharts();
-            loadLeaderboard();
-            loadRecentSales();
+            loadReferenceData();
+            loadAllVehicles();
+            initializeFilters();
+            applyFilters();
         });
 
-        function loadKPIs() {
-            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            const totalValue = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
-            const totalRetail = vehicles.reduce((sum, v) => sum + (parseFloat(v.retailPrice) || 0), 0);
-            const profit = totalRetail - totalValue;
+        function loadReferenceData() {
+            // Load makes from localStorage or use defaults
+            const makes = JSON.parse(localStorage.getItem('capeye_makes') || '[]');
+            const makeSelect = document.getElementById('filterMake');
+            const defaultMakes = ['Ford', 'VW', 'Mercedes', 'Peugeot', 'Renault', 'Vauxhall', 'Citroen', 'Fiat'];
             
-            const soldThisMonth = vehicles.filter(v => {
-                if (!v.saleDate) return false;
-                const d = new Date(v.saleDate);
-                const now = new Date();
-                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            [...new Set([...defaultMakes, ...makes])].sort().forEach(make => {
+                const option = document.createElement('option');
+                option.value = make;
+                option.textContent = make;
+                makeSelect.appendChild(option);
             });
             
-            const revenue = soldThisMonth.reduce((sum, v) => sum + (parseFloat(v.salePrice) || parseFloat(v.retailPrice) || 0), 0);
+            // Load locations
+            const locations = JSON.parse(localStorage.getItem('capeye_locations') || '[]');
+            const locationSelect = document.getElementById('filterLocation');
+            const defaultLocations = ['Stanmore Retail', 'Stanmore 2', 'Stanmore PDI', 'With Supplier', 'ACL'];
+            
+            [...new Set([...defaultLocations, ...locations])].forEach(loc => {
+                const option = document.createElement('option');
+                option.value = loc;
+                option.textContent = loc;
+                locationSelect.appendChild(option);
+            });
+        }
+
+        function loadAllVehicles() {
+            allVehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            
+            // If no vehicles in storage, create sample data for demonstration
+            if (allVehicles.length === 0) {
+                allVehicles = generateSampleData();
+                localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
+            }
+            
+            filteredVehicles = [...allVehicles];
+        }
+
+        function generateSampleData() {
+            const makes = ['Ford', 'VW', 'Mercedes', 'Peugeot', 'Renault'];
+            const models = ['Transit', 'Crafter', 'Sprinter', 'Boxer', 'Master'];
+            const statuses = ['In Stock', 'In Transit', 'Sold', 'Off-site R', 'Subject to'];
+            const locations = ['Stanmore Retail', 'Stanmore 2', 'Stanmore PDI', 'With Supplier', 'ACL'];
+            const salespeople = ['Ibrahim Ata', 'Keith Hardy', 'Ali Amood', 'Marcin Kiljan', 'Stash'];
+            
+            const vehicles = [];
+            const now = new Date();
+            
+            for (let i = 0; i < 150; i++) {
+                const make = makes[Math.floor(Math.random() * makes.length)];
+                const dateInStock = new Date(now.getTime() - Math.random() * 180 * 24 * 60 * 60 * 1000);
+                const isSold = Math.random() > 0.6;
+                const saleDate = isSold ? new Date(dateInStock.getTime() + Math.random() * 90 * 24 * 60 * 60 * 1000) : null;
+                const daysInStock = isSold ? Math.floor((saleDate - dateInStock) / (1000 * 60 * 60 * 24)) : Math.floor((now - dateInStock) / (1000 * 60 * 60 * 24));
+                
+                vehicles.push({
+                    stockNo: `R${String(1000 + i).padStart(4, '0')}`,
+                    registration: `${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${Math.floor(Math.random() * 90 + 10)} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
+                    make: make,
+                    model: models[Math.floor(Math.random() * models.length)],
+                    status: isSold ? 'Sold' : statuses[Math.floor(Math.random() * (statuses.length - 1))],
+                    location: locations[Math.floor(Math.random() * locations.length)],
+                    costPrice: Math.floor(Math.random() * 20000 + 10000),
+                    retailPrice: Math.floor(Math.random() * 30000 + 15000),
+                    salePrice: isSold ? Math.floor(Math.random() * 28000 + 12000) : null,
+                    dateInStock: dateInStock.toISOString().split('T')[0],
+                    saleDate: saleDate ? saleDate.toISOString().split('T')[0] : null,
+                    daysInStock: daysInStock,
+                    salesperson: isSold ? salespeople[Math.floor(Math.random() * salespeople.length)] : null
+                });
+            }
+            
+            return vehicles;
+        }
+
+        function initializeFilters() {
+            // Set default date range (last 30 days)
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+            
+            document.getElementById('filterDateTo').value = today.toISOString().split('T')[0];
+            document.getElementById('filterDateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
+            
+            // Add enter key support for registration filter
+            document.getElementById('filterReg').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') applyFilters();
+            });
+        }
+
+        function applyFilters() {
+            const dateFrom = document.getElementById('filterDateFrom').value;
+            const dateTo = document.getElementById('filterDateTo').value;
+            const make = document.getElementById('filterMake').value;
+            const status = document.getElementById('filterStatus').value;
+            const location = document.getElementById('filterLocation').value;
+            const reg = document.getElementById('filterReg').value.toLowerCase();
+            
+            filteredVehicles = allVehicles.filter(v => {
+                // Date filter (check sale date for sold vehicles, or date in stock for current inventory)
+                if (dateFrom || dateTo) {
+                    const checkDate = v.status === 'Sold' && v.saleDate ? v.saleDate : v.dateInStock;
+                    if (dateFrom && checkDate < dateFrom) return false;
+                    if (dateTo && checkDate > dateTo) return false;
+                }
+                
+                // Make filter
+                if (make && v.make !== make) return false;
+                
+                // Status filter
+                if (status && v.status !== status) return false;
+                
+                // Location filter
+                if (location && v.location !== location) return false;
+                
+                // Registration filter
+                if (reg && !v.registration.toLowerCase().includes(reg)) return false;
+                
+                return true;
+            });
+            
+            updateActiveFiltersDisplay({ dateFrom, dateTo, make, status, location, reg });
+            updateAllData();
+        }
+
+        function updateActiveFiltersDisplay(filters) {
+            const container = document.getElementById('activeFilters');
+            const tags = [];
+            
+            if (filters.dateFrom || filters.dateTo) {
+                const dateRange = `${filters.dateFrom || 'Start'} to ${filters.dateTo || 'End'}`;
+                tags.push(`<span class="filter-tag">Date: ${dateRange} <button onclick="clearFilter('date')">×</button></span>`);
+            }
+            if (filters.make) tags.push(`<span class="filter-tag">Make: ${filters.make} <button onclick="clearFilter('make')">×</button></span>`);
+            if (filters.status) tags.push(`<span class="filter-tag">Status: ${filters.status} <button onclick="clearFilter('status')">×</button></span>`);
+            if (filters.location) tags.push(`<span class="filter-tag">Location: ${filters.location} <button onclick="clearFilter('location')">×</button></span>`);
+            if (filters.reg) tags.push(`<span class="filter-tag">Reg: ${filters.reg} <button onclick="clearFilter('reg')">×</button></span>`);
+            
+            container.innerHTML = tags.join('');
+        }
+
+        function clearFilter(type) {
+            switch(type) {
+                case 'date':
+                    document.getElementById('filterDateFrom').value = '';
+                    document.getElementById('filterDateTo').value = '';
+                    break;
+                case 'make':
+                    document.getElementById('filterMake').value = '';
+                    break;
+                case 'status':
+                    document.getElementById('filterStatus').value = '';
+                    break;
+                case 'location':
+                    document.getElementById('filterLocation').value = '';
+                    break;
+                case 'reg':
+                    document.getElementById('filterReg').value = '';
+                    break;
+            }
+            applyFilters();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+            document.getElementById('filterMake').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterLocation').value = '';
+            document.getElementById('filterReg').value = '';
+            
+            document.getElementById('activeFilters').innerHTML = '';
+            filteredVehicles = [...allVehicles];
+            updateAllData();
+        }
+
+        function updateAllData() {
+            loadKPIs();
+            updateCharts();
+            loadLeaderboard();
+            loadRecentSales();
+            updateInsights();
+        }
+
+        function loadKPIs() {
+            const totalValue = filteredVehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
+            const totalRetail = filteredVehicles.reduce((sum, v) => sum + (parseFloat(v.retailPrice) || 0), 0);
+            const profit = totalRetail - totalValue;
+            
+            const soldVehicles = filteredVehicles.filter(v => v.status === 'Sold');
+            const revenue = soldVehicles.reduce((sum, v) => sum + (parseFloat(v.salePrice) || parseFloat(v.retailPrice) || 0), 0);
+            
+            // Calculate average days to sell for sold vehicles
+            const avgDays = soldVehicles.length > 0 
+                ? Math.round(soldVehicles.reduce((sum, v) => sum + (v.daysInStock || 0), 0) / soldVehicles.length)
+                : 0;
+            
+            // Stock turnover (sold / average inventory)
+            const avgInventory = filteredVehicles.length > 0 ? filteredVehicles.length / 2 : 1;
+            const turnover = soldVehicles.length > 0 ? (soldVehicles.length / avgInventory).toFixed(1) : '0';
             
             animateValue('kpiRevenue', revenue, '£');
             animateValue('kpiProfit', profit * 0.6, '£');
-            animateValue('kpiTurnover', (soldThisMonth.length / Math.max(vehicles.length * 0.3, 1)).toFixed(1), '');
-            animateValue('kpiDays', 28, '', ' days');
+            animateValue('kpiTurnover', turnover, '');
+            animateValue('kpiDays', avgDays, '', ' days');
             
             animateValue('headerRevenue', revenue, '£');
-            animateValue('headerUnits', soldThisMonth.length, '');
-            animateValue('headerMargin', '18.5', '', '%');
+            animateValue('headerUnits', soldVehicles.length, '');
+            
+            const avgMargin = revenue > 0 ? ((profit * 0.6) / revenue * 100).toFixed(1) : '0';
+            animateValue('headerMargin', avgMargin, '', '%');
+        }
+
+        function updateCharts() {
+            // Update Revenue Chart with filtered data
+            const monthlyData = calculateMonthlyData();
+            charts.revenue.data.datasets[0].data = monthlyData.revenue;
+            charts.revenue.data.datasets[1].data = monthlyData.profit;
+            charts.revenue.update();
+            
+            // Update Make Chart
+            const makeData = calculateMakeData();
+            charts.make.data.labels = makeData.labels;
+            charts.make.data.datasets[0].data = makeData.values;
+            charts.make.update();
+            
+            // Update Weekly Chart
+            const weeklyData = calculateWeeklyData();
+            charts.weekly.data.datasets[0].data = weeklyData;
+            charts.weekly.update();
+            
+            // Update Age Chart
+            const ageData = calculateAgeData();
+            charts.age.data.datasets[0].data = ageData;
+            charts.age.update();
+        }
+
+        function calculateMonthlyData() {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const revenue = new Array(12).fill(0);
+            const profit = new Array(12).fill(0);
+            
+            filteredVehicles.filter(v => v.status === 'Sold' && v.saleDate).forEach(v => {
+                const date = new Date(v.saleDate);
+                const month = date.getMonth();
+                const salePrice = parseFloat(v.salePrice) || parseFloat(v.retailPrice) || 0;
+                const costPrice = parseFloat(v.costPrice) || 0;
+                
+                revenue[month] += salePrice;
+                profit[month] += (salePrice - costPrice) * 0.6; // Estimated gross profit
+            });
+            
+            return { revenue, profit };
+        }
+
+        function calculateMakeData() {
+            const makeCounts = {};
+            filteredVehicles.filter(v => v.status === 'Sold').forEach(v => {
+                makeCounts[v.make] = (makeCounts[v.make] || 0) + 1;
+            });
+            
+            const sorted = Object.entries(makeCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+            return {
+                labels: sorted.map(x => x[0]),
+                values: sorted.map(x => x[1])
+            };
+        }
+
+        function calculateWeeklyData() {
+            const days = [0, 0, 0, 0, 0, 0, 0];
+            const today = new Date();
+            
+            filteredVehicles.filter(v => v.status === 'Sold' && v.saleDate).forEach(v => {
+                const saleDate = new Date(v.saleDate);
+                const diffDays = Math.floor((today - saleDate) / (1000 * 60 * 60 * 24));
+                if (diffDays < 7) {
+                    const dayIndex = saleDate.getDay();
+                    days[dayIndex === 0 ? 6 : dayIndex - 1]++; // Adjust so Monday is 0
+                }
+            });
+            
+            return days;
+        }
+
+        function calculateAgeData() {
+            const ages = [0, 0, 0, 0]; // 0-30, 31-60, 61-90, 90+
+            
+            filteredVehicles.filter(v => v.status !== 'Sold').forEach(v => {
+                const days = v.daysInStock || 0;
+                if (days <= 30) ages[0]++;
+                else if (days <= 60) ages[1]++;
+                else if (days <= 90) ages[2]++;
+                else ages[3]++;
+            });
+            
+            return ages;
+        }
+
+        function updateInsights() {
+            // Top Performer
+            const salesByPerson = {};
+            filteredVehicles.filter(v => v.status === 'Sold').forEach(v => {
+                const person = v.salesperson || 'Unknown';
+                if (!salesByPerson[person]) {
+                    salesByPerson[person] = { units: 0, revenue: 0 };
+                }
+                salesByPerson[person].units++;
+                salesByPerson[person].revenue += parseFloat(v.salePrice) || 0;
+            });
+            
+            const topPerformer = Object.entries(salesByPerson).sort((a, b) => b[1].revenue - a[1].revenue)[0];
+            if (topPerformer) {
+                document.getElementById('topPerformer').textContent = topPerformer[0].split(' ')[0];
+                document.querySelector('.insight-card:nth-child(1) .insight-desc').textContent = 
+                    `£${Math.floor(topPerformer[1].revenue).toLocaleString()} in sales with ${topPerformer[1].units} units sold`;
+            }
+            
+            // Best Selling Make
+            const makeData = calculateMakeData();
+            if (makeData.labels.length > 0) {
+                document.getElementById('bestMake').textContent = makeData.labels[0];
+                const makeRevenue = filteredVehicles
+                    .filter(v => v.status === 'Sold' && v.make === makeData.labels[0])
+                    .reduce((sum, v) => sum + (parseFloat(v.salePrice) || 0), 0);
+                document.querySelector('.insight-card:nth-child(2) .insight-desc').textContent = 
+                    `${makeData.values[0]} units sold with £${Math.floor(makeRevenue/1000)}k revenue contribution`;
+            }
+            
+            // Attention Needed (90+ days in stock)
+            const oldStock = filteredVehicles.filter(v => v.status !== 'Sold' && (v.daysInStock || 0) > 90).length;
+            document.getElementById('attentionCount').textContent = oldStock;
         }
 
         function animateValue(id, value, prefix = '', suffix = '') {
             const el = document.getElementById(id);
-            const numValue = parseFloat(value.toString().replace(/[^0-9.]/g, ''));
+            const numValue = parseFloat(value.toString().replace(/[^0-9.]/g, '')) || 0;
             const duration = 1500;
             const increment = numValue / (duration / 16);
             let current = 0;
@@ -829,7 +1335,7 @@
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                     datasets: [{
                         label: 'Revenue',
-                        data: [320000, 350000, 380000, 420000, 390000, 450000, 480000, 520000, 490000, 550000, 580000, 620000],
+                        data: new Array(12).fill(0),
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         borderWidth: 3,
@@ -838,7 +1344,7 @@
                         pointRadius: 4
                     }, {
                         label: 'Gross Profit',
-                        data: [64000, 70000, 76000, 84000, 78000, 90000, 96000, 104000, 98000, 110000, 116000, 124000],
+                        data: new Array(12).fill(0),
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         borderWidth: 3,
@@ -872,9 +1378,9 @@
             charts.make = new Chart(makeCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Ford', 'VW', 'Mercedes', 'Peugeot', 'Renault', 'Other'],
+                    labels: [],
                     datasets: [{
-                        data: [12, 8, 6, 5, 4, 7],
+                        data: [],
                         backgroundColor: ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899', '#64748b'],
                         borderRadius: 6
                     }]
@@ -890,7 +1396,7 @@
                 }
             });
 
-            // Channel Chart
+            // Channel Chart (static for now, could be made dynamic)
             const channelCtx = document.getElementById('channelChart').getContext('2d');
             charts.channel = new Chart(channelCtx, {
                 type: 'doughnut',
@@ -919,7 +1425,7 @@
                 data: {
                     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
                     datasets: [{
-                        data: [2, 3, 1, 4, 3, 2, 1],
+                        data: [0, 0, 0, 0, 0, 0, 0],
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         borderWidth: 2,
@@ -939,7 +1445,7 @@
                 }
             });
 
-            // Margin Chart
+            // Margin Chart (static for now)
             const marginCtx = document.getElementById('marginChart').getContext('2d');
             charts.margin = new Chart(marginCtx, {
                 type: 'bar',
@@ -970,7 +1476,7 @@
                 data: {
                     labels: ['0-30', '31-60', '61-90', '90+'],
                     datasets: [{
-                        data: [45, 32, 18, 7],
+                        data: [0, 0, 0, 0],
                         backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#dc2626'],
                         borderRadius: 4
                     }]
@@ -988,15 +1494,38 @@
         }
 
         function loadLeaderboard() {
-            const data = [
-                { name: 'Ibrahim Ata', units: 8, revenue: 45200, margin: '19%', trend: 'up' },
-                { name: 'Keith Hardy', units: 6, revenue: 32800, margin: '21%', trend: 'up' },
-                { name: 'Ali Amood', units: 5, revenue: 28500, margin: '17%', trend: 'down' },
-                { name: 'Marcin Kiljan', units: 4, revenue: 22400, margin: '18%', trend: 'up' },
-                { name: 'Stash', units: 3, revenue: 18600, margin: '16%', trend: 'flat' }
-            ];
-
-            document.getElementById('leaderboardTable').innerHTML = data.map((person, i) => `
+            const salesByPerson = {};
+            filteredVehicles.filter(v => v.status === 'Sold').forEach(v => {
+                const person = v.salesperson || 'Unknown';
+                if (!salesByPerson[person]) {
+                    salesByPerson[person] = { units: 0, revenue: 0, margin: 0 };
+                }
+                salesByPerson[person].units++;
+                const salePrice = parseFloat(v.salePrice) || parseFloat(v.retailPrice) || 0;
+                const costPrice = parseFloat(v.costPrice) || 0;
+                salesByPerson[person].revenue += salePrice;
+                salesByPerson[person].margin += ((salePrice - costPrice) / salePrice * 100);
+            });
+            
+            const sorted = Object.entries(salesByPerson)
+                .map(([name, data]) => ({
+                    name,
+                    units: data.units,
+                    revenue: data.revenue,
+                    margin: Math.round(data.margin / data.units)
+                }))
+                .sort((a, b) => b.revenue - a.revenue)
+                .slice(0, 5);
+            
+            // Fill with sample data if empty
+            if (sorted.length === 0) {
+                sorted.push(
+                    { name: 'Ibrahim Ata', units: 0, revenue: 0, margin: 0, trend: 'flat' },
+                    { name: 'Keith Hardy', units: 0, revenue: 0, margin: 0, trend: 'flat' }
+                );
+            }
+            
+            document.getElementById('leaderboardTable').innerHTML = sorted.map((person, i) => `
                 <tr>
                     <td>
                         <div style="display: flex; align-items: center; gap: 10px;">
@@ -1008,39 +1537,58 @@
                     </td>
                     <td style="color: #94a3b8;">${person.units}</td>
                     <td style="font-weight: 600; color: #f8fafc;">£${person.revenue.toLocaleString()}</td>
-                    <td><span style="padding: 4px 10px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 6px; font-size: 12px; font-weight: 600;">${person.margin}</span></td>
-                    <td><i class="fas fa-arrow-${person.trend}" style="color: ${person.trend === 'up' ? '#10b981' : person.trend === 'down' ? '#dc2626' : '#64748b'};"></i></td>
+                    <td><span style="padding: 4px 10px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 6px; font-size: 12px; font-weight: 600;">${person.margin}%</span></td>
+                    <td><i class="fas fa-minus" style="color: #64748b;"></i></td>
                 </tr>
             `).join('');
         }
 
         function loadRecentSales() {
-            const sales = [
-                { vehicle: 'Ford Transit Custom', reg: 'RF66 UBC', price: 18995, time: '2 hours ago' },
-                { vehicle: 'VW Crafter', reg: 'CU21 NBO', price: 24995, time: '4 hours ago' },
-                { vehicle: 'Mercedes Sprinter', reg: 'AX19 DEF', price: 32995, time: '6 hours ago' },
-                { vehicle: 'Peugeot Boxer', reg: 'BD20 GHI', price: 15995, time: 'Yesterday' }
-            ];
-
-            document.getElementById('recentSalesList').innerHTML = sales.map(sale => `
+            const recentSales = filteredVehicles
+                .filter(v => v.status === 'Sold' && v.saleDate)
+                .sort((a, b) => new Date(b.saleDate) - new Date(a.saleDate))
+                .slice(0, 4);
+            
+            if (recentSales.length === 0) {
+                document.getElementById('recentSalesList').innerHTML = '<div style="color: #64748b; text-align: center; padding: 20px;">No sales in selected period</div>';
+                return;
+            }
+            
+            document.getElementById('recentSalesList').innerHTML = recentSales.map(sale => {
+                const timeAgo = getTimeAgo(sale.saleDate);
+                return `
                 <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
                     <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; color: #64748b;">
                         <i class="fas fa-car"></i>
                     </div>
                     <div style="flex: 1;">
-                        <div style="font-weight: 600; color: #f8fafc; font-size: 13px;">${sale.vehicle}</div>
-                        <div style="font-size: 11px; color: #64748b;">${sale.reg}</div>
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 13px;">${sale.make} ${sale.model}</div>
+                        <div style="font-size: 11px; color: #64748b;">${sale.registration}</div>
                     </div>
                     <div style="text-align: right;">
-                        <div style="font-weight: 700; color: #f8fafc; font-size: 13px;">£${sale.price.toLocaleString()}</div>
-                        <div style="font-size: 11px; color: #64748b;">${sale.time}</div>
+                        <div style="font-weight: 700; color: #f8fafc; font-size: 13px;">£${(parseFloat(sale.salePrice) || 0).toLocaleString()}</div>
+                        <div style="font-size: 11px; color: #64748b;">${timeAgo}</div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
+        }
+
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffHours = Math.floor((now - date) / (1000 * 60 * 60));
+            
+            if (diffHours < 1) return 'Just now';
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            const diffDays = Math.floor(diffHours / 24);
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            return date.toLocaleDateString('en-GB');
         }
 
         function changeDateRange() {
-            alert('Date range selector');
+            // Could implement a custom date range picker here
+            alert('Date range selector - use the filter bar below for specific dates');
         }
 
         function logout() {
@@ -1049,8 +1597,14 @@
         }
 
         window.refreshData = function() {
-            loadKPIs();
+            loadAllVehicles();
+            applyFilters();
         };
+
+        // Initialize charts after DOM loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+        });
     </script>
 </body>
 </html>
