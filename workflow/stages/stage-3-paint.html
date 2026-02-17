@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 3: Dent & Paint Repairs - Capeye Workflow</title>
+    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
+    <script src="../../data/staff/staff-list.js"></script>
+    <script src="../../js/workflow/workflow-engine.js"></script>
+    <script src="../../js/workflow/form-components.js"></script>
+</head>
+<body>
+    <div class="workflow-container">
+        <div id="stage-nav-container"></div>
+        
+        <main class="main-content">
+            <div id="header-container"></div>
+            
+            <div class="stage-container">
+                <div class="stage-header">
+                    <h1 class="stage-title">
+                        <span style="font-size: 2rem;">🖌️</span>
+                        Stage 3: Dent & Paint Repairs
+                    </h1>
+                    <p class="stage-description">
+                        Execute bodywork repairs, dent removal, and paint refinishing. Track repair progress and quality control.
+                    </p>
+                </div>
+                
+                <div id="vehicle-info-display" class="vehicle-info-card">
+                    <div class="vehicle-info-header">
+                        <div class="vehicle-info-title">Vehicle Details</div>
+                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+                    </div>
+                    <div class="vehicle-details-grid" id="vehicle-details-content">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+                
+                <form id="stage-3-form">
+                    <!-- Technician Assignment -->
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="paint-technician">
+                                Paint Technician <span class="required">*</span>
+                            </label>
+                            <select id="paint-technician" name="paintTechnician" class="form-select" required>
+                                <option value="">Select Technician...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="start-date">Repair Start Date</label>
+                            <input type="date" id="start-date" name="startDate" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <!-- Repair Checklist -->
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">
+                        Repair Tasks
+                    </h3>
+                    
+                    <div class="checkbox-grid cols-2">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="tasks[]" value="dent-removal">
+                            <span>Dent Removal / PDR</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="tasks[]" value="filler-work">
+                            <span>Filler Application</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="tasks[]" value="sanding">
+                            <span>Sanding & Prep</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="tasks[]" value="masking">
+                            <span>Masking</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="tasks[]" value="primer">
+                            <span>Primer Application</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="tasks[]" value="base-coat">
+                            <span>Base Coat</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="tasks[]" value="clear-coat">
+                            <span>Clear Coat</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="tasks[]" value="polishing">
+                            <span>Cut & Polish</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Paint Details -->
+                    <div class="form-grid" style="margin-top: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="paint-code">Paint Code</label>
+                            <input type="text" id="paint-code" name="paintCode" class="form-input" placeholder="e.g., LB9A">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="paint-type">Paint Type</label>
+                            <select id="paint-type" name="paintType" class="form-select">
+                                <option value="">Select...</option>
+                                <option value="solid">Solid</option>
+                                <option value="metallic">Metallic</option>
+                                <option value="pearl">Pearl</option>
+                                <option value="matte">Matte</option>
+                                <option value="tri-coat">Tri-Coat</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Quality Control -->
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">
+                        Quality Control
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="color-match">Color Match Quality</label>
+                            <select id="color-match" name="colorMatch" class="form-select">
+                                <option value="excellent">Excellent - Perfect Match</option>
+                                <option value="good">Good - Acceptable</option>
+                                <option value="fair">Fair - Minor Variance</option>
+                                <option value="poor">Poor - Requires Redo</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="finish-quality">Finish Quality</label>
+                            <select id="finish-quality" name="finishQuality" class="form-select">
+                                <option value="excellent">Excellent - No Defects</option>
+                                <option value="good">Good - Minor Issues</option>
+                                <option value="fair">Fair - Some Correction Needed</option>
+                                <option value="poor">Poor - Requires Redo</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Photos -->
+                    <div class="form-group">
+                        <label class="form-label">Repair Progress Photos</label>
+                        <div id="progress-photos-container"></div>
+                        <input type="hidden" id="progress-photos" name="progressPhotos">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Final Photos <span class="required">*</span></label>
+                        <div id="final-photos-container"></div>
+                        <input type="hidden" id="final-photos" name="finalPhotos" required>
+                    </div>
+                    
+                    <!-- Time & Costs -->
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="actual-hours">Actual Hours Worked</label>
+                            <input type="number" id="actual-hours" name="actualHours" class="form-input" step="0.5" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="completion-date">Completion Date</label>
+                            <input type="date" id="completion-date" name="completionDate" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="paint-notes">Repair Notes</label>
+                        <textarea id="paint-notes" name="paintNotes" class="form-textarea" rows="4" 
+                            placeholder="Details of work carried out, any issues encountered..."></textarea>
+                    </div>
+                    
+                    <!-- Sign-off -->
+                    <div class="form-group">
+                        <label class="form-label">Technician Signature <span class="required">*</span></label>
+                        <div id="signature-container"></div>
+                        <input type="hidden" id="signature" name="signature" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <a href="stage-2-bodywork.html" class="btn btn-secondary">← Back</a>
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">
+                                ✓ Complete & Send to Legal →
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentVehicle = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            WorkflowEngine.setStage(3);
+            loadComponents();
+            populateTechnicians();
+            initPhotoUploads();
+            initSignature();
+            loadVehicle();
+            loadSavedData();
+            
+            document.getElementById('start-date').valueAsDate = new Date();
+        });
+        
+        function loadComponents() {
+            fetch('../../workflow/components/header.html')
+                .then(r => r.text())
+                .then(html => document.getElementById('header-container').innerHTML = html);
+            fetch('../../workflow/components/stage-nav.html')
+                .then(r => r.text())
+                .then(html => document.getElementById('stage-nav-container').innerHTML = html);
+        }
+        
+        function populateTechnicians() {
+            const select = document.getElementById('paint-technician');
+            if (STAFF_DATA) {
+                const bodyshop = STAFF_DATA.getStaffByDept('bodyshop');
+                const workshop = STAFF_DATA.getStaffByDept('workshop');
+                [...bodyshop, ...workshop].forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = s.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+        
+        function initPhotoUploads() {
+            const progContainer = document.getElementById('progress-photos-container');
+            progContainer.appendChild(FormComponents.createPhotoUpload({
+                id: 'progress-photos', label: 'Progress Photos', maxPhotos: 10
+            }));
+            
+            const finalContainer = document.getElementById('final-photos-container');
+            finalContainer.appendChild(FormComponents.createPhotoUpload({
+                id: 'final-photos', label: 'Final Photos', maxPhotos: 8, minPhotos: 4, required: true
+            }));
+        }
+        
+        function initSignature() {
+            document.getElementById('signature-container').appendChild(
+                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
+            );
+        }
+        
+        function loadVehicle() {
+            currentVehicle = WorkflowEngine.getVehicle();
+            if (!currentVehicle) {
+                if (confirm('No vehicle selected. Go to Stage 1?')) {
+                    window.location.href = 'stage-1-intake.html';
+                }
+                return;
+            }
+            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
+            document.getElementById('vehicle-details-content').innerHTML = `
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span>
+                <span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span>
+                <span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Colour</span>
+                <span class="vehicle-detail-value">${currentVehicle.colour}</span></div>
+            `;
+        }
+        
+        function getFormData() {
+            const form = document.getElementById('stage-3-form');
+            const fd = new FormData(form);
+            return {
+                paintTechnician: fd.get('paintTechnician'),
+                startDate: fd.get('startDate'),
+                tasks: fd.getAll('tasks[]'),
+                paintCode: fd.get('paintCode'),
+                paintType: fd.get('paintType'),
+                colorMatch: fd.get('colorMatch'),
+                finishQuality: fd.get('finishQuality'),
+                progressPhotos: document.getElementById('progress-photos').value,
+                finalPhotos: document.getElementById('final-photos').value,
+                actualHours: fd.get('actualHours'),
+                completionDate: fd.get('completionDate'),
+                paintNotes: fd.get('paintNotes'),
+                signature: document.getElementById('signature').value
+            };
+        }
+        
+        function loadSavedData() {
+            if (!currentVehicle) return;
+            const saved = WorkflowEngine.loadStageData(3, currentVehicle.stockNo);
+            if (saved?.data) {
+                const d = saved.data;
+                if (d.paintTechnician) document.getElementById('paint-technician').value = d.paintTechnician;
+                if (d.startDate) document.getElementById('start-date').value = d.startDate;
+                if (d.paintCode) document.getElementById('paint-code').value = d.paintCode;
+                if (d.paintType) document.getElementById('paint-type').value = d.paintType;
+                if (d.colorMatch) document.getElementById('color-match').value = d.colorMatch;
+                if (d.finishQuality) document.getElementById('finish-quality').value = d.finishQuality;
+                if (d.actualHours) document.getElementById('actual-hours').value = d.actualHours;
+                if (d.completionDate) document.getElementById('completion-date').value = d.completionDate;
+                if (d.paintNotes) document.getElementById('paint-notes').value = d.paintNotes;
+                if (d.tasks) {
+                    d.tasks.forEach(v => {
+                        const cb = document.querySelector(`input[value="${v}"]`);
+                        if (cb) cb.checked = true;
+                    });
+                }
+            }
+        }
+        
+        function saveDraft() {
+            if (!currentVehicle) return;
+            WorkflowEngine.saveStageData(3, getFormData());
+            showAlert('Draft saved', 'success');
+        }
+        
+        function completeStage() {
+            if (!currentVehicle) return;
+            const data = getFormData();
+            if (!data.signature) {
+                showAlert('Signature required', 'danger');
+                return;
+            }
+            WorkflowEngine.completeStage(3, data);
+            showAlert('Stage 3 complete!', 'success');
+            setTimeout(() => window.location.href = 'stage-4-legal.html', 1500);
+        }
+        
+        function showAlert(msg, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${msg}</span>`;
+            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
+    </script>
+</body>
+</html>
