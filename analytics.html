@@ -74,6 +74,7 @@
         .filter-input:focus {
             outline: none;
             border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
         
         .filter-select {
@@ -103,6 +104,7 @@
         
         .filter-btn:hover {
             background: #2563eb;
+            transform: translateY(-1px);
         }
         
         .filter-btn-secondary {
@@ -114,6 +116,43 @@
         .filter-btn-secondary:hover {
             background: var(--cy-bg-secondary);
             color: var(--cy-text-primary);
+            border-color: var(--cy-border-hover);
+        }
+        
+        /* Active Filters Display */
+        .active-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+        
+        .filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #3b82f6;
+            font-weight: 500;
+        }
+        
+        .filter-tag button {
+            background: none;
+            border: none;
+            color: #3b82f6;
+            cursor: pointer;
+            padding: 0;
+            font-size: 14px;
+            line-height: 1;
+        }
+        
+        .filter-tag button:hover {
+            color: #dc2626;
         }
         
         /* Role Toggle */
@@ -163,6 +202,12 @@
             justify-content: space-between;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .kpi-card:hover {
+            border-color: var(--cy-border-hover);
+            transform: translateY(-2px);
         }
         
         .kpi-card::before {
@@ -280,6 +325,12 @@
             background: var(--cy-bg-tertiary);
             border-radius: 8px;
             border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .exception-item:hover {
+            background: rgba(59, 130, 246, 0.05);
         }
         
         .exception-item.critical {
@@ -529,6 +580,7 @@
         .report-card:hover {
             border-color: #3b82f6;
             background: rgba(59, 130, 246, 0.05);
+            transform: translateY(-2px);
         }
         
         .report-icon {
@@ -568,6 +620,8 @@
             .kpi-section { grid-template-columns: 1fr; }
             .filter-bar { flex-direction: column; }
             .filter-group { width: 100%; }
+            .filter-actions { width: 100%; margin-left: 0; }
+            .filter-actions button { flex: 1; justify-content: center; }
         }
     </style>
 </head>
@@ -653,17 +707,17 @@
         <div class="filter-bar">
             <div class="filter-group">
                 <label class="filter-label">Date From</label>
-                <input type="date" id="filterDateFrom" class="filter-input">
+                <input type="date" id="filterDateFrom" class="filter-input" onchange="applyFilters()">
             </div>
             
             <div class="filter-group">
                 <label class="filter-label">Date To</label>
-                <input type="date" id="filterDateTo" class="filter-input">
+                <input type="date" id="filterDateTo" class="filter-input" onchange="applyFilters()">
             </div>
             
             <div class="filter-group">
                 <label class="filter-label">Department</label>
-                <select id="filterDept" class="filter-input filter-select">
+                <select id="filterDept" class="filter-input filter-select" onchange="applyFilters()">
                     <option value="">All Departments</option>
                     <option value="Sales">Sales</option>
                     <option value="Workshop">Workshop</option>
@@ -673,7 +727,7 @@
             
             <div class="filter-group">
                 <label class="filter-label">Staff Member</label>
-                <select id="filterStaff" class="filter-input filter-select">
+                <select id="filterStaff" class="filter-input filter-select" onchange="applyFilters()">
                     <option value="">All Staff</option>
                 </select>
             </div>
@@ -685,24 +739,28 @@
                 </button>
                 <button class="filter-btn filter-btn-secondary" onclick="resetFilters()">
                     <i class="fas fa-undo"></i>
+                    Reset
                 </button>
             </div>
         </div>
+
+        <!-- Active Filters Display -->
+        <div class="active-filters" id="activeFilters"></div>
 
         <!-- KPI Cards -->
         <div class="kpi-section">
             <div class="kpi-card" style="--kpi-color: #3b82f6; --kpi-color-soft: rgba(59, 130, 246, 0.1);">
                 <div class="kpi-top">
-                    <span class="kpi-label">Revenue MTD</span>
+                    <span class="kpi-label">Revenue (Filtered)</span>
                     <div class="kpi-icon">
                         <i class="fas fa-pound-sign"></i>
                     </div>
                 </div>
                 <div>
                     <div class="kpi-value" id="kpiRevenue">£0</div>
-                    <div class="kpi-change positive">
+                    <div class="kpi-change positive" id="kpiRevenueChange">
                         <i class="fas fa-arrow-up" style="font-size: 10px;"></i>
-                        <span>12.5% vs last month</span>
+                        <span>0% vs period</span>
                     </div>
                 </div>
             </div>
@@ -716,9 +774,9 @@
                 </div>
                 <div>
                     <div class="kpi-value" id="kpiMargin">0%</div>
-                    <div class="kpi-change positive">
+                    <div class="kpi-change positive" id="kpiMarginChange">
                         <i class="fas fa-arrow-up" style="font-size: 10px;"></i>
-                        <span>2.1% improvement</span>
+                        <span>0% change</span>
                     </div>
                 </div>
             </div>
@@ -732,9 +790,9 @@
                 </div>
                 <div>
                     <div class="kpi-value" id="kpiDays">0</div>
-                    <div class="kpi-change positive">
-                        <i class="fas fa-arrow-down" style="font-size: 10px;"></i>
-                        <span>3 days faster</span>
+                    <div class="kpi-change positive" id="kpiDaysChange">
+                        <i class="fas fa-minus" style="font-size: 10px;"></i>
+                        <span>No change</span>
                     </div>
                 </div>
             </div>
@@ -790,8 +848,8 @@
                 <div class="chart-header">
                     <div class="chart-title">Revenue & Profit Trend</div>
                     <div style="display: flex; gap: 8px;">
-                        <button style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; font-size: 11px; color: var(--cy-text-secondary); cursor: pointer;">Monthly</button>
-                        <button style="padding: 6px 12px; background: #3b82f6; border: none; border-radius: 6px; font-size: 11px; color: white; cursor: pointer;">Weekly</button>
+                        <button onclick="setChartPeriod('monthly')" id="btnMonthly" style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; font-size: 11px; color: var(--cy-text-secondary); cursor: pointer;">Monthly</button>
+                        <button onclick="setChartPeriod('weekly')" id="btnWeekly" style="padding: 6px 12px; background: #3b82f6; border: none; border-radius: 6px; font-size: 11px; color: white; cursor: pointer;">Weekly</button>
                     </div>
                 </div>
                 <div class="chart-container">
@@ -814,10 +872,11 @@
             <div class="performance-header">
                 <div class="performance-title">Staff Performance & Efficiency</div>
                 <div style="display: flex; gap: 8px;">
-                    <select style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; font-size: 12px; color: var(--cy-text-primary);">
-                        <option>All Departments</option>
-                        <option>Sales</option>
-                        <option>Workshop</option>
+                    <select id="perfDeptFilter" onchange="applyFilters()" style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; font-size: 12px; color: var(--cy-text-primary);">
+                        <option value="">All Departments</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="Prep">Prep</option>
                     </select>
                 </div>
             </div>
@@ -847,21 +906,21 @@
                 <div class="config-item">
                     <span class="config-label">Yard stay alert</span>
                     <div class="config-value">
-                        <input type="number" class="config-input" value="7" id="yardThreshold">
+                        <input type="number" class="config-input" value="7" id="yardThreshold" onchange="updateThresholds()">
                         <span style="font-size: 12px; color: var(--cy-text-muted);">days</span>
                     </div>
                 </div>
                 <div class="config-item">
                     <span class="config-label">Workshop alert</span>
                     <div class="config-value">
-                        <input type="number" class="config-input" value="7" id="workshopThreshold">
+                        <input type="number" class="config-input" value="7" id="workshopThreshold" onchange="updateThresholds()">
                         <span style="font-size: 12px; color: var(--cy-text-muted);">days</span>
                     </div>
                 </div>
                 <div class="config-item">
                     <span class="config-label">Prep alert</span>
                     <div class="config-value">
-                        <input type="number" class="config-input" value="3" id="prepThreshold">
+                        <input type="number" class="config-input" value="3" id="prepThreshold" onchange="updateThresholds()">
                         <span style="font-size: 12px; color: var(--cy-text-muted);">days</span>
                     </div>
                 </div>
@@ -973,7 +1032,16 @@
     <script>
         let charts = {};
         let allVehicles = [];
+        let filteredVehicles = [];
         let currentRole = 'director';
+        let chartPeriod = 'weekly';
+        
+        // Alert thresholds
+        let thresholds = {
+            yard: 7,
+            workshop: 7,
+            prep: 3
+        };
         
         const staff = [
             { name: 'Ibrahim Ata', dept: 'Sales', avatar: 'IA' },
@@ -983,14 +1051,14 @@
             { name: 'Marcin Kiljan', dept: 'Workshop', avatar: 'MK' },
             { name: 'Sia Vajihi', dept: 'Workshop', avatar: 'SV' },
             { name: 'Iman Zarien', dept: 'Workshop', avatar: 'IZ' },
-            { name: 'Stash', dept: 'Bodyshop', avatar: 'ST' }
+            { name: 'Stash', dept: 'Prep', avatar: 'ST' }
         ];
         
         document.addEventListener('DOMContentLoaded', function() {
             loadData();
             initializeFilters();
             initCharts();
-            renderAll();
+            applyFilters(); // This will call renderAll with initial data
             updateTimestamp();
         });
 
@@ -998,30 +1066,38 @@
             allVehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
             if (allVehicles.length === 0) {
                 allVehicles = generateSampleData();
+                localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
             }
+            filteredVehicles = [...allVehicles];
         }
 
         function generateSampleData() {
-            // Same sample data generator as operations page
             const makes = ['Ford', 'VW', 'Mercedes', 'Peugeot', 'Renault'];
             const models = ['Transit', 'Crafter', 'Sprinter', 'Boxer', 'Master'];
-            const stages = ['INTAKE', 'WORKSHOP', 'PREP', 'READY', 'ADVERTISED'];
+            const stages = ['INTAKE', 'WORKSHOP', 'PREP', 'READY', 'ADVERTISED', 'SOLD'];
             
             const vehicles = [];
-            for (let i = 0; i < 50; i++) {
+            const today = new Date();
+            
+            for (let i = 0; i < 80; i++) {
                 const stage = stages[Math.floor(Math.random() * stages.length)];
-                const daysInStage = Math.floor(Math.random() * 15);
+                const daysInStage = Math.floor(Math.random() * 20);
+                const saleDate = stage === 'SOLD' ? new Date(today.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000) : null;
+                const dateInStock = new Date(today.getTime() - (daysInStage + Math.random() * 30) * 24 * 60 * 60 * 1000);
                 
                 vehicles.push({
                     stockNo: `R${String(1000 + i).padStart(4, '0')}`,
-                    registration: `RF${Math.floor(Math.random() * 90 + 10)} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}BC`,
+                    registration: `RF${Math.floor(Math.random() * 90 + 10)} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
                     make: makes[Math.floor(Math.random() * makes.length)],
                     model: models[Math.floor(Math.random() * models.length)],
                     stage: stage,
-                    stageEntered: new Date(Date.now() - daysInStage * 24 * 60 * 60 * 1000).toISOString(),
+                    stageEntered: new Date(today.getTime() - daysInStage * 24 * 60 * 60 * 1000).toISOString(),
+                    dateInStock: dateInStock.toISOString(),
                     assignedTo: staff[Math.floor(Math.random() * staff.length)].name,
-                    saleDate: Math.random() > 0.6 ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString() : null,
-                    salePrice: Math.floor(Math.random() * 20000 + 15000)
+                    saleDate: saleDate ? saleDate.toISOString() : null,
+                    salePrice: stage === 'SOLD' ? Math.floor(Math.random() * 20000 + 15000) : null,
+                    costPrice: Math.floor(Math.random() * 15000 + 10000),
+                    channel: ['B2B', 'B2C', 'Trade', 'Online'][Math.floor(Math.random() * 4)]
                 });
             }
             return vehicles;
@@ -1044,24 +1120,86 @@
             document.getElementById('filterDateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
         }
 
-        function setRole(role) {
-            currentRole = role;
-            document.querySelectorAll('.role-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.toLowerCase().includes(role)) {
-                    btn.classList.add('active');
+        function applyFilters() {
+            const dateFrom = document.getElementById('filterDateFrom').value;
+            const dateTo = document.getElementById('filterDateTo').value;
+            const dept = document.getElementById('filterDept').value;
+            const staffMember = document.getElementById('filterStaff').value;
+            const perfDept = document.getElementById('perfDeptFilter').value;
+            
+            // Filter vehicles
+            filteredVehicles = allVehicles.filter(v => {
+                // Date filter - check sale date for sold vehicles, or date in stock for active
+                if (dateFrom || dateTo) {
+                    const checkDate = v.saleDate || v.dateInStock;
+                    if (dateFrom && checkDate < dateFrom) return false;
+                    if (dateTo && checkDate > dateTo) return false;
                 }
+                
+                // Department filter (based on assigned staff dept)
+                if (dept) {
+                    const staffDept = staff.find(s => s.name === v.assignedTo)?.dept;
+                    if (staffDept !== dept) return false;
+                }
+                
+                // Staff filter
+                if (staffMember && v.assignedTo !== staffMember) return false;
+                
+                return true;
             });
             
-            // Update view based on role
-            if (role === 'manager') {
-                // Filter to show only relevant department data
-                document.querySelector('.performance-title').textContent = 'My Team Performance';
-            } else {
-                document.querySelector('.performance-title').textContent = 'Staff Performance & Efficiency';
-            }
+            // Update active filters display
+            updateActiveFilters({ dateFrom, dateTo, dept, staffMember });
             
+            // Render everything with filtered data
             renderAll();
+        }
+
+        function updateActiveFilters(filters) {
+            const container = document.getElementById('activeFilters');
+            const tags = [];
+            
+            if (filters.dateFrom || filters.dateTo) {
+                const dateRange = `${filters.dateFrom || 'Start'} to ${filters.dateTo || 'End'}`;
+                tags.push(`<span class="filter-tag">Date: ${dateRange} <button onclick="clearFilter('date')">×</button></span>`);
+            }
+            if (filters.dept) tags.push(`<span class="filter-tag">Dept: ${filters.dept} <button onclick="clearFilter('dept')">×</button></span>`);
+            if (filters.staffMember) tags.push(`<span class="filter-tag">Staff: ${filters.staffMember} <button onclick="clearFilter('staff')">×</button></span>`);
+            
+            container.innerHTML = tags.join('');
+        }
+
+        function clearFilter(type) {
+            switch(type) {
+                case 'date':
+                    document.getElementById('filterDateFrom').value = '';
+                    document.getElementById('filterDateTo').value = '';
+                    break;
+                case 'dept':
+                    document.getElementById('filterDept').value = '';
+                    break;
+                case 'staff':
+                    document.getElementById('filterStaff').value = '';
+                    break;
+            }
+            applyFilters();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+            document.getElementById('filterDept').value = '';
+            document.getElementById('filterStaff').value = '';
+            document.getElementById('perfDeptFilter').value = '';
+            document.getElementById('activeFilters').innerHTML = '';
+            
+            // Reset to default dates
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+            document.getElementById('filterDateTo').value = today.toISOString().split('T')[0];
+            document.getElementById('filterDateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
+            
+            applyFilters();
         }
 
         function renderAll() {
@@ -1069,37 +1207,62 @@
             renderExceptions();
             renderPerformanceTable();
             updateCharts();
+            updateTimestamp();
         }
 
         function renderKPIs() {
-            const soldVehicles = allVehicles.filter(v => v.saleDate);
+            // Calculate based on FILTERED vehicles
+            const soldVehicles = filteredVehicles.filter(v => v.saleDate);
             const revenue = soldVehicles.reduce((sum, v) => sum + (v.salePrice || 0), 0);
-            const exceptions = allVehicles.filter(v => {
+            const cost = soldVehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0);
+            const profit = revenue - cost;
+            const margin = revenue > 0 ? ((profit / revenue) * 100).toFixed(1) : 0;
+            
+            // Exceptions count from filtered data
+            const exceptions = filteredVehicles.filter(v => {
                 const days = calculateDaysInStage(v);
-                return days > 7;
+                return days > thresholds.yard && v.stage !== 'SOLD';
             }).length;
             
-            // Calculate average days to sell
+            // Average days to sell
             const avgDays = soldVehicles.length > 0 
                 ? Math.round(soldVehicles.reduce((sum, v) => {
-                    const entered = new Date(v.stageEntered);
+                    const entered = new Date(v.dateInStock);
                     const sold = new Date(v.saleDate);
                     return sum + Math.floor((sold - entered) / (1000 * 60 * 60 * 24));
                 }, 0) / soldVehicles.length)
                 : 0;
             
+            // Animate values
             animateValue('kpiRevenue', revenue, '£');
-            animateValue('kpiMargin', 18.5, '', '%');
+            animateValue('kpiMargin', margin, '', '%');
             animateValue('kpiDays', avgDays, '', ' days');
             animateValue('kpiExceptions', exceptions, '');
+            
+            // Update change indicators (simulated comparison)
+            document.getElementById('kpiRevenueChange').innerHTML = 
+                `<i class="fas fa-arrow-up" style="font-size: 10px;"></i><span>${(Math.random() * 20).toFixed(1)}% vs period</span>`;
+            document.getElementById('kpiMarginChange').innerHTML = 
+                `<i class="fas fa-arrow-${margin > 15 ? 'up' : 'down'}" style="font-size: 10px;"></i><span>${Math.abs(margin - 15).toFixed(1)}% ${margin > 15 ? 'above' : 'below'} target</span>`;
+            document.getElementById('kpiDaysChange').innerHTML = 
+                `<i class="fas fa-arrow-${avgDays < 30 ? 'down' : 'up'}" style="font-size: 10px;"></i><span>${avgDays < 30 ? 'Good' : 'Slow'} velocity</span>`;
         }
 
         function renderExceptions() {
-            const critical = allVehicles.filter(v => calculateDaysInStage(v) > 7);
-            const warnings = allVehicles.filter(v => {
+            // Critical: > workshop threshold days in workshop/prep
+            const critical = filteredVehicles.filter(v => {
                 const days = calculateDaysInStage(v);
-                return days >= 5 && days <= 7;
-            });
+                return (v.stage === 'WORKSHOP' && days > thresholds.workshop) ||
+                       (v.stage === 'PREP' && days > thresholds.prep) ||
+                       (v.stage === 'INTAKE' && days > thresholds.yard);
+            }).sort((a, b) => calculateDaysInStage(b) - calculateDaysInStage(a));
+            
+            // Warnings: approaching threshold
+            const warnings = filteredVehicles.filter(v => {
+                const days = calculateDaysInStage(v);
+                return (v.stage === 'WORKSHOP' && days >= 5 && days <= thresholds.workshop) ||
+                       (v.stage === 'PREP' && days >= 2 && days <= thresholds.prep);
+            }).sort((a, b) => calculateDaysInStage(b) - calculateDaysInStage(a));
             
             document.getElementById('criticalCount').textContent = critical.length;
             document.getElementById('warningCount').textContent = warnings.length;
@@ -1115,13 +1278,13 @@
                 return;
             }
             
-            container.innerHTML = vehicles.slice(0, 4).map(v => {
+            container.innerHTML = vehicles.slice(0, 5).map(v => {
                 const days = calculateDaysInStage(v);
                 return `
-                    <div class="exception-item ${type}">
+                    <div class="exception-item ${type}" onclick="viewVehicle('${v.stockNo}')">
                         <div class="exception-vehicle">
                             <div class="exception-reg">${v.registration}</div>
-                            <div class="exception-issue">${v.make} ${v.model} • ${v.stage}</div>
+                            <div class="exception-issue">${v.make} ${v.model} • ${v.stage} • ${v.assignedTo?.split(' ')[0] || 'Unassigned'}</div>
                         </div>
                         <div class="exception-time">${days}d</div>
                     </div>
@@ -1131,17 +1294,29 @@
 
         function renderPerformanceTable() {
             const tbody = document.getElementById('performanceTable');
+            const perfDept = document.getElementById('perfDeptFilter').value;
             
-            const staffPerformance = staff.map(s => {
-                const processed = allVehicles.filter(v => v.assignedTo === s.name).length;
-                const efficiency = Math.floor(Math.random() * 40 + 60); // Simulated efficiency score
+            // Filter staff by department if selected
+            let displayStaff = staff;
+            if (perfDept) {
+                displayStaff = staff.filter(s => s.dept === perfDept);
+            }
+            
+            // Calculate metrics from FILTERED vehicles
+            const staffPerformance = displayStaff.map(s => {
+                const processed = filteredVehicles.filter(v => v.assignedTo === s.name).length;
+                const avgTime = processed > 0 
+                    ? Math.floor(Math.random() * 5 + 2) // Simulated - would calculate from actual data
+                    : 0;
+                const efficiency = processed > 0 
+                    ? Math.min(95, Math.floor(60 + (processed * 2) + (Math.random() * 20)))
+                    : 0;
                 
-                return { ...s, processed, efficiency };
+                return { ...s, processed, avgTime, efficiency };
             }).sort((a, b) => b.efficiency - a.efficiency);
             
             tbody.innerHTML = staffPerformance.map(s => {
                 const effClass = s.efficiency >= 80 ? 'high' : s.efficiency >= 60 ? 'medium' : 'low';
-                const avgTime = Math.floor(Math.random() * 5 + 2);
                 
                 return `
                     <tr>
@@ -1156,7 +1331,7 @@
                         </td>
                         <td style="color: var(--cy-text-secondary);">${s.dept}</td>
                         <td style="font-weight: 600; color: var(--cy-text-primary);">${s.processed}</td>
-                        <td style="color: var(--cy-text-secondary);">${avgTime} days</td>
+                        <td style="color: var(--cy-text-secondary);">${s.avgTime > 0 ? s.avgTime + ' days' : '-'}</td>
                         <td>
                             <div class="efficiency-score">
                                 <div class="efficiency-bar">
@@ -1185,7 +1360,7 @@
                     labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
                     datasets: [{
                         label: 'Revenue',
-                        data: [85000, 92000, 88000, 95000],
+                        data: [0, 0, 0, 0],
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         borderWidth: 2,
@@ -1193,7 +1368,7 @@
                         fill: true
                     }, {
                         label: 'Profit',
-                        data: [17000, 18400, 17600, 19000],
+                        data: [0, 0, 0, 0],
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         borderWidth: 2,
@@ -1219,7 +1394,7 @@
                 data: {
                     labels: ['B2B', 'B2C', 'Trade', 'Online'],
                     datasets: [{
-                        data: [45, 30, 15, 10],
+                        data: [0, 0, 0, 0],
                         backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'],
                         borderWidth: 0
                     }]
@@ -1236,20 +1411,68 @@
         }
 
         function updateCharts() {
-            // Update with filtered data if needed
+            // Calculate data from FILTERED vehicles
+            const soldVehicles = filteredVehicles.filter(v => v.saleDate);
+            
+            // Revenue by week (simplified - in real app would group by actual weeks)
+            const weeklyRevenue = [0, 0, 0, 0];
+            const weeklyProfit = [0, 0, 0, 0];
+            
+            soldVehicles.forEach(v => {
+                const weekIndex = Math.floor(Math.random() * 4); // Simplified - would use actual date logic
+                weeklyRevenue[weekIndex] += v.salePrice || 0;
+                weeklyProfit[weekIndex] += (v.salePrice || 0) - (v.costPrice || 0);
+            });
+            
+            charts.revenue.data.datasets[0].data = weeklyRevenue;
+            charts.revenue.data.datasets[1].data = weeklyProfit;
+            charts.revenue.update();
+            
+            // Channel distribution
+            const channelCounts = { 'B2B': 0, 'B2C': 0, 'Trade': 0, 'Online': 0 };
+            soldVehicles.forEach(v => {
+                if (v.channel) channelCounts[v.channel]++;
+            });
+            
+            charts.channel.data.datasets[0].data = [
+                channelCounts['B2B'],
+                channelCounts['B2C'],
+                channelCounts['Trade'],
+                channelCounts['Online']
+            ];
+            charts.channel.update();
         }
 
-        function applyFilters() {
-            // Filter logic here
-            renderAll();
+        function setChartPeriod(period) {
+            chartPeriod = period;
+            document.getElementById('btnMonthly').style.background = period === 'monthly' ? '#3b82f6' : 'var(--cy-bg-tertiary)';
+            document.getElementById('btnMonthly').style.color = period === 'monthly' ? 'white' : 'var(--cy-text-secondary)';
+            document.getElementById('btnWeekly').style.background = period === 'weekly' ? '#3b82f6' : 'var(--cy-bg-tertiary)';
+            document.getElementById('btnWeekly').style.color = period === 'weekly' ? 'white' : 'var(--cy-text-secondary)';
+            
+            // Update chart labels and data based on period
+            if (period === 'monthly') {
+                charts.revenue.data.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            } else {
+                charts.revenue.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+            }
+            updateCharts();
         }
 
-        function resetFilters() {
-            document.getElementById('filterDateFrom').value = '';
-            document.getElementById('filterDateTo').value = '';
-            document.getElementById('filterDept').value = '';
-            document.getElementById('filterStaff').value = '';
-            renderAll();
+        function updateThresholds() {
+            thresholds.yard = parseInt(document.getElementById('yardThreshold').value) || 7;
+            thresholds.workshop = parseInt(document.getElementById('workshopThreshold').value) || 7;
+            thresholds.prep = parseInt(document.getElementById('prepThreshold').value) || 3;
+            
+            // Re-render exceptions with new thresholds
+            renderExceptions();
+        }
+
+        function viewVehicle(stockNo) {
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (vehicle) {
+                alert(`Vehicle: ${vehicle.registration}\nMake: ${vehicle.make} ${vehicle.model}\nStage: ${vehicle.stage}\nAssigned: ${vehicle.assignedTo}\nDays in stage: ${calculateDaysInStage(vehicle)}`);
+            }
         }
 
         function downloadReport(type) {
@@ -1259,11 +1482,33 @@
                 performance: 'Staff Performance Report',
                 exceptions: 'Exceptions Report'
             };
-            alert(`Generating ${reports[type]}...\n\nThis would download a PDF in production.`);
+            alert(`Generating ${reports[type]}...\n\nBased on current filters:\n- Date range: ${document.getElementById('filterDateFrom').value} to ${document.getElementById('filterDateTo').value}\n- Department: ${document.getElementById('filterDept').value || 'All'}\n- Staff: ${document.getElementById('filterStaff').value || 'All'}\n\nThis would download a PDF in production.`);
         }
 
         function exportReport() {
             downloadReport('daily');
+        }
+
+        function setRole(role) {
+            currentRole = role;
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(role)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Update view based on role
+            if (role === 'manager') {
+                document.querySelector('.performance-title').textContent = 'My Team Performance';
+                // Auto-filter to manager's department (would be dynamic in real app)
+                document.getElementById('filterDept').value = 'Workshop';
+            } else {
+                document.querySelector('.performance-title').textContent = 'Staff Performance & Efficiency';
+                document.getElementById('filterDept').value = '';
+            }
+            
+            applyFilters();
         }
 
         function updateTimestamp() {
