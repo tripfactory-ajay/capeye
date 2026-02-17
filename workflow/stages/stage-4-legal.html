@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 4: Legal & Documentation - Capeye Workflow</title>
+    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
+    <script src="../../data/staff/staff-list.js"></script>
+    <script src="../../js/workflow/workflow-engine.js"></script>
+    <script src="../../js/workflow/form-components.js"></script>
+</head>
+<body>
+    <div class="workflow-container">
+        <div id="stage-nav-container"></div>
+        <main class="main-content">
+            <div id="header-container"></div>
+            <div class="stage-container">
+                <div class="stage-header">
+                    <h1 class="stage-title"><span style="font-size: 2rem;">📄</span> Stage 4: Legal & Documentation</h1>
+                    <p class="stage-description">Verify and organize all legal documents, service history, and compliance paperwork.</p>
+                </div>
+                
+                <div id="vehicle-info-display" class="vehicle-info-card">
+                    <div class="vehicle-info-header">
+                        <div class="vehicle-info-title">Vehicle Details</div>
+                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+                    </div>
+                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                </div>
+                
+                <form id="stage-4-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="processor">Document Processor <span class="required">*</span></label>
+                            <select id="processor" name="processor" class="form-select" required>
+                                <option value="">Select...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="process-date">Processing Date</label>
+                            <input type="date" id="process-date" name="processDate" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Document Checklist</h3>
+                    
+                    <div class="checkbox-grid cols-2">
+                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="v5"><span>V5C Logbook</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="mot"><span>MOT Certificate</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="service-history"><span>Service History</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="warranty"><span>Warranty Docs</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="purchase-invoice"><span>Purchase Invoice</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="previous-mot"><span>Previous MOTs</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="handbook"><span>Handbook</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="spare-key"><span>Spare Key</span></label>
+                    </div>
+                    
+                    <div class="form-grid" style="margin-top: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="mot-status">MOT Status</label>
+                            <select id="mot-status" name="motStatus" class="form-select">
+                                <option value="valid">Valid</option>
+                                <option value="expired">Expired</option>
+                                <option value="not-required">Not Required</option>
+                                <option value="needed">Needs Renewal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="mot-expiry">MOT Expiry Date</label>
+                            <input type="date" id="mot-expiry" name="motExpiry" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="service-history-notes">Service History Notes</label>
+                        <textarea id="service-history-notes" name="serviceHistoryNotes" class="form-textarea" rows="3" placeholder="Record service intervals, stamps, digital history..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Document Photos</label>
+                        <div id="doc-photos-container"></div>
+                        <input type="hidden" id="doc-photos" name="docPhotos">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="legal-notes">Legal Notes/Issues</label>
+                        <textarea id="legal-notes" name="legalNotes" class="form-textarea" rows="3" placeholder="Any legal concerns, outstanding finance checks, etc..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Processor Signature <span class="required">*</span></label>
+                        <div id="signature-container"></div>
+                        <input type="hidden" id="signature" name="signature" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <a href="stage-3-paint.html" class="btn btn-secondary">← Back</a>
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete & Send to Mechanical →</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentVehicle = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            WorkflowEngine.setStage(4);
+            loadComponents();
+            populateStaff();
+            initPhotos();
+            initSignature();
+            loadVehicle();
+            loadSavedData();
+            document.getElementById('process-date').valueAsDate = new Date();
+        });
+        
+        function loadComponents() {
+            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
+            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+        }
+        
+        function populateStaff() {
+            const select = document.getElementById('processor');
+            if (STAFF_DATA) {
+                const accounts = STAFF_DATA.getStaffByDept('accounts');
+                const mgmt = STAFF_DATA.getStaffByDept('management');
+                [...accounts, ...mgmt].forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = s.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+        
+        function initPhotos() {
+            document.getElementById('doc-photos-container').appendChild(
+                FormComponents.createPhotoUpload({ id: 'doc-photos', label: 'Document Photos', maxPhotos: 10 })
+            );
+        }
+        
+        function initSignature() {
+            document.getElementById('signature-container').appendChild(
+                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
+            );
+        }
+        
+        function loadVehicle() {
+            currentVehicle = WorkflowEngine.getVehicle();
+            if (!currentVehicle) {
+                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
+                return;
+            }
+            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
+            document.getElementById('vehicle-details-content').innerHTML = `
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Year</span><span class="vehicle-detail-value">${currentVehicle.year}</span></div>
+            `;
+        }
+        
+        function getFormData() {
+            const form = document.getElementById('stage-4-form');
+            const fd = new FormData(form);
+            return {
+                processor: fd.get('processor'),
+                processDate: fd.get('processDate'),
+                docs: fd.getAll('docs[]'),
+                motStatus: fd.get('motStatus'),
+                motExpiry: fd.get('motExpiry'),
+                serviceHistoryNotes: fd.get('serviceHistoryNotes'),
+                docPhotos: document.getElementById('doc-photos').value,
+                legalNotes: fd.get('legalNotes'),
+                signature: document.getElementById('signature').value
+            };
+        }
+        
+        function loadSavedData() {
+            if (!currentVehicle) return;
+            const saved = WorkflowEngine.loadStageData(4, currentVehicle.stockNo);
+            if (saved?.data) {
+                const d = saved.data;
+                if (d.processor) document.getElementById('processor').value = d.processor;
+                if (d.processDate) document.getElementById('process-date').value = d.processDate;
+                if (d.motStatus) document.getElementById('mot-status').value = d.motStatus;
+                if (d.motExpiry) document.getElementById('mot-expiry').value = d.motExpiry;
+                if (d.serviceHistoryNotes) document.getElementById('service-history-notes').value = d.serviceHistoryNotes;
+                if (d.legalNotes) document.getElementById('legal-notes').value = d.legalNotes;
+                if (d.docs) d.docs.forEach(v => { const cb = document.querySelector(`input[value="${v}"]`); if (cb) cb.checked = true; });
+            }
+        }
+        
+        function saveDraft() {
+            if (!currentVehicle) return;
+            WorkflowEngine.saveStageData(4, getFormData());
+            showAlert('Draft saved', 'success');
+        }
+        
+        function completeStage() {
+            if (!currentVehicle) return;
+            const data = getFormData();
+            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
+            WorkflowEngine.completeStage(4, data);
+            showAlert('Stage 4 complete!', 'success');
+            setTimeout(() => window.location.href = 'stage-5-mechanical.html', 1500);
+        }
+        
+        function showAlert(msg, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${msg}</span>`;
+            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
+    </script>
+</body>
+</html>
