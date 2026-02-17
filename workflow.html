@@ -35,24 +35,13 @@
             --cy-accent-blue: #3b82f6;
             --cy-accent-blue-soft: rgba(59, 130, 246, 0.15);
             --cy-accent-green: #10b981;
-            --cy-accent-green-soft: rgba(16, 185, 129, 0.15);
             --cy-accent-orange: #f59e0b;
-            --cy-accent-orange-soft: rgba(245, 158, 11, 0.15);
             --cy-accent-red: #ef4444;
-            --cy-accent-red-soft: rgba(239, 68, 68, 0.15);
             --cy-accent-purple: #8b5cf6;
-            --cy-accent-purple-soft: rgba(139, 92, 246, 0.15);
-            --cy-accent-slate: #64748b;
-            --cy-accent-slate-soft: rgba(100, 116, 139, 0.15);
-            --cy-accent-indigo: #6366f1;
-            --cy-accent-indigo-soft: rgba(99, 102, 241, 0.15);
             --cy-radius-sm: 6px;
             --cy-radius-md: 8px;
             --cy-radius-lg: 12px;
             --cy-radius-xl: 16px;
-            --cy-transition-fast: 150ms ease;
-            --cy-transition-base: 250ms ease;
-            --cy-transition-slow: 350ms ease;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -94,7 +83,7 @@
         .cy-logo {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--cy-accent-blue), var(--cy-accent-purple));
+            background: linear-gradient(135deg, var(--cy-accent-blue), #8b5cf6);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -132,7 +121,7 @@
             font-weight: 500;
             color: var(--cy-text-secondary);
             text-decoration: none;
-            transition: all var(--cy-transition-fast);
+            transition: all 0.15s ease;
         }
 
         .cy-nav-link:hover {
@@ -177,13 +166,13 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Data Status Banner */
+        /* Data Status */
         .data-status {
             padding: 12px 16px;
             border-radius: var(--cy-radius-lg);
             margin-bottom: 24px;
-            font-size: 13px;
             display: none;
+            font-size: 13px;
         }
 
         .data-status.success {
@@ -242,7 +231,6 @@
             border-radius: var(--cy-radius-md);
             color: var(--cy-text-primary);
             font-size: 13px;
-            transition: all var(--cy-transition-fast);
         }
 
         .filter-input:focus {
@@ -265,7 +253,7 @@
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all var(--cy-transition-fast);
+            transition: all 0.15s ease;
         }
 
         .btn-primary:hover { background: #2563eb; }
@@ -279,7 +267,7 @@
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            transition: all var(--cy-transition-fast);
+            transition: all 0.15s ease;
         }
 
         .btn-secondary:hover {
@@ -312,7 +300,6 @@
             color: inherit;
             cursor: pointer;
             font-size: 14px;
-            line-height: 1;
         }
 
         /* Page Header */
@@ -385,7 +372,7 @@
             font-weight: 500;
             color: var(--cy-text-secondary);
             cursor: pointer;
-            transition: all var(--cy-transition-fast);
+            transition: all 0.15s ease;
             white-space: nowrap;
         }
 
@@ -459,7 +446,7 @@
             border-radius: var(--cy-radius-xl);
             padding: 20px;
             cursor: pointer;
-            transition: all var(--cy-transition-base);
+            transition: all 0.25s ease;
             position: relative;
             overflow: hidden;
         }
@@ -479,7 +466,7 @@
             width: 4px;
             background: var(--stage-color, var(--cy-accent-blue));
             opacity: 0;
-            transition: opacity var(--cy-transition-fast);
+            transition: opacity 0.15s ease;
         }
 
         .stage-card:hover::before { opacity: 1; }
@@ -543,7 +530,7 @@
             height: 100%;
             background: var(--stage-color, var(--cy-accent-blue));
             border-radius: 2px;
-            transition: width var(--cy-transition-slow);
+            transition: width 0.35s ease;
         }
 
         /* Charts Row */
@@ -624,7 +611,7 @@
             font-weight: 500;
             color: var(--cy-text-secondary);
             cursor: pointer;
-            transition: all var(--cy-transition-fast);
+            transition: all 0.15s ease;
             border: none;
             background: transparent;
         }
@@ -654,7 +641,7 @@
             border: 1px solid var(--cy-border);
             border-radius: var(--cy-radius-lg);
             cursor: pointer;
-            transition: all var(--cy-transition-fast);
+            transition: all 0.15s ease;
         }
 
         .queue-item:hover {
@@ -810,6 +797,78 @@
             margin-bottom: 12px;
             opacity: 0.5;
         }
+
+        /* Start Intake Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            color: var(--cy-text-muted);
+            font-size: 14px;
+        }
+
+        .vehicle-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 16px 0;
+        }
+
+        .vehicle-option {
+            padding: 12px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-md);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .vehicle-option:hover {
+            border-color: var(--cy-accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .vehicle-option-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .vehicle-option-meta {
+            font-size: 12px;
+            color: var(--cy-text-muted);
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -821,36 +880,46 @@
         </div>
     </div>
 
+    <!-- Start Intake Modal -->
+    <div id="intakeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Start New Intake</h3>
+                <p class="modal-subtitle">Select a vehicle to begin Stage 1</p>
+            </div>
+            <div class="vehicle-list" id="intakeVehicleList"></div>
+            <button onclick="closeIntakeModal()" class="btn-secondary" style="width: 100%; margin-top: 16px;">Cancel</button>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="cy-header">
         <div class="cy-header-content">
-            <div style="display: flex; align-items: center; gap: 32px;">
-                <a href="./index.html" class="cy-brand">
-                    <div class="cy-logo">AC</div>
-                    <div class="cy-brand-text">
-                        <h1>CAPEYE</h1>
-                        <span>Auto Capital Intelligence</span>
-                    </div>
+            <a href="index.html" class="cy-brand">
+                <div class="cy-logo">AC</div>
+                <div class="cy-brand-text">
+                    <h1>CAPEYE</h1>
+                    <span>Auto Capital Intelligence</span>
+                </div>
+            </a>
+            
+            <nav class="cy-nav">
+                <a href="index.html" class="cy-nav-link">
+                    <i class="fas fa-home"></i> Dashboard
                 </a>
-                
-                <nav class="cy-nav">
-                    <a href="./index.html" class="cy-nav-link">
-                        <i class="fas fa-home"></i> Dashboard
-                    </a>
-                    <a href="./operations.html" class="cy-nav-link">
-                        <i class="fas fa-cogs"></i> Operations
-                    </a>
-                    <a href="./inventory.html" class="cy-nav-link">
-                        <i class="fas fa-car"></i> Inventory
-                    </a>
-                    <a href="./workflow.html" class="cy-nav-link active">
-                        <i class="fas fa-tasks"></i> Workflow
-                    </a>
-                    <a href="./analytics.html" class="cy-nav-link">
-                        <i class="fas fa-chart-bar"></i> Analytics
-                    </a>
-                </nav>
-            </div>
+                <a href="operations.html" class="cy-nav-link">
+                    <i class="fas fa-cogs"></i> Operations
+                </a>
+                <a href="inventory.html" class="cy-nav-link">
+                    <i class="fas fa-car"></i> Inventory
+                </a>
+                <a href="workflow.html" class="cy-nav-link active">
+                    <i class="fas fa-tasks"></i> Workflow
+                </a>
+                <a href="analytics.html" class="cy-nav-link">
+                    <i class="fas fa-chart-bar"></i> Analytics
+                </a>
+            </nav>
         </div>
     </header>
 
@@ -917,7 +986,7 @@
 
         <!-- Quick Actions -->
         <div class="actions-bar">
-            <div class="action-chip" onclick="quickAction('intake')">
+            <div class="action-chip" onclick="openIntakeModal()">
                 <i class="fas fa-plus-circle"></i> New Intake
             </div>
             <div class="action-chip" onclick="quickAction('search')">
@@ -1022,20 +1091,20 @@
     </main>
 
     <script>
-        // Stage definitions
+        // Stage definitions with CORRECT file paths
         const stages = [
-            { id: 1, name: 'Vehicle Intake', dept: 'Sales', icon: 'fa-clipboard-check', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)' },
-            { id: 2, name: 'Bodywork', dept: 'Bodyshop', icon: 'fa-spray-can', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)' },
-            { id: 3, name: 'Paint Repairs', dept: 'Bodyshop', icon: 'fa-paint-roller', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)' },
-            { id: 4, name: 'Legal & Docs', dept: 'Accounts', icon: 'fa-file-contract', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.15)' },
-            { id: 5, name: 'Mechanical', dept: 'Workshop', icon: 'fa-wrench', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)' },
-            { id: 6, name: 'External', dept: 'Workshop', icon: 'fa-bolt', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)' },
-            { id: 7, name: 'Valeting', dept: 'Valeting', icon: 'fa-sparkles', color: '#10b981', colorSoft: 'rgba(16, 185, 129, 0.15)' },
-            { id: 8, name: 'Fault Overview', dept: 'Workshop', icon: 'fa-clipboard-list', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)' },
-            { id: 9, name: 'Advertising', dept: 'Sales', icon: 'fa-camera', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)' },
-            { id: 10, name: 'Delivery', dept: 'Sales', icon: 'fa-handshake', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)' },
-            { id: 11, name: 'Accounts', dept: 'Accounts', icon: 'fa-calculator', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.15)' },
-            { id: 12, name: 'Management', dept: 'Management', icon: 'fa-user-tie', color: '#6366f1', colorSoft: 'rgba(99, 102, 241, 0.15)' }
+            { id: 1, name: 'Vehicle Intake', dept: 'Sales', icon: 'fa-clipboard-check', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)', file: 'stage-1-vehicle-intake.html' },
+            { id: 2, name: 'Bodywork', dept: 'Bodyshop', icon: 'fa-spray-can', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)', file: 'stage-2-bodywork.html' },
+            { id: 3, name: 'Paint Repairs', dept: 'Bodyshop', icon: 'fa-paint-roller', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)', file: 'stage-3-paint.html' },
+            { id: 4, name: 'Legal & Docs', dept: 'Accounts', icon: 'fa-file-contract', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.15)', file: 'stage-4-legal.html' },
+            { id: 5, name: 'Mechanical', dept: 'Workshop', icon: 'fa-wrench', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)', file: 'stage-5-mechanical.html' },
+            { id: 6, name: 'External', dept: 'Workshop', icon: 'fa-bolt', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)', file: 'stage-6-external.html' },
+            { id: 7, name: 'Valeting', dept: 'Valeting', icon: 'fa-sparkles', color: '#10b981', colorSoft: 'rgba(16, 185, 129, 0.15)', file: 'stage-7-valeting.html' },
+            { id: 8, name: 'Fault Overview', dept: 'Workshop', icon: 'fa-clipboard-list', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)', file: 'stage-8-faults.html' },
+            { id: 9, name: 'Advertising', dept: 'Sales', icon: 'fa-camera', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)', file: 'stage-9-advertising.html' },
+            { id: 10, name: 'Delivery', dept: 'Sales', icon: 'fa-handshake', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)', file: 'stage-10-delivery.html' },
+            { id: 11, name: 'Accounts', dept: 'Accounts', icon: 'fa-calculator', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.15)', file: 'stage-11-accounts.html' },
+            { id: 12, name: 'Management', dept: 'Management', icon: 'fa-user-tie', color: '#6366f1', colorSoft: 'rgba(99, 102, 241, 0.15)', file: 'stage-12-management.html' }
         ];
 
         let allVehicles = [];
@@ -1052,7 +1121,6 @@
         // Load CSV Data
         async function loadData() {
             try {
-                // Load stock data
                 const stockResponse = await fetch('Auto Capital - Stock List-639068391990284525.csv');
                 const stockCsv = await stockResponse.text();
                 
@@ -1062,10 +1130,11 @@
                     complete: function(results) {
                         allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
                         
-                        // Determine workflow stage based on status/location
+                        // Check localStorage for workflow stages
                         allVehicles.forEach(v => {
-                            v.workflowStage = determineWorkflowStage(v);
-                            v.daysAtStage = calculateDaysInStage(v);
+                            const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
+                            v.workflowStage = profile.currentStage || determineWorkflowStage(v);
+                            v.daysInStage = calculateDaysInStage(v, profile);
                         });
                         
                         filteredVehicles = [...allVehicles];
@@ -1111,7 +1180,7 @@
             }
         }
 
-        // Normalize Vehicle Data
+        // Normalize Vehicle
         function normalizeVehicle(row) {
             const getValue = (keys) => {
                 for (let key of keys) {
@@ -1140,35 +1209,41 @@
             };
         }
 
-        // Determine Workflow Stage based on status/location
+        // Determine Workflow Stage
         function determineWorkflowStage(vehicle) {
             const status = (vehicle.status || '').toLowerCase();
             const location = (vehicle.location || '').toLowerCase();
             
             if (status === 'sold') return 12;
-            if (location.includes('pdi') || location.includes('prep')) return 2;
-            if (location.includes('workshop')) return 5;
             if (location.includes('bodyshop')) return 2;
+            if (location.includes('paint')) return 3;
+            if (location.includes('workshop')) return 5;
             if (location.includes('valet')) return 7;
             if (location.includes('retail') && status === 'in stock') return 9;
             if (status === 'in transit') return 1;
             if (status === 'off-site r') return 4;
-            if (status === 'subject to') return 10;
             
-            return 1; // Default to intake
+            // Default to Stage 1 for new stock not yet processed
+            return 1;
         }
 
         // Calculate Days in Stage
-        function calculateDaysInStage(vehicle) {
-            if (!vehicle.dateInStock) return 0;
-            const date = new Date(vehicle.dateInStock);
-            if (isNaN(date.getTime())) return 0;
-            return Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
+        function calculateDaysInStage(vehicle, profile) {
+            if (profile && profile.stage1 && profile.stage1.completedAt) {
+                // Calculate from last stage completion
+                return Math.floor((new Date() - new Date(profile.stage1.completedAt)) / (1000 * 60 * 60 * 24));
+            }
+            if (vehicle.dateInStock) {
+                const date = new Date(vehicle.dateInStock);
+                if (!isNaN(date.getTime())) {
+                    return Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
+                }
+            }
+            return 0;
         }
 
-        // Populate Filter Dropdowns
+        // Populate Filters
         function populateFilters() {
-            // Stage filter
             const stageSelect = document.getElementById('filterStage');
             stages.forEach(stage => {
                 const option = document.createElement('option');
@@ -1177,7 +1252,6 @@
                 stageSelect.appendChild(option);
             });
 
-            // Department filter
             const depts = [...new Set(stages.map(s => s.dept))];
             const deptSelect = document.getElementById('filterDept');
             depts.forEach(dept => {
@@ -1187,7 +1261,6 @@
                 deptSelect.appendChild(option);
             });
 
-            // Location filter
             const locations = [...new Set(allVehicles.map(v => v.location).filter(Boolean))].sort();
             const locationSelect = document.getElementById('filterLocation');
             locations.forEach(loc => {
@@ -1328,19 +1401,79 @@
             }).join('');
         }
 
+        // OPEN STAGE - FIXED FILE PATHS
+        function openStage(stageId) {
+            const stage = stages.find(s => s.id === stageId);
+            if (!stage) return;
+            
+            // Check if file exists by trying to fetch it, otherwise show alert
+            const filePath = `./workflow/stages/${stage.file}`;
+            
+            // For Stage 1, show intake modal if no specific vehicle selected
+            if (stageId === 1) {
+                openIntakeModal();
+                return;
+            }
+            
+            // For other stages, check if there are vehicles in that stage
+            const vehiclesInStage = filteredVehicles.filter(v => v.workflowStage === stageId);
+            if (vehiclesInStage.length === 0) {
+                showDataStatus(`No vehicles currently in ${stage.name}`, 'error');
+                return;
+            }
+            
+            // Navigate to stage form
+            window.location.href = filePath;
+        }
+
+        // Open Intake Modal
+        function openIntakeModal() {
+            const modal = document.getElementById('intakeModal');
+            const list = document.getElementById('intakeVehicleList');
+            
+            // Show vehicles not yet in workflow (Stage 1 or no stage)
+            const availableVehicles = allVehicles.filter(v => {
+                const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
+                return !profile.currentStage || profile.currentStage === 1;
+            }).slice(0, 10);
+            
+            if (availableVehicles.length === 0) {
+                list.innerHTML = '<p style="color: var(--cy-text-muted); text-align: center;">No vehicles available for intake</p>';
+            } else {
+                list.innerHTML = availableVehicles.map(v => `
+                    <div class="vehicle-option" onclick="startIntake('${v.stockNo}')">
+                        <div class="vehicle-option-title">${v.make} ${v.model}</div>
+                        <div class="vehicle-option-meta">${v.stockNo} • ${v.registration || 'No Reg'} • ${v.location || 'Unknown'}</div>
+                    </div>
+                `).join('');
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // Close Intake Modal
+        function closeIntakeModal() {
+            document.getElementById('intakeModal').classList.remove('active');
+        }
+
+        // Start Intake for Specific Vehicle
+        function startIntake(stockNo) {
+            window.location.href = `./workflow/stages/stage-1-vehicle-intake.html?stock=${stockNo}`;
+        }
+
         // Load Vehicle Queue
         function loadVehicleQueue() {
             let displayVehicles = filteredVehicles.filter(v => v.workflowStage && v.workflowStage < 12 && v.status !== 'Sold');
             
             if (currentTab === 'overdue') {
-                displayVehicles = displayVehicles.filter(v => v.daysAtStage > 7);
+                displayVehicles = displayVehicles.filter(v => v.daysInStage > 7);
             } else if (currentTab === 'today') {
-                displayVehicles = displayVehicles.filter(v => v.daysAtStage <= 1);
+                displayVehicles = displayVehicles.filter(v => v.daysInStage <= 1);
             } else if (currentTab === 'mine') {
                 displayVehicles = displayVehicles.slice(0, 5);
             }
             
-            displayVehicles = displayVehicles.sort((a, b) => b.daysAtStage - a.daysAtStage).slice(0, 10);
+            displayVehicles = displayVehicles.sort((a, b) => b.daysInStage - a.daysInStage).slice(0, 10);
             
             const container = document.getElementById('vehicleQueue');
             
@@ -1356,7 +1489,7 @@
             
             container.innerHTML = displayVehicles.map(v => {
                 const stage = stages.find(s => s.id === v.workflowStage) || stages[0];
-                const daysClass = v.daysAtStage > 14 ? 'danger' : v.daysAtStage > 7 ? 'warning' : '';
+                const daysClass = v.daysInStage > 14 ? 'danger' : v.daysInStage > 7 ? 'warning' : '';
                 
                 return `
                     <div class="queue-item" onclick="viewVehicle('${v.stockNo}')">
@@ -1368,7 +1501,7 @@
                             ${stage.name}
                         </span>
                         <div class="queue-time">
-                            <div class="queue-days ${daysClass}">${v.daysAtStage}d</div>
+                            <div class="queue-days ${daysClass}">${v.daysInStage}d</div>
                             <div class="queue-label">in stage</div>
                         </div>
                     </div>
@@ -1376,30 +1509,51 @@
             }).join('');
         }
 
+        // View Vehicle Detail
+        function viewVehicle(stockNo) {
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (!vehicle) return;
+            
+            const stage = stages.find(s => s.id === vehicle.workflowStage);
+            if (stage) {
+                window.location.href = `./workflow/stages/${stage.file}?stock=${stockNo}`;
+            }
+        }
+
         // Load Activity Feed
         function loadActivityFeed() {
-            // Generate activity from actual vehicle data
-            const recentVehicles = filteredVehicles
-                .filter(v => v.daysAtStage <= 3)
-                .slice(0, 5);
+            const activities = [];
             
-            const activities = recentVehicles.map((v, i) => {
-                const stage = stages.find(s => s.id === v.workflowStage) || stages[0];
-                const times = ['10 min ago', '32 min ago', '1 hour ago', '2 hours ago', '3 hours ago'];
-                const users = ['Ibrahim Ata', 'Ali Amood', 'Marcin Kiljan', 'Keith Hardy', 'Stash'];
-                
-                return {
-                    title: `${stage.name} ${i === 0 ? 'Started' : 'Updated'}`,
-                    desc: `${v.make} ${v.model} (${v.stockNo})`,
-                    time: times[i] || 'Today',
-                    user: users[i] || 'System',
-                    completed: i < 3
-                };
+            // Get recent stage completions from localStorage
+            allVehicles.forEach(v => {
+                const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
+                if (profile.stage1 && profile.stage1.completedAt) {
+                    activities.push({
+                        title: 'Stage 1 Completed',
+                        desc: `${v.make} ${v.model} (${v.stockNo}) - Intake finished`,
+                        time: timeAgo(profile.stage1.completedAt),
+                        user: profile.stage1.inspectedBy || 'Unknown',
+                        completed: true
+                    });
+                }
+                if (profile.stage2 && profile.stage2.completedAt) {
+                    activities.push({
+                        title: 'Stage 2 Completed',
+                        desc: `${v.make} ${v.model} (${v.stockNo}) - Bodywork assessed`,
+                        time: timeAgo(profile.stage2.completedAt),
+                        user: profile.stage2.authorizedBy || 'Unknown',
+                        completed: true
+                    });
+                }
             });
-
-            // Fallback if no recent vehicles
-            if (activities.length === 0) {
-                activities.push({
+            
+            // Sort by time and take top 5
+            activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+            const recentActivities = activities.slice(0, 5);
+            
+            // Fallback if no activities
+            if (recentActivities.length === 0) {
+                recentActivities.push({
                     title: 'System Ready',
                     desc: 'Workflow system loaded successfully',
                     time: 'Just now',
@@ -1409,7 +1563,7 @@
             }
             
             const container = document.getElementById('activityFeed');
-            container.innerHTML = activities.map(act => `
+            container.innerHTML = recentActivities.map(act => `
                 <div class="activity-item">
                     <div class="activity-dot ${act.completed ? 'completed' : ''}"></div>
                     <div class="activity-content">
@@ -1425,6 +1579,20 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        // Time Ago Helper
+        function timeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            if (seconds < 60) return 'Just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} min ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} hour ago`;
+            return `${Math.floor(hours / 24)} days ago`;
         }
 
         // Initialize Charts
@@ -1555,7 +1723,7 @@
         // Update Stats
         function updateStats() {
             const avgDays = filteredVehicles.length > 0 
-                ? Math.round(filteredVehicles.reduce((sum, v) => sum + v.daysAtStage, 0) / filteredVehicles.length)
+                ? Math.round(filteredVehicles.reduce((sum, v) => sum + (v.daysInStage || 0), 0) / filteredVehicles.length)
                 : 0;
             
             document.getElementById('avgTime').textContent = avgDays + 'd';
@@ -1570,22 +1738,9 @@
             loadVehicleQueue();
         }
 
-        // Navigation Functions
-        function openStage(stageId) {
-            const stage = stages.find(s => s.id === stageId);
-            const fileName = stage.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-            window.location.href = `./workflow/stages/stage-${stageId}-${fileName}.html`;
-        }
-
-        function viewVehicle(stockNo) {
-            window.location.href = `./vehicle-detail.html?stock=${stockNo}`;
-        }
-
+        // Quick Actions
         function quickAction(action) {
             switch(action) {
-                case 'intake':
-                    window.location.href = './workflow/stages/stage-1-vehicle-intake.html';
-                    break;
                 case 'search':
                     document.getElementById('filterSearch').focus();
                     break;
@@ -1613,7 +1768,7 @@
                         v.make,
                         v.model,
                         stage ? stage.name : 'Unknown',
-                        v.daysAtStage,
+                        v.daysInStage || 0,
                         v.status
                     ].join(',');
                 })
