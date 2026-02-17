@@ -1,395 +1,249 @@
-/**
- * Capeye Vehicle Store Module
- * Manages vehicle data from ClickDealer imports with upsert support
- */
+<!-- workflow/stage-1-intake.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 1: Vehicle Intake | Capeye Workflow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/vehicle-store.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #f8fafc; }
+        .form-container { max-width: 800px; margin: 40px auto; padding: 24px; background: #12121a; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select, textarea { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; color: #f8fafc; font-size: 14px; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; }
+        .btn-primary { background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: rgba(255,255,255,0.03); color: #94a3b8; padding: 12px 24px; border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 24px; }
+        .vehicle-found { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 16px; border-radius: 8px; margin-bottom: 20px; }
+        .vehicle-not-found { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); padding: 16px; border-radius: 8px; margin-bottom: 20px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h1 style="font-size: 20px; font-weight: 700;">Stage 1: Vehicle Intake</h1>
+            <a href="../operations.html" class="btn-secondary">Back to Operations</a>
+        </div>
 
-const VehicleStore = {
-    STORAGE_KEY: 'capeye_vehicles',
-    IMPORT_HISTORY_KEY: 'capeye_import_history',
-    
-    /**
-     * Get all vehicles
-     */
-    getAll() {
-        const data = localStorage.getItem(this.STORAGE_KEY);
-        return data ? JSON.parse(data) : [];
-    },
-    
-    /**
-     * Get vehicle by Stock No (primary key)
-     */
-    getByStockNo(stockNo) {
-        if (!stockNo) return null;
-        const vehicles = this.getAll();
-        return vehicles.find(v => v.stockNo && v.stockNo.toUpperCase() === stockNo.toUpperCase());
-    },
-    
-    /**
-     * Get vehicle by registration (fallback)
-     */
-    getByRegistration(reg) {
-        if (!reg) return null;
-        const vehicles = this.getAll();
-        return vehicles.find(v => v.registration && v.registration.toUpperCase() === reg.toUpperCase());
-    },
-    
-    /**
-     * Find existing vehicle by Stock No or Registration
-     */
-    findExisting(vehicle) {
-        // First try Stock No (most reliable)
-        if (vehicle.stockNo) {
-            const byStockNo = this.getByStockNo(vehicle.stockNo);
-            if (byStockNo) return byStockNo;
+        <!-- Search -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Enter Stock No or Registration..." style="flex: 1;">
+            <button onclick="searchVehicle()" class="btn-primary" style="width: auto;">Search</button>
+            <button onclick="createNew()" class="btn-secondary">New Vehicle</button>
+        </div>
+
+        <!-- Results -->
+        <div id="searchResult"></div>
+
+        <!-- Form -->
+        <form id="intakeForm" class="hidden">
+            <input type="hidden" id="stockNo">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="registration" required>
+                </div>
+                <div class="form-group">
+                    <label>Make</label>
+                    <input type="text" id="make" required>
+                </div>
+                <div class="form-group">
+                    <label>Model</label>
+                    <input type="text" id="model" required>
+                </div>
+                <div class="form-group">
+                    <label>Year</label>
+                    <input type="number" id="year" required>
+                </div>
+                <div class="form-group">
+                    <label>Mileage</label>
+                    <input type="number" id="mileage" required>
+                </div>
+                <div class="form-group">
+                    <label>Color</label>
+                    <input type="text" id="color" required>
+                </div>
+                <div class="form-group">
+                    <label>Fuel Type</label>
+                    <select id="fuel" required>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Petrol">Petrol</option>
+                        <option value="Electric">Electric</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <select id="location" required>
+                        <option value="Stanmore Retail">Stanmore Retail</option>
+                        <option value="Stanmore 2">Stanmore 2</option>
+                        <option value="Stanmore PDI">Stanmore PDI</option>
+                        <option value="With Supplier">With Supplier</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Assigned To</label>
+                <select id="assignedTo" required></select>
+            </div>
+
+            <div class="form-group">
+                <label>Intake Notes</label>
+                <textarea id="notes" rows="3" placeholder="Condition, damage, special requirements..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <button type="button" onclick="saveDraft()" class="btn-secondary" style="flex: 1;">Save Draft</button>
+                <button type="submit" class="btn-primary" style="flex: 2;">Complete Intake & Send to Workshop</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Load staff dropdown
+        function loadStaff() {
+            const staff = VehicleStore.getStaff('Sales').concat(VehicleStore.getStaff('Management'));
+            const select = document.getElementById('assignedTo');
+            select.innerHTML = staff.map(s => `<option value="${s.name}">${s.name} (${s.role})</option>`).join('');
         }
-        
-        // Fallback to Registration
-        if (vehicle.registration) {
-            const byReg = this.getByRegistration(vehicle.registration);
-            if (byReg) return byReg;
-        }
-        
-        return null;
-    },
-    
-    /**
-     * Add new vehicle
-     */
-    add(vehicle) {
-        const vehicles = this.getAll();
-        vehicle.id = 'veh_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        vehicle.createdAt = new Date().toISOString();
-        vehicle.lastImportDate = new Date().toISOString();
-        vehicles.push(vehicle);
-        this.save(vehicles);
-        return vehicle;
-    },
-    
-    /**
-     * Update vehicle - merges new data with existing, preserving fields not in CSV
-     */
-    update(existingId, newData) {
-        const vehicles = this.getAll();
-        const index = vehicles.findIndex(v => v.id === existingId);
-        
-        if (index !== -1) {
-            const existing = vehicles[index];
+
+        // Search for vehicle
+        function searchVehicle() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            const vehicle = VehicleStore.get(query);
+            const resultDiv = document.getElementById('searchResult');
             
-            // Fields that should NOT be overwritten if they have values in existing
-            // but are empty in new data (preserve existing data)
-            const preserveFields = ['workshopStatus', 'valetStatus', 'accountsStatus', 
-                                   'mechanicalNotes', 'bodyworkNotes', 'valetNotes',
-                                   'accountsNotes', 'salesNotes', 'images', 'documents',
-                                   'pdIComplete', 'prepComplete', 'salePrice', 'customer',
-                                   'saleDate', 'margin', 'salesPerson', 'workshopAssigned',
-                                   'valetAssigned', 'accountsAssigned', 'prepStatus',
-                                   'bodyworkStatus', 'mechanicalStatus', 'partsStatus'];
-            
-            // Start with new data
-            let merged = { ...newData };
-            
-            // Preserve existing fields that have values but are empty in new data
-            preserveFields.forEach(field => {
-                if (existing[field] && (!newData[field] || newData[field] === '' || newData[field] === 0)) {
-                    merged[field] = existing[field];
-                }
-            });
-            
-            // Always preserve the original ID and creation date
-            merged.id = existing.id;
-            merged.createdAt = existing.createdAt;
-            merged.updatedAt = new Date().toISOString();
-            merged.lastImportDate = new Date().toISOString();
-            
-            // Keep the stockNo from new data if available, otherwise keep existing
-            if (!merged.stockNo && existing.stockNo) {
-                merged.stockNo = existing.stockNo;
-            }
-            
-            // Keep the registration from new data if available, otherwise keep existing
-            if (!merged.registration && existing.registration) {
-                merged.registration = existing.registration;
-            }
-            
-            vehicles[index] = merged;
-            this.save(vehicles);
-            return vehicles[index];
-        }
-        return null;
-    },
-    
-    /**
-     * Save all vehicles
-     */
-    save(vehicles) {
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(vehicles));
-    },
-    
-    /**
-     * Clear all vehicles
-     */
-    clear() {
-        localStorage.removeItem(this.STORAGE_KEY);
-    },
-    
-    /**
-     * Bulk import from CSV data - UPSERT operation
-     * Updates existing vehicles by Stock No or Registration
-     * Adds new vehicles if not found
-     */
-    bulkImport(csvData) {
-        const stats = { total: 0, created: 0, updated: 0, errors: [], details: [] };
-        
-        csvData.forEach((row, idx) => {
-            try {
-                // Map CSV columns to vehicle object
-                const vehicle = this.mapCSVRow(row);
-                
-                // Skip if no identifiers
-                if (!vehicle.stockNo && !vehicle.registration) {
-                    stats.errors.push({ row: idx, error: 'No Stock No or Registration found' });
-                    return;
-                }
-                
-                // Find existing vehicle
-                const existing = this.findExisting(vehicle);
-                
-                if (existing) {
-                    // UPDATE existing vehicle
-                    this.update(existing.id, vehicle);
-                    stats.updated++;
-                    stats.details.push({
-                        row: idx,
-                        action: 'updated',
-                        stockNo: vehicle.stockNo,
-                        registration: vehicle.registration,
-                        make: vehicle.make,
-                        model: vehicle.model
-                    });
-                } else {
-                    // ADD new vehicle
-                    this.add(vehicle);
-                    stats.created++;
-                    stats.details.push({
-                        row: idx,
-                        action: 'created',
-                        stockNo: vehicle.stockNo,
-                        registration: vehicle.registration,
-                        make: vehicle.make,
-                        model: vehicle.model
-                    });
-                }
-                stats.total++;
-                
-            } catch (error) {
-                stats.errors.push({ row: idx, error: error.message });
-            }
-        });
-        
-        // Record import
-        this.recordImport(stats);
-        
-        return stats;
-    },
-    
-    /**
-     * Map CSV row to vehicle object
-     * Handles ClickDealer column variations
-     */
-    mapCSVRow(row) {
-        // Helper to clean numeric values
-        const cleanNumber = (val) => {
-            if (!val) return 0;
-            const cleaned = val.toString().replace(/[£,$,€,\s,comm]/g, '').replace(/,/g, '');
-            return parseFloat(cleaned) || 0;
-        };
-        
-        // Helper to clean string values
-        const cleanString = (val) => {
-            if (!val) return '';
-            return val.toString().trim();
-        };
-        
-        // Extract year from Reg Date if available
-        let year = null;
-        const regDate = row.regDate || row['Reg Date'] || '';
-        if (regDate && regDate.includes('/')) {
-            const parts = regDate.split('/');
-            if (parts.length === 3) {
-                year = parseInt(parts[2]);
-            }
-        }
-        
-        return {
-            // Primary identifier - Stock No
-            stockNo: cleanString(row.stockNo || row['Stock No'] || row.stock_no || row.stockno || row.stock || ''),
-            
-            // Registration
-            registration: cleanString(row.registration || row['Reg No'] || row.Reg || row.REG || row.vrm || ''),
-            
-            // Vehicle details
-            make: cleanString(row.make || row.Make || row.MANUFACTURER || ''),
-            model: cleanString(row.model || row.Model || row.MODEL || ''),
-            variant: cleanString(row.variant || row.Variant || row.VARIANT || row.trim || ''),
-            year: parseInt(row.year || row.YEAR) || year || null,
-            colour: cleanString(row.colour || row.Colour || row.COLOR || row.Colour || ''),
-            fuelType: cleanString(row.fuelType || row.Fuel || row.FUEL || ''),
-            transmission: cleanString(row.transmission || row.Transmission || row.Gbox || row.GEARBOX || ''),
-            mileage: cleanNumber(row.mileage || row.Mileage || row.MILEAGE),
-            body: cleanString(row.body || row.Body || row.BODY || ''),
-            doors: parseInt(row.doors || row.Doors) || 0,
-            
-            // Location and Status
-            location: cleanString(row.location || row.Location || row['Location '] || 'Unknown'),
-            status: cleanString(row.status || row.Status || row.STATUS || 'In Stock'),
-            
-            // Dates
-            dateInStock: row.dateInStock || row['Date In Stock'] || new Date().toISOString(),
-            regDate: regDate,
-            mot: row.mot || row.MOT || '',
-            
-            // Financial
-            costPrice: cleanNumber(row.costPrice || row['Cost Price'] || row.Cost || row.PRICE),
-            retailPrice: cleanNumber(row.retailPrice || row['Retail Price'] || row.retail),
-            rfl: cleanNumber(row.rfl || row.RFL),
-            
-            // Additional fields from CSV
-            fsh: row.fsh || row.FSH || '',
-            keytag: row.keytag || row.Keytag || '',
-            
-            // Calculated fields
-            daysInStock: this.calculateDaysInStock(row['Date In Stock'] || row.dateInStock)
-        };
-    },
-    
-    /**
-     * Calculate days in stock from date
-     */
-    calculateDaysInStock(dateString) {
-        if (!dateString) return 0;
-        try {
-            // Handle DD/MM/YYYY format
-            let dateIn;
-            if (dateString.includes('/')) {
-                const parts = dateString.split('/');
-                if (parts.length === 3) {
-                    dateIn = new Date(parts[2], parts[1] - 1, parts[0]);
-                }
+            if (vehicle) {
+                resultDiv.innerHTML = `
+                    <div class="vehicle-found">
+                        <strong>Vehicle Found:</strong> ${vehicle.registration} - ${vehicle.make} ${vehicle.model}<br>
+                        <small>Current Stage: ${VehicleStore.STAGES[vehicle.stage]?.name || vehicle.stage} | Assigned: ${vehicle.assignedTo}</small>
+                    </div>
+                `;
+                populateForm(vehicle);
             } else {
-                dateIn = new Date(dateString);
+                resultDiv.innerHTML = `
+                    <div class="vehicle-not-found">
+                        <strong>Vehicle not found.</strong> Create new or check reference.
+                    </div>
+                `;
+                document.getElementById('intakeForm').classList.remove('hidden');
+                document.getElementById('registration').value = query.toUpperCase();
             }
-            
-            if (isNaN(dateIn.getTime())) return 0;
-            
-            const today = new Date();
-            const diffTime = Math.abs(today - dateIn);
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        } catch (e) {
-            return 0;
         }
-    },
-    
-    /**
-     * Record import in history
-     */
-    recordImport(stats) {
-        const history = this.getImportHistory();
-        history.unshift({
-            timestamp: new Date().toISOString(),
-            total: stats.total,
-            created: stats.created,
-            updated: stats.updated,
-            errors: stats.errors.length
+
+        // Create new vehicle
+        function createNew() {
+            document.getElementById('searchResult').innerHTML = '';
+            document.getElementById('intakeForm').classList.remove('hidden');
+            document.getElementById('intakeForm').reset();
+            document.getElementById('stockNo').value = '';
+        }
+
+        // Populate form with vehicle data
+        function populateForm(vehicle) {
+            document.getElementById('intakeForm').classList.remove('hidden');
+            document.getElementById('stockNo').value = vehicle.stockNo;
+            document.getElementById('registration').value = vehicle.registration;
+            document.getElementById('make').value = vehicle.make;
+            document.getElementById('model').value = vehicle.model;
+            document.getElementById('year').value = vehicle.year || '';
+            document.getElementById('mileage').value = vehicle.mileage || '';
+            document.getElementById('color').value = vehicle.color || '';
+            document.getElementById('fuel').value = vehicle.fuel || 'Diesel';
+            document.getElementById('location').value = vehicle.location || 'Stanmore Retail';
+            document.getElementById('assignedTo').value = vehicle.assignedTo || '';
+            document.getElementById('notes').value = vehicle.notes || '';
+        }
+
+        // Save draft
+        function saveDraft() {
+            const formData = {
+                registration: document.getElementById('registration').value,
+                make: document.getElementById('make').value,
+                model: document.getElementById('model').value,
+                year: parseInt(document.getElementById('year').value),
+                mileage: parseInt(document.getElementById('mileage').value),
+                color: document.getElementById('color').value,
+                fuel: document.getElementById('fuel').value,
+                location: document.getElementById('location').value,
+                assignedTo: document.getElementById('assignedTo').value,
+                notes: document.getElementById('notes').value
+            };
+
+            const stockNo = document.getElementById('stockNo').value;
+            
+            if (stockNo) {
+                VehicleStore.update(stockNo, { ...formData, status: 'DRAFT' });
+                alert('Draft saved!');
+            } else {
+                const result = VehicleStore.add({ ...formData, status: 'DRAFT' });
+                if (result.success) {
+                    document.getElementById('stockNo').value = result.vehicle.stockNo;
+                    alert(`New vehicle created: ${result.vehicle.stockNo}\nDraft saved!`);
+                }
+            }
+        }
+
+        // Form submission
+        document.getElementById('intakeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const stockNo = document.getElementById('stockNo').value;
+            const formData = {
+                registration: document.getElementById('registration').value.toUpperCase(),
+                make: document.getElementById('make').value,
+                model: document.getElementById('model').value,
+                year: parseInt(document.getElementById('year').value),
+                mileage: parseInt(document.getElementById('mileage').value),
+                color: document.getElementById('color').value,
+                fuel: document.getElementById('fuel').value,
+                location: document.getElementById('location').value,
+                assignedTo: document.getElementById('assignedTo').value,
+                notes: document.getElementById('notes').value,
+                status: 'NORMAL'
+            };
+
+            let result;
+            if (stockNo) {
+                // Update existing
+                VehicleStore.update(stockNo, formData);
+                // Advance to workshop
+                result = VehicleStore.advance(stockNo, { 
+                    notes: 'Intake completed',
+                    staff: formData.assignedTo
+                });
+            } else {
+                // Create new and advance
+                const createResult = VehicleStore.add(formData);
+                if (createResult.success) {
+                    result = VehicleStore.advance(createResult.vehicle.stockNo, {
+                        notes: 'Intake completed',
+                        staff: formData.assignedTo
+                    });
+                }
+            }
+
+            if (result && result.success) {
+                alert(`Vehicle ${result.vehicle.registration} sent to Workshop!\n\nStock No: ${result.vehicle.stockNo}`);
+                window.location.href = '../operations.html';
+            } else {
+                alert('Error: ' + (result?.error || 'Unknown error'));
+            }
         });
-        // Keep last 50 imports
-        localStorage.setItem(this.IMPORT_HISTORY_KEY, JSON.stringify(history.slice(0, 50)));
-    },
-    
-    /**
-     * Get import history
-     */
-    getImportHistory() {
-        const data = localStorage.getItem(this.IMPORT_HISTORY_KEY);
-        return data ? JSON.parse(data) : [];
-    },
-    
-    /**
-     * Get vehicles by location
-     */
-    getByLocation(location) {
-        const vehicles = this.getAll();
-        return vehicles.filter(v => v.location && v.location.toUpperCase() === location.toUpperCase());
-    },
-    
-    /**
-     * Get vehicles by status
-     */
-    getByStatus(status) {
-        const vehicles = this.getAll();
-        return vehicles.filter(v => v.status && v.status.toUpperCase() === status.toUpperCase());
-    },
-    
-    /**
-     * Get vehicles by make
-     */
-    getByMake(make) {
-        const vehicles = this.getAll();
-        return vehicles.filter(v => v.make && v.make.toUpperCase() === make.toUpperCase());
-    },
-    
-    /**
-     * Search vehicles
-     */
-    search(query) {
-        const vehicles = this.getAll();
-        const q = query.toUpperCase();
-        return vehicles.filter(v => 
-            (v.stockNo && v.stockNo.toUpperCase().includes(q)) ||
-            (v.registration && v.registration.toUpperCase().includes(q)) ||
-            (v.make && v.make.toUpperCase().includes(q)) ||
-            (v.model && v.model.toUpperCase().includes(q))
-        );
-    },
-    
-    /**
-     * Get vehicle counts by status
-     */
-    getCountsByStatus() {
-        const vehicles = this.getAll();
-        const counts = {};
-        vehicles.forEach(v => {
-            const status = v.status || 'Unknown';
-            counts[status] = (counts[status] || 0) + 1;
-        });
-        return counts;
-    },
-    
-    /**
-     * Get vehicle counts by location
-     */
-    getCountsByLocation() {
-        const vehicles = this.getAll();
-        const counts = {};
-        vehicles.forEach(v => {
-            const location = v.location || 'Unknown';
-            counts[location] = (counts[location] || 0) + 1;
-        });
-        return counts;
-    },
-    
-    /**
-     * Get total investment
-     */
-    getTotalInvestment() {
-        const vehicles = this.getAll();
-        return vehicles.reduce((total, v) => total + (v.costPrice || 0), 0);
-    },
-    
-    /**
-     * Get vehicles ready for sale
-     */
-    getReadyForSale() {
-        const vehicles = this.getAll();
-        return vehicles.filter(v => v.status === 'In Stock' && v.location !== 'With Supplier');
-    }
-};
+
+        // Initialize
+        loadStaff();
+    </script>
+</body>
+</html>
