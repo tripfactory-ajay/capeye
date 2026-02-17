@@ -16,547 +16,176 @@
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Capeye Design System -->
-    <link rel="stylesheet" href="./css/capeye-system.css">
+    <!-- Vehicle Store -->
+    <script src="./js/vehicle-store.js"></script>
     
     <style>
-        /* Inventory-specific styles */
-        .inv-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 24px;
+        :root {
+            --cy-bg-primary: #0a0a0f;
+            --cy-bg-secondary: #12121a;
+            --cy-bg-tertiary: #1a1a24;
+            --cy-border: rgba(255,255,255,0.06);
+            --cy-border-hover: rgba(255,255,255,0.12);
+            --cy-text-primary: #f8fafc;
+            --cy-text-secondary: #94a3b8;
+            --cy-text-muted: #64748b;
         }
         
-        @media (max-width: 1024px) {
-            .inv-layout {
-                grid-template-columns: 1fr;
-            }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cy-bg-primary);
+            color: var(--cy-text-primary);
+            margin: 0;
         }
         
-        .filter-sidebar {
+        /* Header */
+        .cy-header {
+            background: rgba(18, 18, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--cy-border);
             position: sticky;
-            top: 96px;
-            height: fit-content;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .cy-header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* Filter Bar - Top Positioned */
+        .filter-section {
+            background: var(--cy-bg-secondary);
+            border-bottom: 1px solid var(--cy-border);
+            padding: 16px 24px;
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-row:last-child {
+            margin-bottom: 0;
         }
         
         .filter-group {
-            margin-bottom: 20px;
-        }
-        
-        .filter-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 140px;
         }
         
-        .filter-title {
-            font-size: 12px;
-            font-weight: 700;
+        .filter-label {
+            font-size: 10px;
+            font-weight: 600;
             color: var(--cy-text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         
-        .filter-clear {
-            font-size: 11px;
-            color: var(--cy-accent-blue);
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-        
-        .filter-clear:hover {
-            text-decoration: underline;
-        }
-        
-        .checkbox-list {
-            space-y: 8px;
-        }
-        
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-            cursor: pointer;
-        }
-        
-        .checkbox-item:hover {
-            color: var(--cy-text-primary);
-        }
-        
-        .cy-checkbox {
-            width: 18px;
-            height: 18px;
-            border: 2px solid var(--cy-border);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--cy-transition-fast);
-            flex-shrink: 0;
-        }
-        
-        .checkbox-item:hover .cy-checkbox {
-            border-color: var(--cy-accent-blue);
-        }
-        
-        .checkbox-item.checked .cy-checkbox {
-            background: var(--cy-accent-blue);
-            border-color: var(--cy-accent-blue);
-        }
-        
-        .checkbox-label {
-            font-size: 13px;
-            color: var(--cy-text-secondary);
-            flex: 1;
-        }
-        
-        .checkbox-count {
-            font-size: 11px;
-            color: var(--cy-text-muted);
-            background: var(--cy-bg-tertiary);
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-        
-        .price-range {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .price-input {
-            width: 100px;
+        .filter-input {
             padding: 8px 12px;
             background: var(--cy-bg-tertiary);
             border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-md);
+            border-radius: 6px;
             font-size: 13px;
             color: var(--cy-text-primary);
-        }
-        
-        .toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 16px 20px;
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
-        }
-        
-        .search-box {
-            position: relative;
-            width: 320px;
-        }
-        
-        .search-input {
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
             width: 100%;
-            padding: 10px 16px 10px 40px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            font-size: 14px;
-            color: var(--cy-text-primary);
-            transition: all var(--cy-transition-fast);
         }
         
-        .search-input:focus {
+        .filter-input:focus {
             outline: none;
-            border-color: var(--cy-accent-blue);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
         }
         
-        .search-icon {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--cy-text-muted);
-        }
-        
-        .view-toggle {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .view-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--cy-radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: 1px solid var(--cy-border);
-            color: var(--cy-text-muted);
+        .filter-select {
             cursor: pointer;
-            transition: all var(--cy-transition-fast);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 28px;
         }
         
-        .view-btn:hover {
-            border-color: var(--cy-border-hover);
-            color: var(--cy-text-primary);
-        }
-        
-        .view-btn.active {
-            background: var(--cy-accent-blue-soft);
-            border-color: var(--cy-accent-blue);
-            color: var(--cy-accent-blue);
-        }
-        
-        .sort-select {
-            padding: 8px 32px 8px 12px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-md);
+        .filter-btn {
+            padding: 8px 16px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 6px;
             font-size: 13px;
-            color: var(--cy-text-primary);
-            cursor: pointer;
-        }
-        
-        /* Vehicle Grid View */
-        .vehicle-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        .vehicle-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
-            overflow: hidden;
-            transition: all var(--cy-transition-base);
-            cursor: pointer;
-        }
-        
-        .vehicle-card:hover {
-            border-color: var(--cy-border-hover);
-            transform: translateY(-4px);
-            box-shadow: var(--cy-shadow-lg);
-        }
-        
-        .vehicle-image {
-            height: 180px;
-            background: linear-gradient(135deg, var(--cy-bg-tertiary) 0%, var(--cy-bg-elevated) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .vehicle-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .vehicle-image-placeholder {
-            font-size: 48px;
-            color: var(--cy-text-muted);
-            opacity: 0.3;
-        }
-        
-        .vehicle-badges {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            display: flex;
-            gap: 8px;
-        }
-        
-        .vehicle-badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .vehicle-badge.status-instock {
-            background: var(--cy-accent-green-soft);
-            color: var(--cy-accent-green);
-        }
-        
-        .vehicle-badge.status-transit {
-            background: var(--cy-accent-orange-soft);
-            color: var(--cy-accent-orange);
-        }
-        
-        .vehicle-badge.status-sold {
-            background: var(--cy-accent-blue-soft);
-            color: var(--cy-accent-blue);
-        }
-        
-        .vehicle-days {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            padding: 4px 10px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            font-size: 11px;
             font-weight: 600;
             color: white;
-        }
-        
-        .vehicle-days.warning {
-            background: rgba(220, 38, 38, 0.8);
-        }
-        
-        .vehicle-info {
-            padding: 20px;
-        }
-        
-        .vehicle-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-        
-        .vehicle-title {
-            font-weight: 600;
-            color: var(--cy-text-primary);
-            font-size: 16px;
-            line-height: 1.3;
-        }
-        
-        .vehicle-stock {
-            font-family: 'Space Grotesk', monospace;
-            font-size: 12px;
-            color: var(--cy-accent-blue);
-            font-weight: 600;
-        }
-        
-        .vehicle-details {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        
-        .vehicle-detail {
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 12px;
-            color: var(--cy-text-secondary);
+            height: fit-content;
+            margin-top: auto;
         }
         
-        .vehicle-detail i {
-            color: var(--cy-text-muted);
-            width: 14px;
+        .filter-btn:hover {
+            background: #2563eb;
         }
         
-        .vehicle-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 16px;
-            border-top: 1px solid var(--cy-border);
-        }
-        
-        .vehicle-price {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--cy-text-primary);
-        }
-        
-        .vehicle-price-label {
-            font-size: 11px;
-            color: var(--cy-text-muted);
-        }
-        
-        .vehicle-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .vehicle-action-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: var(--cy-radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .filter-btn-secondary {
             background: var(--cy-bg-tertiary);
             border: 1px solid var(--cy-border);
             color: var(--cy-text-secondary);
-            cursor: pointer;
-            transition: all var(--cy-transition-fast);
         }
         
-        .vehicle-action-btn:hover {
-            border-color: var(--cy-accent-blue);
-            color: var(--cy-accent-blue);
-        }
-        
-        /* Vehicle List View */
-        .vehicle-list {
+        .filter-btn-secondary:hover {
             background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
-            overflow: hidden;
-        }
-        
-        .list-header {
-            display: grid;
-            grid-template-columns: 60px 2fr 1fr 1fr 120px 100px 80px;
-            gap: 16px;
-            padding: 16px 20px;
-            background: var(--cy-bg-tertiary);
-            border-bottom: 1px solid var(--cy-border);
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--cy-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .list-row {
-            display: grid;
-            grid-template-columns: 60px 2fr 1fr 1fr 120px 100px 80px;
-            gap: 16px;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--cy-border);
-            align-items: center;
-            transition: all var(--cy-transition-fast);
-        }
-        
-        .list-row:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-        
-        .list-row:last-child {
-            border-bottom: none;
-        }
-        
-        .list-thumb {
-            width: 60px;
-            height: 40px;
-            background: var(--cy-bg-tertiary);
-            border-radius: var(--cy-radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: var(--cy-text-muted);
-        }
-        
-        .list-vehicle {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .list-title {
-            font-weight: 600;
             color: var(--cy-text-primary);
-            font-size: 14px;
         }
         
-        .list-stock {
-            font-family: 'Space Grotesk', monospace;
+        .filter-badge {
+            padding: 4px 10px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
             font-size: 11px;
-            color: var(--cy-accent-blue);
-        }
-        
-        .list-location, .list-status {
-            font-size: 13px;
-            color: var(--cy-text-secondary);
-        }
-        
-        .list-price {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            color: var(--cy-text-primary);
-            font-size: 14px;
-        }
-        
-        .list-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin-top: 32px;
-        }
-        
-        .page-btn {
-            min-width: 36px;
-            height: 36px;
-            padding: 0 12px;
-            border-radius: var(--cy-radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            color: var(--cy-text-secondary);
-            font-size: 13px;
+            color: #3b82f6;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .filter-badge button {
+            background: none;
+            border: none;
+            color: #3b82f6;
             cursor: pointer;
-            transition: all var(--cy-transition-fast);
-        }
-        
-        .page-btn:hover {
-            border-color: var(--cy-border-hover);
-            color: var(--cy-text-primary);
-        }
-        
-        .page-btn.active {
-            background: var(--cy-accent-blue);
-            border-color: var(--cy-accent-blue);
-            color: white;
-        }
-        
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            font-size: 12px;
+            padding: 0;
         }
         
         /* Stats Bar */
         .stats-bar {
             display: flex;
-            gap: 32px;
-            margin-bottom: 24px;
-            padding: 16px 20px;
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
+            gap: 24px;
+            padding: 12px 24px;
+            background: var(--cy-bg-primary);
+            border-bottom: 1px solid var(--cy-border);
         }
         
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-        
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        
-        .stat-info {
-            display: flex;
-            flex-direction: column;
+            gap: 8px;
         }
         
         .stat-value {
@@ -567,611 +196,845 @@
         }
         
         .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--cy-text-muted);
+            text-transform: uppercase;
         }
         
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
+        /* Main Content */
+        .main-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        /* Vehicle Table */
+        .vehicle-table-container {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .vehicle-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .vehicle-table th {
+            text-align: left;
+            padding: 14px 12px;
+            font-size: 11px;
+            font-weight: 700;
             color: var(--cy-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--cy-bg-tertiary);
+            border-bottom: 1px solid var(--cy-border);
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
         }
         
-        .empty-icon {
-            font-size: 64px;
-            margin-bottom: 24px;
-            opacity: 0.3;
+        .vehicle-table th:hover {
+            color: var(--cy-text-primary);
+            background: rgba(255,255,255,0.02);
         }
         
-        .empty-title {
-            font-size: 20px;
+        .vehicle-table th i {
+            margin-left: 4px;
+            font-size: 10px;
+        }
+        
+        .vehicle-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--cy-border);
+            vertical-align: middle;
+        }
+        
+        .vehicle-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+        
+        .vehicle-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Cell Styles */
+        .cell-reg {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+        }
+        
+        .cell-vehicle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .vehicle-thumb {
+            width: 48px;
+            height: 36px;
+            background: var(--cy-bg-tertiary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cy-text-muted);
+            font-size: 16px;
+        }
+        
+        .vehicle-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .vehicle-name {
             font-weight: 600;
             color: var(--cy-text-primary);
-            margin-bottom: 8px;
         }
         
-        .empty-text {
+        .vehicle-details {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+        }
+        
+        .cell-price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+        }
+        
+        .price-retail {
+            color: #10b981;
             font-size: 14px;
-            margin-bottom: 24px;
         }
         
-        /* Mobile optimizations */
+        .price-cost {
+            color: var(--cy-text-muted);
+            font-size: 11px;
+            text-decoration: line-through;
+        }
+        
+        .price-margin {
+            font-size: 11px;
+            color: #3b82f6;
+            margin-top: 2px;
+        }
+        
+        .cell-stage {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .cell-days {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+        }
+        
+        .days-normal { color: #10b981; }
+        .days-warning { color: #f59e0b; }
+        .days-danger { color: #dc2626; }
+        
+        .cell-staff {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .staff-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .cell-location {
+            color: var(--cy-text-secondary);
+            font-size: 12px;
+        }
+        
+        .cell-actions {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--cy-border);
+            background: var(--cy-bg-tertiary);
+            color: var(--cy-text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-top: 1px solid var(--cy-border);
+        }
+        
+        .page-info {
+            font-size: 13px;
+            color: var(--cy-text-muted);
+        }
+        
+        .page-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .page-btn {
+            padding: 8px 12px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: 6px;
+            color: var(--cy-text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .page-btn:hover:not(:disabled) {
+            background: var(--cy-bg-secondary);
+            color: var(--cy-text-primary);
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .page-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        /* Status badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-instock { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .badge-intransit { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .badge-sold { background: rgba(100, 116, 139, 0.1); color: #64748b; }
+        .badge-stuck { background: rgba(220, 38, 38, 0.1); color: #dc2626; }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .vehicle-table { font-size: 12px; }
+            .vehicle-table th, .vehicle-table td { padding: 10px 8px; }
+            .cell-reg { font-size: 12px; }
+            .price-retail { font-size: 12px; }
+        }
+        
         @media (max-width: 768px) {
-            .vehicle-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .list-header,
-            .list-row {
-                display: none;
-            }
-            
-            .search-box {
-                width: 100%;
-            }
-            
-            .toolbar {
-                flex-direction: column;
-                gap: 16px;
-            }
+            .filter-row { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
+            .vehicle-table-container { overflow-x: auto; }
+            .vehicle-table { min-width: 1000px; }
         }
     </style>
 </head>
 <body>
-    <!-- Background Effects -->
-    <div class="cy-bg-grid"></div>
-    <div class="cy-ambient-glow" style="top: -200px; right: -200px;"></div>
-    <div class="cy-ambient-glow-red" style="bottom: -100px; left: -100px;"></div>
-
     <!-- Header -->
     <header class="cy-header">
         <div class="cy-header-content">
-            <div class="cy-flex cy-items-center" style="gap: 32px;">
-                <a href="./index.html" class="cy-brand">
-                    <div class="cy-logo">AC</div>
-                    <div class="cy-brand-text">
-                        <h1>CAPEYE</h1>
-                        <span>Auto Capital Intelligence</span>
+            <div style="display: flex; align-items: center; gap: 32px;">
+                <a href="./index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: white; font-size: 16px;">AC</div>
+                    <div>
+                        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #f8fafc;">CAPEYE</div>
+                        <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 2px;">Auto Capital Intelligence</div>
                     </div>
                 </a>
                 
-                <nav class="cy-nav">
-                    <a href="./index.html" class="cy-nav-link">
+                <nav style="display: flex; align-items: center; gap: 8px;">
+                    <a href="./index.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-home"></i> Dashboard
                     </a>
-                    <a href="./operations.html" class="cy-nav-link">
+                    <a href="./operations.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-cogs"></i> Operations
                     </a>
-                    <a href="./inventory.html" class="cy-nav-link active">
+                    <a href="./inventory.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #f8fafc; background: rgba(59, 130, 246, 0.1); text-decoration: none; display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-car"></i> Inventory
                     </a>
-                    <a href="./workflow.html" class="cy-nav-link">
+                    <a href="./workflow.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-tasks"></i> Workflow
                     </a>
-                    <a href="./analytics.html" class="cy-nav-link">
-                        <i class="fas fa-chart-bar"></i> Analytics
+                    <a href="./analytics.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-chart-bar"></i> Intelligence
                     </a>
                 </nav>
             </div>
             
-            <div class="cy-flex cy-items-center" style="gap: 16px;">
-                <div class="cy-dropdown">
-                    <button class="cy-dropdown-btn">
-                        <i class="fas fa-toolbox"></i>
-                        Tools
-                        <i class="fas fa-chevron-down" style="font-size: 10px;"></i>
-                    </button>
-                    <div class="cy-dropdown-menu">
-                        <a href="https://myclickdealer.co.uk" target="_blank" class="cy-dropdown-item">
-                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-blue);">
-                                <i class="fas fa-mouse-pointer"></i>
-                            </div>
-                            <div>
-                                <div class="tool-title">Click Dealer</div>
-                                <div class="tool-desc">DMS & Stock</div>
-                            </div>
-                        </a>
-                        <a href="https://autocapital.co.uk" target="_blank" class="cy-dropdown-item">
-                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-green);">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            <div>
-                                <div class="tool-title">Auto Capital</div>
-                                <div class="tool-desc">Website</div>
-                            </div>
-                        </a>
-                        <a href="https://www.gov.uk/get-vehicle-information-from-dvla" target="_blank" class="cy-dropdown-item">
-                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-orange);">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <div>
-                                <div class="tool-title">DVLA Check</div>
-                                <div class="tool-desc">Vehicle Info</div>
-                            </div>
-                        </a>
-                        <a href="https://www.hpicheck.com" target="_blank" class="cy-dropdown-item">
-                            <div class="cy-dropdown-icon" style="color: #ec4899;">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <div>
-                                <div class="tool-title">HPI Check</div>
-                                <div class="tool-desc">History</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button onclick="exportInventory()" style="padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 13px; font-weight: 500; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
                 
-                <button onclick="logout()" class="cy-nav-link" style="color: var(--cy-accent-red);">
+                <button onclick="logout()" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #dc2626; background: none; border: none; cursor: pointer;">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="cy-container">
+    <!-- Filter Section - Top Positioned -->
+    <div class="filter-section">
+        <!-- Row 1: Primary Filters -->
+        <div class="filter-row">
+            <div class="filter-group" style="flex: 2;">
+                <label class="filter-label">Search</label>
+                <input type="text" id="searchInput" class="filter-input" placeholder="Stock No, Registration, Make, Model...">
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Make</label>
+                <select id="filterMake" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Makes</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Model</label>
+                <select id="filterModel" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Models</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Stage</label>
+                <select id="filterStage" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Stages</option>
+                    <option value="INTAKE">Intake</option>
+                    <option value="WORKSHOP">Workshop</option>
+                    <option value="PREP">Prep</option>
+                    <option value="READY">Ready</option>
+                    <option value="ADVERTISED">Advertised</option>
+                    <option value="SOLD">Sold</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Status</label>
+                <select id="filterStatus" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Statuses</option>
+                    <option value="In Stock">In Stock</option>
+                    <option value="In Transit">In Transit</option>
+                    <option value="Sold">Sold</option>
+                </select>
+            </div>
+        </div>
         
-        <!-- Page Header -->
-        <div class="cy-section">
-            <div class="cy-flex cy-justify-between cy-items-end">
-                <div>
-                    <h2 class="cy-font-display" style="font-size: 32px; font-weight: 700; margin-bottom: 8px;">
-                        Vehicle <span style="color: var(--cy-accent-blue);">Inventory</span>
-                    </h2>
-                    <p class="cy-text-secondary">Manage stock, track vehicles, and monitor inventory levels</p>
+        <!-- Row 2: Secondary Filters -->
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">Location</label>
+                <select id="filterLocation" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Locations</option>
+                    <option value="Stanmore Retail">Stanmore Retail</option>
+                    <option value="Stanmore 2">Stanmore 2</option>
+                    <option value="Stanmore PDI">Stanmore PDI</option>
+                    <option value="With Supplier">With Supplier</option>
+                    <option value="ACL">ACL</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Assigned To</label>
+                <select id="filterStaff" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Staff</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Price From</label>
+                <input type="number" id="priceFrom" class="filter-input" placeholder="£0" onchange="applyFilters()">
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Price To</label>
+                <input type="number" id="priceTo" class="filter-input" placeholder="£99999" onchange="applyFilters()">
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Days in Stock</label>
+                <select id="filterDays" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">Any</option>
+                    <option value="0-7">0-7 days</option>
+                    <option value="8-14">8-14 days</option>
+                    <option value="15-30">15-30 days</option>
+                    <option value="30+">30+ days</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 8px; margin-top: auto;">
+                <button class="filter-btn" onclick="applyFilters()">
+                    <i class="fas fa-filter"></i>
+                    Apply
+                </button>
+                <button class="filter-btn filter-btn-secondary" onclick="resetFilters()">
+                    <i class="fas fa-undo"></i>
+                    Reset
+                </button>
+            </div>
+        </div>
+        
+        <!-- Active Filters -->
+        <div class="filter-row" id="activeFilters" style="margin-top: 12px; min-height: 28px;"></div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <span class="stat-value" id="statTotal">0</span>
+            <span class="stat-label">Total Vehicles</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value" id="statValue">£0</span>
+            <span class="stat-label">Total Value</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value" id="statAvgDays">0</span>
+            <span class="stat-label">Avg Days</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value" id="statMargin">0%</span>
+            <span class="stat-label">Avg Margin</span>
+        </div>
+        <div style="margin-left: auto; display: flex; gap: 12px;">
+            <button onclick="addNewVehicle()" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-plus"></i> Add Vehicle
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="vehicle-table-container">
+            <table class="vehicle-table">
+                <thead>
+                    <tr>
+                        <th onclick="sortBy('registration')">Registration <i class="fas fa-sort"></i></th>
+                        <th onclick="sortBy('vehicle')">Vehicle Details <i class="fas fa-sort"></i></th>
+                        <th onclick="sortBy('stage')">Stage <i class="fas fa-sort"></i></th>
+                        <th onclick="sortBy('price')">Pricing <i class="fas fa-sort"></i></th>
+                        <th onclick="sortBy('days')">Days <i class="fas fa-sort"></i></th>
+                        <th onclick="sortBy('staff')">Assigned <i class="fas fa-sort"></i></th>
+                        <th onclick="sortBy('location')">Location <i class="fas fa-sort"></i></th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="vehicleTableBody">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+            
+            <!-- Pagination -->
+            <div class="pagination">
+                <div class="page-info">
+                    Showing <span id="showingFrom">0</span> to <span id="showingTo">0</span> of <span id="totalItems">0</span> vehicles
                 </div>
-                <div class="cy-live-badge">
-                    <div class="cy-live-dot"></div>
-                    <span>Live</span>
+                <div class="page-controls" id="paginationControls">
+                    <!-- Populated by JS -->
                 </div>
             </div>
         </div>
-
-        <!-- Stats Bar -->
-        <div class="stats-bar">
-            <div class="stat-item">
-                <div class="stat-icon" style="background: var(--cy-accent-blue-soft); color: var(--cy-accent-blue);">
-                    <i class="fas fa-car"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value" id="statTotal">0</div>
-                    <div class="stat-label">Total Vehicles</div>
-                </div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon" style="background: var(--cy-accent-green-soft); color: var(--cy-accent-green);">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value" id="statInStock">0</div>
-                    <div class="stat-label">In Stock</div>
-                </div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon" style="background: var(--cy-accent-orange-soft); color: var(--cy-accent-orange);">
-                    <i class="fas fa-shipping-fast"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value" id="statTransit">0</div>
-                    <div class="stat-label">In Transit</div>
-                </div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon" style="background: var(--cy-accent-purple-soft); color: var(--cy-accent-purple);">
-                    <i class="fas fa-pound-sign"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value" id="statValue">£0</div>
-                    <div class="stat-label">Stock Value</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Layout -->
-        <div class="inv-layout">
-            <!-- Sidebar Filters -->
-            <aside class="filter-sidebar">
-                <div class="cy-card">
-                    <div class="filter-header">
-                        <span class="filter-title">Filters</span>
-                        <button class="filter-clear" onclick="clearAllFilters()">Clear all</button>
-                    </div>
-                    
-                    <!-- Status Filter -->
-                    <div class="filter-group">
-                        <div class="filter-title" style="margin-bottom: 12px;">Status</div>
-                        <div class="checkbox-list" id="statusFilters">
-                            <!-- Injected by JS -->
-                        </div>
-                    </div>
-                    
-                    <!-- Make Filter -->
-                    <div class="filter-group">
-                        <div class="filter-header">
-                            <span class="filter-title">Make</span>
-                            <button class="filter-clear" onclick="clearFilter('make')">Clear</button>
-                        </div>
-                        <div class="checkbox-list" id="makeFilters">
-                            <!-- Injected by JS -->
-                        </div>
-                    </div>
-                    
-                    <!-- Location Filter -->
-                    <div class="filter-group">
-                        <div class="filter-header">
-                            <span class="filter-title">Location</span>
-                            <button class="filter-clear" onclick="clearFilter('location')">Clear</button>
-                        </div>
-                        <div class="checkbox-list" id="locationFilters">
-                            <!-- Injected by JS -->
-                        </div>
-                    </div>
-                    
-                    <!-- Price Range -->
-                    <div class="filter-group">
-                        <div class="filter-title" style="margin-bottom: 12px;">Price Range</div>
-                        <div class="price-range">
-                            <input type="number" class="price-input" id="priceMin" placeholder="Min" onchange="applyFilters()">
-                            <span style="color: var(--cy-text-muted);">-</span>
-                            <input type="number" class="price-input" id="priceMax" placeholder="Max" onchange="applyFilters()">
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main Content -->
-            <div>
-                <!-- Toolbar -->
-                <div class="toolbar">
-                    <div class="search-box">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="search-input" id="searchInput" placeholder="Search by reg, make, model or stock number..." onkeyup="applyFilters()">
-                    </div>
-                    
-                    <div class="cy-flex cy-items-center" style="gap: 16px;">
-                        <select class="sort-select" id="sortSelect" onchange="applyFilters()">
-                            <option value="newest">Newest First</option>
-                            <option value="oldest">Oldest First</option>
-                            <option value="price-high">Price: High to Low</option>
-                            <option value="price-low">Price: Low to High</option>
-                            <option value="make">Make: A-Z</option>
-                        </select>
-                        
-                        <div class="view-toggle">
-                            <button class="view-btn active" onclick="setView('grid')" title="Grid View">
-                                <i class="fas fa-th-large"></i>
-                            </button>
-                            <button class="view-btn" onclick="setView('list')" title="List View">
-                                <i class="fas fa-list"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Results Count -->
-                <div style="margin-bottom: 16px; font-size: 13px; color: var(--cy-text-muted);">
-                    Showing <span id="showingCount" style="color: var(--cy-text-primary); font-weight: 600;">0</span> of <span id="totalCount">0</span> vehicles
-                </div>
-
-                <!-- Vehicle Grid -->
-                <div id="vehicleContainer">
-                    <!-- Injected by JS -->
-                </div>
-
-                <!-- Pagination -->
-                <div class="pagination" id="pagination">
-                    <!-- Injected by JS -->
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="./js/capeye-core.js"></script>
     <script>
-        // State
-        let currentView = 'grid';
-        let currentPage = 1;
-        const itemsPerPage = 12;
+        let allVehicles = [];
         let filteredVehicles = [];
-        let activeFilters = {
-            status: [],
-            make: [],
-            location: [],
-            priceMin: null,
-            priceMax: null,
-            search: ''
+        let currentPage = 1;
+        let itemsPerPage = 25;
+        let currentSort = { field: 'dateInStock', direction: 'desc' };
+        
+        const stages = {
+            INTAKE: { name: 'Intake', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
+            WORKSHOP: { name: 'Workshop', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+            PREP: { name: 'Prep', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' },
+            READY: { name: 'Ready', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
+            ADVERTISED: { name: 'Advertised', color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.1)' },
+            SOLD: { name: 'Sold', color: '#64748b', bg: 'rgba(100, 116, 139, 0.1)' }
         };
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            loadFilterOptions();
+            VehicleStore.init();
+            loadData();
+            populateFilters();
             applyFilters();
-            updateStats();
+            
+            // Search input listener
+            document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
         });
 
-        function loadFilterOptions() {
-            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            
-            // Status filters
-            const statuses = ['In Stock', 'In Transit', 'Off-site R', 'Subject to', 'Sold'];
-            const statusCounts = {};
-            statuses.forEach(s => statusCounts[s] = vehicles.filter(v => v.status === s).length);
-            
-            document.getElementById('statusFilters').innerHTML = statuses.map(status => `
-                <div class="checkbox-item" onclick="toggleFilter('status', '${status}')">
-                    <div class="cy-checkbox" id="chk-status-${status.replace(/\s+/g, '-')}"></div>
-                    <span class="checkbox-label">${status}</span>
-                    <span class="checkbox-count">${statusCounts[status] || 0}</span>
-                </div>
-            `).join('');
-            
-            // Make filters
-            const makes = [...new Set(vehicles.map(v => v.make).filter(Boolean))].sort();
-            const makeCounts = {};
-            makes.forEach(m => makeCounts[m] = vehicles.filter(v => v.make === m).length);
-            
-            document.getElementById('makeFilters').innerHTML = makes.slice(0, 10).map(make => `
-                <div class="checkbox-item" onclick="toggleFilter('make', '${make}')">
-                    <div class="cy-checkbox" id="chk-make-${make.replace(/\s+/g, '-')}"></div>
-                    <span class="checkbox-label">${make}</span>
-                    <span class="checkbox-count">${makeCounts[make]}</span>
-                </div>
-            `).join('');
-            
-            // Location filters
-            const locations = [...new Set(vehicles.map(v => v.location).filter(Boolean))].sort();
-            const locationCounts = {};
-            locations.forEach(l => locationCounts[l] = vehicles.filter(v => v.location === l).length);
-            
-            document.getElementById('locationFilters').innerHTML = locations.map(loc => `
-                <div class="checkbox-item" onclick="toggleFilter('location', '${loc}')">
-                    <div class="cy-checkbox" id="chk-location-${loc.replace(/\s+/g, '-')}"></div>
-                    <span class="checkbox-label">${loc}</span>
-                    <span class="checkbox-count">${locationCounts[loc]}</span>
-                </div>
-            `).join('');
+        function loadData() {
+            allVehicles = VehicleStore.getAll();
         }
 
-        function toggleFilter(type, value) {
-            const index = activeFilters[type].indexOf(value);
-            if (index > -1) {
-                activeFilters[type].splice(index, 1);
-            } else {
-                activeFilters[type].push(value);
-            }
+        function populateFilters() {
+            // Get unique makes and models
+            const makes = [...new Set(allVehicles.map(v => v.make))].sort();
+            const models = [...new Set(allVehicles.map(v => v.model))].sort();
+            const staff = VehicleStore.getStaff();
             
-            // Update checkbox visual
-            const chkId = `chk-${type}-${value.replace(/\s+/g, '-')}`;
-            const chk = document.getElementById(chkId);
-            if (chk) {
-                chk.parentElement.classList.toggle('checked');
-            }
-            
-            currentPage = 1;
-            applyFilters();
-        }
-
-        function clearFilter(type) {
-            activeFilters[type] = [];
-            document.querySelectorAll(`#${type}Filters .checkbox-item`).forEach(el => {
-                el.classList.remove('checked');
+            const makeSelect = document.getElementById('filterMake');
+            makes.forEach(make => {
+                makeSelect.innerHTML += `<option value="${make}">${make}</option>`;
             });
-            currentPage = 1;
-            applyFilters();
-        }
-
-        function clearAllFilters() {
-            activeFilters = {
-                status: [],
-                make: [],
-                location: [],
-                priceMin: null,
-                priceMax: null,
-                search: ''
-            };
-            document.querySelectorAll('.checkbox-item').forEach(el => el.classList.remove('checked'));
-            document.getElementById('priceMin').value = '';
-            document.getElementById('priceMax').value = '';
-            document.getElementById('searchInput').value = '';
-            currentPage = 1;
-            applyFilters();
+            
+            const modelSelect = document.getElementById('filterModel');
+            models.forEach(model => {
+                modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+            });
+            
+            const staffSelect = document.getElementById('filterStaff');
+            staff.forEach(s => {
+                staffSelect.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+            });
         }
 
         function applyFilters() {
-            let vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const make = document.getElementById('filterMake').value;
+            const model = document.getElementById('filterModel').value;
+            const stage = document.getElementById('filterStage').value;
+            const status = document.getElementById('filterStatus').value;
+            const location = document.getElementById('filterLocation').value;
+            const staff = document.getElementById('filterStaff').value;
+            const priceFrom = parseFloat(document.getElementById('priceFrom').value) || 0;
+            const priceTo = parseFloat(document.getElementById('priceTo').value) || Infinity;
+            const daysFilter = document.getElementById('filterDays').value;
             
-            // Get price range
-            activeFilters.priceMin = document.getElementById('priceMin').value;
-            activeFilters.priceMax = document.getElementById('priceMax').value;
-            activeFilters.search = document.getElementById('searchInput').value.toLowerCase();
-            
-            // Apply filters
-            filteredVehicles = vehicles.filter(v => {
-                if (activeFilters.status.length > 0 && !activeFilters.status.includes(v.status)) return false;
-                if (activeFilters.make.length > 0 && !activeFilters.make.includes(v.make)) return false;
-                if (activeFilters.location.length > 0 && !activeFilters.location.includes(v.location)) return false;
-                if (activeFilters.priceMin && (v.costPrice || 0) < parseFloat(activeFilters.priceMin)) return false;
-                if (activeFilters.priceMax && (v.costPrice || 0) > parseFloat(activeFilters.priceMax)) return false;
-                if (activeFilters.search) {
-                    const searchStr = `${v.stockNo} ${v.make} ${v.model} ${v.registration}`.toLowerCase();
-                    if (!searchStr.includes(activeFilters.search)) return false;
+            filteredVehicles = allVehicles.filter(v => {
+                // Search filter
+                if (search && !(
+                    v.registration.toLowerCase().includes(search) ||
+                    v.stockNo.toLowerCase().includes(search) ||
+                    v.make.toLowerCase().includes(search) ||
+                    v.model.toLowerCase().includes(search) ||
+                    (v.assignedTo && v.assignedTo.toLowerCase().includes(search))
+                )) return false;
+                
+                // Other filters
+                if (make && v.make !== make) return false;
+                if (model && v.model !== model) return false;
+                if (stage && v.stage !== stage) return false;
+                if (status && v.status !== status) return false;
+                if (location && v.location !== location) return false;
+                if (staff && v.assignedTo !== staff) return false;
+                
+                // Price filter
+                const price = v.retailPrice || 0;
+                if (price < priceFrom || price > priceTo) return false;
+                
+                // Days filter
+                if (daysFilter) {
+                    const days = VehicleStore.getDaysInStage(v);
+                    if (daysFilter === '0-7' && days > 7) return false;
+                    if (daysFilter === '8-14' && (days < 8 || days > 14)) return false;
+                    if (daysFilter === '15-30' && (days < 15 || days > 30)) return false;
+                    if (daysFilter === '30+' && days < 30) return false;
                 }
+                
                 return true;
             });
             
             // Sort
-            const sortValue = document.getElementById('sortSelect').value;
-            switch(sortValue) {
-                case 'newest':
-                    filteredVehicles.sort((a, b) => new Date(b.dateInStock) - new Date(a.dateInStock));
-                    break;
-                case 'oldest':
-                    filteredVehicles.sort((a, b) => new Date(a.dateInStock) - new Date(b.dateInStock));
-                    break;
-                case 'price-high':
-                    filteredVehicles.sort((a, b) => (b.costPrice || 0) - (a.costPrice || 0));
-                    break;
-                case 'price-low':
-                    filteredVehicles.sort((a, b) => (a.costPrice || 0) - (b.costPrice || 0));
-                    break;
-                case 'make':
-                    filteredVehicles.sort((a, b) => (a.make || '').localeCompare(b.make || ''));
-                    break;
-            }
+            sortVehicles();
             
-            renderVehicles();
+            // Update display
             updateStats();
+            updateActiveFilters();
+            renderTable();
+            renderPagination();
         }
 
-        function setView(view) {
-            currentView = view;
-            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            renderVehicles();
+        function sortVehicles() {
+            filteredVehicles.sort((a, b) => {
+                let valA, valB;
+                
+                switch(currentSort.field) {
+                    case 'registration':
+                        valA = a.registration;
+                        valB = b.registration;
+                        break;
+                    case 'vehicle':
+                        valA = `${a.make} ${a.model}`;
+                        valB = `${b.make} ${b.model}`;
+                        break;
+                    case 'stage':
+                        valA = a.stage;
+                        valB = b.stage;
+                        break;
+                    case 'price':
+                        valA = a.retailPrice || 0;
+                        valB = b.retailPrice || 0;
+                        break;
+                    case 'days':
+                        valA = VehicleStore.getDaysInStage(a);
+                        valB = VehicleStore.getDaysInStage(b);
+                        break;
+                    case 'staff':
+                        valA = a.assignedTo || '';
+                        valB = b.assignedTo || '';
+                        break;
+                    case 'location':
+                        valA = a.location || '';
+                        valB = b.location || '';
+                        break;
+                    default:
+                        valA = a.dateInStock;
+                        valB = b.dateInStock;
+                }
+                
+                if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
         }
 
-        function renderVehicles() {
-            const container = document.getElementById('vehicleContainer');
+        function sortBy(field) {
+            if (currentSort.field === field) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.field = field;
+                currentSort.direction = 'asc';
+            }
+            applyFilters();
+        }
+
+        function updateStats() {
+            const total = filteredVehicles.length;
+            const totalValue = filteredVehicles.reduce((sum, v) => sum + (v.retailPrice || 0), 0);
+            const avgDays = total > 0 
+                ? Math.round(filteredVehicles.reduce((sum, v) => sum + VehicleStore.getDaysInStage(v), 0) / total)
+                : 0;
+            
+            const totalCost = filteredVehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0);
+            const margin = totalValue > 0 ? (((totalValue - totalCost) / totalValue) * 100).toFixed(1) : 0;
+            
+            animateValue('statTotal', total, '');
+            document.getElementById('statValue').textContent = '£' + totalValue.toLocaleString();
+            animateValue('statAvgDays', avgDays, '');
+            document.getElementById('statMargin').textContent = margin + '%';
+        }
+
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            const tags = [];
+            
+            const search = document.getElementById('searchInput').value;
+            const make = document.getElementById('filterMake').value;
+            const model = document.getElementById('filterModel').value;
+            const stage = document.getElementById('filterStage').value;
+            const status = document.getElementById('filterStatus').value;
+            const location = document.getElementById('filterLocation').value;
+            const staff = document.getElementById('filterStaff').value;
+            const priceFrom = document.getElementById('priceFrom').value;
+            const priceTo = document.getElementById('priceTo').value;
+            const days = document.getElementById('filterDays').value;
+            
+            if (search) tags.push(`Search: "${search}"`);
+            if (make) tags.push(`Make: ${make}`);
+            if (model) tags.push(`Model: ${model}`);
+            if (stage) tags.push(`Stage: ${stage}`);
+            if (status) tags.push(`Status: ${status}`);
+            if (location) tags.push(`Location: ${location}`);
+            if (staff) tags.push(`Staff: ${staff}`);
+            if (priceFrom || priceTo) tags.push(`Price: £${priceFrom || 0} - £${priceTo || '∞'}`);
+            if (days) tags.push(`Days: ${days}`);
+            
+            container.innerHTML = tags.map(tag => `
+                <span class="filter-badge">
+                    ${tag}
+                    <button onclick="clearFilter('${tag.split(':')[0].toLowerCase()}')">×</button>
+                </span>
+            `).join('');
+        }
+
+        function clearFilter(type) {
+            switch(type) {
+                case 'search': document.getElementById('searchInput').value = ''; break;
+                case 'make': document.getElementById('filterMake').value = ''; break;
+                case 'model': document.getElementById('filterModel').value = ''; break;
+                case 'stage': document.getElementById('filterStage').value = ''; break;
+                case 'status': document.getElementById('filterStatus').value = ''; break;
+                case 'location': document.getElementById('filterLocation').value = ''; break;
+                case 'staff': document.getElementById('filterStaff').value = ''; break;
+                case 'price': 
+                    document.getElementById('priceFrom').value = '';
+                    document.getElementById('priceTo').value = '';
+                    break;
+                case 'days': document.getElementById('filterDays').value = ''; break;
+            }
+            applyFilters();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterMake').value = '';
+            document.getElementById('filterModel').value = '';
+            document.getElementById('filterStage').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterLocation').value = '';
+            document.getElementById('filterStaff').value = '';
+            document.getElementById('priceFrom').value = '';
+            document.getElementById('priceTo').value = '';
+            document.getElementById('filterDays').value = '';
+            applyFilters();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('vehicleTableBody');
             const start = (currentPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
             const pageVehicles = filteredVehicles.slice(start, end);
             
-            document.getElementById('showingCount').textContent = pageVehicles.length;
-            document.getElementById('totalCount').textContent = filteredVehicles.length;
-            
             if (pageVehicles.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon"><i class="fas fa-car"></i></div>
-                        <div class="empty-title">No vehicles found</div>
-                        <div class="empty-text">Try adjusting your filters or search criteria</div>
-                        <button class="cy-btn cy-btn-primary" onclick="clearAllFilters()">Clear Filters</button>
-                    </div>
-                `;
-                document.getElementById('pagination').innerHTML = '';
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--cy-text-muted);">No vehicles found</td></tr>';
                 return;
             }
             
-            if (currentView === 'grid') {
-                container.innerHTML = `<div class="vehicle-grid">${pageVehicles.map(v => renderVehicleCard(v)).join('')}</div>`;
-            } else {
-                container.innerHTML = `
-                    <div class="vehicle-list">
-                        <div class="list-header">
-                            <div></div>
-                            <div>Vehicle</div>
-                            <div>Location</div>
-                            <div>Status</div>
-                            <div>Price</div>
-                            <div>Days</div>
-                            <div></div>
-                        </div>
-                        ${pageVehicles.map(v => renderVehicleRow(v)).join('')}
-                    </div>
-                `;
-            }
-            
-            renderPagination();
-        }
-
-        function renderVehicleCard(v) {
-            const daysInStock = v.dateInStock ? Math.floor((new Date() - new Date(v.dateInStock)) / (1000 * 60 * 60 * 24)) : 0;
-            const isAging = daysInStock > 90;
-            const statusClass = v.status === 'In Stock' ? 'status-instock' : v.status === 'In Transit' ? 'status-transit' : 'status-sold';
-            
-            return `
-                <div class="vehicle-card" onclick="viewVehicle('${v.stockNo}')">
-                    <div class="vehicle-image">
-                        <div class="vehicle-image-placeholder"><i class="fas fa-car"></i></div>
-                        <div class="vehicle-badges">
-                            <span class="vehicle-badge ${statusClass}">${v.status}</span>
-                        </div>
-                        <div class="vehicle-days ${isAging ? 'warning' : ''}">${daysInStock} days</div>
-                    </div>
-                    <div class="vehicle-info">
-                        <div class="vehicle-header">
-                            <div>
-                                <div class="vehicle-title">${v.make} ${v.model}</div>
-                                <div class="vehicle-stock">${v.stockNo}</div>
+            tbody.innerHTML = pageVehicles.map(v => {
+                const stage = stages[v.stage] || stages.INTAKE;
+                const days = VehicleStore.getDaysInStage(v);
+                const daysClass = days > 14 ? 'days-danger' : days > 7 ? 'days-warning' : 'days-normal';
+                const margin = v.retailPrice && v.costPrice ? (((v.retailPrice - v.costPrice) / v.retailPrice) * 100).toFixed(1) : 0;
+                
+                let statusBadge = '';
+                if (v.status === 'Sold') statusBadge = '<span class="badge badge-sold">Sold</span>';
+                else if (days > 14) statusBadge = '<span class="badge badge-stuck">Stuck</span>';
+                else if (v.location === 'With Supplier') statusBadge = '<span class="badge badge-intransit">In Transit</span>';
+                else statusBadge = '<span class="badge badge-instock">In Stock</span>';
+                
+                return `
+                    <tr onclick="viewVehicle('${v.stockNo}')" style="cursor: pointer;">
+                        <td>
+                            <div class="cell-reg">${v.registration}</div>
+                            <div style="font-size: 11px; color: var(--cy-text-muted);">${v.stockNo}</div>
+                        </td>
+                        <td>
+                            <div class="cell-vehicle">
+                                <div class="vehicle-thumb">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <div class="vehicle-info">
+                                    <div class="vehicle-name">${v.make} ${v.model}</div>
+                                    <div class="vehicle-details">${v.year} • ${v.fuel} • ${v.mileage?.toLocaleString()} mi</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="vehicle-details">
-                            <div class="vehicle-detail">
-                                <i class="fas fa-calendar"></i>
-                                <span>${v.year || '-'}</span>
+                        </td>
+                        <td>
+                            <span class="cell-stage" style="background: ${stage.bg}; color: ${stage.color};">
+                                <i class="fas fa-circle" style="font-size: 6px;"></i>
+                                ${stage.name}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="cell-price">
+                                <div class="price-retail">£${(v.retailPrice || 0).toLocaleString()}</div>
+                                <div class="price-cost">£${(v.costPrice || 0).toLocaleString()}</div>
+                                <div class="price-margin">${margin}% margin</div>
                             </div>
-                            <div class="vehicle-detail">
-                                <i class="fas fa-gas-pump"></i>
-                                <span>${v.fuelType || '-'}</span>
+                        </td>
+                        <td>
+                            <div class="cell-days ${daysClass}">${days} days</div>
+                            <div style="font-size: 11px; color: var(--cy-text-muted);">in stage</div>
+                        </td>
+                        <td>
+                            <div class="cell-staff">
+                                <div class="staff-avatar">${v.assignedTo?.charAt(0) || '?'}</div>
+                                <span>${v.assignedTo?.split(' ')[0] || 'Unassigned'}</span>
                             </div>
-                            <div class="vehicle-detail">
-                                <i class="fas fa-cog"></i>
-                                <span>${v.transmission || '-'}</span>
+                        </td>
+                        <td>
+                            <div class="cell-location">
+                                <i class="fas fa-map-marker-alt" style="margin-right: 4px;"></i>
+                                ${v.location || 'Unknown'}
                             </div>
-                            <div class="vehicle-detail">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>${v.location || '-'}</span>
-                            </div>
-                        </div>
-                        <div class="vehicle-footer">
-                            <div>
-                                <div class="vehicle-price">${Capeye.formatCurrency(v.costPrice)}</div>
-                                <div class="vehicle-price-label">Cost Price</div>
-                            </div>
-                            <div class="vehicle-actions" onclick="event.stopPropagation()">
-                                <button class="vehicle-action-btn" onclick="editVehicle('${v.stockNo}')" title="Edit">
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="cell-actions" onclick="event.stopPropagation()">
+                                <button class="action-btn" onclick="editVehicle('${v.stockNo}')" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="vehicle-action-btn" onclick="viewWorkflow('${v.stockNo}')" title="Workflow">
+                                <button class="action-btn" onclick="window.location.href='./workflow/stages/stage-${stage.num}-${v.stage.toLowerCase()}.html?stock=${v.stockNo}'" title="Workflow">
                                     <i class="fas fa-tasks"></i>
                                 </button>
+                                <button class="action-btn" onclick="advanceVehicle('${v.stockNo}')" title="Advance Stage">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderVehicleRow(v) {
-            const daysInStock = v.dateInStock ? Math.floor((new Date() - new Date(v.dateInStock)) / (1000 * 60 * 60 * 24)) : 0;
+                        </td>
+                    </tr>
+                `;
+            }).join('');
             
-            return `
-                <div class="list-row" onclick="viewVehicle('${v.stockNo}')">
-                    <div class="list-thumb"><i class="fas fa-car"></i></div>
-                    <div class="list-vehicle">
-                        <div class="list-title">${v.make} ${v.model}</div>
-                        <div class="list-stock">${v.stockNo}</div>
-                    </div>
-                    <div class="list-location">${v.location || '-'}</div>
-                    <div class="list-status"><span class="cy-badge ${v.status === 'In Stock' ? 'cy-badge-green' : v.status === 'In Transit' ? 'cy-badge-orange' : 'cy-badge-blue'}">${v.status}</span></div>
-                    <div class="list-price">${Capeye.formatCurrency(v.costPrice)}</div>
-                    <div class="list-location">${daysInStock} days</div>
-                    <div class="list-actions" onclick="event.stopPropagation()">
-                        <button class="vehicle-action-btn" onclick="editVehicle('${v.stockNo}')" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
+            // Update showing info
+            document.getElementById('showingFrom').textContent = start + 1;
+            document.getElementById('showingTo').textContent = Math.min(end, filteredVehicles.length);
+            document.getElementById('totalItems').textContent = filteredVehicles.length;
         }
 
         function renderPagination() {
             const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
+            const container = document.getElementById('paginationControls');
+            
             if (totalPages <= 1) {
-                document.getElementById('pagination').innerHTML = '';
+                container.innerHTML = '';
                 return;
             }
             
-            let html = `
-                <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-            `;
+            let html = '';
             
+            // Previous
+            html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+            
+            // Page numbers
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
                     html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
@@ -1180,49 +1043,124 @@
                 }
             }
             
-            html += `
-                <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            `;
+            // Next
+            html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
             
-            document.getElementById('pagination').innerHTML = html;
+            container.innerHTML = html;
         }
 
         function changePage(page) {
+            const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
             currentPage = page;
-            renderVehicles();
+            renderTable();
+            renderPagination();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function updateStats() {
-            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            
-            document.getElementById('statTotal').textContent = vehicles.length;
-            document.getElementById('statInStock').textContent = vehicles.filter(v => v.status === 'In Stock').length;
-            document.getElementById('statTransit').textContent = vehicles.filter(v => v.status === 'In Transit').length;
-            
-            const totalValue = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
-            document.getElementById('statValue').textContent = Capeye.formatCurrency(totalValue);
-        }
-
         function viewVehicle(stockNo) {
-            window.location.href = `./vehicle-detail.html?stock=${stockNo}`;
+            const vehicle = VehicleStore.get(stockNo);
+            if (!vehicle) return;
+            
+            const details = `
+Registration: ${vehicle.registration}
+Stock No: ${vehicle.stockNo}
+Make/Model: ${vehicle.make} ${vehicle.model}
+Year: ${vehicle.year}
+Stage: ${vehicle.stage}
+Price: £${(vehicle.retailPrice || 0).toLocaleString()}
+Assigned: ${vehicle.assignedTo}
+Location: ${vehicle.location}
+            `.trim();
+            
+            alert(details);
         }
 
         function editVehicle(stockNo) {
-            Capeye.notify(`Edit vehicle ${stockNo}`, 'info');
+            window.location.href = `./workflow/stages/stage-1-intake.html?stock=${stockNo}&edit=true`;
         }
 
-        function viewWorkflow(stockNo) {
-            window.location.href = `./workflow.html?stock=${stockNo}`;
+        function advanceVehicle(stockNo) {
+            const result = VehicleStore.advance(stockNo, {
+                staff: 'Current User',
+                notes: 'Advanced from Inventory'
+            });
+            
+            if (result.success) {
+                alert(`Advanced to ${stages[result.vehicle.stage]?.name || result.vehicle.stage}`);
+                loadData();
+                applyFilters();
+            } else {
+                alert('Error: ' + result.error);
+            }
         }
 
-        // Refresh function for auto-refresh
-        window.refreshData = function() {
-            applyFilters();
-            updateStats();
-        };
+        function addNewVehicle() {
+            window.location.href = './workflow/stages/stage-1-intake.html';
+        }
+
+        function exportInventory() {
+            const csv = [
+                ['Stock No', 'Registration', 'Make', 'Model', 'Year', 'Stage', 'Cost Price', 'Retail Price', 'Assigned To', 'Location', 'Days in Stock'].join(','),
+                ...filteredVehicles.map(v => [
+                    v.stockNo,
+                    v.registration,
+                    v.make,
+                    v.model,
+                    v.year,
+                    v.stage,
+                    v.costPrice,
+                    v.retailPrice,
+                    v.assignedTo,
+                    v.location,
+                    VehicleStore.getDaysInStage(v)
+                ].join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `inventory_export_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function animateValue(id, value, prefix) {
+            const el = document.getElementById(id);
+            const current = parseInt(el.textContent) || 0;
+            if (current === value) return;
+            
+            const diff = value - current;
+            const steps = 20;
+            const increment = diff / steps;
+            let step = 0;
+            
+            const timer = setInterval(() => {
+                step++;
+                const newVal = Math.round(current + (increment * step));
+                el.textContent = prefix + newVal;
+                if (step >= steps) clearInterval(timer);
+            }, 30);
+        }
+
+        function logout() {
+            localStorage.removeItem('capeye_session');
+            window.location.href = './login.html';
+        }
     </script>
 </body>
 </html>
