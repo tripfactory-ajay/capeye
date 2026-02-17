@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Add Dancing Script for signature font -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -489,9 +491,9 @@
             color: var(--cy-text-muted);
         }
 
-        /* Signature Pad - COMPACT WIDTH VERSION */
+        /* Signature Section - Updated for auto-generated signature */
         .signature-wrapper {
-            max-width: 400px; /* REDUCED WIDTH */
+            max-width: 400px;
             margin-top: 8px;
         }
 
@@ -500,6 +502,7 @@
             border-radius: var(--cy-radius-lg);
             padding: 12px;
             border: 2px solid var(--cy-border);
+            position: relative;
         }
 
         #signaturePad {
@@ -509,6 +512,22 @@
             border-radius: var(--cy-radius-md);
             cursor: crosshair;
             background: white;
+            display: block;
+        }
+
+        .auto-signature-notice {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--cy-accent-green-soft);
+            color: var(--cy-accent-green);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            display: none;
+        }
+
+        .auto-signature-notice.show {
             display: block;
         }
 
@@ -1004,7 +1023,7 @@
                 <div class="form-grid-2">
                     <div class="form-group">
                         <label class="required">Inspected By</label>
-                        <select id="inspectedBy" class="form-select" required>
+                        <select id="inspectedBy" class="form-select" required onchange="generateAutoSignature()">
                             <option value="">Select Staff Member</option>
                         </select>
                     </div>
@@ -1023,32 +1042,37 @@
                     <textarea id="internalNotes" class="form-input" placeholder="Any notes for the next department..."></textarea>
                 </div>
 
-                <!-- COMPACT SIGNATURE SECTION WITH AUTO DATE STAMP -->
+                <!-- AUTO-GENERATED SIGNATURE SECTION -->
                 <div style="margin-top: 24px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <label>Digital Signature <span style="color: var(--cy-accent-red);">*</span></label>
+                        <label>Digital Signature <span style="color: var(--cy-text-muted); font-size: 12px;">(Auto-generated from name)</span></label>
                         <div class="date-stamp" id="dateStampDisplay" style="display: none;">
                             <i class="fas fa-clock"></i>
                             <span id="dateStampText"></span>
                         </div>
                     </div>
                     
-                    <!-- WRAPPER TO LIMIT WIDTH -->
                     <div class="signature-wrapper">
                         <div class="signature-container">
+                            <div class="auto-signature-notice" id="autoSignatureNotice">
+                                <i class="fas fa-magic"></i> Auto-generated
+                            </div>
                             <canvas id="signaturePad"></canvas>
                         </div>
                         <div class="signature-actions">
                             <button type="button" onclick="clearSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
-                                <i class="fas fa-eraser"></i> Clear
+                                <i class="fas fa-eraser"></i> Clear & Draw Manual
+                            </button>
+                            <button type="button" onclick="regenerateSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+                                <i class="fas fa-redo"></i> Regenerate
                             </button>
                             <span style="color: var(--cy-text-muted); font-size: 13px;">
-                                <i class="fas fa-info-circle"></i> Sign to confirm
+                                <i class="fas fa-info-circle"></i> Select name above to auto-generate
                             </span>
                         </div>
                         <div class="signature-meta">
-                            <span><i class="fas fa-calendar"></i> Auto-stamped on submit</span>
-                            <span><i class="fas fa-shield-alt"></i> Legally binding</span>
+                            <span><i class="fas fa-signature"></i> Script font: Dancing Script</span>
+                            <span><i class="fas fa-shield-alt"></i> Digitally valid</span>
                         </div>
                     </div>
                 </div>
@@ -1081,7 +1105,8 @@
         let uploadedPhotos = {};
         let signaturePad = null;
         let signatureContext = null;
-        let hasSignatureBeenDrawn = false;
+        let isAutoSignature = false;
+        let currentSignatureName = '';
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1093,7 +1118,7 @@
             document.getElementById('additionalCosts').addEventListener('input', calculateTotal);
         });
 
-        // Initialize Signature Pad - FIXED VERSION
+        // Initialize Signature Pad
         function initSignaturePad() {
             const canvas = document.getElementById('signaturePad');
             if (!canvas) {
@@ -1103,8 +1128,8 @@
             
             signatureContext = canvas.getContext('2d');
             
-            // Set canvas size - COMPACT
-            canvas.width = 376; // Fixed width to match container (400px - padding)
+            // Set canvas size
+            canvas.width = 376;
             canvas.height = 120;
             
             // Set white background
@@ -1127,12 +1152,12 @@
             
             function startDraw(e) {
                 isDrawing = true;
-                hasSignatureBeenDrawn = true;
+                isAutoSignature = false; // Switch to manual if user draws
+                document.getElementById('autoSignatureNotice').classList.remove('show');
                 const pos = getPos(e);
                 lastX = pos.x;
                 lastY = pos.y;
                 
-                // Draw a single dot for click
                 signatureContext.beginPath();
                 signatureContext.arc(lastX, lastY, 1, 0, 2 * Math.PI);
                 signatureContext.fillStyle = '#000';
@@ -1181,7 +1206,71 @@
             canvas.addEventListener('touchend', endDraw);
             
             signaturePad = canvas;
-            hasSignatureBeenDrawn = false;
+        }
+
+        // Generate Auto Signature from Name - ITALIC SCRIPT
+        function generateAutoSignature() {
+            const select = document.getElementById('inspectedBy');
+            const name = select.value;
+            
+            if (!name) return;
+            
+            currentSignatureName = name;
+            isAutoSignature = true;
+            
+            // Clear canvas
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, signaturePad.width, signaturePad.height);
+            
+            // Set up italic script font
+            signatureContext.font = 'italic 700 36px "Dancing Script", cursive';
+            signatureContext.fillStyle = '#1f2937';
+            signatureContext.textBaseline = 'middle';
+            
+            // Calculate center position
+            const textWidth = signatureContext.measureText(name).width;
+            const x = (signaturePad.width - textWidth) / 2;
+            const y = signaturePad.height / 2;
+            
+            // Draw signature with slight randomization for natural look
+            let currentX = x;
+            const chars = name.split('');
+            
+            chars.forEach((char, index) => {
+                const randomY = y + (Math.random() - 0.5) * 3; // Slight vertical variation
+                const randomRotation = (Math.random() - 0.5) * 0.05; // Slight rotation
+                
+                signatureContext.save();
+                signatureContext.translate(currentX, randomY);
+                signatureContext.rotate(randomRotation);
+                signatureContext.fillText(char, 0, 0);
+                signatureContext.restore();
+                
+                currentX += signatureContext.measureText(char).width;
+            });
+            
+            // Add underline flourish
+            signatureContext.beginPath();
+            signatureContext.moveTo(x, y + 20);
+            signatureContext.quadraticCurveTo(
+                x + textWidth / 2, y + 25,
+                x + textWidth, y + 18
+            );
+            signatureContext.strokeStyle = '#1f2937';
+            signatureContext.lineWidth = 2;
+            signatureContext.stroke();
+            
+            // Show auto-generated notice
+            document.getElementById('autoSignatureNotice').classList.add('show');
+        }
+
+        // Regenerate signature with different randomization
+        function regenerateSignature() {
+            if (currentSignatureName) {
+                generateAutoSignature();
+            } else {
+                showStatus('Please select a name first', 'error');
+            }
         }
 
         // Clear Signature
@@ -1189,35 +1278,30 @@
             if (!signatureContext || !signaturePad) return;
             signatureContext.fillStyle = 'white';
             signatureContext.fillRect(0, 0, signaturePad.width, signaturePad.height);
-            hasSignatureBeenDrawn = false;
+            isAutoSignature = false;
+            currentSignatureName = '';
+            document.getElementById('autoSignatureNotice').classList.remove('show');
         }
 
-        // Check if signature is valid (not empty) - FIXED VERSION
+        // Check if signature is valid
         function isSignatureValid() {
             if (!signatureContext || !signaturePad) return false;
             
-            // Check if user has drawn anything
-            if (!hasSignatureBeenDrawn) return false;
-            
-            // Additional check: sample pixels to see if there's actual content
+            // Check for non-white pixels
             try {
                 const imageData = signatureContext.getImageData(0, 0, signaturePad.width, signaturePad.height);
                 const pixels = imageData.data;
                 
-                // Check for non-white pixels (allowing for some anti-aliasing)
                 let nonWhitePixels = 0;
                 for (let i = 0; i < pixels.length; i += 4) {
-                    // If pixel is not white (with some tolerance)
                     if (pixels[i] < 250 || pixels[i + 1] < 250 || pixels[i + 2] < 250) {
                         nonWhitePixels++;
                     }
                 }
                 
-                // Require at least 50 non-white pixels (roughly a short line)
                 return nonWhitePixels > 50;
             } catch (e) {
-                console.error('Error checking signature:', e);
-                return hasSignatureBeenDrawn;
+                return false;
             }
         }
 
@@ -1437,7 +1521,11 @@
                 const img = new Image();
                 img.onload = function() {
                     signatureContext.drawImage(img, 0, 0);
-                    hasSignatureBeenDrawn = true;
+                    if (data.isAutoSignature) {
+                        document.getElementById('autoSignatureNotice').classList.add('show');
+                        isAutoSignature = true;
+                        currentSignatureName = data.inspectedBy || '';
+                    }
                 };
                 img.src = data.signature;
             }
@@ -1533,7 +1621,8 @@
                 inspectedBy: document.getElementById('inspectedBy').value,
                 nextStage: document.getElementById('nextStage').value,
                 internalNotes: document.getElementById('internalNotes').value,
-                photos: uploadedPhotos
+                photos: uploadedPhotos,
+                isAutoSignature: isAutoSignature
             };
             
             // Checkboxes
@@ -1553,7 +1642,7 @@
             return data;
         }
 
-        // Save Form Data (Submit) - FIXED VERSION
+        // Save Form Data (Submit)
         function saveFormData(event) {
             event.preventDefault();
             
@@ -1562,10 +1651,9 @@
                 return;
             }
             
-            // Validate signature - FIXED
+            // Validate signature
             if (!isSignatureValid()) {
-                showStatus('Please provide a signature before submitting', 'error');
-                // Highlight signature box
+                showStatus('Please provide a signature (select inspector name to auto-generate)', 'error');
                 document.querySelector('.signature-container').style.borderColor = 'var(--cy-accent-red)';
                 setTimeout(() => {
                     document.querySelector('.signature-container').style.borderColor = 'var(--cy-border)';
@@ -1579,7 +1667,7 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             submitBtn.disabled = true;
             
-            // AUTO DATE STAMP - Capture current date/time at submission
+            // AUTO DATE STAMP
             const submissionDateTime = new Date();
             const formattedDateTime = submissionDateTime.toLocaleString('en-GB', {
                 day: '2-digit',
@@ -1629,7 +1717,7 @@
                 localStorage.setItem('capeye_all_vehicles', JSON.stringify(allVehicles));
             }
             
-            // Trigger workflow update event for other pages
+            // Trigger workflow update
             localStorage.setItem('capeye_workflow_update', JSON.stringify({
                 stockNo: currentVehicle.stockNo,
                 fromStage: 1,
@@ -1638,7 +1726,7 @@
                 action: 'stage_complete'
             }));
             
-            showStatus(`Stage 1 completed at ${formattedDateTime}! Vehicle forwarded to next stage.`, 'success');
+            showStatus(`Stage 1 completed at ${formattedDateTime}! Vehicle forwarded to Stage ${formData.nextStage}.`, 'success');
             
             // Redirect after delay
             setTimeout(() => {
