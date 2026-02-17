@@ -1,347 +1,1715 @@
+<!-- STAGE 3: DENT & PAINT REPAIRS -->
+<!-- File: /capeye/workflow/stages/stage-3-paint.html -->
+<!-- Replace entire file content -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stage 3: Dent & Paint Repairs - Capeye Workflow</title>
-    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
-    <script src="../../data/staff/staff-list.js"></script>
-    <script src="../../js/workflow/workflow-engine.js"></script>
-    <script src="../../js/workflow/form-components.js"></script>
+    <title>Stage 3: Dent & Paint Repairs | Capeye Auto Capital</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Papa Parse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <style>
+        :root {
+            --cy-bg-primary: #0a0f1c;
+            --cy-bg-secondary: #111827;
+            --cy-bg-tertiary: #1f2937;
+            --cy-border: #374151;
+            --cy-border-hover: #4b5563;
+            --cy-text-primary: #f9fafb;
+            --cy-text-secondary: #d1d5db;
+            --cy-text-muted: #9ca3af;
+            --cy-accent-purple: #8b5cf6;
+            --cy-accent-purple-soft: rgba(139, 92, 246, 0.15);
+            --cy-accent-green: #10b981;
+            --cy-accent-green-soft: rgba(16, 185, 129, 0.15);
+            --cy-accent-orange: #f59e0b;
+            --cy-accent-red: #ef4444;
+            --cy-radius-sm: 6px;
+            --cy-radius-md: 8px;
+            --cy-radius-lg: 12px;
+            --cy-radius-xl: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cy-bg-primary);
+            color: var(--cy-text-primary);
+            line-height: 1.5;
+        }
+
+        .cy-header {
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--cy-border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .cy-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cy-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .cy-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--cy-accent-purple), #ec4899);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+        }
+
+        .cy-brand-text h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+            line-height: 1.2;
+        }
+
+        .cy-brand-text span {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+        }
+
+        .stage-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: var(--cy-accent-purple-soft);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+        }
+
+        .stage-number {
+            width: 28px;
+            height: 28px;
+            background: var(--cy-accent-purple);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .stage-info {
+            font-size: 13px;
+        }
+
+        .stage-info .label {
+            color: var(--cy-text-muted);
+            font-size: 11px;
+        }
+
+        .cy-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 15, 28, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--cy-border);
+            border-top-color: var(--cy-accent-purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .vehicle-selector {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .selector-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 16px;
+            align-items: end;
+        }
+
+        @media (max-width: 1024px) {
+            .selector-grid { grid-template-columns: 1fr; }
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-md);
+            color: var(--cy-text-primary);
+            font-size: 14px;
+            transition: all 0.15s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--cy-accent-purple);
+        }
+
+        .btn-primary {
+            padding: 12px 24px;
+            background: var(--cy-accent-purple);
+            border: none;
+            border-radius: var(--cy-radius-md);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover { background: #7c3aed; }
+
+        .btn-secondary {
+            padding: 12px 24px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-md);
+            color: var(--cy-text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--cy-border-hover);
+            color: var(--cy-text-primary);
+        }
+
+        .btn-success {
+            padding: 12px 32px;
+            background: var(--cy-accent-green);
+            border: none;
+            border-radius: var(--cy-radius-md);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-success:hover { background: #059669; }
+
+        .vehicle-banner {
+            background: linear-gradient(135deg, var(--cy-bg-secondary) 0%, var(--cy-bg-tertiary) 100%);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            padding: 24px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .vehicle-banner.active { display: block; }
+
+        .banner-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .banner-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .banner-item label {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .banner-item .value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--cy-text-primary);
+        }
+
+        .banner-item .sub {
+            font-size: 13px;
+            color: var(--cy-text-secondary);
+            margin-top: 2px;
+        }
+
+        .form-section {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--cy-border);
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--cy-accent-purple-soft);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cy-accent-purple);
+            font-size: 18px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--cy-text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: var(--cy-text-muted);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .form-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid-2 { grid-template-columns: 1fr; }
+        }
+
+        .form-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .form-grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .form-grid-4 { grid-template-columns: 1fr; }
+        }
+
+        textarea.form-input {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--cy-accent-purple);
+        }
+
+        .checkbox-item label {
+            font-size: 14px;
+            color: var(--cy-text-secondary);
+            cursor: pointer;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .photo-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .photo-slot {
+            aspect-ratio: 4/3;
+            background: var(--cy-bg-tertiary);
+            border: 2px dashed var(--cy-border);
+            border-radius: var(--cy-radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-slot:hover {
+            border-color: var(--cy-accent-purple);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .photo-slot.has-image {
+            border-style: solid;
+            border-color: var(--cy-accent-green);
+        }
+
+        .photo-slot img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-slot .remove-photo {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(239, 68, 68, 0.9);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 10;
+        }
+
+        .photo-slot i {
+            font-size: 24px;
+            color: var(--cy-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .photo-slot span {
+            font-size: 12px;
+            color: var(--cy-text-muted);
+        }
+
+        .repair-item {
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-lg);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .repair-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .repair-title {
+            font-weight: 600;
+            color: var(--cy-text-primary);
+        }
+
+        .btn-remove {
+            padding: 6px 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--cy-radius-md);
+            color: var(--cy-accent-red);
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            padding: 12px 24px;
+            background: var(--cy-accent-purple-soft);
+            border: 1px dashed var(--cy-accent-purple);
+            border-radius: var(--cy-radius-md);
+            color: var(--cy-accent-purple);
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .signature-container {
+            background: white;
+            border-radius: var(--cy-radius-lg);
+            padding: 12px;
+            margin-top: 8px;
+            border: 2px solid var(--cy-border);
+        }
+
+        #signaturePad {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #e5e7eb;
+            border-radius: var(--cy-radius-md);
+            cursor: crosshair;
+            background: white;
+        }
+
+        .signature-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            align-items: center;
+        }
+
+        .signature-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--cy-text-muted);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            position: sticky;
+            bottom: 24px;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .status-message {
+            padding: 16px;
+            border-radius: var(--cy-radius-lg);
+            margin-bottom: 24px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--cy-accent-green);
+            display: flex;
+        }
+
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--cy-accent-red);
+            display: flex;
+        }
+
+        .required::after {
+            content: ' *';
+            color: var(--cy-accent-red);
+        }
+
+        .date-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: var(--cy-accent-purple-soft);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--cy-accent-purple);
+            font-weight: 500;
+        }
+
+        .paint-code-display {
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-md);
+            padding: 12px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: var(--cy-accent-purple);
+            font-weight: 600;
+        }
+
+        .cost-summary {
+            background: var(--cy-accent-purple-soft);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: var(--cy-radius-lg);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .cost-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .cost-row.total {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--cy-accent-purple);
+            border-top: 1px solid rgba(139, 92, 246, 0.3);
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .quality-check {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .quality-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--cy-bg-tertiary);
+            border-radius: var(--cy-radius-md);
+        }
+
+        .quality-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--cy-accent-purple);
+        }
+    </style>
 </head>
 <body>
-    <div class="workflow-container">
-        <div id="stage-nav-container"></div>
-        
-        <main class="main-content">
-            <div id="header-container"></div>
-            
-            <div class="stage-container">
-                <div class="stage-header">
-                    <h1 class="stage-title">
-                        <span style="font-size: 2rem;">🖌️</span>
-                        Stage 3: Dent & Paint Repairs
-                    </h1>
-                    <p class="stage-description">
-                        Execute bodywork repairs, dent removal, and paint refinishing. Track repair progress and quality control.
-                    </p>
-                </div>
-                
-                <div id="vehicle-info-display" class="vehicle-info-card">
-                    <div class="vehicle-info-header">
-                        <div class="vehicle-info-title">Vehicle Details</div>
-                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
-                    </div>
-                    <div class="vehicle-details-grid" id="vehicle-details-content">
-                        <p>Loading...</p>
-                    </div>
-                </div>
-                
-                <form id="stage-3-form">
-                    <!-- Technician Assignment -->
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="paint-technician">
-                                Paint Technician <span class="required">*</span>
-                            </label>
-                            <select id="paint-technician" name="paintTechnician" class="form-select" required>
-                                <option value="">Select Technician...</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="start-date">Repair Start Date</label>
-                            <input type="date" id="start-date" name="startDate" class="form-input">
-                        </div>
-                    </div>
-                    
-                    <!-- Repair Checklist -->
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">
-                        Repair Tasks
-                    </h3>
-                    
-                    <div class="checkbox-grid cols-2">
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="tasks[]" value="dent-removal">
-                            <span>Dent Removal / PDR</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="tasks[]" value="filler-work">
-                            <span>Filler Application</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="tasks[]" value="sanding">
-                            <span>Sanding & Prep</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="tasks[]" value="masking">
-                            <span>Masking</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="tasks[]" value="primer">
-                            <span>Primer Application</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="tasks[]" value="base-coat">
-                            <span>Base Coat</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="tasks[]" value="clear-coat">
-                            <span>Clear Coat</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="tasks[]" value="polishing">
-                            <span>Cut & Polish</span>
-                        </label>
-                    </div>
-                    
-                    <!-- Paint Details -->
-                    <div class="form-grid" style="margin-top: 1.5rem;">
-                        <div class="form-group">
-                            <label class="form-label" for="paint-code">Paint Code</label>
-                            <input type="text" id="paint-code" name="paintCode" class="form-input" placeholder="e.g., LB9A">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="paint-type">Paint Type</label>
-                            <select id="paint-type" name="paintType" class="form-select">
-                                <option value="">Select...</option>
-                                <option value="solid">Solid</option>
-                                <option value="metallic">Metallic</option>
-                                <option value="pearl">Pearl</option>
-                                <option value="matte">Matte</option>
-                                <option value="tri-coat">Tri-Coat</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Quality Control -->
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">
-                        Quality Control
-                    </h3>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="color-match">Color Match Quality</label>
-                            <select id="color-match" name="colorMatch" class="form-select">
-                                <option value="excellent">Excellent - Perfect Match</option>
-                                <option value="good">Good - Acceptable</option>
-                                <option value="fair">Fair - Minor Variance</option>
-                                <option value="poor">Poor - Requires Redo</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="finish-quality">Finish Quality</label>
-                            <select id="finish-quality" name="finishQuality" class="form-select">
-                                <option value="excellent">Excellent - No Defects</option>
-                                <option value="good">Good - Minor Issues</option>
-                                <option value="fair">Fair - Some Correction Needed</option>
-                                <option value="poor">Poor - Requires Redo</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Progress Photos -->
-                    <div class="form-group">
-                        <label class="form-label">Repair Progress Photos</label>
-                        <div id="progress-photos-container"></div>
-                        <input type="hidden" id="progress-photos" name="progressPhotos">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Final Photos <span class="required">*</span></label>
-                        <div id="final-photos-container"></div>
-                        <input type="hidden" id="final-photos" name="finalPhotos" required>
-                    </div>
-                    
-                    <!-- Time & Costs -->
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="actual-hours">Actual Hours Worked</label>
-                            <input type="number" id="actual-hours" name="actualHours" class="form-input" step="0.5" min="0">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="completion-date">Completion Date</label>
-                            <input type="date" id="completion-date" name="completionDate" class="form-input">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="paint-notes">Repair Notes</label>
-                        <textarea id="paint-notes" name="paintNotes" class="form-textarea" rows="4" 
-                            placeholder="Details of work carried out, any issues encountered..."></textarea>
-                    </div>
-                    
-                    <!-- Sign-off -->
-                    <div class="form-group">
-                        <label class="form-label">Technician Signature <span class="required">*</span></label>
-                        <div id="signature-container"></div>
-                        <input type="hidden" id="signature" name="signature" required>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <div class="form-actions-left">
-                            <a href="stage-2-bodywork.html" class="btn btn-secondary">← Back</a>
-                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
-                        </div>
-                        <div class="form-actions-right">
-                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">
-                                ✓ Complete & Send to Legal →
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </main>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="text-center">
+            <div class="spinner mb-4 mx-auto"></div>
+            <p style="color: var(--cy-text-muted); font-size: 14px;">Loading vehicle data...</p>
+        </div>
     </div>
-    
+
+    <!-- Header -->
+    <header class="cy-header">
+        <div class="cy-header-content">
+            <a href="../workflow.html" class="cy-brand">
+                <div class="cy-logo">AC</div>
+                <div class="cy-brand-text">
+                    <h1>CAPEYE</h1>
+                    <span>Auto Capital Intelligence</span>
+                </div>
+            </a>
+            
+            <div class="stage-indicator">
+                <div class="stage-number">3</div>
+                <div class="stage-info">
+                    <div class="label">Current Stage</div>
+                    <div style="font-weight: 600;">Dent & Paint Repairs</div>
+                </div>
+            </div>
+
+            <a href="../workflow.html" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Pipeline
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="cy-container">
+        <!-- Status Message -->
+        <div id="statusMessage" class="status-message">
+            <i class="fas fa-check-circle"></i>
+            <span id="statusText"></span>
+        </div>
+
+        <!-- Vehicle Selector -->
+        <div class="vehicle-selector">
+            <div class="selector-grid">
+                <div class="form-group">
+                    <label>Select Vehicle</label>
+                    <select id="vehicleSelect" class="form-select" onchange="loadVehicleData()">
+                        <option value="">-- Search or Select Vehicle --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Or Enter Stock No</label>
+                    <input type="text" id="stockNoInput" class="form-input" placeholder="e.g., R0218">
+                </div>
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="regInput" class="form-input" placeholder="e.g., RF66UBC">
+                </div>
+                <button onclick="searchVehicle()" class="btn-primary">
+                    <i class="fas fa-search"></i> Load Vehicle
+                </button>
+            </div>
+        </div>
+
+        <!-- Vehicle Info Banner -->
+        <div id="vehicleBanner" class="vehicle-banner">
+            <div class="banner-grid">
+                <div class="banner-item">
+                    <label>Stock Number</label>
+                    <div class="value" id="bannerStockNo">-</div>
+                    <div class="sub" id="bannerReg">-</div>
+                </div>
+                <div class="banner-item">
+                    <label>Vehicle</label>
+                    <div class="value" id="bannerVehicle">-</div>
+                    <div class="sub" id="bannerDetails">-</div>
+                </div>
+                <div class="banner-item">
+                    <label>Paint Code</label>
+                    <div class="paint-code-display" id="bannerPaintCode">-- -- --</div>
+                </div>
+                <div class="banner-item">
+                    <label>Bodywork Cost</label>
+                    <div class="value" id="bannerBodyworkCost">-</div>
+                    <div class="sub">From Stage 2</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paint Repair Form -->
+        <form id="paintForm" onsubmit="saveFormData(event)">
+            <!-- Section 1: Paint Specification -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Paint Specification</div>
+                        <div class="section-subtitle">Colour matching and paint details</div>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">Paint Code</label>
+                        <input type="text" id="paintCode" class="form-input" placeholder="e.g., LY9T" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Colour Name</label>
+                        <input type="text" id="colourName" class="form-input" placeholder="e.g., Daytona Grey" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Paint System Used</label>
+                        <select id="paintSystem" class="form-select">
+                            <option value="">Select System</option>
+                            <option value="Water Based">Water Based</option>
+                            <option value="Solvent Based">Solvent Based</option>
+                            <option value="Factory Matched">Factory Matched</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Paint Manufacturer</label>
+                        <select id="paintManufacturer" class="form-select">
+                            <option value="">Select Manufacturer</option>
+                            <option value="Glasurit">Glasurit</option>
+                            <option value="Sikkens">Sikkens</option>
+                            <option value="PPG">PPG</option>
+                            <option value="Spies Hecker">Spies Hecker</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Blending Required</label>
+                        <select id="blendingRequired" class="form-select">
+                            <option value="Yes">Yes</option>
+                            <option value="No" selected>No</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Clear Coat Layers</label>
+                        <input type="number" id="clearCoatLayers" class="form-input" value="2" min="1" max="5">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Repair Work Log -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Repair Work Log</div>
+                        <div class="section-subtitle">Detailed repair tasks completed</div>
+                    </div>
+                </div>
+                
+                <div id="repairList">
+                    <!-- Repair items added dynamically -->
+                </div>
+                
+                <button type="button" onclick="addRepairItem()" class="btn-add">
+                    <i class="fas fa-plus"></i> Add Repair Task
+                </button>
+            </div>
+
+            <!-- Section 3: Quality Control -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Quality Control Checks</div>
+                        <div class="section-subtitle">Post-repair inspection checklist</div>
+                    </div>
+                </div>
+                
+                <div class="quality-check">
+                    <div class="quality-item">
+                        <input type="checkbox" id="qcColourMatch" name="qualityChecks">
+                        <label for="qcColourMatch">Colour Match Verified</label>
+                    </div>
+                    <div class="quality-item">
+                        <input type="checkbox" id="qcOrangePeel" name="qualityChecks">
+                        <label for="qcOrangePeel">No Orange Peel</label>
+                    </div>
+                    <div class="quality-item">
+                        <input type="checkbox" id="qcDust" name="qualityChecks">
+                        <label for="qcDust">No Dust Inclusions</label>
+                    </div>
+                    <div class="quality-item">
+                        <input type="checkbox" id="qcRuns" name="qualityChecks">
+                        <label for="qcRuns">No Runs or Sags</label>
+                    </div>
+                    <div class="quality-item">
+                        <input type="checkbox" id="qcPolish" name="qualityChecks">
+                        <label for="qcPolish">Polish Completed</label>
+                    </div>
+                    <div class="quality-item">
+                        <input type="checkbox" id="qcBlend" name="qualityChecks">
+                        <label for="qcBlend">Blend Lines Invisible</label>
+                    </div>
+                    <div class="quality-item">
+                        <input type="checkbox" id="qcGloss" name="qualityChecks">
+                        <label for="qcGloss">Gloss Level Correct</label>
+                    </div>
+                    <div class="quality-item">
+                        <input type="checkbox" id="qcFinalInspect" name="qualityChecks">
+                        <label for="qcFinalInspect">Final Inspection Passed</label>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Quality Notes</label>
+                    <textarea id="qualityNotes" class="form-input" placeholder="Any quality issues or observations..."></textarea>
+                </div>
+            </div>
+
+            <!-- Section 4: Cost Tracking -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Actual Repair Costs</div>
+                        <div class="section-subtitle">Record actual costs vs estimates</div>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Actual Labour Hours</label>
+                        <input type="number" id="actualLabourHours" class="form-input" step="0.5" onchange="calculateActualCosts()">
+                    </div>
+                    <div class="form-group">
+                        <label>Actual Materials (£)</label>
+                        <input type="number" id="actualMaterials" class="form-input" step="0.01" onchange="calculateActualCosts()">
+                    </div>
+                    <div class="form-group">
+                        <label>Actual Paint (£)</label>
+                        <input type="number" id="actualPaint" class="form-input" step="0.01" onchange="calculateActualCosts()">
+                    </div>
+                </div>
+
+                <div class="cost-summary">
+                    <div class="cost-row">
+                        <span>Estimated Total (Stage 2):</span>
+                        <span id="estimatedTotalDisplay">£0.00</span>
+                    </div>
+                    <div class="cost-row">
+                        <span>Actual Labour:</span>
+                        <span id="actualLabourTotal">£0.00</span>
+                    </div>
+                    <div class="cost-row">
+                        <span>Actual Materials:</span>
+                        <span id="actualMaterialsTotal">£0.00</span>
+                    </div>
+                    <div class="cost-row">
+                        <span>Actual Paint:</span>
+                        <span id="actualPaintTotal">£0.00</span>
+                    </div>
+                    <div class="cost-row total">
+                        <span>Actual Total Cost:</span>
+                        <span id="actualGrandTotal">£0.00</span>
+                    </div>
+                    <div class="cost-row" id="varianceRow" style="color: var(--cy-accent-orange);">
+                        <span>Variance:</span>
+                        <span id="costVariance">£0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Photographs -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">After Repair Photos</div>
+                        <div class="section-subtitle">Post-repair documentation</div>
+                    </div>
+                </div>
+                
+                <div class="photo-grid">
+                    <div class="photo-slot" onclick="triggerPhotoUpload('after1')">
+                        <input type="file" id="after1" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'after1')">
+                        <i class="fas fa-plus"></i>
+                        <span>Repair Area 1</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('after2')">
+                        <input type="file" id="after2" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'after2')">
+                        <i class="fas fa-plus"></i>
+                        <span>Repair Area 2</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('after3')">
+                        <input type="file" id="after3" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'after3')">
+                        <i class="fas fa-plus"></i>
+                        <span>Repair Area 3</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('after4')">
+                        <input type="file" id="after4" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'after4')">
+                        <i class="fas fa-plus"></i>
+                        <span>Repair Area 4</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('blend1')">
+                        <input type="file" id="blend1" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'blend1')">
+                        <i class="fas fa-plus"></i>
+                        <span>Blend Check 1</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('blend2')">
+                        <input type="file" id="blend2" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'blend2')">
+                        <i class="fas fa-plus"></i>
+                        <span>Blend Check 2</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('overall1')">
+                        <input type="file" id="overall1" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'overall1')">
+                        <i class="fas fa-plus"></i>
+                        <span>Overall Front</span>
+                    </div>
+                    <div class="photo-slot" onclick="triggerPhotoUpload('overall2')">
+                        <input type="file" id="overall2" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'overall2')">
+                        <i class="fas fa-plus"></i>
+                        <span>Overall Rear</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Assignment & Sign-off -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Assignment & Sign-off</div>
+                        <div class="section-subtitle">Complete repairs and forward vehicle</div>
+                    </div>
+                </div>
+                
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="required">Completed By</label>
+                        <select id="completedBy" class="form-select" required>
+                            <option value="">Select Staff Member</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Assign to Next Stage</label>
+                        <select id="nextStage" class="form-select" required>
+                            <option value="5">Stage 5: Mechanical & Diagnostic</option>
+                            <option value="6">Stage 6: External & Electrical</option>
+                            <option value="7">Stage 7: Interior & Valeting</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label>Repair Start Date</label>
+                        <input type="date" id="repairStartDate" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Repair Completion Date</label>
+                        <input type="date" id="repairCompletionDate" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Quality Checked By</label>
+                        <select id="qualityCheckedBy" class="form-select">
+                            <option value="">Select Staff</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Completion Notes</label>
+                    <textarea id="completionNotes" class="form-input" placeholder="Notes for next department..."></textarea>
+                </div>
+
+                <!-- COMPACT SIGNATURE SECTION WITH AUTO DATE STAMP -->
+                <div style="margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label>Digital Signature</label>
+                        <div class="date-stamp" id="dateStampDisplay" style="display: none;">
+                            <i class="fas fa-clock"></i>
+                            <span id="dateStampText"></span>
+                        </div>
+                    </div>
+                    <div class="signature-container">
+                        <canvas id="signaturePad"></canvas>
+                    </div>
+                    <div class="signature-actions">
+                        <button type="button" onclick="clearSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                        <span style="color: var(--cy-text-muted); font-size: 13px;">
+                            <i class="fas fa-info-circle"></i> Sign to confirm completion
+                        </span>
+                    </div>
+                    <div class="signature-meta">
+                        <span><i class="fas fa-calendar"></i> Auto-stamped on submit</span>
+                        <span><i class="fas fa-shield-alt"></i> Legally binding</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="action-group">
+                    <button type="button" onclick="saveDraft()" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button type="button" onclick="printForm()" class="btn-secondary">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
+                <div class="action-group">
+                    <button type="submit" class="btn-success">
+                        <i class="fas fa-check-circle"></i> Complete Stage & Forward
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
     <script>
+        // Global Variables
+        let allVehicles = [];
+        let staffList = [];
         let currentVehicle = null;
-        
+        let uploadedPhotos = {};
+        let signaturePad = null;
+        let signatureContext = null;
+        let repairCount = 0;
+        let stage2Estimate = 0;
+
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            WorkflowEngine.setStage(3);
-            loadComponents();
-            populateTechnicians();
-            initPhotoUploads();
-            initSignature();
-            loadVehicle();
-            loadSavedData();
-            
-            document.getElementById('start-date').valueAsDate = new Date();
+            initSignaturePad();
+            loadData();
         });
-        
-        function loadComponents() {
-            fetch('../../workflow/components/header.html')
-                .then(r => r.text())
-                .then(html => document.getElementById('header-container').innerHTML = html);
-            fetch('../../workflow/components/stage-nav.html')
-                .then(r => r.text())
-                .then(html => document.getElementById('stage-nav-container').innerHTML = html);
-        }
-        
-        function populateTechnicians() {
-            const select = document.getElementById('paint-technician');
-            if (STAFF_DATA) {
-                const bodyshop = STAFF_DATA.getStaffByDept('bodyshop');
-                const workshop = STAFF_DATA.getStaffByDept('workshop');
-                [...bodyshop, ...workshop].forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name;
-                    select.appendChild(opt);
-                });
-            }
-        }
-        
-        function initPhotoUploads() {
-            const progContainer = document.getElementById('progress-photos-container');
-            progContainer.appendChild(FormComponents.createPhotoUpload({
-                id: 'progress-photos', label: 'Progress Photos', maxPhotos: 10
-            }));
+
+        function initSignaturePad() {
+            const canvas = document.getElementById('signaturePad');
+            signatureContext = canvas.getContext('2d');
             
-            const finalContainer = document.getElementById('final-photos-container');
-            finalContainer.appendChild(FormComponents.createPhotoUpload({
-                id: 'final-photos', label: 'Final Photos', maxPhotos: 8, minPhotos: 4, required: true
-            }));
-        }
-        
-        function initSignature() {
-            document.getElementById('signature-container').appendChild(
-                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
-            );
-        }
-        
-        function loadVehicle() {
-            currentVehicle = WorkflowEngine.getVehicle();
-            if (!currentVehicle) {
-                if (confirm('No vehicle selected. Go to Stage 1?')) {
-                    window.location.href = 'stage-1-intake.html';
-                }
-                return;
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 120;
+            
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, canvas.width, canvas.height);
+            
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
             }
-            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
-            document.getElementById('vehicle-details-content').innerHTML = `
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span>
-                <span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span>
-                <span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Colour</span>
-                <span class="vehicle-detail-value">${currentVehicle.colour}</span></div>
+            
+            function startDraw(e) {
+                isDrawing = true;
+                const pos = getPos(e);
+                lastX = pos.x;
+                lastY = pos.y;
+            }
+            
+            function draw(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                
+                const pos = getPos(e);
+                signatureContext.beginPath();
+                signatureContext.moveTo(lastX, lastY);
+                signatureContext.lineTo(pos.x, pos.y);
+                signatureContext.strokeStyle = '#000';
+                signatureContext.lineWidth = 2;
+                signatureContext.lineCap = 'round';
+                signatureContext.stroke();
+                
+                lastX = pos.x;
+                lastY = pos.y;
+            }
+            
+            function endDraw() {
+                isDrawing = false;
+            }
+            
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', endDraw);
+            canvas.addEventListener('mouseout', endDraw);
+            
+            canvas.addEventListener('touchstart', startDraw);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', endDraw);
+            
+            signaturePad = canvas;
+        }
+
+        function clearSignature() {
+            if (!signatureContext) return;
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, signaturePad.width, signaturePad.height);
+        }
+
+        function isSignatureEmpty() {
+            if (!signatureContext) return true;
+            const pixelData = signatureContext.getImageData(0, 0, signaturePad.width, signaturePad.height).data;
+            return !pixelData.some((pixel, index) => index % 4 === 3 && pixel < 255);
+        }
+
+        // Repair Task Functions
+        function addRepairItem() {
+            repairCount++;
+            const repairList = document.getElementById('repairList');
+            
+            const repairItem = document.createElement('div');
+            repairItem.className = 'repair-item';
+            repairItem.id = `repair-${repairCount}`;
+            
+            repairItem.innerHTML = `
+                <div class="repair-header">
+                    <span class="repair-title">Repair Task #${repairCount}</span>
+                    <button type="button" onclick="removeRepairItem(${repairCount})" class="btn-remove">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Panel/Area</label>
+                        <input type="text" id="repairPanel_${repairCount}" class="form-input" placeholder="e.g., Front Bumper">
+                    </div>
+                    <div class="form-group">
+                        <label>Repair Type</label>
+                        <select id="repairType_${repairCount}" class="form-select">
+                            <option value="">Select Type</option>
+                            <option value="Dent Removal">Dent Removal</option>
+                            <option value="Fill & Sand">Fill & Sand</option>
+                            <option value="Prime">Prime</option>
+                            <option value="Base Coat">Base Coat</option>
+                            <option value="Clear Coat">Clear Coat</option>
+                            <option value="Polish">Polish</option>
+                            <option value="Blend">Blend</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Hours Taken</label>
+                        <input type="number" id="repairHours_${repairCount}" class="form-input" step="0.5" onchange="calculateActualCosts()">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 12px;">
+                    <label>Task Notes</label>
+                    <input type="text" id="repairNotes_${repairCount}" class="form-input" placeholder="Details of work completed...">
+                </div>
             `;
+            
+            repairList.appendChild(repairItem);
         }
-        
-        function getFormData() {
-            const form = document.getElementById('stage-3-form');
-            const fd = new FormData(form);
-            return {
-                paintTechnician: fd.get('paintTechnician'),
-                startDate: fd.get('startDate'),
-                tasks: fd.getAll('tasks[]'),
-                paintCode: fd.get('paintCode'),
-                paintType: fd.get('paintType'),
-                colorMatch: fd.get('colorMatch'),
-                finishQuality: fd.get('finishQuality'),
-                progressPhotos: document.getElementById('progress-photos').value,
-                finalPhotos: document.getElementById('final-photos').value,
-                actualHours: fd.get('actualHours'),
-                completionDate: fd.get('completionDate'),
-                paintNotes: fd.get('paintNotes'),
-                signature: document.getElementById('signature').value
-            };
+
+        function removeRepairItem(id) {
+            const item = document.getElementById(`repair-${id}`);
+            if (item) {
+                item.remove();
+                calculateActualCosts();
+            }
         }
-        
-        function loadSavedData() {
-            if (!currentVehicle) return;
-            const saved = WorkflowEngine.loadStageData(3, currentVehicle.stockNo);
-            if (saved?.data) {
-                const d = saved.data;
-                if (d.paintTechnician) document.getElementById('paint-technician').value = d.paintTechnician;
-                if (d.startDate) document.getElementById('start-date').value = d.startDate;
-                if (d.paintCode) document.getElementById('paint-code').value = d.paintCode;
-                if (d.paintType) document.getElementById('paint-type').value = d.paintType;
-                if (d.colorMatch) document.getElementById('color-match').value = d.colorMatch;
-                if (d.finishQuality) document.getElementById('finish-quality').value = d.finishQuality;
-                if (d.actualHours) document.getElementById('actual-hours').value = d.actualHours;
-                if (d.completionDate) document.getElementById('completion-date').value = d.completionDate;
-                if (d.paintNotes) document.getElementById('paint-notes').value = d.paintNotes;
-                if (d.tasks) {
-                    d.tasks.forEach(v => {
-                        const cb = document.querySelector(`input[value="${v}"]`);
-                        if (cb) cb.checked = true;
+
+        function collectRepairItems() {
+            const items = [];
+            for (let i = 1; i <= repairCount; i++) {
+                const panel = document.getElementById(`repairPanel_${i}`);
+                if (panel) {
+                    items.push({
+                        panel: panel.value,
+                        type: document.getElementById(`repairType_${i}`)?.value,
+                        hours: parseFloat(document.getElementById(`repairHours_${i}`)?.value) || 0,
+                        notes: document.getElementById(`repairNotes_${i}`)?.value
                     });
                 }
             }
+            return items;
         }
-        
+
+        // Cost Calculations
+        function calculateActualCosts() {
+            const repairs = collectRepairItems();
+            const labourHours = repairs.reduce((sum, r) => sum + r.hours, 0);
+            const labourRate = 45.00; // Standard rate
+            const labourTotal = labourHours * labourRate;
+            
+            const materials = parseFloat(document.getElementById('actualMaterials').value) || 0;
+            const paint = parseFloat(document.getElementById('actualPaint').value) || 0;
+            const grandTotal = labourTotal + materials + paint;
+            
+            document.getElementById('actualLabourHours').value = labourHours;
+            document.getElementById('actualLabourTotal').textContent = formatCurrency(labourTotal);
+            document.getElementById('actualMaterialsTotal').textContent = formatCurrency(materials);
+            document.getElementById('actualPaintTotal').textContent = formatCurrency(paint);
+            document.getElementById('actualGrandTotal').textContent = formatCurrency(grandTotal);
+            
+            const variance = grandTotal - stage2Estimate;
+            const varianceEl = document.getElementById('costVariance');
+            varianceEl.textContent = (variance >= 0 ? '+' : '') + formatCurrency(variance);
+            varianceEl.style.color = variance > 0 ? 'var(--cy-accent-red)' : 'var(--cy-accent-green)';
+        }
+
+        // Load CSV Data
+        async function loadData() {
+            try {
+                const stockResponse = await fetch('../Auto Capital - Stock List-639068391990284525.csv');
+                const stockCsv = await stockResponse.text();
+                
+                Papa.parse(stockCsv, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
+                        populateVehicleSelect();
+                        loadStaffData();
+                    },
+                    error: function(err) {
+                        showStatus('Error loading vehicle data: ' + err.message, 'error');
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                    }
+                });
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+
+        async function loadStaffData() {
+            try {
+                const staffResponse = await fetch('../Auto Capital - Staff List-639068391990284525.csv');
+                const staffCsv = await staffResponse.text();
+                
+                Papa.parse(staffCsv, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        staffList = results.data.filter(s => s.Name);
+                        populateStaffSelects();
+                        
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const stockNo = urlParams.get('stock');
+                        if (stockNo) {
+                            document.getElementById('stockNoInput').value = stockNo;
+                            searchVehicle();
+                        }
+                        
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                    },
+                    error: function() {
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                    }
+                });
+            } catch (error) {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+
+        function normalizeVehicle(row) {
+            const getValue = (keys) => {
+                for (let key of keys) {
+                    if (row[key] !== undefined && row[key] !== '') return row[key];
+                }
+                return '';
+            };
+
+            return {
+                stockNo: getValue(['Stock No', 'StockNo', 'Stock Number', 'StockNo.']),
+                registration: getValue(['Registration', 'Reg', 'Reg No', 'RegNo']),
+                make: getValue(['Make', 'Manufacturer', 'Brand']),
+                model: getValue(['Model', 'Model Name']),
+                variant: getValue(['Variant', 'Trim', 'Spec']),
+                year: getValue(['Year', 'Year Reg', 'Reg Year']),
+                colour: getValue(['Colour', 'Color', 'Body Colour']),
+                location: getValue(['Location', 'Vehicle Location', 'Current Location']),
+                status: getValue(['Status', 'Vehicle Status', 'Stock Status']),
+                dateInStock: getValue(['Date In Stock', 'DateInStock', 'In Stock Date']),
+                costPrice: parseFloat(getValue(['Cost Price', 'CostPrice', 'Cost'])?.toString().replace(/[£,]/g, '')) || 0,
+                retailPrice: parseFloat(getValue(['Retail Price', 'RetailPrice', 'Retail'])?.toString().replace(/[£,]/g, '')) || 0,
+                fuelType: getValue(['Fuel Type', 'Fuel', 'FuelType']),
+                transmission: getValue(['Transmission', 'Gearbox', 'Trans']),
+                mileage: getValue(['Mileage', 'Miles', 'Odometer']),
+                body: getValue(['Body', 'Body Type', 'Body Style']),
+                mot: getValue(['MOT', 'MOT Date', 'MOT Expiry'])
+            };
+        }
+
+        function populateVehicleSelect() {
+            const select = document.getElementById('vehicleSelect');
+            const eligibleVehicles = allVehicles.filter(v => {
+                const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
+                return profile.currentStage === 3 || profile.stage2?.isComplete;
+            });
+            
+            eligibleVehicles.forEach(v => {
+                const option = document.createElement('option');
+                option.value = v.stockNo;
+                option.textContent = `${v.stockNo} - ${v.make} ${v.model} (${v.registration || 'No Reg'})`;
+                select.appendChild(option);
+            });
+        }
+
+        function populateStaffSelects() {
+            const completedBy = document.getElementById('completedBy');
+            const qualityCheckedBy = document.getElementById('qualityCheckedBy');
+            
+            const paintStaff = staffList.filter(s => 
+                s.Department === 'Bodyshop' || s.Department === 'Workshop' || s.Department === 'Management'
+            );
+            
+            paintStaff.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.Name;
+                option.textContent = `${s.Name} (${s.Department})`;
+                completedBy.appendChild(option.cloneNode(true));
+                qualityCheckedBy.appendChild(option);
+            });
+        }
+
+        function searchVehicle() {
+            const stockNo = document.getElementById('stockNoInput').value.trim().toUpperCase();
+            const reg = document.getElementById('regInput').value.trim().toUpperCase();
+            
+            currentVehicle = allVehicles.find(v => 
+                (stockNo && v.stockNo?.toUpperCase() === stockNo) ||
+                (reg && v.registration?.toUpperCase() === reg)
+            );
+            
+            if (currentVehicle) {
+                loadVehicleIntoForm(currentVehicle);
+                showStatus(`Loaded vehicle: ${currentVehicle.make} ${currentVehicle.model}`, 'success');
+            } else {
+                showStatus('Vehicle not found. Please check Stock No or Registration.', 'error');
+            }
+        }
+
+        function loadVehicleData() {
+            const stockNo = document.getElementById('vehicleSelect').value;
+            if (!stockNo) return;
+            
+            currentVehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (currentVehicle) {
+                loadVehicleIntoForm(currentVehicle);
+            }
+        }
+
+        function loadVehicleIntoForm(vehicle) {
+            document.getElementById('vehicleBanner').classList.add('active');
+            document.getElementById('bannerStockNo').textContent = vehicle.stockNo;
+            document.getElementById('bannerReg').textContent = vehicle.registration || 'No Reg';
+            document.getElementById('bannerVehicle').textContent = `${vehicle.make} ${vehicle.model}`;
+            document.getElementById('bannerDetails').textContent = `${vehicle.year} • ${vehicle.colour || 'Unknown Colour'}`;
+            
+            // Load Stage 2 cost data
+            const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${vehicle.stockNo}`) || '{}');
+            if (profile.stage2) {
+                stage2Estimate = profile.stage2.grandTotal || 0;
+                document.getElementById('bannerBodyworkCost').textContent = formatCurrency(stage2Estimate);
+                document.getElementById('estimatedTotalDisplay').textContent = formatCurrency(stage2Estimate);
+                
+                // Pre-fill paint code from stage 2 if available
+                if (vehicle.colour) {
+                    document.getElementById('colourName').value = vehicle.colour;
+                }
+            }
+            
+            const savedData = localStorage.getItem(`capeye_stage3_${vehicle.stockNo}`);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                populateFormFields(data);
+                showStatus('Previous draft data loaded', 'success');
+            }
+        }
+
+        function populateFormFields(data) {
+            // Restore repair items
+            if (data.repairItems && data.repairItems.length > 0) {
+                data.repairItems.forEach((repair, index) => {
+                    addRepairItem();
+                    const count = index + 1;
+                    document.getElementById(`repairPanel_${count}`).value = repair.panel || '';
+                    document.getElementById(`repairType_${count}`).value = repair.type || '';
+                    document.getElementById(`repairHours_${count}`).value = repair.hours || '';
+                    document.getElementById(`repairNotes_${count}`).value = repair.notes || '';
+                });
+            }
+            
+            const fields = ['paintCode', 'colourName', 'paintSystem', 'paintManufacturer', 'blendingRequired', 
+                          'clearCoatLayers', 'qualityNotes', 'actualMaterials', 'actualPaint', 'completedBy',
+                          'nextStage', 'repairStartDate', 'repairCompletionDate', 'qualityCheckedBy', 'completionNotes'];
+            
+            fields.forEach(field => {
+                const el = document.getElementById(field);
+                if (el && data[field]) el.value = data[field];
+            });
+            
+            // Restore quality checkboxes
+            if (data.qualityChecks) {
+                data.qualityChecks.forEach(check => {
+                    const cb = document.getElementById(check);
+                    if (cb) cb.checked = true;
+                });
+            }
+            
+            calculateActualCosts();
+            
+            if (data.photos) {
+                uploadedPhotos = data.photos;
+                Object.keys(data.photos).forEach(photoId => {
+                    const slot = document.querySelector(`[onclick="triggerPhotoUpload('${photoId}')"]`);
+                    if (slot && data.photos[photoId]) {
+                        slot.classList.add('has-image');
+                        slot.innerHTML = `
+                            <img src="${data.photos[photoId]}" alt="Photo">
+                            <button type="button" class="remove-photo" onclick="event.stopPropagation(); removePhoto('${photoId}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                    }
+                });
+            }
+            
+            if (data.signature && signatureContext) {
+                const img = new Image();
+                img.onload = function() {
+                    signatureContext.drawImage(img, 0, 0);
+                };
+                img.src = data.signature;
+            }
+        }
+
+        // Photo Upload Functions
+        function triggerPhotoUpload(inputId) {
+            document.getElementById(inputId).click();
+        }
+
+        function handlePhotoUpload(input, slotId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const photoId = input.id;
+                    uploadedPhotos[photoId] = e.target.result;
+                    
+                    const slot = input.parentElement;
+                    slot.classList.add('has-image');
+                    slot.innerHTML = `
+                        <img src="${e.target.result}" alt="Photo">
+                        <button type="button" class="remove-photo" onclick="event.stopPropagation(); removePhoto('${photoId}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${slotId}')">
+                    `;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removePhoto(photoId) {
+            delete uploadedPhotos[photoId];
+            const slot = document.querySelector(`[onclick="triggerPhotoUpload('${photoId}')"]`);
+            if (slot) {
+                slot.classList.remove('has-image');
+                const labels = {
+                    'after1': 'Repair Area 1', 'after2': 'Repair Area 2',
+                    'after3': 'Repair Area 3', 'after4': 'Repair Area 4',
+                    'blend1': 'Blend Check 1', 'blend2': 'Blend Check 2',
+                    'overall1': 'Overall Front', 'overall2': 'Overall Rear'
+                };
+                slot.innerHTML = `
+                    <i class="fas fa-plus"></i>
+                    <span>${labels[photoId]}</span>
+                    <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${photoId}')">
+                `;
+            }
+        }
+
         function saveDraft() {
-            if (!currentVehicle) return;
-            WorkflowEngine.saveStageData(3, getFormData());
-            showAlert('Draft saved', 'success');
-        }
-        
-        function completeStage() {
-            if (!currentVehicle) return;
-            const data = getFormData();
-            if (!data.signature) {
-                showAlert('Signature required', 'danger');
+            if (!currentVehicle) {
+                showStatus('Please select a vehicle first', 'error');
                 return;
             }
-            WorkflowEngine.completeStage(3, data);
-            showAlert('Stage 3 complete!', 'success');
-            setTimeout(() => window.location.href = 'stage-4-legal.html', 1500);
+            
+            const formData = collectFormData();
+            formData.lastSaved = new Date().toISOString();
+            formData.isDraft = true;
+            
+            localStorage.setItem(`capeye_stage3_${currentVehicle.stockNo}`, JSON.stringify(formData));
+            showStatus('Draft saved successfully', 'success');
         }
-        
-        function showAlert(msg, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `<span>${msg}</span>`;
-            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
-            setTimeout(() => alert.remove(), 5000);
+
+        function collectFormData() {
+            const qualityChecks = [];
+            document.querySelectorAll('input[name="qualityChecks"]:checked').forEach(cb => {
+                qualityChecks.push(cb.id);
+            });
+            
+            return {
+                stockNo: currentVehicle?.stockNo,
+                paintCode: document.getElementById('paintCode').value,
+                colourName: document.getElementById('colourName').value,
+                paintSystem: document.getElementById('paintSystem').value,
+                paintManufacturer: document.getElementById('paintManufacturer').value,
+                blendingRequired: document.getElementById('blendingRequired').value,
+                clearCoatLayers: document.getElementById('clearCoatLayers').value,
+                repairItems: collectRepairItems(),
+                qualityChecks: qualityChecks,
+                qualityNotes: document.getElementById('qualityNotes').value,
+                actualMaterials: document.getElementById('actualMaterials').value,
+                actualPaint: document.getElementById('actualPaint').value,
+                completedBy: document.getElementById('completedBy').value,
+                nextStage: document.getElementById('nextStage').value,
+                repairStartDate: document.getElementById('repairStartDate').value,
+                repairCompletionDate: document.getElementById('repairCompletionDate').value,
+                qualityCheckedBy: document.getElementById('qualityCheckedBy').value,
+                completionNotes: document.getElementById('completionNotes').value,
+                photos: uploadedPhotos,
+                signature: isSignatureEmpty() ? null : signaturePad.toDataURL()
+            };
         }
-        
-        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
+
+        function saveFormData(event) {
+            event.preventDefault();
+            
+            if (!currentVehicle) {
+                showStatus('Please select a vehicle first', 'error');
+                return;
+            }
+            
+            if (isSignatureEmpty()) {
+                showStatus('Please provide a signature', 'error');
+                return;
+            }
+            
+            const submissionDateTime = new Date();
+            const formattedDateTime = submissionDateTime.toLocaleString('en-GB', {
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+            
+            const formData = collectFormData();
+            formData.completedAt = submissionDateTime.toISOString();
+            formData.formattedCompletedAt = formattedDateTime;
+            formData.isComplete = true;
+            formData.stage = 3;
+            formData.stageName = 'Dent & Paint Repairs';
+            formData.grandTotal = parseFloat(document.getElementById('actualGrandTotal').textContent.replace(/[£,]/g, '')) || 0;
+            
+            document.getElementById('dateStampText').textContent = formattedDateTime;
+            document.getElementById('dateStampDisplay').style.display = 'inline-flex';
+            
+            const vehicleProfile = JSON.parse(localStorage.getItem(`capeye_vehicle_${currentVehicle.stockNo}`) || '{}');
+            vehicleProfile.stage3 = formData;
+            vehicleProfile.currentStage = parseInt(formData.nextStage);
+            vehicleProfile.lastUpdated = submissionDateTime.toISOString();
+            vehicleProfile.stageHistory = vehicleProfile.stageHistory || [];
+            vehicleProfile.stageHistory.push({
+                stage: 3,
+                stageName: 'Dent & Paint Repairs',
+                completedAt: submissionDateTime.toISOString(),
+                completedBy: formData.completedBy,
+                nextStage: parseInt(formData.nextStage),
+                actualCost: formData.grandTotal
+            });
+            
+            localStorage.setItem(`capeye_vehicle_${currentVehicle.stockNo}`, JSON.stringify(vehicleProfile));
+            localStorage.removeItem(`capeye_stage3_${currentVehicle.stockNo}`);
+            
+            const vehicleIndex = allVehicles.findIndex(v => v.stockNo === currentVehicle.stockNo);
+            if (vehicleIndex >= 0) {
+                allVehicles[vehicleIndex].workflowStage = parseInt(formData.nextStage);
+                allVehicles[vehicleIndex].currentStage = parseInt(formData.nextStage);
+                allVehicles[vehicleIndex].lastUpdated = submissionDateTime.toISOString();
+                allVehicles[vehicleIndex].paintCost = formData.grandTotal;
+                localStorage.setItem('capeye_all_vehicles', JSON.stringify(allVehicles));
+            }
+            
+            localStorage.setItem('capeye_workflow_update', JSON.stringify({
+                stockNo: currentVehicle.stockNo,
+                fromStage: 3,
+                toStage: parseInt(formData.nextStage),
+                timestamp: submissionDateTime.toISOString(),
+                action: 'stage_complete',
+                actualCost: formData.grandTotal
+            }));
+            
+            showStatus(`Stage 3 completed at ${formattedDateTime}! Vehicle forwarded to Stage ${formData.nextStage}.`, 'success');
+            
+            document.getElementById('paintForm').querySelectorAll('input, select, textarea, button').forEach(el => {
+                el.disabled = true;
+            });
+            
+            setTimeout(() => {
+                window.location.href = '../workflow.html';
+            }, 2500);
+        }
+
+        function printForm() {
+            window.print();
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            const textEl = document.getElementById('statusText');
+            
+            statusEl.className = `status-message ${type}`;
+            textEl.textContent = message;
+            
+            setTimeout(() => {
+                statusEl.className = 'status-message';
+            }, 5000);
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-GB', { 
+                style: 'currency', 
+                currency: 'GBP',
+                minimumFractionDigits: 2
+            }).format(value || 0);
+        }
     </script>
 </body>
 </html>
