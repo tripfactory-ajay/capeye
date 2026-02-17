@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 6: External & Electrical - Capeye Workflow</title>
+    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
+    <script src="../../data/staff/staff-list.js"></script>
+    <script src="../../js/workflow/workflow-engine.js"></script>
+    <script src="../../js/workflow/form-components.js"></script>
+</head>
+<body>
+    <div class="workflow-container">
+        <div id="stage-nav-container"></div>
+        <main class="main-content">
+            <div id="header-container"></div>
+            <div class="stage-container">
+                <div class="stage-header">
+                    <h1 class="stage-title"><span style="font-size: 2rem;">⚡</span> Stage 6: External & Electrical</h1>
+                    <p class="stage-description">Inspect tyres, lights, wipers, and all electrical systems.</p>
+                </div>
+                
+                <div id="vehicle-info-display" class="vehicle-info-card">
+                    <div class="vehicle-info-header">
+                        <div class="vehicle-info-title">Vehicle Details</div>
+                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+                    </div>
+                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                </div>
+                
+                <form id="stage-6-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="inspector">Inspector <span class="required">*</span></label>
+                            <select id="inspector" name="inspector" class="form-select" required>
+                                <option value="">Select...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="inspection-date">Inspection Date</label>
+                            <input type="date" id="inspection-date" name="inspectionDate" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Tyre Condition</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="front-left">Front Left</label>
+                            <select id="front-left" name="frontLeft" class="form-select">
+                                <option value="good">Good (>3mm)</option>
+                                <option value="fair">Fair (2-3mm)</option>
+                                <option value="low">Low (1.6-2mm)</option>
+                                <option value="replace">Replace (<1.6mm)</option>
+                                <option value="damaged">Damaged</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="front-right">Front Right</label>
+                            <select id="front-right" name="frontRight" class="form-select">
+                                <option value="good">Good (>3mm)</option>
+                                <option value="fair">Fair (2-3mm)</option>
+                                <option value="low">Low (1.6-2mm)</option>
+                                <option value="replace">Replace (<1.6mm)</option>
+                                <option value="damaged">Damaged</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="rear-left">Rear Left</label>
+                            <select id="rear-left" name="rearLeft" class="form-select">
+                                <option value="good">Good (>3mm)</option>
+                                <option value="fair">Fair (2-3mm)</option>
+                                <option value="low">Low (1.6-2mm)</option>
+                                <option value="replace">Replace (<1.6mm)</option>
+                                <option value="damaged">Damaged</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="rear-right">Rear Right</label>
+                            <select id="rear-right" name="rearRight" class="form-select">
+                                <option value="good">Good (>3mm)</option>
+                                <option value="fair">Fair (2-3mm)</option>
+                                <option value="low">Low (1.6-2mm)</option>
+                                <option value="replace">Replace (<1.6mm)</option>
+                                <option value="damaged">Damaged</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="spare-tyre">Spare Tyre</label>
+                            <select id="spare-tyre" name="spareTyre" class="form-select">
+                                <option value="full">Full Size</option>
+                                <option value="space">Space Saver</option>
+                                <option value="repair">Repair Kit</option>
+                                <option value="missing">Missing</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="locking-nuts">Locking Wheel Nuts</label>
+                            <select id="locking-nuts" name="lockingNuts" class="form-select">
+                                <option value="present">Present</option>
+                                <option value="missing">Missing</option>
+                                <option value="not-fitted">Not Fitted</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Lighting</h3>
+                    
+                    <div class="checkbox-grid cols-3">
+                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="headlights"><span>Headlights</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="taillights"><span>Taillights</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="brake-lights"><span>Brake Lights</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="indicators"><span>Indicators</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="fog-lights"><span>Fog Lights</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="reverse"><span>Reverse Lights</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="number-plate"><span>Number Plate Lights</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="interior"><span>Interior Lights</span></label>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Wipers & Glass</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="wiper-condition">Wiper Condition</label>
+                            <select id="wiper-condition" name="wiperCondition" class="form-select">
+                                <option value="good">Good</option>
+                                <option value="streaking">Streaking</option>
+                                <option value="worn">Worn</option>
+                                <option value="replace">Replace</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="windscreen">Windscreen Condition</label>
+                            <select id="windscreen" name="windscreen" class="form-select">
+                                <option value="good">Good</option>
+                                <option value="chips">Minor Chips</option>
+                                <option value="crack">Crack Present</option>
+                                <option value="replace">Replace Required</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Electrical Systems</h3>
+                    
+                    <div class="checkbox-grid cols-3">
+                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="windows"><span>Windows</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="mirrors"><span>Mirrors</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="central-locking"><span>Central Locking</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="air-con"><span>Air Conditioning</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="heater"><span>Heater</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="radio"><span>Radio/Infotainment</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="cigarette-lighter"><span>12V Socket</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="usb"><span>USB/Aux</span></label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">External Photos</label>
+                        <div id="external-photos-container"></div>
+                        <input type="hidden" id="external-photos" name="externalPhotos">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="external-notes">Notes</label>
+                        <textarea id="external-notes" name="externalNotes" class="form-textarea" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Signature <span class="required">*</span></label>
+                        <div id="signature-container"></div>
+                        <input type="hidden" id="signature" name="signature" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <a href="stage-5-mechanical.html" class="btn btn-secondary">← Back</a>
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete & Send to Valeting →</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentVehicle = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            WorkflowEngine.setStage(6);
+            loadComponents();
+            populateStaff();
+            initPhotos();
+            initSignature();
+            loadVehicle();
+            loadSavedData();
+            document.getElementById('inspection-date').valueAsDate = new Date();
+        });
+        
+        function loadComponents() {
+            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
+            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+        }
+        
+        function populateStaff() {
+            const select = document.getElementById('inspector');
+            if (STAFF_DATA) {
+                STAFF_DATA.getStaffByDept('workshop').forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = s.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+        
+        function initPhotos() {
+            document.getElementById('external-photos-container').appendChild(
+                FormComponents.createPhotoUpload({ id: 'external-photos', label: 'External Photos', maxPhotos: 8 })
+            );
+        }
+        
+        function initSignature() {
+            document.getElementById('signature-container').appendChild(
+                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
+            );
+        }
+        
+        function loadVehicle() {
+            currentVehicle = WorkflowEngine.getVehicle();
+            if (!currentVehicle) {
+                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
+                return;
+            }
+            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
+            document.getElementById('vehicle-details-content').innerHTML = `
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
+            `;
+        }
+        
+        function getFormData() {
+            const form = document.getElementById('stage-6-form');
+            const fd = new FormData(form);
+            return {
+                inspector: fd.get('inspector'),
+                inspectionDate: fd.get('inspectionDate'),
+                frontLeft: fd.get('frontLeft'),
+                frontRight: fd.get('frontRight'),
+                rearLeft: fd.get('rearLeft'),
+                rearRight: fd.get('rearRight'),
+                spareTyre: fd.get('spareTyre'),
+                lockingNuts: fd.get('lockingNuts'),
+                lights: fd.getAll('lights[]'),
+                wiperCondition: fd.get('wiperCondition'),
+                windscreen: fd.get('windscreen'),
+                electrical: fd.getAll('electrical[]'),
+                externalPhotos: document.getElementById('external-photos').value,
+                externalNotes: fd.get('externalNotes'),
+                signature: document.getElementById('signature').value
+            };
+        }
+        
+        function loadSavedData() {
+            if (!currentVehicle) return;
+            const saved = WorkflowEngine.loadStageData(6, currentVehicle.stockNo);
+            if (saved?.data) {
+                const d = saved.data;
+                if (d.inspector) document.getElementById('inspector').value = d.inspector;
+                if (d.frontLeft) document.getElementById('front-left').value = d.frontLeft;
+                if (d.frontRight) document.getElementById('front-right').value = d.frontRight;
+                if (d.rearLeft) document.getElementById('rear-left').value = d.rearLeft;
+                if (d.rearRight) document.getElementById('rear-right').value = d.rearRight;
+                if (d.spareTyre) document.getElementById('spare-tyre').value = d.spareTyre;
+                if (d.lockingNuts) document.getElementById('locking-nuts').value = d.lockingNuts;
+                if (d.wiperCondition) document.getElementById('wiper-condition').value = d.wiperCondition;
+                if (d.windscreen) document.getElementById('windscreen').value = d.windscreen;
+                if (d.externalNotes) document.getElementById('external-notes').value = d.externalNotes;
+                if (d.lights) d.lights.forEach(v => { const cb = document.querySelector(`input[value="${v}"]`); if (cb) cb.checked = true; });
+                if (d.electrical) d.electrical.forEach(v => { const cb = document.querySelector(`input[name="electrical[]"][value="${v}"]`); if (cb) cb.checked = true; });
+            }
+        }
+        
+        function saveDraft() {
+            if (!currentVehicle) return;
+            WorkflowEngine.saveStageData(6, getFormData());
+            showAlert('Draft saved', 'success');
+        }
+        
+        function completeStage() {
+            if (!currentVehicle) return;
+            const data = getFormData();
+            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
+            WorkflowEngine.completeStage(6, data);
+            showAlert('Stage 6 complete!', 'success');
+            setTimeout(() => window.location.href = 'stage-7-valeting.html', 1500);
+        }
+        
+        function showAlert(msg, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${msg}</span>`;
+            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
+    </script>
+</body>
+</html>
