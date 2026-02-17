@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 5: Mechanical & Diagnostic - Capeye Workflow</title>
+    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
+    <script src="../../data/staff/staff-list.js"></script>
+    <script src="../../data/faults/fault-types.js"></script>
+    <script src="../../js/workflow/workflow-engine.js"></script>
+    <script src="../../js/workflow/form-components.js"></script>
+</head>
+<body>
+    <div class="workflow-container">
+        <div id="stage-nav-container"></div>
+        <main class="main-content">
+            <div id="header-container"></div>
+            <div class="stage-container">
+                <div class="stage-header">
+                    <h1 class="stage-title"><span style="font-size: 2rem;">🔧</span> Stage 5: Mechanical & Diagnostic</h1>
+                    <p class="stage-description">Complete mechanical inspection, diagnostic checks, and engine servicing.</p>
+                </div>
+                
+                <div id="vehicle-info-display" class="vehicle-info-card">
+                    <div class="vehicle-info-header">
+                        <div class="vehicle-info-title">Vehicle Details</div>
+                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+                    </div>
+                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                </div>
+                
+                <form id="stage-5-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="mechanic">Lead Mechanic <span class="required">*</span></label>
+                            <select id="mechanic" name="mechanic" class="form-select" required>
+                                <option value="">Select Mechanic...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="inspection-date">Inspection Date</label>
+                            <input type="date" id="inspection-date" name="inspectionDate" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Fluid Levels & Condition</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="engine-oil">Engine Oil</label>
+                            <select id="engine-oil" name="engineOil" class="form-select">
+                                <option value="ok">OK - Level Good</option>
+                                <option value="low">Low - Top Up</option>
+                                <option value="change">Change Required</option>
+                                <option value="leak">Leak Detected</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="coolant">Coolant</label>
+                            <select id="coolant" name="coolant" class="form-select">
+                                <option value="ok">OK - Level Good</option>
+                                <option value="low">Low - Top Up</option>
+                                <option value="change">Change Required</option>
+                                <option value="leak">Leak Detected</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="brake-fluid">Brake Fluid</label>
+                            <select id="brake-fluid" name="brakeFluid" class="form-select">
+                                <option value="ok">OK</option>
+                                <option value="change">Change Required</option>
+                                <option value="contaminated">Contaminated</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="power-steering">Power Steering</label>
+                            <select id="power-steering" name="powerSteering" class="form-select">
+                                <option value="ok">OK</option>
+                                <option value="low">Low</option>
+                                <option value="leak">Leak</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Brake Inspection</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="front-brakes">Front Brake Pads</label>
+                            <select id="front-brakes" name="frontBrakes" class="form-select">
+                                <option value="good">Good (>50%)</option>
+                                <option value="fair">Fair (25-50%)</option>
+                                <option value="low">Low (<25%)</option>
+                                <option value="replace">Replace Now</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="rear-brakes">Rear Brake Pads</label>
+                            <select id="rear-brakes" name="rearBrakes" class="form-select">
+                                <option value="good">Good (>50%)</option>
+                                <option value="fair">Fair (25-50%)</option>
+                                <option value="low">Low (<25%)</option>
+                                <option value="replace">Replace Now</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="brake-discs">Brake Discs</label>
+                            <select id="brake-discs" name="brakeDiscs" class="form-select">
+                                <option value="good">Good Condition</option>
+                                <option value="lip">Lip Forming</option>
+                                <option value="warped">Warped</option>
+                                <option value="replace">Replace Required</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="handbrake">Handbrake</label>
+                            <select id="handbrake" name="handbrake" class="form-select">
+                                <option value="ok">Holds Securely</option>
+                                <option value="adjust">Needs Adjustment</option>
+                                <option value="repair">Repair Required</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Diagnostic Check</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="diagnostic-tool">Diagnostic Tool Used</label>
+                        <input type="text" id="diagnostic-tool" name="diagnosticTool" class="form-input" placeholder="e.g., Snap-on, Launch, Bosch">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="fault-codes">Fault Codes Found</label>
+                        <textarea id="fault-codes" name="faultCodes" class="form-textarea" rows="3" placeholder="List any DTCs or fault codes..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="mechanical-faults">Mechanical Faults Identified</label>
+                        <div id="fault-selector"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Engine Bay Photos</label>
+                        <div id="engine-photos-container"></div>
+                        <input type="hidden" id="engine-photos" name="enginePhotos">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="mechanical-notes">Mechanical Notes</label>
+                        <textarea id="mechanical-notes" name="mechanicalNotes" class="form-textarea" rows="4" placeholder="Detailed mechanical observations..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Mechanic Signature <span class="required">*</span></label>
+                        <div id="signature-container"></div>
+                        <input type="hidden" id="signature" name="signature" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <a href="stage-4-legal.html" class="btn btn-secondary">← Back</a>
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete & Send to External →</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentVehicle = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            WorkflowEngine.setStage(5);
+            loadComponents();
+            populateMechanics();
+            initFaultSelector();
+            initPhotos();
+            initSignature();
+            loadVehicle();
+            loadSavedData();
+            document.getElementById('inspection-date').valueAsDate = new Date();
+        });
+        
+        function loadComponents() {
+            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
+            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+        }
+        
+        function populateMechanics() {
+            const select = document.getElementById('mechanic');
+            if (STAFF_DATA) {
+                STAFF_DATA.getStaffByDept('workshop').forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = s.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+        
+        function initFaultSelector() {
+            const container = document.getElementById('fault-selector');
+            if (FAULT_DATA) {
+                const select = FormComponents.createDropdown({
+                    id: 'mechanical-faults',
+                    label: '',
+                    options: FAULT_DATA.getByCategory('mechanical').map(f => ({ value: f, label: f })),
+                    multiple: true
+                });
+                container.appendChild(select);
+            }
+        }
+        
+        function initPhotos() {
+            document.getElementById('engine-photos-container').appendChild(
+                FormComponents.createPhotoUpload({ id: 'engine-photos', label: 'Engine Bay Photos', maxPhotos: 8 })
+            );
+        }
+        
+        function initSignature() {
+            document.getElementById('signature-container').appendChild(
+                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
+            );
+        }
+        
+        function loadVehicle() {
+            currentVehicle = WorkflowEngine.getVehicle();
+            if (!currentVehicle) {
+                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
+                return;
+            }
+            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
+            document.getElementById('vehicle-details-content').innerHTML = `
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Engine</span><span class="vehicle-detail-value">${currentVehicle.fuelType}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Mileage</span><span class="vehicle-detail-value">${currentVehicle.mileage?.toLocaleString()}</span></div>
+            `;
+        }
+        
+        function getFormData() {
+            const form = document.getElementById('stage-5-form');
+            const fd = new FormData(form);
+            return {
+                mechanic: fd.get('mechanic'),
+                inspectionDate: fd.get('inspectionDate'),
+                engineOil: fd.get('engineOil'),
+                coolant: fd.get('coolant'),
+                brakeFluid: fd.get('brakeFluid'),
+                powerSteering: fd.get('powerSteering'),
+                frontBrakes: fd.get('frontBrakes'),
+                rearBrakes: fd.get('rearBrakes'),
+                brakeDiscs: fd.get('brakeDiscs'),
+                handbrake: fd.get('handbrake'),
+                diagnosticTool: fd.get('diagnosticTool'),
+                faultCodes: fd.get('faultCodes'),
+                mechanicalFaults: fd.getAll('mechanicalFaults'),
+                enginePhotos: document.getElementById('engine-photos').value,
+                mechanicalNotes: fd.get('mechanicalNotes'),
+                signature: document.getElementById('signature').value
+            };
+        }
+        
+        function loadSavedData() {
+            if (!currentVehicle) return;
+            const saved = WorkflowEngine.loadStageData(5, currentVehicle.stockNo);
+            if (saved?.data) {
+                const d = saved.data;
+                if (d.mechanic) document.getElementById('mechanic').value = d.mechanic;
+                if (d.inspectionDate) document.getElementById('inspection-date').value = d.inspectionDate;
+                if (d.engineOil) document.getElementById('engine-oil').value = d.engineOil;
+                if (d.coolant) document.getElementById('coolant').value = d.coolant;
+                if (d.brakeFluid) document.getElementById('brake-fluid').value = d.brakeFluid;
+                if (d.powerSteering) document.getElementById('power-steering').value = d.powerSteering;
+                if (d.frontBrakes) document.getElementById('front-brakes').value = d.frontBrakes;
+                if (d.rearBrakes) document.getElementById('rear-brakes').value = d.rearBrakes;
+                if (d.brakeDiscs) document.getElementById('brake-discs').value = d.brakeDiscs;
+                if (d.handbrake) document.getElementById('handbrake').value = d.handbrake;
+                if (d.diagnosticTool) document.getElementById('diagnostic-tool').value = d.diagnosticTool;
+                if (d.faultCodes) document.getElementById('fault-codes').value = d.faultCodes;
+                if (d.mechanicalNotes) document.getElementById('mechanical-notes').value = d.mechanicalNotes;
+            }
+        }
+        
+        function saveDraft() {
+            if (!currentVehicle) return;
+            WorkflowEngine.saveStageData(5, getFormData());
+            showAlert('Draft saved', 'success');
+        }
+        
+        function completeStage() {
+            if (!currentVehicle) return;
+            const data = getFormData();
+            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
+            WorkflowEngine.completeStage(5, data);
+            showAlert('Stage 5 complete!', 'success');
+            setTimeout(() => window.location.href = 'stage-6-external.html', 1500);
+        }
+        
+        function showAlert(msg, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${msg}</span>`;
+            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
+    </script>
+</body>
+</html>
