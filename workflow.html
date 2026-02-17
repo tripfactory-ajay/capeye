@@ -3,217 +3,1067 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workflow - Capeye Auto Capital</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Workflow | Capeye Auto Capital</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Capeye Design System -->
+    <link rel="stylesheet" href="./css/capeye-system.css">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background: #f1f5f9; }
-        .glass-panel { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
-        .stage-card { transition: all 0.3s ease; }
-        .stage-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
-        .view-all-btn { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
-        .view-all-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); }
+        /* Workflow-specific styles */
+        .pipeline-container {
+            margin-bottom: 32px;
+        }
+        
+        .pipeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .pipeline-stats {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .pipeline-stat {
+            text-align: center;
+        }
+        
+        .pipeline-stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+        }
+        
+        .pipeline-stat-label {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Stage Cards Grid */
+        .stages-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        
+        @media (max-width: 1200px) {
+            .stages-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stages-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .stage-card {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            padding: 20px;
+            cursor: pointer;
+            transition: all var(--cy-transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stage-card:hover {
+            border-color: var(--cy-border-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--cy-shadow-lg);
+        }
+        
+        .stage-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--stage-color, var(--cy-accent-blue));
+            opacity: 0;
+            transition: opacity var(--cy-transition-fast);
+        }
+        
+        .stage-card:hover::before {
+            opacity: 1;
+        }
+        
+        .stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .stage-number {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stage-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: var(--stage-color-soft, var(--cy-accent-blue-soft));
+            color: var(--stage-color, var(--cy-accent-blue));
+        }
+        
+        .stage-count {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .stage-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .stage-dept {
+            font-size: 12px;
+            color: var(--cy-text-muted);
+        }
+        
+        .stage-progress {
+            margin-top: 16px;
+            height: 4px;
+            background: var(--cy-bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .stage-progress-bar {
+            height: 100%;
+            background: var(--stage-color, var(--cy-accent-blue));
+            border-radius: 2px;
+            transition: width var(--cy-transition-slow);
+        }
+        
+        /* Active Vehicles Section */
+        .vehicles-section {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+        }
+        
+        @media (max-width: 1024px) {
+            .vehicles-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .vehicle-queue {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            padding: 24px;
+        }
+        
+        .queue-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--cy-border);
+            padding-bottom: 16px;
+        }
+        
+        .queue-tab {
+            padding: 8px 16px;
+            border-radius: var(--cy-radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--cy-text-secondary);
+            cursor: pointer;
+            transition: all var(--cy-transition-fast);
+            border: none;
+            background: transparent;
+        }
+        
+        .queue-tab:hover {
+            color: var(--cy-text-primary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .queue-tab.active {
+            color: var(--cy-text-primary);
+            background: var(--cy-accent-blue-soft);
+        }
+        
+        .queue-list {
+            space-y: 12px;
+        }
+        
+        .queue-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-lg);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all var(--cy-transition-fast);
+        }
+        
+        .queue-item:hover {
+            border-color: var(--cy-border-hover);
+            transform: translateX(4px);
+        }
+        
+        .queue-vehicle {
+            flex: 1;
+        }
+        
+        .queue-title {
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .queue-meta {
+            font-size: 12px;
+            color: var(--cy-text-muted);
+        }
+        
+        .queue-stage {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--cy-accent-blue-soft);
+            color: var(--cy-accent-blue);
+        }
+        
+        .queue-time {
+            text-align: right;
+        }
+        
+        .queue-days {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+        }
+        
+        .queue-days.warning {
+            color: var(--cy-accent-orange);
+        }
+        
+        .queue-days.danger {
+            color: var(--cy-accent-red);
+        }
+        
+        .queue-label {
+            font-size: 10px;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+        }
+        
+        /* Activity Feed */
+        .activity-panel {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            padding: 24px;
+        }
+        
+        .activity-timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+        
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--cy-border);
+        }
+        
+        .activity-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+        
+        .activity-item:last-child {
+            padding-bottom: 0;
+        }
+        
+        .activity-dot {
+            position: absolute;
+            left: -24px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--cy-bg-secondary);
+            border: 2px solid var(--cy-accent-blue);
+        }
+        
+        .activity-dot.completed {
+            background: var(--cy-accent-green);
+            border-color: var(--cy-accent-green);
+        }
+        
+        .activity-content {
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-lg);
+            padding: 16px;
+        }
+        
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            font-size: 13px;
+        }
+        
+        .activity-time {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+        }
+        
+        .activity-desc {
+            font-size: 12px;
+            color: var(--cy-text-secondary);
+        }
+        
+        .activity-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--cy-border);
+        }
+        
+        .activity-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cy-accent-blue), var(--cy-accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .activity-user-name {
+            font-size: 12px;
+            color: var(--cy-text-secondary);
+        }
+        
+        /* Charts Row */
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        @media (max-width: 1024px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-card {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            padding: 20px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--cy-text-primary);
+        }
+        
+        .chart-container {
+            height: 200px;
+            position: relative;
+        }
+        
+        /* Quick Actions Bar */
+        .actions-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            overflow-x: auto;
+        }
+        
+        .action-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-lg);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--cy-text-secondary);
+            cursor: pointer;
+            transition: all var(--cy-transition-fast);
+            white-space: nowrap;
+        }
+        
+        .action-chip:hover {
+            border-color: var(--cy-border-hover);
+            color: var(--cy-text-primary);
+        }
+        
+        .action-chip i {
+            color: var(--cy-accent-blue);
+        }
+        
+        /* Stage Detail Modal (simplified) */
+        .stage-detail {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            padding: 24px;
+            margin-top: 24px;
+        }
+        
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .detail-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+        }
+        
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .vehicle-table {
+            width: 100%;
+        }
+        
+        .vehicle-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--cy-border);
+        }
+        
+        .vehicle-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--cy-border);
+            font-size: 13px;
+        }
+        
+        .vehicle-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen">
-    
-    <!-- Auth Check -->
-    <script>
-        (function() {
-            const session = localStorage.getItem('capeye_session');
-            if (!session) {
-                window.location.replace('./login.html');
-                return;
-            }
-        })();
-    </script>
+<body>
+    <!-- Background Effects -->
+    <div class="cy-bg-grid"></div>
+    <div class="cy-ambient-glow" style="top: -200px; right: -200px;"></div>
+    <div class="cy-ambient-glow-red" style="bottom: -100px; left: -100px;"></div>
 
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20">
-                <div class="flex items-center">
-                    <img src="./autocapital-logo.png" alt="Auto Capital" class="h-16 w-auto object-contain" onerror="this.style.display='none'">
-                </div>
-                <div class="hidden md:flex items-center space-x-1">
-                    <a href="./index.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Dashboard</a>
-                    <a href="./operations.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Operations</a>
-                    <a href="./inventory.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Inventory</a>
-                    <a href="./workflow.html" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg border-b-2 border-blue-600">Workflow</a>
-                    <a href="./analytics.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Analytics</a>
-                    <button onclick="logout()" class="ml-4 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+    <!-- Header -->
+    <header class="cy-header">
+        <div class="cy-header-content">
+            <div class="cy-flex cy-items-center" style="gap: 32px;">
+                <a href="./index.html" class="cy-brand">
+                    <div class="cy-logo">AC</div>
+                    <div class="cy-brand-text">
+                        <h1>CAPEYE</h1>
+                        <span>Auto Capital Intelligence</span>
+                    </div>
+                </a>
+                
+                <nav class="cy-nav">
+                    <a href="./index.html" class="cy-nav-link">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="./operations.html" class="cy-nav-link">
+                        <i class="fas fa-cogs"></i> Operations
+                    </a>
+                    <a href="./inventory.html" class="cy-nav-link">
+                        <i class="fas fa-car"></i> Inventory
+                    </a>
+                    <a href="./workflow.html" class="cy-nav-link active">
+                        <i class="fas fa-tasks"></i> Workflow
+                    </a>
+                    <a href="./analytics.html" class="cy-nav-link">
+                        <i class="fas fa-chart-bar"></i> Analytics
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="cy-flex cy-items-center" style="gap: 16px;">
+                <div class="cy-dropdown">
+                    <button class="cy-dropdown-btn">
+                        <i class="fas fa-toolbox"></i>
+                        Tools
+                        <i class="fas fa-chevron-down" style="font-size: 10px;"></i>
                     </button>
+                    <div class="cy-dropdown-menu">
+                        <a href="https://myclickdealer.co.uk" target="_blank" class="cy-dropdown-item">
+                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-blue);">
+                                <i class="fas fa-mouse-pointer"></i>
+                            </div>
+                            <div>
+                                <div class="tool-title">Click Dealer</div>
+                                <div class="tool-desc">DMS & Stock</div>
+                            </div>
+                        </a>
+                        <a href="https://autocapital.co.uk" target="_blank" class="cy-dropdown-item">
+                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-green);">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>
+                                <div class="tool-title">Auto Capital</div>
+                                <div class="tool-desc">Website</div>
+                            </div>
+                        </a>
+                        <a href="https://www.gov.uk/get-vehicle-information-from-dvla" target="_blank" class="cy-dropdown-item">
+                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-orange);">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div>
+                                <div class="tool-title">DVLA Check</div>
+                                <div class="tool-desc">Vehicle Info</div>
+                            </div>
+                        </a>
+                        <a href="https://www.hpicheck.com" target="_blank" class="cy-dropdown-item">
+                            <div class="cy-dropdown-icon" style="color: #ec4899;">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div>
+                                <div class="tool-title">HPI Check</div>
+                                <div class="tool-desc">History</div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
-                <div class="md:hidden flex items-center">
-                    <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-slate-900 p-2">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-slate-200">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="./index.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Dashboard</a>
-                <a href="./operations.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Operations</a>
-                <a href="./inventory.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Inventory</a>
-                <a href="./workflow.html" class="block px-3 py-2 text-base font-medium text-blue-600 bg-blue-50 rounded-md">Workflow</a>
-                <a href="./analytics.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Analytics</a>
-                <button onclick="logout()" class="w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md">Logout</button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-slate-900">Vehicle Preparation Workflow</h1>
-                <p class="mt-2 text-slate-600">12-stage pipeline from intake to customer delivery</p>
-            </div>
-            <div class="mt-4 md:mt-0">
-                <button onclick="viewAllForms()" class="view-all-btn text-white px-6 py-3 rounded-lg font-medium transition flex items-center">
-                    <i class="fas fa-th-large mr-2"></i>View All Forms
+                
+                <button onclick="logout()" class="cy-nav-link" style="color: var(--cy-accent-red);">
+                    <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
         </div>
+    </header>
 
-        <!-- Progress Overview -->
-        <div class="glass-panel rounded-xl p-6 mb-8 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-slate-800">Pipeline Overview</h2>
-                <span id="activeVehiclesCount" class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">0 Active Vehicles</span>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" id="pipelineStats">
-                <!-- Stats injected by JS -->
-            </div>
-        </div>
-
-        <!-- 12 Stage Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="stageGrid">
-            <!-- Stage cards injected by JS -->
-        </div>
-
-        <!-- View All Forms Modal (Hidden by default) -->
-        <div id="allFormsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-slate-900">All Workflow Forms</h2>
-                    <button onclick="closeAllForms()" class="text-slate-400 hover:text-slate-600">
-                        <i class="fas fa-times text-2xl"></i>
-                    </button>
+    <!-- Main Content -->
+    <main class="cy-container">
+        
+        <!-- Page Header -->
+        <div class="cy-section">
+            <div class="cy-flex cy-justify-between cy-items-end">
+                <div>
+                    <h2 class="cy-font-display" style="font-size: 32px; font-weight: 700; margin-bottom: 8px;">
+                        Workflow <span style="color: var(--cy-accent-blue);">Pipeline</span>
+                    </h2>
+                    <p class="cy-text-secondary">12-stage vehicle preparation and sales process</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="allFormsGrid">
-                    <!-- All form links -->
+                <div class="cy-live-badge">
+                    <div class="cy-live-dot"></div>
+                    <span>Live</span>
                 </div>
             </div>
         </div>
+
+        <!-- Quick Actions -->
+        <div class="actions-bar">
+            <div class="action-chip" onclick="quickAction('intake')">
+                <i class="fas fa-plus-circle"></i>
+                New Intake
+            </div>
+            <div class="action-chip" onclick="quickAction('search')">
+                <i class="fas fa-search"></i>
+                Find Vehicle
+            </div>
+            <div class="action-chip" onclick="quickAction('overdue')">
+                <i class="fas fa-exclamation-triangle"></i>
+                Overdue Items
+            </div>
+            <div class="action-chip" onclick="quickAction('complete')">
+                <i class="fas fa-check-double"></i>
+                Recently Completed
+            </div>
+            <div class="action-chip" onclick="quickAction('report')">
+                <i class="fas fa-file-export"></i>
+                Export Report
+            </div>
+        </div>
+
+        <!-- Pipeline Overview -->
+        <div class="pipeline-container">
+            <div class="pipeline-header">
+                <div class="cy-section-title">
+                    <i class="fas fa-project-diagram" style="color: var(--cy-accent-blue);"></i>
+                    Stage Overview
+                </div>
+                <div class="pipeline-stats">
+                    <div class="pipeline-stat">
+                        <div class="pipeline-stat-value" id="totalInPipeline">0</div>
+                        <div class="pipeline-stat-label">In Pipeline</div>
+                    </div>
+                    <div class="pipeline-stat">
+                        <div class="pipeline-stat-value" id="avgTime">0d</div>
+                        <div class="pipeline-stat-label">Avg Time</div>
+                    </div>
+                    <div class="pipeline-stat">
+                        <div class="pipeline-stat-value" id="completedToday">0</div>
+                        <div class="pipeline-stat-label">Done Today</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stages-grid" id="stagesGrid">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Stage Distribution</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="stageChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Daily Throughput</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="throughputChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Bottlenecks</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="bottleneckChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicles & Activity -->
+        <div class="vehicles-section">
+            <!-- Vehicle Queue -->
+            <div class="vehicle-queue">
+                <div class="cy-section-header" style="margin-bottom: 20px;">
+                    <div class="cy-section-title">
+                        <i class="fas fa-list" style="color: var(--cy-accent-green);"></i>
+                        Active Vehicles
+                    </div>
+                </div>
+                
+                <div class="queue-tabs">
+                    <button class="queue-tab active" onclick="switchTab('all')">All Active</button>
+                    <button class="queue-tab" onclick="switchTab('overdue')">Overdue</button>
+                    <button class="queue-tab" onclick="switchTab('today')">Due Today</button>
+                    <button class="queue-tab" onclick="switchTab('mine')">My Tasks</button>
+                </div>
+                
+                <div class="queue-list" id="vehicleQueue">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="activity-panel">
+                <div class="cy-section-header" style="margin-bottom: 20px;">
+                    <div class="cy-section-title">
+                        <i class="fas fa-history" style="color: var(--cy-accent-purple);"></i>
+                        Recent Activity
+                    </div>
+                </div>
+                
+                <div class="activity-timeline" id="activityFeed">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+        </div>
+
     </main>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./js/capeye-core.js"></script>
     <script>
-        // Workflow stages configuration with CORRECT file paths
-        const workflowStages = [
-            { id: 1, name: 'Vehicle Intake', file: 'stage-1-intake.html', dept: 'Sales', icon: '📋', color: 'blue', desc: 'Initial vehicle reception and documentation' },
-            { id: 2, name: 'Bodywork & Cosmetic', file: 'stage-2-bodywork.html', dept: 'Bodyshop', icon: '🎨', color: 'purple', desc: 'Assess dents, scratches, rust, panel alignment' },
-            { id: 3, name: 'Dent & Paint Repairs', file: 'stage-3-paint.html', dept: 'Bodyshop', icon: '🖌️', color: 'purple', desc: 'Execute repairs and paint refinishing' },
-            { id: 4, name: 'Legal & Documentation', file: 'stage-4-legal.html', dept: 'Admin', icon: '📄', color: 'slate', desc: 'Verify V5, MOT, service history' },
-            { id: 5, name: 'Mechanical & Diagnostic', file: 'stage-5-mechanical.html', dept: 'Workshop', icon: '🔧', color: 'orange', desc: 'Mechanical inspection and servicing' },
-            { id: 6, name: 'External & Electrical', file: 'stage-6-external.html', dept: 'Workshop', icon: '⚡', color: 'orange', desc: 'Tyres, lights, wipers, electrics' },
-            { id: 7, name: 'Interior & Valeting', file: 'stage-7-valeting.html', dept: 'Valeting', icon: '✨', color: 'green', desc: 'Deep clean and prepare for display' },
-            { id: 8, name: 'Fault Overview', file: 'stage-8-faults.html', dept: 'Workshop', icon: '📊', color: 'orange', desc: 'Workshop lead review and sign-off' },
-            { id: 9, name: 'Ready for Advertising', file: 'stage-9-advertising.html', dept: 'Sales', icon: '📸', color: 'blue', desc: 'Photography and pricing' },
-            { id: 10, name: 'Customer Delivery', file: 'stage-10-delivery.html', dept: 'Sales', icon: '🚗', color: 'blue', desc: 'Customer handover and documentation' },
-            { id: 11, name: 'Accounts & Warranty', file: 'stage-11-accounts.html', dept: 'Accounts', icon: '💰', color: 'slate', desc: 'Payment processing and warranty' },
-            { id: 12, name: 'Management Overview', file: 'stage-12-management.html', dept: 'Management', icon: '👔', color: 'indigo', desc: 'Final review and archive' }
+        // Stage definitions with colors
+        const stages = [
+            { id: 1, name: 'Vehicle Intake', dept: 'Sales', icon: 'fa-clipboard-check', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.1)' },
+            { id: 2, name: 'Bodywork', dept: 'Bodyshop', icon: 'fa-spray-can', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.1)' },
+            { id: 3, name: 'Paint Repairs', dept: 'Bodyshop', icon: 'fa-paint-roller', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.1)' },
+            { id: 4, name: 'Legal & Docs', dept: 'Accounts', icon: 'fa-file-contract', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.1)' },
+            { id: 5, name: 'Mechanical', dept: 'Workshop', icon: 'fa-wrench', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.1)' },
+            { id: 6, name: 'External', dept: 'Workshop', icon: 'fa-bolt', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.1)' },
+            { id: 7, name: 'Valeting', dept: 'Valeting', icon: 'fa-sparkles', color: '#10b981', colorSoft: 'rgba(16, 185, 129, 0.1)' },
+            { id: 8, name: 'Fault Overview', dept: 'Workshop', icon: 'fa-clipboard-list', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.1)' },
+            { id: 9, name: 'Advertising', dept: 'Sales', icon: 'fa-camera', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.1)' },
+            { id: 10, name: 'Delivery', dept: 'Sales', icon: 'fa-handshake', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.1)' },
+            { id: 11, name: 'Accounts', dept: 'Accounts', icon: 'fa-calculator', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.1)' },
+            { id: 12, name: 'Management', dept: 'Mgmt', icon: 'fa-user-tie', color: '#6366f1', colorSoft: 'rgba(99, 102, 241, 0.1)' }
         ];
+
+        let currentTab = 'all';
+        let charts = {};
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            renderStageCards();
-            loadPipelineStats();
-            renderAllFormsGrid();
+            loadStages();
+            loadVehicleQueue();
+            loadActivityFeed();
+            initCharts();
+            updateStats();
         });
 
-        function renderStageCards() {
-            const container = document.getElementById('stageGrid');
-            container.innerHTML = workflowStages.map(stage => `
-                <a href="./workflow/stages/${stage.file}" class="stage-card block bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="w-12 h-12 bg-${stage.color}-100 rounded-lg flex items-center justify-center text-2xl">
-                            ${stage.icon}
-                        </div>
-                        <span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-xs font-medium">${stage.dept}</span>
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-900 mb-1">Stage ${stage.id}</h3>
-                    <p class="font-medium text-slate-800 mb-2">${stage.name}</p>
-                    <p class="text-sm text-slate-600 mb-4">${stage.desc}</p>
-                    <div class="flex items-center text-${stage.color}-600 font-medium text-sm">
-                        Open Form <i class="fas fa-arrow-right ml-2"></i>
-                    </div>
-                </a>
-            `).join('');
-        }
-
-        function loadPipelineStats() {
+        function loadStages() {
             const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            const activeVehicles = vehicles.filter(v => v.workflowStage && v.workflowStage < 12);
+            const container = document.getElementById('stagesGrid');
             
-            document.getElementById('activeVehiclesCount').textContent = `${activeVehicles.length} Active Vehicles`;
+            // Count vehicles per stage
+            const stageCounts = {};
+            stages.forEach(s => stageCounts[s.id] = 0);
             
-            const stats = workflowStages.map(stage => {
-                const count = vehicles.filter(v => v.workflowStage === stage.id).length;
-                return { ...stage, count };
+            vehicles.forEach(v => {
+                const stage = v.workflowStage || 1;
+                if (stageCounts.hasOwnProperty(stage)) stageCounts[stage]++;
             });
             
-            document.getElementById('pipelineStats').innerHTML = stats.map(stat => `
-                <a href="./workflow/stages/${stat.file}" class="bg-white p-3 rounded-lg border border-slate-200 text-center hover:shadow-md transition">
-                    <div class="text-2xl font-bold text-${stat.color}-600">${stat.count}</div>
-                    <div class="text-xs text-slate-600 mt-1 truncate">${stat.name}</div>
-                </a>
+            // Calculate total in pipeline (not sold)
+            const inPipeline = vehicles.filter(v => v.status !== 'Sold').length;
+            document.getElementById('totalInPipeline').textContent = inPipeline;
+            
+            container.innerHTML = stages.map(stage => {
+                const count = stageCounts[stage.id] || 0;
+                const totalInPipeline = inPipeline || 1;
+                const percentage = (count / totalInPipeline) * 100;
+                
+                return `
+                    <div class="stage-card" 
+                         style="--stage-color: ${stage.color}; --stage-color-soft: ${stage.colorSoft};"
+                         onclick="openStage(${stage.id})">
+                        <div class="stage-header">
+                            <span class="stage-number">Stage ${stage.id}</span>
+                            <div class="stage-icon" style="background: ${stage.colorSoft}; color: ${stage.color};">
+                                <i class="fas ${stage.icon}"></i>
+                            </div>
+                        </div>
+                        <div class="stage-count">${count}</div>
+                        <div class="stage-name">${stage.name}</div>
+                        <div class="stage-dept">${stage.dept}</div>
+                        <div class="stage-progress">
+                            <div class="stage-progress-bar" style="width: ${percentage}%; background: ${stage.color};"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadVehicleQueue() {
+            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            const now = new Date();
+            
+            let filtered = vehicles.filter(v => v.workflowStage && v.workflowStage < 12 && v.status !== 'Sold');
+            
+            if (currentTab === 'overdue') {
+                filtered = filtered.filter(v => {
+                    const stageData = JSON.parse(localStorage.getItem(`capeye_workflow_stage_${v.workflowStage}_${v.stockNo}`) || '{}');
+                    const timestamp = stageData.timestamp ? new Date(stageData.timestamp) : new Date(v.dateInStock);
+                    const days = Math.floor((now - timestamp) / (1000 * 60 * 60 * 24));
+                    return days > 5;
+                });
+            } else if (currentTab === 'today') {
+                filtered = filtered.filter(v => v.workflowStage === 1); // New intakes today
+            } else if (currentTab === 'mine') {
+                filtered = filtered.slice(0, 3); // Mock assigned vehicles
+            }
+            
+            // Sort by days at stage
+            filtered = filtered.map(v => {
+                const stageData = JSON.parse(localStorage.getItem(`capeye_workflow_stage_${v.workflowStage}_${v.stockNo}`) || '{}');
+                const timestamp = stageData.timestamp ? new Date(stageData.timestamp) : new Date(v.dateInStock);
+                const days = Math.floor((now - timestamp) / (1000 * 60 * 60 * 24));
+                return { ...v, daysAtStage: days };
+            }).sort((a, b) => b.daysAtStage - a.daysAtStage).slice(0, 6);
+            
+            const container = document.getElementById('vehicleQueue');
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--cy-text-muted);">
+                        <i class="fas fa-check-circle" style="font-size: 32px; margin-bottom: 12px; opacity: 0.5;"></i>
+                        <p>No vehicles in this queue</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(v => {
+                const stage = stages.find(s => s.id === v.workflowStage) || stages[0];
+                const daysClass = v.daysAtStage > 7 ? 'danger' : v.daysAtStage > 3 ? 'warning' : '';
+                
+                return `
+                    <div class="queue-item" onclick="viewVehicle('${v.stockNo}')">
+                        <div class="queue-vehicle">
+                            <div class="queue-title">${v.make} ${v.model}</div>
+                            <div class="queue-meta">${v.stockNo} • ${v.registration || 'No Reg'}</div>
+                        </div>
+                        <span class="queue-stage" style="background: ${stage.colorSoft}; color: ${stage.color};">
+                            ${stage.name}
+                        </span>
+                        <div class="queue-time">
+                            <div class="queue-days ${daysClass}">${v.daysAtStage}d</div>
+                            <div class="queue-label">at stage</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadActivityFeed() {
+            const activities = [
+                { title: 'Vehicle Intake Completed', desc: 'Ford Transit (R0218) entered Stage 1', time: '10 min ago', user: 'Ibrahim Ata', completed: true },
+                { title: 'Mechanical Work Started', desc: 'VW Crafter (R0461) moved to Stage 5', time: '32 min ago', user: 'Ali Amood', completed: true },
+                { title: 'Valeting Completed', desc: 'Mercedes Sprinter (11064) finished Stage 7', time: '1 hour ago', user: 'Marcin Kiljan', completed: true },
+                { title: 'Ready for Advertising', desc: 'Peugeot Boxer (R0523) entered Stage 9', time: '2 hours ago', user: 'Keith Hardy', completed: false },
+                { title: 'Bodywork Assessment', desc: 'Renault Master (R0489) moved to Stage 2', time: '3 hours ago', user: 'Stash', completed: false }
+            ];
+            
+            const container = document.getElementById('activityFeed');
+            container.innerHTML = activities.map(act => `
+                <div class="activity-item">
+                    <div class="activity-dot ${act.completed ? 'completed' : ''}"></div>
+                    <div class="activity-content">
+                        <div class="activity-header">
+                            <div class="activity-title">${act.title}</div>
+                            <div class="activity-time">${act.time}</div>
+                        </div>
+                        <div class="activity-desc">${act.desc}</div>
+                        <div class="activity-user">
+                            <div class="activity-avatar">${act.user.split(' ').map(n => n[0]).join('')}</div>
+                            <div class="activity-user-name">${act.user}</div>
+                        </div>
+                    </div>
+                </div>
             `).join('');
         }
 
-        function viewAllForms() {
-            document.getElementById('allFormsModal').classList.remove('hidden');
+        function initCharts() {
+            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            const stageCounts = stages.map(s => vehicles.filter(v => (v.workflowStage || 1) === s.id).length);
+            
+            // Stage Distribution Chart
+            const stageCtx = document.getElementById('stageChart').getContext('2d');
+            charts.stage = new Chart(stageCtx, {
+                type: 'bar',
+                data: {
+                    labels: stages.map(s => `S${s.id}`),
+                    datasets: [{
+                        label: 'Vehicles',
+                        data: stageCounts,
+                        backgroundColor: stages.map(s => s.color),
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { size: 10 } } },
+                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                    }
+                }
+            });
+            
+            // Throughput Chart
+            const throughputCtx = document.getElementById('throughputChart').getContext('2d');
+            charts.throughput = new Chart(throughputCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Completed',
+                        data: [3, 5, 4, 6, 4, 2, 3],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'New',
+                        data: [4, 3, 5, 4, 5, 3, 4],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { size: 10 } } },
+                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                    }
+                }
+            });
+            
+            // Bottleneck Chart (horizontal bar)
+            const bottleneckCtx = document.getElementById('bottleneckChart').getContext('2d');
+            const bottleneckData = stageCounts.map((count, i) => ({ stage: `S${i+1}`, count })).sort((a, b) => b.count - a.count).slice(0, 5);
+            
+            charts.bottleneck = new Chart(bottleneckCtx, {
+                type: 'bar',
+                data: {
+                    labels: bottleneckData.map(d => d.stage),
+                    datasets: [{
+                        label: 'Days',
+                        data: bottleneckData.map(d => d.count * 2), // Mock calculation
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { size: 10 } } },
+                        y: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                    }
+                }
+            });
         }
 
-        function closeAllForms() {
-            document.getElementById('allFormsModal').classList.add('hidden');
+        function updateStats() {
+            // Mock average time calculation
+            document.getElementById('avgTime').textContent = '12d';
+            document.getElementById('completedToday').textContent = '4';
         }
 
-        function renderAllFormsGrid() {
-            const container = document.getElementById('allFormsGrid');
-            container.innerHTML = workflowStages.map(stage => `
-                <a href="./workflow/stages/${stage.file}" class="flex items-center p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition">
-                    <div class="w-10 h-10 bg-${stage.color}-100 rounded-lg flex items-center justify-center text-xl mr-4">
-                        ${stage.icon}
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-medium text-slate-900">Stage ${stage.id}: ${stage.name}</p>
-                        <p class="text-xs text-slate-500">${stage.dept}</p>
-                    </div>
-                    <i class="fas fa-external-link-alt text-slate-400"></i>
-                </a>
-            `).join('');
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.queue-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            loadVehicleQueue();
         }
 
-        function toggleMobileMenu() {
-            document.getElementById('mobileMenu').classList.toggle('hidden');
+        function openStage(stageId) {
+            const stage = stages.find(s => s.id === stageId);
+            window.location.href = `./workflow/stages/stage-${stageId}-${Capeye.getStageFileName(stageId)}.html`;
         }
 
-        function logout() {
-            localStorage.removeItem('capeye_session');
-            window.location.replace('./login.html');
+        function viewVehicle(stockNo) {
+            window.location.href = `./vehicle-detail.html?stock=${stockNo}`;
         }
 
-        // Close modal on outside click
-        document.getElementById('allFormsModal').addEventListener('click', function(e) {
-            if (e.target === this) closeAllForms();
-        });
+        function quickAction(action) {
+            switch(action) {
+                case 'intake':
+                    window.location.href = './workflow/stages/stage-1-intake.html';
+                    break;
+                case 'search':
+                    document.getElementById('vehicleQueue').scrollIntoView({ behavior: 'smooth' });
+                    break;
+                case 'overdue':
+                    switchTab('overdue');
+                    break;
+                case 'complete':
+                    Capeye.notify('Showing recently completed items', 'success');
+                    break;
+                case 'report':
+                    Capeye.notify('Generating workflow report...', 'info');
+                    break;
+            }
+        }
+
+        // Refresh function
+        window.refreshData = function() {
+            loadStages();
+            loadVehicleQueue();
+            updateStats();
+            
+            // Update charts
+            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            const stageCounts = stages.map(s => vehicles.filter(v => (v.workflowStage || 1) === s.id).length);
+            
+            if (charts.stage) {
+                charts.stage.data.datasets[0].data = stageCounts;
+                charts.stage.update();
+            }
+        };
     </script>
 </body>
 </html>
