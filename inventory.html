@@ -3,264 +3,1226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory - Capeye Auto Capital</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Inventory | Capeye Auto Capital</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Capeye Design System -->
+    <link rel="stylesheet" href="./css/capeye-system.css">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background: #f1f5f9; }
-        .glass-panel { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        /* Inventory-specific styles */
+        .inv-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+        }
+        
+        @media (max-width: 1024px) {
+            .inv-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .filter-sidebar {
+            position: sticky;
+            top: 96px;
+            height: fit-content;
+        }
+        
+        .filter-group {
+            margin-bottom: 20px;
+        }
+        
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .filter-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .filter-clear {
+            font-size: 11px;
+            color: var(--cy-accent-blue);
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .filter-clear:hover {
+            text-decoration: underline;
+        }
+        
+        .checkbox-list {
+            space-y: 8px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            cursor: pointer;
+        }
+        
+        .checkbox-item:hover {
+            color: var(--cy-text-primary);
+        }
+        
+        .cy-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--cy-border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--cy-transition-fast);
+            flex-shrink: 0;
+        }
+        
+        .checkbox-item:hover .cy-checkbox {
+            border-color: var(--cy-accent-blue);
+        }
+        
+        .checkbox-item.checked .cy-checkbox {
+            background: var(--cy-accent-blue);
+            border-color: var(--cy-accent-blue);
+        }
+        
+        .checkbox-label {
+            font-size: 13px;
+            color: var(--cy-text-secondary);
+            flex: 1;
+        }
+        
+        .checkbox-count {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+            background: var(--cy-bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .price-range {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .price-input {
+            width: 100px;
+            padding: 8px 12px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-md);
+            font-size: 13px;
+            color: var(--cy-text-primary);
+        }
+        
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+        }
+        
+        .search-box {
+            position: relative;
+            width: 320px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-lg);
+            font-size: 14px;
+            color: var(--cy-text-primary);
+            transition: all var(--cy-transition-fast);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--cy-accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--cy-text-muted);
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .view-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--cy-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid var(--cy-border);
+            color: var(--cy-text-muted);
+            cursor: pointer;
+            transition: all var(--cy-transition-fast);
+        }
+        
+        .view-btn:hover {
+            border-color: var(--cy-border-hover);
+            color: var(--cy-text-primary);
+        }
+        
+        .view-btn.active {
+            background: var(--cy-accent-blue-soft);
+            border-color: var(--cy-accent-blue);
+            color: var(--cy-accent-blue);
+        }
+        
+        .sort-select {
+            padding: 8px 32px 8px 12px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-md);
+            font-size: 13px;
+            color: var(--cy-text-primary);
+            cursor: pointer;
+        }
+        
+        /* Vehicle Grid View */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .vehicle-card {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            overflow: hidden;
+            transition: all var(--cy-transition-base);
+            cursor: pointer;
+        }
+        
+        .vehicle-card:hover {
+            border-color: var(--cy-border-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--cy-shadow-lg);
+        }
+        
+        .vehicle-image {
+            height: 180px;
+            background: linear-gradient(135deg, var(--cy-bg-tertiary) 0%, var(--cy-bg-elevated) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .vehicle-image-placeholder {
+            font-size: 48px;
+            color: var(--cy-text-muted);
+            opacity: 0.3;
+        }
+        
+        .vehicle-badges {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .vehicle-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .vehicle-badge.status-instock {
+            background: var(--cy-accent-green-soft);
+            color: var(--cy-accent-green);
+        }
+        
+        .vehicle-badge.status-transit {
+            background: var(--cy-accent-orange-soft);
+            color: var(--cy-accent-orange);
+        }
+        
+        .vehicle-badge.status-sold {
+            background: var(--cy-accent-blue-soft);
+            color: var(--cy-accent-blue);
+        }
+        
+        .vehicle-days {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 10px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .vehicle-days.warning {
+            background: rgba(220, 38, 38, 0.8);
+        }
+        
+        .vehicle-info {
+            padding: 20px;
+        }
+        
+        .vehicle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .vehicle-title {
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            font-size: 16px;
+            line-height: 1.3;
+        }
+        
+        .vehicle-stock {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 12px;
+            color: var(--cy-accent-blue);
+            font-weight: 600;
+        }
+        
+        .vehicle-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .vehicle-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--cy-text-secondary);
+        }
+        
+        .vehicle-detail i {
+            color: var(--cy-text-muted);
+            width: 14px;
+        }
+        
+        .vehicle-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--cy-border);
+        }
+        
+        .vehicle-price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+        }
+        
+        .vehicle-price-label {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+        }
+        
+        .vehicle-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .vehicle-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--cy-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            color: var(--cy-text-secondary);
+            cursor: pointer;
+            transition: all var(--cy-transition-fast);
+        }
+        
+        .vehicle-action-btn:hover {
+            border-color: var(--cy-accent-blue);
+            color: var(--cy-accent-blue);
+        }
+        
+        /* Vehicle List View */
+        .vehicle-list {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            overflow: hidden;
+        }
+        
+        .list-header {
+            display: grid;
+            grid-template-columns: 60px 2fr 1fr 1fr 120px 100px 80px;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--cy-bg-tertiary);
+            border-bottom: 1px solid var(--cy-border);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .list-row {
+            display: grid;
+            grid-template-columns: 60px 2fr 1fr 1fr 120px 100px 80px;
+            gap: 16px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--cy-border);
+            align-items: center;
+            transition: all var(--cy-transition-fast);
+        }
+        
+        .list-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .list-row:last-child {
+            border-bottom: none;
+        }
+        
+        .list-thumb {
+            width: 60px;
+            height: 40px;
+            background: var(--cy-bg-tertiary);
+            border-radius: var(--cy-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--cy-text-muted);
+        }
+        
+        .list-vehicle {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .list-title {
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            font-size: 14px;
+        }
+        
+        .list-stock {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px;
+            color: var(--cy-accent-blue);
+        }
+        
+        .list-location, .list-status {
+            font-size: 13px;
+            color: var(--cy-text-secondary);
+        }
+        
+        .list-price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+            font-size: 14px;
+        }
+        
+        .list-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 32px;
+        }
+        
+        .page-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 12px;
+            border-radius: var(--cy-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            color: var(--cy-text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--cy-transition-fast);
+        }
+        
+        .page-btn:hover {
+            border-color: var(--cy-border-hover);
+            color: var(--cy-text-primary);
+        }
+        
+        .page-btn.active {
+            background: var(--cy-accent-blue);
+            border-color: var(--cy-accent-blue);
+            color: white;
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--cy-text-muted);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--cy-text-muted);
+        }
+        
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            opacity: 0.3;
+        }
+        
+        .empty-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .empty-text {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .vehicle-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .list-header,
+            .list-row {
+                display: none;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .toolbar {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen">
-    
-    <!-- Auth Check -->
-    <script>
-        (function() {
-            const session = localStorage.getItem('capeye_session');
-            if (!session) {
-                sessionStorage.setItem('redirect_after_login', window.location.href);
-                window.location.replace('./login.html');
-                return;
-            }
-        })();
-    </script>
+<body>
+    <!-- Background Effects -->
+    <div class="cy-bg-grid"></div>
+    <div class="cy-ambient-glow" style="top: -200px; right: -200px;"></div>
+    <div class="cy-ambient-glow-red" style="bottom: -100px; left: -100px;"></div>
 
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <img src="./autocapital-logo.png" alt="Auto Capital" class="h-10 w-auto object-contain" onerror="this.style.display='none'">
-                    <span class="ml-3 text-xl font-bold text-slate-800">Inventory</span>
-                </div>
-                <div class="hidden md:flex items-center space-x-1">
-                    <a href="./index.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Dashboard</a>
-                    <a href="./operations.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Operations</a>
-                    <a href="./inventory.html" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg border-b-2 border-blue-600">Inventory</a>
-                    <a href="./workflow.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Workflow</a>
-                    <a href="./analytics.html" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">Analytics</a>
-                    <button onclick="logout()" class="ml-4 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+    <!-- Header -->
+    <header class="cy-header">
+        <div class="cy-header-content">
+            <div class="cy-flex cy-items-center" style="gap: 32px;">
+                <a href="./index.html" class="cy-brand">
+                    <div class="cy-logo">AC</div>
+                    <div class="cy-brand-text">
+                        <h1>CAPEYE</h1>
+                        <span>Auto Capital Intelligence</span>
+                    </div>
+                </a>
+                
+                <nav class="cy-nav">
+                    <a href="./index.html" class="cy-nav-link">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="./operations.html" class="cy-nav-link">
+                        <i class="fas fa-cogs"></i> Operations
+                    </a>
+                    <a href="./inventory.html" class="cy-nav-link active">
+                        <i class="fas fa-car"></i> Inventory
+                    </a>
+                    <a href="./workflow.html" class="cy-nav-link">
+                        <i class="fas fa-tasks"></i> Workflow
+                    </a>
+                    <a href="./analytics.html" class="cy-nav-link">
+                        <i class="fas fa-chart-bar"></i> Analytics
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="cy-flex cy-items-center" style="gap: 16px;">
+                <div class="cy-dropdown">
+                    <button class="cy-dropdown-btn">
+                        <i class="fas fa-toolbox"></i>
+                        Tools
+                        <i class="fas fa-chevron-down" style="font-size: 10px;"></i>
                     </button>
+                    <div class="cy-dropdown-menu">
+                        <a href="https://myclickdealer.co.uk" target="_blank" class="cy-dropdown-item">
+                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-blue);">
+                                <i class="fas fa-mouse-pointer"></i>
+                            </div>
+                            <div>
+                                <div class="tool-title">Click Dealer</div>
+                                <div class="tool-desc">DMS & Stock</div>
+                            </div>
+                        </a>
+                        <a href="https://autocapital.co.uk" target="_blank" class="cy-dropdown-item">
+                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-green);">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>
+                                <div class="tool-title">Auto Capital</div>
+                                <div class="tool-desc">Website</div>
+                            </div>
+                        </a>
+                        <a href="https://www.gov.uk/get-vehicle-information-from-dvla" target="_blank" class="cy-dropdown-item">
+                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-orange);">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div>
+                                <div class="tool-title">DVLA Check</div>
+                                <div class="tool-desc">Vehicle Info</div>
+                            </div>
+                        </a>
+                        <a href="https://www.hpicheck.com" target="_blank" class="cy-dropdown-item">
+                            <div class="cy-dropdown-icon" style="color: #ec4899;">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div>
+                                <div class="tool-title">HPI Check</div>
+                                <div class="tool-desc">History</div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-slate-900 p-2">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                </div>
+                
+                <button onclick="logout()" class="cy-nav-link" style="color: var(--cy-accent-red);">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
             </div>
         </div>
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-slate-200">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="./index.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Dashboard</a>
-                <a href="./operations.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Operations</a>
-                <a href="./inventory.html" class="block px-3 py-2 text-base font-medium text-blue-600 bg-blue-50 rounded-md">Inventory</a>
-                <a href="./workflow.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Workflow</a>
-                <a href="./analytics.html" class="block px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md">Analytics</a>
-                <button onclick="logout()" class="w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md">Logout</button>
-            </div>
-        </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <h1 class="text-3xl font-bold text-slate-900">Vehicle Inventory</h1>
-            <div class="mt-4 md:mt-0 flex gap-3">
-                <a href="./import.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
-                    <i class="fas fa-plus mr-2"></i>Import Stock
-                </a>
-            </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="glass-panel rounded-xl p-4 mb-6 shadow-sm">
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="flex-1">
-                    <input type="text" id="searchInput" placeholder="Search by stock number, reg, make or model..." 
-                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                           onkeyup="filterInventory()">
+    <main class="cy-container">
+        
+        <!-- Page Header -->
+        <div class="cy-section">
+            <div class="cy-flex cy-justify-between cy-items-end">
+                <div>
+                    <h2 class="cy-font-display" style="font-size: 32px; font-weight: 700; margin-bottom: 8px;">
+                        Vehicle <span style="color: var(--cy-accent-blue);">Inventory</span>
+                    </h2>
+                    <p class="cy-text-secondary">Manage stock, track vehicles, and monitor inventory levels</p>
                 </div>
-                <div class="flex gap-3">
-                    <select id="statusFilter" onchange="filterInventory()" class="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Statuses</option>
-                        <option value="In Stock">In Stock</option>
-                        <option value="In Transit">In Transit</option>
-                        <option value="Off-site R">Off-site R</option>
-                        <option value="Subject to">Subject to</option>
-                        <option value="Sold">Sold</option>
-                    </select>
-                    <select id="locationFilter" onchange="filterInventory()" class="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Locations</option>
-                        <option value="Stanmore Retail">Stanmore Retail</option>
-                        <option value="Stanmore 2">Stanmore 2</option>
-                        <option value="Stanmore PDI">Stanmore PDI</option>
-                        <option value="With Supplier">With Supplier</option>
-                        <option value="ACL">ACL</option>
-                    </select>
+                <div class="cy-live-badge">
+                    <div class="cy-live-dot"></div>
+                    <span>Live</span>
                 </div>
             </div>
         </div>
 
-        <!-- Inventory Table -->
-        <div class="glass-panel rounded-xl shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-50 text-slate-600 text-sm uppercase">
-                        <tr>
-                            <th class="px-4 py-3 cursor-pointer hover:bg-slate-100" onclick="sortTable('stockNo')">Stock No <i class="fas fa-sort ml-1"></i></th>
-                            <th class="px-4 py-3 cursor-pointer hover:bg-slate-100" onclick="sortTable('registration')">Registration <i class="fas fa-sort ml-1"></i></th>
-                            <th class="px-4 py-3 cursor-pointer hover:bg-slate-100" onclick="sortTable('make')">Vehicle <i class="fas fa-sort ml-1"></i></th>
-                            <th class="px-4 py-3">Location</th>
-                            <th class="px-4 py-3">Status</th>
-                            <th class="px-4 py-3 text-right">Cost Price</th>
-                            <th class="px-4 py-3 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200" id="inventoryTable">
-                        <!-- Rows injected by JS -->
-                    </tbody>
-                </table>
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-icon" style="background: var(--cy-accent-blue-soft); color: var(--cy-accent-blue);">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statTotal">0</div>
+                    <div class="stat-label">Total Vehicles</div>
+                </div>
             </div>
-            <div id="emptyState" class="hidden text-center py-12">
-                <i class="fas fa-car text-4xl text-slate-300 mb-4"></i>
-                <p class="text-slate-500">No vehicles found. <a href="./import.html" class="text-blue-600 hover:underline">Import stock</a> to get started.</p>
+            <div class="stat-item">
+                <div class="stat-icon" style="background: var(--cy-accent-green-soft); color: var(--cy-accent-green);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statInStock">0</div>
+                    <div class="stat-label">In Stock</div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon" style="background: var(--cy-accent-orange-soft); color: var(--cy-accent-orange);">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statTransit">0</div>
+                    <div class="stat-label">In Transit</div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon" style="background: var(--cy-accent-purple-soft); color: var(--cy-accent-purple);">
+                    <i class="fas fa-pound-sign"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statValue">£0</div>
+                    <div class="stat-label">Stock Value</div>
+                </div>
             </div>
         </div>
+
+        <!-- Main Layout -->
+        <div class="inv-layout">
+            <!-- Sidebar Filters -->
+            <aside class="filter-sidebar">
+                <div class="cy-card">
+                    <div class="filter-header">
+                        <span class="filter-title">Filters</span>
+                        <button class="filter-clear" onclick="clearAllFilters()">Clear all</button>
+                    </div>
+                    
+                    <!-- Status Filter -->
+                    <div class="filter-group">
+                        <div class="filter-title" style="margin-bottom: 12px;">Status</div>
+                        <div class="checkbox-list" id="statusFilters">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Make Filter -->
+                    <div class="filter-group">
+                        <div class="filter-header">
+                            <span class="filter-title">Make</span>
+                            <button class="filter-clear" onclick="clearFilter('make')">Clear</button>
+                        </div>
+                        <div class="checkbox-list" id="makeFilters">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Location Filter -->
+                    <div class="filter-group">
+                        <div class="filter-header">
+                            <span class="filter-title">Location</span>
+                            <button class="filter-clear" onclick="clearFilter('location')">Clear</button>
+                        </div>
+                        <div class="checkbox-list" id="locationFilters">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Price Range -->
+                    <div class="filter-group">
+                        <div class="filter-title" style="margin-bottom: 12px;">Price Range</div>
+                        <div class="price-range">
+                            <input type="number" class="price-input" id="priceMin" placeholder="Min" onchange="applyFilters()">
+                            <span style="color: var(--cy-text-muted);">-</span>
+                            <input type="number" class="price-input" id="priceMax" placeholder="Max" onchange="applyFilters()">
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <div>
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search by reg, make, model or stock number..." onkeyup="applyFilters()">
+                    </div>
+                    
+                    <div class="cy-flex cy-items-center" style="gap: 16px;">
+                        <select class="sort-select" id="sortSelect" onchange="applyFilters()">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="make">Make: A-Z</option>
+                        </select>
+                        
+                        <div class="view-toggle">
+                            <button class="view-btn active" onclick="setView('grid')" title="Grid View">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button class="view-btn" onclick="setView('list')" title="List View">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Count -->
+                <div style="margin-bottom: 16px; font-size: 13px; color: var(--cy-text-muted);">
+                    Showing <span id="showingCount" style="color: var(--cy-text-primary); font-weight: 600;">0</span> of <span id="totalCount">0</span> vehicles
+                </div>
+
+                <!-- Vehicle Grid -->
+                <div id="vehicleContainer">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+        </div>
+
     </main>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./js/capeye-core.js"></script>
     <script>
-        let allVehicles = [];
-        let sortColumn = 'dateInStock';
-        let sortDirection = 'desc';
+        // State
+        let currentView = 'grid';
+        let currentPage = 1;
+        const itemsPerPage = 12;
+        let filteredVehicles = [];
+        let activeFilters = {
+            status: [],
+            make: [],
+            location: [],
+            priceMin: null,
+            priceMax: null,
+            search: ''
+        };
 
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            loadInventory();
+            loadFilterOptions();
+            applyFilters();
+            updateStats();
         });
 
-        function loadInventory() {
-            allVehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            renderTable(allVehicles);
-        }
-
-        function renderTable(vehicles) {
-            const tbody = document.getElementById('inventoryTable');
-            const emptyState = document.getElementById('emptyState');
+        function loadFilterOptions() {
+            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
             
-            if (vehicles.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
+            // Status filters
+            const statuses = ['In Stock', 'In Transit', 'Off-site R', 'Subject to', 'Sold'];
+            const statusCounts = {};
+            statuses.forEach(s => statusCounts[s] = vehicles.filter(v => v.status === s).length);
             
-            emptyState.classList.add('hidden');
+            document.getElementById('statusFilters').innerHTML = statuses.map(status => `
+                <div class="checkbox-item" onclick="toggleFilter('status', '${status}')">
+                    <div class="cy-checkbox" id="chk-status-${status.replace(/\s+/g, '-')}"></div>
+                    <span class="checkbox-label">${status}</span>
+                    <span class="checkbox-count">${statusCounts[status] || 0}</span>
+                </div>
+            `).join('');
             
-            tbody.innerHTML = vehicles.map(v => `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="px-4 py-3 font-medium text-slate-900">${v.stockNo || '-'}</td>
-                    <td class="px-4 py-3 text-slate-600">${v.registration || '-'}</td>
-                    <td class="px-4 py-3">
-                        <div class="font-medium text-slate-900">${v.make} ${v.model}</div>
-                        <div class="text-sm text-slate-500">${v.year} • ${v.fuelType} • ${v.transmission}</div>
-                    </td>
-                    <td class="px-4 py-3 text-slate-600">${v.location || '-'}</td>
-                    <td class="px-4 py-3">
-                        <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(v.status)}">
-                            ${v.status || 'Unknown'}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 text-right font-medium text-slate-900">
-                        £${parseFloat(v.costPrice || 0).toLocaleString('en-GB')}
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                        <button onclick="viewVehicle('${v.stockNo}')" class="text-blue-600 hover:text-blue-800 mx-1" title="View">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button onclick="editVehicle('${v.stockNo}')" class="text-green-600 hover:text-green-800 mx-1" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </td>
-                </tr>
+            // Make filters
+            const makes = [...new Set(vehicles.map(v => v.make).filter(Boolean))].sort();
+            const makeCounts = {};
+            makes.forEach(m => makeCounts[m] = vehicles.filter(v => v.make === m).length);
+            
+            document.getElementById('makeFilters').innerHTML = makes.slice(0, 10).map(make => `
+                <div class="checkbox-item" onclick="toggleFilter('make', '${make}')">
+                    <div class="cy-checkbox" id="chk-make-${make.replace(/\s+/g, '-')}"></div>
+                    <span class="checkbox-label">${make}</span>
+                    <span class="checkbox-count">${makeCounts[make]}</span>
+                </div>
+            `).join('');
+            
+            // Location filters
+            const locations = [...new Set(vehicles.map(v => v.location).filter(Boolean))].sort();
+            const locationCounts = {};
+            locations.forEach(l => locationCounts[l] = vehicles.filter(v => v.location === l).length);
+            
+            document.getElementById('locationFilters').innerHTML = locations.map(loc => `
+                <div class="checkbox-item" onclick="toggleFilter('location', '${loc}')">
+                    <div class="cy-checkbox" id="chk-location-${loc.replace(/\s+/g, '-')}"></div>
+                    <span class="checkbox-label">${loc}</span>
+                    <span class="checkbox-count">${locationCounts[loc]}</span>
+                </div>
             `).join('');
         }
 
-        function getStatusColor(status) {
-            const colors = {
-                'In Stock': 'bg-green-100 text-green-800',
-                'In Transit': 'bg-orange-100 text-orange-800',
-                'Off-site R': 'bg-red-100 text-red-800',
-                'Subject to': 'bg-purple-100 text-purple-800',
-                'Sold': 'bg-slate-100 text-slate-800'
-            };
-            return colors[status] || 'bg-gray-100 text-gray-800';
-        }
-
-        function filterInventory() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const status = document.getElementById('statusFilter').value;
-            const location = document.getElementById('locationFilter').value;
-            
-            let filtered = allVehicles.filter(v => {
-                const matchesSearch = !search || 
-                    (v.stockNo && v.stockNo.toLowerCase().includes(search)) ||
-                    (v.registration && v.registration.toLowerCase().includes(search)) ||
-                    (v.make && v.make.toLowerCase().includes(search)) ||
-                    (v.model && v.model.toLowerCase().includes(search));
-                
-                const matchesStatus = !status || v.status === status;
-                const matchesLocation = !location || v.location === location;
-                
-                return matchesSearch && matchesStatus && matchesLocation;
-            });
-            
-            renderTable(filtered);
-        }
-
-        function sortTable(column) {
-            if (sortColumn === column) {
-                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        function toggleFilter(type, value) {
+            const index = activeFilters[type].indexOf(value);
+            if (index > -1) {
+                activeFilters[type].splice(index, 1);
             } else {
-                sortColumn = column;
-                sortDirection = 'asc';
+                activeFilters[type].push(value);
             }
             
-            allVehicles.sort((a, b) => {
-                let aVal = a[column] || '';
-                let bVal = b[column] || '';
-                
-                if (typeof aVal === 'string') {
-                    aVal = aVal.toLowerCase();
-                    bVal = bVal.toLowerCase();
+            // Update checkbox visual
+            const chkId = `chk-${type}-${value.replace(/\s+/g, '-')}`;
+            const chk = document.getElementById(chkId);
+            if (chk) {
+                chk.parentElement.classList.toggle('checked');
+            }
+            
+            currentPage = 1;
+            applyFilters();
+        }
+
+        function clearFilter(type) {
+            activeFilters[type] = [];
+            document.querySelectorAll(`#${type}Filters .checkbox-item`).forEach(el => {
+                el.classList.remove('checked');
+            });
+            currentPage = 1;
+            applyFilters();
+        }
+
+        function clearAllFilters() {
+            activeFilters = {
+                status: [],
+                make: [],
+                location: [],
+                priceMin: null,
+                priceMax: null,
+                search: ''
+            };
+            document.querySelectorAll('.checkbox-item').forEach(el => el.classList.remove('checked'));
+            document.getElementById('priceMin').value = '';
+            document.getElementById('priceMax').value = '';
+            document.getElementById('searchInput').value = '';
+            currentPage = 1;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            let vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            
+            // Get price range
+            activeFilters.priceMin = document.getElementById('priceMin').value;
+            activeFilters.priceMax = document.getElementById('priceMax').value;
+            activeFilters.search = document.getElementById('searchInput').value.toLowerCase();
+            
+            // Apply filters
+            filteredVehicles = vehicles.filter(v => {
+                if (activeFilters.status.length > 0 && !activeFilters.status.includes(v.status)) return false;
+                if (activeFilters.make.length > 0 && !activeFilters.make.includes(v.make)) return false;
+                if (activeFilters.location.length > 0 && !activeFilters.location.includes(v.location)) return false;
+                if (activeFilters.priceMin && (v.costPrice || 0) < parseFloat(activeFilters.priceMin)) return false;
+                if (activeFilters.priceMax && (v.costPrice || 0) > parseFloat(activeFilters.priceMax)) return false;
+                if (activeFilters.search) {
+                    const searchStr = `${v.stockNo} ${v.make} ${v.model} ${v.registration}`.toLowerCase();
+                    if (!searchStr.includes(activeFilters.search)) return false;
                 }
-                
-                if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
-                if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
-                return 0;
+                return true;
             });
             
-            filterInventory();
+            // Sort
+            const sortValue = document.getElementById('sortSelect').value;
+            switch(sortValue) {
+                case 'newest':
+                    filteredVehicles.sort((a, b) => new Date(b.dateInStock) - new Date(a.dateInStock));
+                    break;
+                case 'oldest':
+                    filteredVehicles.sort((a, b) => new Date(a.dateInStock) - new Date(b.dateInStock));
+                    break;
+                case 'price-high':
+                    filteredVehicles.sort((a, b) => (b.costPrice || 0) - (a.costPrice || 0));
+                    break;
+                case 'price-low':
+                    filteredVehicles.sort((a, b) => (a.costPrice || 0) - (b.costPrice || 0));
+                    break;
+                case 'make':
+                    filteredVehicles.sort((a, b) => (a.make || '').localeCompare(b.make || ''));
+                    break;
+            }
+            
+            renderVehicles();
+            updateStats();
+        }
+
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            renderVehicles();
+        }
+
+        function renderVehicles() {
+            const container = document.getElementById('vehicleContainer');
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageVehicles = filteredVehicles.slice(start, end);
+            
+            document.getElementById('showingCount').textContent = pageVehicles.length;
+            document.getElementById('totalCount').textContent = filteredVehicles.length;
+            
+            if (pageVehicles.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-car"></i></div>
+                        <div class="empty-title">No vehicles found</div>
+                        <div class="empty-text">Try adjusting your filters or search criteria</div>
+                        <button class="cy-btn cy-btn-primary" onclick="clearAllFilters()">Clear Filters</button>
+                    </div>
+                `;
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+            
+            if (currentView === 'grid') {
+                container.innerHTML = `<div class="vehicle-grid">${pageVehicles.map(v => renderVehicleCard(v)).join('')}</div>`;
+            } else {
+                container.innerHTML = `
+                    <div class="vehicle-list">
+                        <div class="list-header">
+                            <div></div>
+                            <div>Vehicle</div>
+                            <div>Location</div>
+                            <div>Status</div>
+                            <div>Price</div>
+                            <div>Days</div>
+                            <div></div>
+                        </div>
+                        ${pageVehicles.map(v => renderVehicleRow(v)).join('')}
+                    </div>
+                `;
+            }
+            
+            renderPagination();
+        }
+
+        function renderVehicleCard(v) {
+            const daysInStock = v.dateInStock ? Math.floor((new Date() - new Date(v.dateInStock)) / (1000 * 60 * 60 * 24)) : 0;
+            const isAging = daysInStock > 90;
+            const statusClass = v.status === 'In Stock' ? 'status-instock' : v.status === 'In Transit' ? 'status-transit' : 'status-sold';
+            
+            return `
+                <div class="vehicle-card" onclick="viewVehicle('${v.stockNo}')">
+                    <div class="vehicle-image">
+                        <div class="vehicle-image-placeholder"><i class="fas fa-car"></i></div>
+                        <div class="vehicle-badges">
+                            <span class="vehicle-badge ${statusClass}">${v.status}</span>
+                        </div>
+                        <div class="vehicle-days ${isAging ? 'warning' : ''}">${daysInStock} days</div>
+                    </div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-header">
+                            <div>
+                                <div class="vehicle-title">${v.make} ${v.model}</div>
+                                <div class="vehicle-stock">${v.stockNo}</div>
+                            </div>
+                        </div>
+                        <div class="vehicle-details">
+                            <div class="vehicle-detail">
+                                <i class="fas fa-calendar"></i>
+                                <span>${v.year || '-'}</span>
+                            </div>
+                            <div class="vehicle-detail">
+                                <i class="fas fa-gas-pump"></i>
+                                <span>${v.fuelType || '-'}</span>
+                            </div>
+                            <div class="vehicle-detail">
+                                <i class="fas fa-cog"></i>
+                                <span>${v.transmission || '-'}</span>
+                            </div>
+                            <div class="vehicle-detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${v.location || '-'}</span>
+                            </div>
+                        </div>
+                        <div class="vehicle-footer">
+                            <div>
+                                <div class="vehicle-price">${Capeye.formatCurrency(v.costPrice)}</div>
+                                <div class="vehicle-price-label">Cost Price</div>
+                            </div>
+                            <div class="vehicle-actions" onclick="event.stopPropagation()">
+                                <button class="vehicle-action-btn" onclick="editVehicle('${v.stockNo}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="vehicle-action-btn" onclick="viewWorkflow('${v.stockNo}')" title="Workflow">
+                                    <i class="fas fa-tasks"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderVehicleRow(v) {
+            const daysInStock = v.dateInStock ? Math.floor((new Date() - new Date(v.dateInStock)) / (1000 * 60 * 60 * 24)) : 0;
+            
+            return `
+                <div class="list-row" onclick="viewVehicle('${v.stockNo}')">
+                    <div class="list-thumb"><i class="fas fa-car"></i></div>
+                    <div class="list-vehicle">
+                        <div class="list-title">${v.make} ${v.model}</div>
+                        <div class="list-stock">${v.stockNo}</div>
+                    </div>
+                    <div class="list-location">${v.location || '-'}</div>
+                    <div class="list-status"><span class="cy-badge ${v.status === 'In Stock' ? 'cy-badge-green' : v.status === 'In Transit' ? 'cy-badge-orange' : 'cy-badge-blue'}">${v.status}</span></div>
+                    <div class="list-price">${Capeye.formatCurrency(v.costPrice)}</div>
+                    <div class="list-location">${daysInStock} days</div>
+                    <div class="list-actions" onclick="event.stopPropagation()">
+                        <button class="vehicle-action-btn" onclick="editVehicle('${v.stockNo}')" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
+            if (totalPages <= 1) {
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+            
+            let html = `
+                <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span style="color: var(--cy-text-muted);">...</span>`;
+                }
+            }
+            
+            html += `
+                <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+            
+            document.getElementById('pagination').innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderVehicles();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateStats() {
+            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            
+            document.getElementById('statTotal').textContent = vehicles.length;
+            document.getElementById('statInStock').textContent = vehicles.filter(v => v.status === 'In Stock').length;
+            document.getElementById('statTransit').textContent = vehicles.filter(v => v.status === 'In Transit').length;
+            
+            const totalValue = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
+            document.getElementById('statValue').textContent = Capeye.formatCurrency(totalValue);
         }
 
         function viewVehicle(stockNo) {
-            alert('View vehicle: ' + stockNo);
+            window.location.href = `./vehicle-detail.html?stock=${stockNo}`;
         }
 
         function editVehicle(stockNo) {
-            alert('Edit vehicle: ' + stockNo);
+            Capeye.notify(`Edit vehicle ${stockNo}`, 'info');
         }
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
+        function viewWorkflow(stockNo) {
+            window.location.href = `./workflow.html?stock=${stockNo}`;
         }
 
-        function logout() {
-            localStorage.removeItem('capeye_session');
-            window.location.replace('./login.html');
-        }
+        // Refresh function for auto-refresh
+        window.refreshData = function() {
+            applyFilters();
+            updateStats();
+        };
     </script>
 </body>
 </html>
