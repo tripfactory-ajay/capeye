@@ -1,7 +1,3 @@
-<!-- STAGE 2: BODYWORK & COSMETIC -->
-<!-- File: /capeye/workflow/stages/stage-2-bodywork.html -->
-<!-- Replace entire file content -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Dancing Script for signature -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,12 +31,10 @@
             --cy-text-primary: #f9fafb;
             --cy-text-secondary: #d1d5db;
             --cy-text-muted: #9ca3af;
-            --cy-accent-blue: #3b82f6;
-            --cy-accent-blue-soft: rgba(59, 130, 246, 0.15);
-            --cy-accent-green: #10b981;
-            --cy-accent-green-soft: rgba(16, 185, 129, 0.15);
             --cy-accent-orange: #f59e0b;
             --cy-accent-orange-soft: rgba(245, 158, 11, 0.15);
+            --cy-accent-green: #10b981;
+            --cy-accent-green-soft: rgba(16, 185, 129, 0.15);
             --cy-accent-red: #ef4444;
             --cy-accent-purple: #8b5cf6;
             --cy-radius-sm: 6px;
@@ -368,49 +364,51 @@
             .form-grid-2 { grid-template-columns: 1fr; }
         }
 
-        .form-grid-4 {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        @media (max-width: 1024px) {
-            .form-grid-4 { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 640px) {
-            .form-grid-4 { grid-template-columns: 1fr; }
-        }
-
         textarea.form-input {
             min-height: 100px;
             resize: vertical;
         }
 
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-top: 8px;
+        .damage-item {
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-lg);
+            padding: 16px;
+            margin-bottom: 12px;
         }
 
-        .checkbox-item {
+        .damage-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .damage-title {
+            font-weight: 600;
+            color: var(--cy-text-primary);
+        }
+
+        .btn-remove {
+            padding: 6px 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--cy-radius-md);
+            color: var(--cy-accent-red);
+            font-size: 12px;
             cursor: pointer;
         }
 
-        .checkbox-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--cy-accent-orange);
-        }
-
-        .checkbox-item label {
+        .btn-add {
+            padding: 12px 24px;
+            background: var(--cy-accent-orange-soft);
+            border: 1px dashed var(--cy-accent-orange);
+            border-radius: var(--cy-radius-md);
+            color: var(--cy-accent-orange);
             font-size: 14px;
-            color: var(--cy-text-secondary);
             cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
         }
 
         .photo-grid {
@@ -487,54 +485,69 @@
             color: var(--cy-text-muted);
         }
 
-        .damage-item {
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            padding: 16px;
-            margin-bottom: 12px;
+        .severity-select {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
         }
 
-        .damage-header {
+        .severity-option {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-md);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.15s ease;
+        }
+
+        .severity-option:hover {
+            border-color: var(--cy-accent-orange);
+        }
+
+        .severity-option.selected {
+            background: var(--cy-accent-orange);
+            border-color: var(--cy-accent-orange);
+            color: white;
+        }
+
+        .cost-summary {
+            background: var(--cy-accent-orange-soft);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: var(--cy-radius-lg);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .cost-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .damage-title {
-            font-weight: 600;
-            color: var(--cy-text-primary);
-        }
-
-        .btn-remove {
-            padding: 6px 12px;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: var(--cy-radius-md);
-            color: var(--cy-accent-red);
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .btn-add {
-            padding: 12px 24px;
-            background: var(--cy-accent-orange-soft);
-            border: 1px dashed var(--cy-accent-orange);
-            border-radius: var(--cy-radius-md);
-            color: var(--cy-accent-orange);
+            margin-bottom: 8px;
             font-size: 14px;
-            cursor: pointer;
-            width: 100%;
+        }
+
+        .cost-row.total {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--cy-accent-orange);
+            border-top: 1px solid rgba(245, 158, 11, 0.3);
+            padding-top: 12px;
             margin-top: 12px;
+        }
+
+        /* Signature Section - Updated */
+        .signature-wrapper {
+            max-width: 400px;
+            margin-top: 8px;
         }
 
         .signature-container {
             background: white;
             border-radius: var(--cy-radius-lg);
             padding: 12px;
-            margin-top: 8px;
             border: 2px solid var(--cy-border);
+            position: relative;
         }
 
         #signaturePad {
@@ -544,6 +557,23 @@
             border-radius: var(--cy-radius-md);
             cursor: crosshair;
             background: white;
+            display: block;
+        }
+
+        .auto-signature-notice {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--cy-accent-green-soft);
+            color: var(--cy-accent-green);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            display: none;
+        }
+
+        .auto-signature-notice.show {
+            display: block;
         }
 
         .signature-actions {
@@ -617,57 +647,6 @@
             font-size: 12px;
             color: var(--cy-accent-orange);
             font-weight: 500;
-        }
-
-        .severity-select {
-            display: flex;
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .severity-option {
-            flex: 1;
-            padding: 8px;
-            text-align: center;
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-md);
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.15s ease;
-        }
-
-        .severity-option:hover {
-            border-color: var(--cy-accent-orange);
-        }
-
-        .severity-option.selected {
-            background: var(--cy-accent-orange);
-            border-color: var(--cy-accent-orange);
-            color: white;
-        }
-
-        .cost-summary {
-            background: var(--cy-accent-orange-soft);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: var(--cy-radius-lg);
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .cost-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .cost-row.total {
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--cy-accent-orange);
-            border-top: 1px solid rgba(245, 158, 11, 0.3);
-            padding-top: 12px;
-            margin-top: 12px;
         }
     </style>
 </head>
@@ -928,7 +907,7 @@
                 <div class="form-grid-2">
                     <div class="form-group">
                         <label class="required">Assessed By</label>
-                        <select id="assessedBy" class="form-select" required>
+                        <select id="assessedBy" class="form-select" required onchange="generateAutoSignature()">
                             <option value="">Select Staff Member</option>
                         </select>
                     </div>
@@ -964,29 +943,38 @@
                     <textarea id="workshopNotes" class="form-input" placeholder="Notes for the paint shop or next department..."></textarea>
                 </div>
 
-                <!-- COMPACT SIGNATURE SECTION WITH AUTO DATE STAMP -->
+                <!-- AUTO-GENERATED SIGNATURE SECTION -->
                 <div style="margin-top: 24px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <label>Digital Signature</label>
+                        <label>Digital Signature <span style="color: var(--cy-text-muted); font-size: 12px;">(Auto-generated from name)</span></label>
                         <div class="date-stamp" id="dateStampDisplay" style="display: none;">
                             <i class="fas fa-clock"></i>
                             <span id="dateStampText"></span>
                         </div>
                     </div>
-                    <div class="signature-container">
-                        <canvas id="signaturePad"></canvas>
-                    </div>
-                    <div class="signature-actions">
-                        <button type="button" onclick="clearSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
-                            <i class="fas fa-eraser"></i> Clear
-                        </button>
-                        <span style="color: var(--cy-text-muted); font-size: 13px;">
-                            <i class="fas fa-info-circle"></i> Sign to confirm assessment
-                        </span>
-                    </div>
-                    <div class="signature-meta">
-                        <span><i class="fas fa-calendar"></i> Auto-stamped on submit</span>
-                        <span><i class="fas fa-shield-alt"></i> Legally binding</span>
+                    
+                    <div class="signature-wrapper">
+                        <div class="signature-container">
+                            <div class="auto-signature-notice" id="autoSignatureNotice">
+                                <i class="fas fa-magic"></i> Auto-generated
+                            </div>
+                            <canvas id="signaturePad"></canvas>
+                        </div>
+                        <div class="signature-actions">
+                            <button type="button" onclick="clearSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+                                <i class="fas fa-eraser"></i> Clear & Draw Manual
+                            </button>
+                            <button type="button" onclick="regenerateSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+                                <i class="fas fa-redo"></i> Regenerate
+                            </button>
+                            <span style="color: var(--cy-text-muted); font-size: 13px;">
+                                <i class="fas fa-info-circle"></i> Select name to auto-generate
+                            </span>
+                        </div>
+                        <div class="signature-meta">
+                            <span><i class="fas fa-signature"></i> Script font: Dancing Script</span>
+                            <span><i class="fas fa-shield-alt"></i> Digitally valid</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1002,7 +990,7 @@
                     </button>
                 </div>
                 <div class="action-group">
-                    <button type="submit" class="btn-success">
+                    <button type="submit" class="btn-success" id="submitBtn">
                         <i class="fas fa-check-circle"></i> Complete Stage & Forward
                     </button>
                 </div>
@@ -1019,6 +1007,8 @@
         let signaturePad = null;
         let signatureContext = null;
         let damageCount = 0;
+        let isAutoSignature = false;
+        let currentSignatureName = '';
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1031,7 +1021,7 @@
             const canvas = document.getElementById('signaturePad');
             signatureContext = canvas.getContext('2d');
             
-            canvas.width = canvas.offsetWidth;
+            canvas.width = 376;
             canvas.height = 120;
             
             signatureContext.fillStyle = 'white';
@@ -1053,9 +1043,16 @@
             
             function startDraw(e) {
                 isDrawing = true;
+                isAutoSignature = false;
+                document.getElementById('autoSignatureNotice').classList.remove('show');
                 const pos = getPos(e);
                 lastX = pos.x;
                 lastY = pos.y;
+                
+                signatureContext.beginPath();
+                signatureContext.arc(lastX, lastY, 1, 0, 2 * Math.PI);
+                signatureContext.fillStyle = '#000';
+                signatureContext.fill();
             }
             
             function draw(e) {
@@ -1069,6 +1066,7 @@
                 signatureContext.strokeStyle = '#000';
                 signatureContext.lineWidth = 2;
                 signatureContext.lineCap = 'round';
+                signatureContext.lineJoin = 'round';
                 signatureContext.stroke();
                 
                 lastX = pos.x;
@@ -1084,23 +1082,111 @@
             canvas.addEventListener('mouseup', endDraw);
             canvas.addEventListener('mouseout', endDraw);
             
-            canvas.addEventListener('touchstart', startDraw);
-            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                startDraw(e);
+            }, { passive: false });
+            
+            canvas.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+                draw(e);
+            }, { passive: false });
+            
             canvas.addEventListener('touchend', endDraw);
             
             signaturePad = canvas;
         }
 
-        function clearSignature() {
-            if (!signatureContext) return;
+        // Generate Auto Signature from Name - ITALIC SCRIPT
+        function generateAutoSignature() {
+            const select = document.getElementById('assessedBy');
+            const name = select.value;
+            
+            if (!name) return;
+            
+            currentSignatureName = name;
+            isAutoSignature = true;
+            
+            // Clear canvas
             signatureContext.fillStyle = 'white';
             signatureContext.fillRect(0, 0, signaturePad.width, signaturePad.height);
+            
+            // Set up italic script font
+            signatureContext.font = 'italic 700 36px "Dancing Script", cursive';
+            signatureContext.fillStyle = '#1f2937';
+            signatureContext.textBaseline = 'middle';
+            
+            // Calculate center position
+            const textWidth = signatureContext.measureText(name).width;
+            const x = (signaturePad.width - textWidth) / 2;
+            const y = signaturePad.height / 2;
+            
+            // Draw signature with slight randomization
+            let currentX = x;
+            const chars = name.split('');
+            
+            chars.forEach((char, index) => {
+                const randomY = y + (Math.random() - 0.5) * 3;
+                const randomRotation = (Math.random() - 0.5) * 0.05;
+                
+                signatureContext.save();
+                signatureContext.translate(currentX, randomY);
+                signatureContext.rotate(randomRotation);
+                signatureContext.fillText(char, 0, 0);
+                signatureContext.restore();
+                
+                currentX += signatureContext.measureText(char).width;
+            });
+            
+            // Add underline flourish
+            signatureContext.beginPath();
+            signatureContext.moveTo(x, y + 20);
+            signatureContext.quadraticCurveTo(
+                x + textWidth / 2, y + 25,
+                x + textWidth, y + 18
+            );
+            signatureContext.strokeStyle = '#1f2937';
+            signatureContext.lineWidth = 2;
+            signatureContext.stroke();
+            
+            document.getElementById('autoSignatureNotice').classList.add('show');
         }
 
-        function isSignatureEmpty() {
-            if (!signatureContext) return true;
-            const pixelData = signatureContext.getImageData(0, 0, signaturePad.width, signaturePad.height).data;
-            return !pixelData.some((pixel, index) => index % 4 === 3 && pixel < 255);
+        function regenerateSignature() {
+            if (currentSignatureName) {
+                generateAutoSignature();
+            } else {
+                showStatus('Please select a name first', 'error');
+            }
+        }
+
+        function clearSignature() {
+            if (!signatureContext || !signaturePad) return;
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, signaturePad.width, signaturePad.height);
+            isAutoSignature = false;
+            currentSignatureName = '';
+            document.getElementById('autoSignatureNotice').classList.remove('show');
+        }
+
+        function isSignatureValid() {
+            if (!signatureContext || !signaturePad) return false;
+            
+            try {
+                const imageData = signatureContext.getImageData(0, 0, signaturePad.width, signaturePad.height);
+                const pixels = imageData.data;
+                
+                let nonWhitePixels = 0;
+                for (let i = 0; i < pixels.length; i += 4) {
+                    if (pixels[i] < 250 || pixels[i + 1] < 250 || pixels[i + 2] < 250) {
+                        nonWhitePixels++;
+                    }
+                }
+                
+                return nonWhitePixels > 50;
+            } catch (e) {
+                return false;
+            }
         }
 
         // Damage Assessment Functions
@@ -1311,7 +1397,6 @@
 
         function populateVehicleSelect() {
             const select = document.getElementById('vehicleSelect');
-            // Filter vehicles that have completed stage 1
             const eligibleVehicles = allVehicles.filter(v => {
                 const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
                 return profile.currentStage === 2 || profile.stage1?.isComplete;
@@ -1341,13 +1426,7 @@
                 const option = document.createElement('option');
                 option.value = s.Name;
                 option.textContent = `${s.Name} (${s.Department})`;
-                assessedBy.appendChild(option);
-            });
-            
-            managers.forEach(s => {
-                const option = document.createElement('option');
-                option.value = s.Name;
-                option.textContent = `${s.Name} (${s.Department})`;
+                assessedBy.appendChild(option.cloneNode(true));
                 approvedBy.appendChild(option);
             });
         }
@@ -1387,7 +1466,6 @@
             document.getElementById('bannerDetails').textContent = `${vehicle.year} • ${vehicle.fuelType} • ${vehicle.transmission}`;
             document.getElementById('bannerLocation').textContent = vehicle.location || 'Unknown';
             
-            // Load Stage 1 info
             const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${vehicle.stockNo}`) || '{}');
             if (profile.stage1) {
                 const stage1Date = new Date(profile.stage1.completedAt);
@@ -1395,7 +1473,6 @@
                 document.getElementById('bannerIntakeBy').textContent = `By: ${profile.stage1.inspectedBy || 'Unknown'}`;
             }
             
-            // Load saved draft if exists
             const savedData = localStorage.getItem(`capeye_stage2_${vehicle.stockNo}`);
             if (savedData) {
                 const data = JSON.parse(savedData);
@@ -1405,7 +1482,6 @@
         }
 
         function populateFormFields(data) {
-            // Restore damage items
             if (data.damageItems && data.damageItems.length > 0) {
                 data.damageItems.forEach((damage, index) => {
                     addDamageItem();
@@ -1420,7 +1496,6 @@
                 });
             }
             
-            // Restore other fields
             const fields = ['bodyworkSummary', 'labourHours', 'labourRate', 'materialsCost', 'paintCost', 'partsCost', 
                           'assessedBy', 'nextStage', 'approvedBy', 'approvalDate', 'expectedCompletion', 'workshopNotes'];
             fields.forEach(field => {
@@ -1430,7 +1505,6 @@
             
             calculateCosts();
             
-            // Restore photos
             if (data.photos) {
                 uploadedPhotos = data.photos;
                 Object.keys(data.photos).forEach(photoId => {
@@ -1447,11 +1521,15 @@
                 });
             }
             
-            // Restore signature
             if (data.signature && signatureContext) {
                 const img = new Image();
                 img.onload = function() {
                     signatureContext.drawImage(img, 0, 0);
+                    if (data.isAutoSignature) {
+                        document.getElementById('autoSignatureNotice').classList.add('show');
+                        isAutoSignature = true;
+                        currentSignatureName = data.assessedBy || '';
+                    }
                 };
                 img.src = data.signature;
             }
@@ -1551,7 +1629,8 @@
                 expectedCompletion: document.getElementById('expectedCompletion').value,
                 workshopNotes: document.getElementById('workshopNotes').value,
                 photos: uploadedPhotos,
-                signature: isSignatureEmpty() ? null : signaturePad.toDataURL()
+                signature: isSignatureValid() ? signaturePad.toDataURL() : null,
+                isAutoSignature: isAutoSignature
             };
         }
 
@@ -1563,10 +1642,18 @@
                 return;
             }
             
-            if (isSignatureEmpty()) {
-                showStatus('Please provide a signature', 'error');
+            if (!isSignatureValid()) {
+                showStatus('Please provide a signature (select assessor name to auto-generate)', 'error');
+                document.querySelector('.signature-container').style.borderColor = 'var(--cy-accent-red)';
+                setTimeout(() => {
+                    document.querySelector('.signature-container').style.borderColor = 'var(--cy-border)';
+                }, 3000);
                 return;
             }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            submitBtn.disabled = true;
             
             const submissionDateTime = new Date();
             const formattedDateTime = submissionDateTime.toLocaleString('en-GB', {
@@ -1584,7 +1671,6 @@
             document.getElementById('dateStampText').textContent = formattedDateTime;
             document.getElementById('dateStampDisplay').style.display = 'inline-flex';
             
-            // Save to vehicle profile
             const vehicleProfile = JSON.parse(localStorage.getItem(`capeye_vehicle_${currentVehicle.stockNo}`) || '{}');
             vehicleProfile.stage2 = formData;
             vehicleProfile.currentStage = parseInt(formData.nextStage);
@@ -1602,7 +1688,6 @@
             localStorage.setItem(`capeye_vehicle_${currentVehicle.stockNo}`, JSON.stringify(vehicleProfile));
             localStorage.removeItem(`capeye_stage2_${currentVehicle.stockNo}`);
             
-            // Update workflow dashboard
             const vehicleIndex = allVehicles.findIndex(v => v.stockNo === currentVehicle.stockNo);
             if (vehicleIndex >= 0) {
                 allVehicles[vehicleIndex].workflowStage = parseInt(formData.nextStage);
@@ -1622,10 +1707,6 @@
             }));
             
             showStatus(`Stage 2 completed at ${formattedDateTime}! Vehicle forwarded to Stage ${formData.nextStage}.`, 'success');
-            
-            document.getElementById('bodyworkForm').querySelectorAll('input, select, textarea, button').forEach(el => {
-                el.disabled = true;
-            });
             
             setTimeout(() => {
                 window.location.href = '../workflow.html';
@@ -1654,12 +1735,6 @@
                 currency: 'GBP',
                 minimumFractionDigits: 2
             }).format(value || 0);
-        }
-
-        function formatDateForInput(dateString) {
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) return '';
-            return date.toISOString().split('T')[0];
         }
     </script>
 </body>
