@@ -489,12 +489,16 @@
             color: var(--cy-text-muted);
         }
 
-        /* Signature Pad - COMPACT VERSION */
+        /* Signature Pad - COMPACT WIDTH VERSION */
+        .signature-wrapper {
+            max-width: 400px; /* REDUCED WIDTH */
+            margin-top: 8px;
+        }
+
         .signature-container {
             background: white;
             border-radius: var(--cy-radius-lg);
             padding: 12px;
-            margin-top: 8px;
             border: 2px solid var(--cy-border);
         }
 
@@ -505,6 +509,7 @@
             border-radius: var(--cy-radius-md);
             cursor: crosshair;
             background: white;
+            display: block;
         }
 
         .signature-actions {
@@ -588,6 +593,11 @@
             font-size: 12px;
             color: var(--cy-accent-blue);
             font-weight: 500;
+        }
+
+        .validation-error {
+            border-color: var(--cy-accent-red) !important;
+            background: rgba(239, 68, 68, 0.05) !important;
         }
     </style>
 </head>
@@ -1016,26 +1026,30 @@
                 <!-- COMPACT SIGNATURE SECTION WITH AUTO DATE STAMP -->
                 <div style="margin-top: 24px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <label>Digital Signature</label>
+                        <label>Digital Signature <span style="color: var(--cy-accent-red);">*</span></label>
                         <div class="date-stamp" id="dateStampDisplay" style="display: none;">
                             <i class="fas fa-clock"></i>
                             <span id="dateStampText"></span>
                         </div>
                     </div>
-                    <div class="signature-container">
-                        <canvas id="signaturePad"></canvas>
-                    </div>
-                    <div class="signature-actions">
-                        <button type="button" onclick="clearSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
-                            <i class="fas fa-eraser"></i> Clear
-                        </button>
-                        <span style="color: var(--cy-text-muted); font-size: 13px;">
-                            <i class="fas fa-info-circle"></i> Sign above to confirm inspection
-                        </span>
-                    </div>
-                    <div class="signature-meta">
-                        <span><i class="fas fa-calendar"></i> Auto-stamped on submit</span>
-                        <span><i class="fas fa-shield-alt"></i> Legally binding</span>
+                    
+                    <!-- WRAPPER TO LIMIT WIDTH -->
+                    <div class="signature-wrapper">
+                        <div class="signature-container">
+                            <canvas id="signaturePad"></canvas>
+                        </div>
+                        <div class="signature-actions">
+                            <button type="button" onclick="clearSignature()" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+                                <i class="fas fa-eraser"></i> Clear
+                            </button>
+                            <span style="color: var(--cy-text-muted); font-size: 13px;">
+                                <i class="fas fa-info-circle"></i> Sign to confirm
+                            </span>
+                        </div>
+                        <div class="signature-meta">
+                            <span><i class="fas fa-calendar"></i> Auto-stamped on submit</span>
+                            <span><i class="fas fa-shield-alt"></i> Legally binding</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1051,7 +1065,7 @@
                     </button>
                 </div>
                 <div class="action-group">
-                    <button type="submit" class="btn-success">
+                    <button type="submit" class="btn-success" id="submitBtn">
                         <i class="fas fa-check-circle"></i> Complete Stage & Forward
                     </button>
                 </div>
@@ -1067,6 +1081,7 @@
         let uploadedPhotos = {};
         let signaturePad = null;
         let signatureContext = null;
+        let hasSignatureBeenDrawn = false;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1078,13 +1093,18 @@
             document.getElementById('additionalCosts').addEventListener('input', calculateTotal);
         });
 
-        // Initialize Signature Pad - COMPACT VERSION
+        // Initialize Signature Pad - FIXED VERSION
         function initSignaturePad() {
             const canvas = document.getElementById('signaturePad');
+            if (!canvas) {
+                console.error('Canvas not found');
+                return;
+            }
+            
             signatureContext = canvas.getContext('2d');
             
-            // Set canvas size - COMPACT HEIGHT
-            canvas.width = canvas.offsetWidth;
+            // Set canvas size - COMPACT
+            canvas.width = 376; // Fixed width to match container (400px - padding)
             canvas.height = 120;
             
             // Set white background
@@ -1107,9 +1127,16 @@
             
             function startDraw(e) {
                 isDrawing = true;
+                hasSignatureBeenDrawn = true;
                 const pos = getPos(e);
                 lastX = pos.x;
                 lastY = pos.y;
+                
+                // Draw a single dot for click
+                signatureContext.beginPath();
+                signatureContext.arc(lastX, lastY, 1, 0, 2 * Math.PI);
+                signatureContext.fillStyle = '#000';
+                signatureContext.fill();
             }
             
             function draw(e) {
@@ -1123,6 +1150,7 @@
                 signatureContext.strokeStyle = '#000';
                 signatureContext.lineWidth = 2;
                 signatureContext.lineCap = 'round';
+                signatureContext.lineJoin = 'round';
                 signatureContext.stroke();
                 
                 lastX = pos.x;
@@ -1133,30 +1161,64 @@
                 isDrawing = false;
             }
             
+            // Mouse events
             canvas.addEventListener('mousedown', startDraw);
             canvas.addEventListener('mousemove', draw);
             canvas.addEventListener('mouseup', endDraw);
             canvas.addEventListener('mouseout', endDraw);
             
-            canvas.addEventListener('touchstart', startDraw);
-            canvas.addEventListener('touchmove', draw);
+            // Touch events
+            canvas.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                startDraw(e);
+            }, { passive: false });
+            
+            canvas.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+                draw(e);
+            }, { passive: false });
+            
             canvas.addEventListener('touchend', endDraw);
             
             signaturePad = canvas;
+            hasSignatureBeenDrawn = false;
         }
 
         // Clear Signature
         function clearSignature() {
-            if (!signatureContext) return;
+            if (!signatureContext || !signaturePad) return;
             signatureContext.fillStyle = 'white';
             signatureContext.fillRect(0, 0, signaturePad.width, signaturePad.height);
+            hasSignatureBeenDrawn = false;
         }
 
-        // Check if signature is empty
-        function isSignatureEmpty() {
-            if (!signatureContext) return true;
-            const pixelData = signatureContext.getImageData(0, 0, signaturePad.width, signaturePad.height).data;
-            return !pixelData.some((pixel, index) => index % 4 === 3 && pixel < 255);
+        // Check if signature is valid (not empty) - FIXED VERSION
+        function isSignatureValid() {
+            if (!signatureContext || !signaturePad) return false;
+            
+            // Check if user has drawn anything
+            if (!hasSignatureBeenDrawn) return false;
+            
+            // Additional check: sample pixels to see if there's actual content
+            try {
+                const imageData = signatureContext.getImageData(0, 0, signaturePad.width, signaturePad.height);
+                const pixels = imageData.data;
+                
+                // Check for non-white pixels (allowing for some anti-aliasing)
+                let nonWhitePixels = 0;
+                for (let i = 0; i < pixels.length; i += 4) {
+                    // If pixel is not white (with some tolerance)
+                    if (pixels[i] < 250 || pixels[i + 1] < 250 || pixels[i + 2] < 250) {
+                        nonWhitePixels++;
+                    }
+                }
+                
+                // Require at least 50 non-white pixels (roughly a short line)
+                return nonWhitePixels > 50;
+            } catch (e) {
+                console.error('Error checking signature:', e);
+                return hasSignatureBeenDrawn;
+            }
         }
 
         // Load CSV Data
@@ -1375,6 +1437,7 @@
                 const img = new Image();
                 img.onload = function() {
                     signatureContext.drawImage(img, 0, 0);
+                    hasSignatureBeenDrawn = true;
                 };
                 img.src = data.signature;
             }
@@ -1483,14 +1546,14 @@
             });
             
             // Signature
-            if (signaturePad && !isSignatureEmpty()) {
+            if (signaturePad && isSignatureValid()) {
                 data.signature = signaturePad.toDataURL();
             }
             
             return data;
         }
 
-        // Save Form Data (Submit) - WITH AUTO DATE STAMP AND WORKFLOW UPDATE
+        // Save Form Data (Submit) - FIXED VERSION
         function saveFormData(event) {
             event.preventDefault();
             
@@ -1499,11 +1562,22 @@
                 return;
             }
             
-            // Validate signature
-            if (isSignatureEmpty()) {
-                showStatus('Please provide a signature', 'error');
+            // Validate signature - FIXED
+            if (!isSignatureValid()) {
+                showStatus('Please provide a signature before submitting', 'error');
+                // Highlight signature box
+                document.querySelector('.signature-container').style.borderColor = 'var(--cy-accent-red)';
+                setTimeout(() => {
+                    document.querySelector('.signature-container').style.borderColor = 'var(--cy-border)';
+                }, 3000);
                 return;
             }
+            
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            submitBtn.disabled = true;
             
             // AUTO DATE STAMP - Capture current date/time at submission
             const submissionDateTime = new Date();
@@ -1545,15 +1619,13 @@
             // Remove draft
             localStorage.removeItem(`capeye_stage1_${currentVehicle.stockNo}`);
             
-            // UPDATE WORKFLOW DASHBOARD - Update vehicle in main list with new stage
+            // Update vehicle in main list
             const vehicleIndex = allVehicles.findIndex(v => v.stockNo === currentVehicle.stockNo);
             if (vehicleIndex >= 0) {
                 allVehicles[vehicleIndex].workflowStage = parseInt(formData.nextStage);
                 allVehicles[vehicleIndex].currentStage = parseInt(formData.nextStage);
                 allVehicles[vehicleIndex].lastUpdated = submissionDateTime.toISOString();
                 allVehicles[vehicleIndex].status = 'In Progress';
-                
-                // Save updated vehicle list to localStorage for dashboard sync
                 localStorage.setItem('capeye_all_vehicles', JSON.stringify(allVehicles));
             }
             
@@ -1566,17 +1638,12 @@
                 action: 'stage_complete'
             }));
             
-            showStatus(`Stage 1 completed at ${formattedDateTime}! Vehicle forwarded to Stage ${formData.nextStage}.`, 'success');
-            
-            // Disable form to prevent double submission
-            document.getElementById('intakeForm').querySelectorAll('input, select, textarea, button').forEach(el => {
-                el.disabled = true;
-            });
+            showStatus(`Stage 1 completed at ${formattedDateTime}! Vehicle forwarded to next stage.`, 'success');
             
             // Redirect after delay
             setTimeout(() => {
                 window.location.href = '../workflow.html';
-            }, 2500);
+            }, 2000);
         }
 
         // Print Form
