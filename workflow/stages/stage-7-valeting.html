@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 7: Interior & Valeting - Capeye Workflow</title>
+    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
+    <script src="../../data/staff/staff-list.js"></script>
+    <script src="../../js/workflow/workflow-engine.js"></script>
+    <script src="../../js/workflow/form-components.js"></script>
+</head>
+<body>
+    <div class="workflow-container">
+        <div id="stage-nav-container"></div>
+        <main class="main-content">
+            <div id="header-container"></div>
+            <div class="stage-container">
+                <div class="stage-header">
+                    <h1 class="stage-title"><span style="font-size: 2rem;">✨</span> Stage 7: Interior & Valeting</h1>
+                    <p class="stage-description">Deep clean interior, shampoo carpets, clean glass, and prepare for display.</p>
+                </div>
+                
+                <div id="vehicle-info-display" class="vehicle-info-card">
+                    <div class="vehicle-info-header">
+                        <div class="vehicle-info-title">Vehicle Details</div>
+                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+                    </div>
+                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                </div>
+                
+                <form id="stage-7-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="valeter">Valeter <span class="required">*</span></label>
+                            <select id="valeter" name="valeter" class="form-select" required>
+                                <option value="">Select Valeter...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="valet-date">Valet Date</label>
+                            <input type="date" id="valet-date" name="valetDate" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Interior Cleaning Checklist</h3>
+                    
+                    <div class="checkbox-grid cols-3">
+                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="vacuum"><span>Vacuum Complete</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="carpets-shampoo"><span>Carpets Shampooed</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="seats-clean"><span>Seats Cleaned</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="dashboard"><span>Dashboard Cleaned</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="door-cards"><span>Door Cards Cleaned</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="headlining"><span>Headlining Cleaned</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="boot"><span>Boot Area Cleaned</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="glass-inside"><span>Glass (Inside)</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="odour-eliminate"><span>Odour Eliminated</span></label>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Exterior Cleaning</h3>
+                    
+                    <div class="checkbox-grid cols-3">
+                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="hand-wash"><span>Hand Wash</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="clay-bar"><span>Clay Bar Treatment</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="polish"><span>Polish/Wax</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="glass-outside"><span>Glass (Outside)</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="wheels"><span>Wheels Cleaned</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="tyre-dress"><span>Tyre Dressing</span></label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="valet-grade">Valet Grade</label>
+                        <select id="valet-grade" name="valetGrade" class="form-select">
+                            <option value="standard">Standard</option>
+                            <option value="enhanced">Enhanced</option>
+                            <option value="full">Full Detail</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Before Photos</label>
+                        <div id="before-photos-container"></div>
+                        <input type="hidden" id="before-photos" name="beforePhotos">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">After Photos <span class="required">*</span></label>
+                        <div id="after-photos-container"></div>
+                        <input type="hidden" id="after-photos" name="afterPhotos" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="valet-notes">Valet Notes</label>
+                        <textarea id="valet-notes" name="valetNotes" class="form-textarea" rows="3" placeholder="Any stains removed, damage noted, etc..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Valeter Signature <span class="required">*</span></label>
+                        <div id="signature-container"></div>
+                        <input type="hidden" id="signature" name="signature" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <a href="stage-6-external.html" class="btn btn-secondary">← Back</a>
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete & Send to Fault Overview →</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentVehicle = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            WorkflowEngine.setStage(7);
+            loadComponents();
+            populateValeters();
+            initPhotos();
+            initSignature();
+            loadVehicle();
+            loadSavedData();
+            document.getElementById('valet-date').valueAsDate = new Date();
+        });
+        
+        function loadComponents() {
+            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
+            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+        }
+        
+        function populateValeters() {
+            const select = document.getElementById('valeter');
+            if (STAFF_DATA) {
+                STAFF_DATA.getStaffByDept('valeting').forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = s.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+        
+        function initPhotos() {
+            document.getElementById('before-photos-container').appendChild(
+                FormComponents.createPhotoUpload({ id: 'before-photos', label: 'Before Photos', maxPhotos: 6 })
+            );
+            document.getElementById('after-photos-container').appendChild(
+                FormComponents.createPhotoUpload({ id: 'after-photos', label: 'After Photos', maxPhotos: 8, required: true })
+            );
+        }
+        
+        function initSignature() {
+            document.getElementById('signature-container').appendChild(
+                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
+            );
+        }
+        
+        function loadVehicle() {
+            currentVehicle = WorkflowEngine.getVehicle();
+            if (!currentVehicle) {
+                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
+                return;
+            }
+            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
+            document.getElementById('vehicle-details-content').innerHTML = `
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Colour</span><span class="vehicle-detail-value">${currentVehicle.colour}</span></div>
+            `;
+        }
+        
+        function getFormData() {
+            const form = document.getElementById('stage-7-form');
+            const fd = new FormData(form);
+            return {
+                valeter: fd.get('valeter'),
+                valetDate: fd.get('valetDate'),
+                interior: fd.getAll('interior[]'),
+                exterior: fd.getAll('exterior[]'),
+                valetGrade: fd.get('valetGrade'),
+                beforePhotos: document.getElementById('before-photos').value,
+                afterPhotos: document.getElementById('after-photos').value,
+                valetNotes: fd.get('valetNotes'),
+                signature: document.getElementById('signature').value
+            };
+        }
+        
+        function loadSavedData() {
+            if (!currentVehicle) return;
+            const saved = WorkflowEngine.loadStageData(7, currentVehicle.stockNo);
+            if (saved?.data) {
+                const d = saved.data;
+                if (d.valeter) document.getElementById('valeter').value = d.valeter;
+                if (d.valetGrade) document.getElementById('valet-grade').value = d.valetGrade;
+                if (d.valetNotes) document.getElementById('valet-notes').value = d.valetNotes;
+                if (d.interior) d.interior.forEach(v => { const cb = document.querySelector(`input[value="${v}"]`); if (cb) cb.checked = true; });
+                if (d.exterior) d.exterior.forEach(v => { const cb = document.querySelector(`input[name="exterior[]"][value="${v}"]`); if (cb) cb.checked = true; });
+            }
+        }
+        
+        function saveDraft() {
+            if (!currentVehicle) return;
+            WorkflowEngine.saveStageData(7, getFormData());
+            showAlert('Draft saved', 'success');
+        }
+        
+        function completeStage() {
+            if (!currentVehicle) return;
+            const data = getFormData();
+            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
+            WorkflowEngine.completeStage(7, data);
+            showAlert('Stage 7 complete!', 'success');
+            setTimeout(() => window.location.href = 'stage-8-faults.html', 1500);
+        }
+        
+        function showAlert(msg, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${msg}</span>`;
+            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
+    </script>
+</body>
+</html>
