@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop Pipeline - Auto Capital</title>
+    <title>Dashboard - Auto Capital</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         * {
             margin: 0;
@@ -16,38 +15,28 @@
             box-sizing: border-box;
         }
         
-        :root {
-            --ac-blue: #003366;
-            --ac-red: #E31837;
-            --ac-dark: #0a0e1a;
-            --ac-gray: #1a1f2e;
-            --ac-light: #2d3748;
-            --ac-text: #e2e8f0;
-            --ac-muted: #94a3b8;
-        }
-        
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 100%);
-            color: var(--ac-text);
-            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
         }
         
-        /* Header */
+        /* Professional Header */
         .header {
-            background: rgba(10, 14, 26, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 2px solid var(--ac-red);
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         
         .header-content {
-            max-width: 1600px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 32px;
-            height: 90px;
+            padding: 0 24px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -56,108 +45,99 @@
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
         }
         
         .logo {
-            height: 70px;
+            height: 56px;
             width: auto;
-            filter: brightness(1.1);
+            object-fit: contain;
         }
         
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .brand-name {
-            font-size: 28px;
-            font-weight: 800;
+        .logo-fallback {
+            height: 56px;
+            padding: 0 24px;
+            background: #1e40af;
             color: white;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        
-        .brand-tagline {
-            font-size: 11px;
-            color: var(--ac-red);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            border-radius: 8px;
+            letter-spacing: 0.5px;
         }
         
         /* Navigation */
         .nav-menu {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
         }
         
         .nav-item {
-            padding: 12px 24px;
+            padding: 10px 18px;
             border-radius: 8px;
             font-size: 14px;
-            font-weight: 600;
-            color: var(--ac-muted);
+            font-weight: 500;
+            color: #64748b;
             text-decoration: none;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .nav-item:hover {
-            color: white;
-            background: rgba(227, 24, 55, 0.1);
+            background: #f1f5f9;
+            color: #1e40af;
         }
         
         .nav-item.active {
-            color: var(--ac-red);
-            background: rgba(227, 24, 55, 0.15);
-            border-bottom: 3px solid var(--ac-red);
+            background: #eff6ff;
+            color: #1e40af;
         }
         
-        /* Tools Dropdown */
+        /* Business Tools Dropdown */
         .tools-dropdown {
             position: relative;
         }
         
         .tools-btn {
-            padding: 12px 20px;
-            background: linear-gradient(135deg, var(--ac-red) 0%, #c41230 100%);
-            border: none;
+            padding: 10px 18px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            gap: 8px;
+            transition: all 0.2s;
         }
         
         .tools-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(227, 24, 55, 0.4);
+            background: #f1f5f9;
+            border-color: #cbd5e1;
         }
         
         .tools-menu {
             position: absolute;
             top: 100%;
             right: 0;
-            margin-top: 12px;
-            background: var(--ac-gray);
-            border: 1px solid var(--ac-light);
+            margin-top: 8px;
+            background: white;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            min-width: 300px;
-            padding: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            min-width: 280px;
+            padding: 8px;
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
         
         .tools-dropdown:hover .tools-menu {
@@ -169,21 +149,230 @@
         .tool-item {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 16px;
-            border-radius: 10px;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
             text-decoration: none;
-            color: var(--ac-text);
-            transition: all 0.3s;
-            border: 1px solid transparent;
+            color: #374151;
+            transition: all 0.2s;
         }
         
         .tool-item:hover {
-            background: var(--ac-light);
-            border-color: var(--ac-red);
+            background: #f8fafc;
         }
         
         .tool-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .tool-info {
+            flex: 1;
+        }
+        
+        .tool-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #111827;
+        }
+        
+        .tool-desc {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        /* Weather Widget */
+        .weather-widget {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            border-radius: 12px;
+            color: white;
+            font-size: 13px;
+        }
+        
+        .weather-temp {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .weather-location {
+            opacity: 0.9;
+            font-size: 12px;
+        }
+        
+        /* Main Layout */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        /* Welcome Section */
+        .welcome-bar {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .welcome-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+        
+        .welcome-text p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #059669;
+            font-weight: 500;
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Filters */
+        .filters-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .filters-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .filter-input, .filter-select {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.2s;
+        }
+        
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .reset-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .reset-btn:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .metric-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+        
+        .metric-card:hover {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .metric-icon {
             width: 48px;
             height: 48px;
             border-radius: 12px;
@@ -191,924 +380,1234 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
-            background: var(--ac-blue);
-            color: white;
         }
         
-        /* Main Layout */
-        .main-container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 32px;
-        }
-        
-        /* Hero Section with Van */
-        .hero-section {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr 1fr;
-            gap: 32px;
-            margin-bottom: 40px;
-            align-items: center;
-        }
-        
-        .hero-stats {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        
-        .hero-stat {
-            background: linear-gradient(135deg, rgba(227, 24, 55, 0.1) 0%, rgba(0, 51, 102, 0.1) 100%);
-            border-left: 4px solid var(--ac-red);
-            padding: 24px;
-            border-radius: 0 16px 16px 0;
-        }
-        
-        .hero-stat-value {
-            font-size: 48px;
-            font-weight: 800;
-            color: var(--ac-red);
-            line-height: 1;
-        }
-        
-        .hero-stat-label {
-            font-size: 14px;
-            color: var(--ac-muted);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 8px;
-        }
-        
-        .hero-visual {
-            position: relative;
-            height: 400px;
-            background: linear-gradient(135deg, var(--ac-gray) 0%, var(--ac-dark) 100%);
-            border-radius: 24px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--ac-light);
-        }
-        
-        .hero-visual::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 30% 50%, rgba(227, 24, 55, 0.1) 0%, transparent 50%);
-        }
-        
-        .van-showcase {
-            text-align: center;
-            z-index: 1;
-        }
-        
-        .van-icon {
-            font-size: 180px;
-            color: var(--ac-red);
-            text-shadow: 0 20px 60px rgba(227, 24, 55, 0.3);
-            margin-bottom: 20px;
-        }
-        
-        .van-title {
-            font-size: 42px;
-            font-weight: 800;
-            color: white;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-        
-        .van-subtitle {
-            font-size: 16px;
-            color: var(--ac-muted);
-            margin-top: 8px;
-            letter-spacing: 2px;
-        }
-        
-        /* Charts Section */
-        .charts-section {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-        
-        .chart-card {
-            background: var(--ac-gray);
-            border: 1px solid var(--ac-light);
-            border-radius: 20px;
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .chart-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--ac-red) 0%, var(--ac-blue) 100%);
-        }
-        
-        .chart-title {
-            font-size: 16px;
+        .metric-value {
+            font-size: 32px;
             font-weight: 700;
-            color: white;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #111827;
+            margin-bottom: 8px;
         }
         
-        .chart-container {
-            height: 200px;
-            position: relative;
+        .metric-change {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
         }
         
-        /* Pipeline Section */
-        .pipeline-section {
-            background: var(--ac-gray);
-            border: 1px solid var(--ac-light);
-            border-radius: 24px;
-            padding: 32px;
-            margin-bottom: 40px;
+        .metric-change.positive {
+            color: #059669;
+        }
+        
+        /* Workflow Pipeline */
+        .workflow-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
         }
         
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
+            margin-bottom: 20px;
         }
         
         .section-title {
-            font-size: 24px;
-            font-weight: 800;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
             display: flex;
             align-items: center;
+            gap: 10px;
+        }
+        
+        .status-legend {
+            display: flex;
             gap: 16px;
         }
         
-        .section-title::before {
-            content: '';
-            width: 6px;
-            height: 32px;
-            background: var(--ac-red);
-            border-radius: 3px;
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #6b7280;
         }
         
-        .active-badge {
-            padding: 12px 24px;
-            background: rgba(227, 24, 55, 0.2);
-            border: 2px solid var(--ac-red);
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--ac-red);
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
         }
         
-        /* Stage Grid */
-        .stage-grid {
+        .workflow-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 16px;
-            margin-bottom: 40px;
         }
         
-        .stage-card {
-            background: var(--ac-dark);
-            border: 2px solid var(--ac-light);
-            border-radius: 16px;
-            padding: 24px 16px;
-            text-align: center;
+        .workflow-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             position: relative;
             overflow: hidden;
         }
         
-        .stage-card::before {
+        .workflow-card::before {
             content: '';
             position: absolute;
-            bottom: 0;
             left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--ac-red);
-            transform: scaleX(0);
-            transition: transform 0.3s;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #e5e7eb;
         }
         
-        .stage-card:hover {
-            border-color: var(--ac-red);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(227, 24, 55, 0.2);
+        .workflow-card:hover {
+            border-color: #3b82f6;
+            transform: translateX(4px);
         }
         
-        .stage-card:hover::before {
-            transform: scaleX(1);
+        .workflow-card.stage-1::before { background: #3b82f6; }
+        .workflow-card.stage-2::before { background: #8b5cf6; }
+        .workflow-card.stage-3::before { background: #8b5cf6; }
+        .workflow-card.stage-4::before { background: #64748b; }
+        .workflow-card.stage-5::before { background: #f59e0b; }
+        .workflow-card.stage-6::before { background: #f59e0b; }
+        .workflow-card.stage-7::before { background: #10b981; }
+        .workflow-card.stage-8::before { background: #f59e0b; }
+        .workflow-card.stage-9::before { background: #3b82f6; }
+        .workflow-card.stage-10::before { background: #3b82f6; }
+        .workflow-card.stage-11::before { background: #64748b; }
+        .workflow-card.stage-12::before { background: #6366f1; }
+        
+        .workflow-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
         }
         
-        .stage-card.active {
-            border-color: var(--ac-red);
-            background: rgba(227, 24, 55, 0.1);
+        .workflow-stage-num {
+            font-size: 12px;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
-        .stage-card.active::before {
-            transform: scaleX(1);
+        .workflow-count {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
         }
         
-        .stage-number {
-            font-size: 48px;
-            font-weight: 800;
-            color: var(--ac-red);
-            line-height: 1;
-            margin-bottom: 8px;
+        .workflow-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
         }
         
-        .stage-name {
+        .workflow-dept {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        /* Stuck Vehicles Table */
+        .stuck-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .data-table th {
+            background: #f9fafb;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .data-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+        
+        .data-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+        
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+        
+        .data-table tr:hover td {
+            background: #f9fafb;
+        }
+        
+        .stock-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: #eff6ff;
+            color: #1e40af;
+            border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            line-height: 1.3;
+            font-family: monospace;
         }
         
-        .stage-count {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 28px;
-            height: 28px;
-            background: var(--ac-red);
-            border-radius: 50%;
+        .stage-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-badge.green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-badge.yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-badge.red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .action-link {
+            color: #3b82f6;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+        
+        .action-link:hover {
+            color: #1e40af;
+        }
+        
+        /* Two Column Layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+        
+        /* Alerts Section */
+        .alerts-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+        }
+        
+        .alert-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .alert-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .alert-item.warning {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+        }
+        
+        .alert-item.danger {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+        
+        .alert-item.success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .alert-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+        
+        .alert-text {
             font-size: 13px;
-            font-weight: 700;
-            color: white;
+            color: #4b5563;
         }
         
-        /* Workshop Layout */
-        .workshop-layout {
+        .alert-time {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+        
+        /* Quick Stats */
+        .quick-stats {
             display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 32px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 20px;
         }
         
-        /* Stage Navigation Sidebar */
-        .stage-sidebar {
-            background: var(--ac-gray);
-            border: 1px solid var(--ac-light);
-            border-radius: 20px;
-            padding: 24px;
-            height: fit-content;
+        .stat-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
         }
         
-        .sidebar-title {
-            font-size: 14px;
+        .stat-value {
+            font-size: 28px;
             font-weight: 700;
-            color: var(--ac-muted);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--ac-light);
+            margin-bottom: 4px;
         }
         
-        .stage-nav-item {
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        /* Quick Actions */
+        .actions-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .action-grid {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .action-item {
             display: flex;
             align-items: center;
             gap: 16px;
             padding: 16px;
             border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 8px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
             border: 1px solid transparent;
         }
         
-        .stage-nav-item:hover {
-            background: var(--ac-light);
-            border-color: var(--ac-red);
+        .action-item:hover {
+            background: #f9fafb;
+            border-color: #e2e8f0;
         }
         
-        .stage-nav-item.active {
-            background: linear-gradient(135deg, rgba(227, 24, 55, 0.2) 0%, rgba(0, 51, 102, 0.2) 100%);
-            border-color: var(--ac-red);
-        }
-        
-        .stage-nav-num {
-            width: 40px;
-            height: 40px;
-            background: var(--ac-dark);
-            border: 2px solid var(--ac-light);
-            border-radius: 10px;
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--ac-red);
-        }
-        
-        .stage-nav-item.active .stage-nav-num {
-            background: var(--ac-red);
-            border-color: var(--ac-red);
+            font-size: 20px;
             color: white;
         }
         
-        .stage-nav-info {
-            flex: 1;
-        }
-        
-        .stage-nav-name {
-            font-size: 14px;
+        .action-title {
             font-weight: 600;
-            color: white;
-            margin-bottom: 4px;
+            color: #111827;
+            margin-bottom: 2px;
         }
         
-        .stage-nav-dept {
-            font-size: 11px;
-            color: var(--ac-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .action-desc {
+            font-size: 13px;
+            color: #6b7280;
         }
         
-        .stage-nav-arrow {
-            color: var(--ac-muted);
-            transition: all 0.3s;
+        /* Activity Section */
+        .activity-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
         }
         
-        .stage-nav-item:hover .stage-nav-arrow {
-            color: var(--ac-red);
-            transform: translateX(4px);
-        }
-        
-        /* Form Area */
-        .form-area {
-            background: var(--ac-gray);
-            border: 1px solid var(--ac-light);
-            border-radius: 20px;
-            padding: 32px;
-            min-height: 600px;
-        }
-        
-        .form-header {
+        .activity-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--ac-light);
-        }
-        
-        .form-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .form-subtitle {
-            font-size: 14px;
-            color: var(--ac-muted);
-            margin-top: 4px;
-        }
-        
-        .form-actions {
-            display: flex;
             gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
         }
         
-        .btn {
-            padding: 12px 24px;
-            border-radius: 10px;
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #3b82f6;
+        }
+        
+        .activity-text {
+            flex: 1;
             font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
+            color: #374151;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            padding: 10px;
+            background: none;
             border: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 20px;
+            color: #374151;
+            cursor: pointer;
         }
         
-        .btn-primary {
-            background: linear-gradient(135deg, var(--ac-red) 0%, #c41230 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(227, 24, 55, 0.4);
-        }
-        
-        .btn-secondary {
-            background: var(--ac-light);
-            color: var(--ac-text);
-            border: 1px solid var(--ac-light);
-        }
-        
-        .btn-secondary:hover {
-            background: var(--ac-dark);
-            border-color: var(--ac-red);
-        }
-        
-        /* Form Content Placeholder */
-        .form-content {
-            color: var(--ac-muted);
-            text-align: center;
-            padding: 80px 40px;
-        }
-        
-        .form-content i {
-            font-size: 64px;
-            color: var(--ac-red);
-            margin-bottom: 24px;
-            opacity: 0.5;
-        }
-        
-        .form-content h3 {
-            font-size: 24px;
-            color: white;
-            margin-bottom: 16px;
-        }
-        
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .hero-section {
-                grid-template-columns: 1fr;
-            }
-            
-            .hero-visual {
-                order: -1;
-                height: 300px;
-            }
-            
-            .stage-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .workshop-layout {
-                grid-template-columns: 1fr;
-            }
-            
-            .stage-sidebar {
+        @media (max-width: 1024px) {
+            .nav-menu {
                 display: none;
             }
-        }
-        
-        @media (max-width: 768px) {
-            .stage-grid {
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-stats {
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            .charts-section {
+            .weather-widget {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .filters-grid {
                 grid-template-columns: 1fr;
             }
             
-            .header-content {
-                padding: 0 16px;
+            .workflow-grid {
+                grid-template-columns: 1fr;
             }
             
-            .nav-menu {
-                display: none;
+            .metrics-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Auth Check -->
+    <script>
+        (function() {
+            const session = localStorage.getItem('capeye_session');
+            if (!session && !window.location.pathname.includes('login.html')) {
+                window.location.replace('./login.html');
+            }
+        })();
+    </script>
+
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <div class="logo-section">
-                <img src="./autocapital-logo.png" alt="Auto Capital" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                <div style="display: none; flex-direction: column;">
-                    <span class="brand-name">Auto Capital</span>
-                    <span class="brand-tagline">The Van Centre</span>
+            <div style="display: flex; align-items: center; gap: 24px;">
+                <!-- Logo -->
+                <div class="logo-section">
+                    <img src="./autocapital-logo.png" alt="Auto Capital" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="logo-fallback" style="display: none;">AUTO CAPITAL</div>
                 </div>
-                <div class="brand-text" style="margin-left: 16px;">
-                    <span class="brand-name">Workshop</span>
-                    <span class="brand-tagline">Pipeline Control</span>
-                </div>
+                
+                <!-- Navigation -->
+                <nav class="nav-menu">
+                    <a href="./index.html" class="nav-item active">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="./operations.html" class="nav-item">
+                        <i class="fas fa-cogs"></i> Operations
+                    </a>
+                    <a href="./inventory.html" class="nav-item">
+                        <i class="fas fa-car"></i> Inventory
+                    </a>
+                    <a href="./workflow/stages/stage-1-intake.html" class="nav-item">
+                        <i class="fas fa-tasks"></i> Workflow
+                    </a>
+                    <a href="./analytics.html" class="nav-item">
+                        <i class="fas fa-chart-bar"></i> Analytics
+                    </a>
+                </nav>
             </div>
             
-            <nav class="nav-menu">
-                <a href="./index.html" class="nav-item">Dashboard</a>
-                <a href="./operations.html" class="nav-item">Operations</a>
-                <a href="./inventory.html" class="nav-item">Stock</a>
-                <a href="./workflow.html" class="nav-item active">Workshop</a>
-                <a href="./analytics.html" class="nav-item">Reports</a>
-            </nav>
-            
-            <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <!-- Weather Widget -->
+                <div class="weather-widget" id="weatherWidget">
+                    <i class="fas fa-sun" style="font-size: 24px;"></i>
+                    <div>
+                        <div class="weather-temp" id="weatherTemp">--°</div>
+                        <div class="weather-location">London, UK</div>
+                    </div>
+                </div>
+                
+                <!-- Business Tools Dropdown -->
                 <div class="tools-dropdown">
                     <button class="tools-btn">
-                        <i class="fas fa-wrench"></i>
-                        Garage Tools
+                        <i class="fas fa-toolbox"></i>
+                        Business Tools
+                        <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
                     </button>
                     <div class="tools-menu">
-                        <a href="https://id.clickdealer.co.uk/" target="_blank" class="tool-item">
-                            <div class="tool-icon"><i class="fas fa-mouse-pointer"></i></div>
-                            <div>
-                                <div style="font-weight: 700; color: white;">Click Dealer</div>
-                                <div style="font-size: 12px; color: var(--ac-muted);">DMS System</div>
+                        <a href="https://id.clickdealer.co.uk/realms/organisations-prod/protocol/openid-connect/auth?client_id=click-dms&redirect_uri=https%3A%2F%2Fmyclickdealer.co.uk%2Foauth2%2Fidpresponse&response_type=code&scope=openid&state=V%2FpB3cEEMcVU0DA6x5rdf0eGnq%2FrPKhLVhKnJupi2Zf59JaHQwbMHXTW09eeMy4vQs2trhs7DsZn3Ri9O7skLgx0I7OxuRGlkIW3ARV3RYSqnWBgXpMCWDqzgW8Xjk0qsWios0vwHQNdOMXXcnR6oquYx7DhDlnL%2BoYu5cJFPiTMqu52v5TxVnD5wQxiCqj4Q5leI3sPwcRFDXQ4iHGNCP66Y633PBCkNiR%2BLK5zx4rFD5dJu2c%3D" target="_blank" class="tool-item">
+                            <div class="tool-icon" style="background: #dbeafe; color: #1e40af;">
+                                <i class="fas fa-mouse-pointer"></i>
+                            </div>
+                            <div class="tool-info">
+                                <div class="tool-title">Click Dealer</div>
+                                <div class="tool-desc">DMS & Stock Management</div>
                             </div>
                         </a>
+                        
                         <a href="https://autocapital.co.uk/" target="_blank" class="tool-item">
-                            <div class="tool-icon" style="background: var(--ac-red);"><i class="fas fa-globe"></i></div>
-                            <div>
-                                <div style="font-weight: 700; color: white;">Auto Capital</div>
-                                <div style="font-size: 12px; color: var(--ac-muted);">Website</div>
+                            <div class="tool-icon" style="background: #dcfce7; color: #166534;">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="tool-info">
+                                <div class="tool-title">Auto Capital</div>
+                                <div class="tool-desc">Company Website</div>
                             </div>
                         </a>
+                        
                         <a href="https://www.gov.uk/get-vehicle-information-from-dvla" target="_blank" class="tool-item">
-                            <div class="tool-icon" style="background: #f59e0b;"><i class="fas fa-search"></i></div>
-                            <div>
-                                <div style="font-weight: 700; color: white;">DVLA Check</div>
-                                <div style="font-size: 12px; color: var(--ac-muted);">Vehicle Info</div>
+                            <div class="tool-icon" style="background: #fef3c7; color: #92400e;">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="tool-info">
+                                <div class="tool-title">DVLA Car Check</div>
+                                <div class="tool-desc">Vehicle Information</div>
                             </div>
                         </a>
+                        
                         <a href="https://www.hpicheck.com/" target="_blank" class="tool-item">
-                            <div class="tool-icon" style="background: #8b5cf6;"><i class="fas fa-shield-alt"></i></div>
-                            <div>
-                                <div style="font-weight: 700; color: white;">HPI Check</div>
-                                <div style="font-size: 12px; color: var(--ac-muted);">History Check</div>
+                            <div class="tool-icon" style="background: #fce7f3; color: #9d174d;">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="tool-info">
+                                <div class="tool-title">HPI Check</div>
+                                <div class="tool-desc">Vehicle History Check</div>
                             </div>
                         </a>
                     </div>
                 </div>
                 
-                <button onclick="logout()" style="background: none; border: none; color: var(--ac-muted); font-size: 20px; cursor: pointer; transition: all 0.3s;">
-                    <i class="fas fa-power-off"></i>
+                <button onclick="logout()" class="nav-item" style="color: #dc2626;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
     </header>
 
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" style="display: none; background: white; border-bottom: 1px solid #e2e8f0; padding: 16px;">
+        <a href="./index.html" class="nav-item active" style="display: block; margin-bottom: 8px;">Dashboard</a>
+        <a href="./operations.html" class="nav-item" style="display: block; margin-bottom: 8px;">Operations</a>
+        <a href="./inventory.html" class="nav-item" style="display: block; margin-bottom: 8px;">Inventory</a>
+        <a href="./workflow/stages/stage-1-intake.html" class="nav-item" style="display: block; margin-bottom: 8px;">Workflow</a>
+        <a href="./analytics.html" class="nav-item" style="display: block; margin-bottom: 8px;">Analytics</a>
+    </div>
+
     <!-- Main Content -->
     <main class="main-container">
         
-        <!-- Hero Section -->
-        <div class="hero-section">
-            <div class="hero-stats">
-                <div class="hero-stat">
-                    <div class="hero-stat-value" id="totalStockValue">£0</div>
-                    <div class="hero-stat-label">Stock Value</div>
+        <!-- Welcome Bar -->
+        <div class="welcome-bar">
+            <div class="welcome-text">
+                <h1>Welcome back, <span id="userName">User</span></h1>
+                <p>Real-time visibility over stock, workflow stages, sales performance, and vehicle preparation.</p>
+            </div>
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                <span>Live Data</span>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filters-header">
+                <div class="filters-title">
+                    <i class="fas fa-filter" style="color: #3b82f6;"></i>
+                    Vehicle Filters
                 </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-value" id="unitsInPrep">0</div>
-                    <div class="hero-stat-label">Units in Prep</div>
+                <button class="reset-btn" onclick="resetFilters()">
+                    <i class="fas fa-undo mr-2"></i>Reset
+                </button>
+            </div>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Date From</label>
+                    <input type="date" id="filter-date-from" class="filter-input" onchange="applyFilters()">
                 </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-value" id="avgPrepTime">0</div>
-                    <div class="hero-stat-label">Avg Prep Days</div>
+                <div class="filter-group">
+                    <label class="filter-label">Date To</label>
+                    <input type="date" id="filter-date-to" class="filter-input" onchange="applyFilters()">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Vehicle Make</label>
+                    <select id="filter-make" class="filter-select" onchange="applyFilters()">
+                        <option value="">All Makes</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select id="filter-status" class="filter-select" onchange="applyFilters()">
+                        <option value="">All Statuses</option>
+                        <option value="In Stock">In Stock</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Off-site R">Off-site R</option>
+                        <option value="Subject to">Subject to</option>
+                        <option value="Sold">Sold</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Location</label>
+                    <select id="filter-location" class="filter-select" onchange="applyFilters()">
+                        <option value="">All Locations</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Registration</label>
+                    <input type="text" id="filter-reg" class="filter-input" placeholder="e.g., AB12 CDE" onkeyup="applyFilters()">
                 </div>
             </div>
-            
-            <div class="hero-visual">
-                <div class="van-showcase">
-                    <div class="van-icon">
-                        <i class="fas fa-truck-moving"></i>
+        </div>
+
+        <!-- Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-label">Total Stock Value</div>
+                        <div class="metric-value" id="totalValue">£0</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i> 12% vs last month
+                        </div>
                     </div>
-                    <div class="van-title">Commercial</div>
-                    <div class="van-subtitle">Vehicle Preparation System</div>
+                    <div class="metric-icon" style="background: #dbeafe; color: #1e40af;">
+                        <i class="fas fa-pound-sign"></i>
+                    </div>
                 </div>
             </div>
             
-            <div class="hero-stats">
-                <div class="hero-stat">
-                    <div class="hero-stat-value" id="completedToday">0</div>
-                    <div class="hero-stat-label">Completed Today</div>
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-label">Total Vehicles</div>
+                        <div class="metric-value" id="totalVehicles">0</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i> 8 new this week
+                        </div>
+                    </div>
+                    <div class="metric-icon" style="background: #e0e7ff; color: #3730a3;">
+                        <i class="fas fa-car"></i>
+                    </div>
                 </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-value" id="bayOccupancy">0%</div>
-                    <div class="hero-stat-label">Bay Occupancy</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-label">Sales This Month</div>
+                        <div class="metric-value" id="monthlySales">0</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i> 24% vs last month
+                        </div>
+                    </div>
+                    <div class="metric-icon" style="background: #d1fae5; color: #065f46;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
                 </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-value" id="qualityScore">0</div>
-                    <div class="hero-stat-label">Quality Score</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-label">Potential Margin</div>
+                        <div class="metric-value" id="potentialMargin">£0</div>
+                        <div class="metric-change" style="color: #6b7280;">
+                            Based on current stock
+                        </div>
+                    </div>
+                    <div class="metric-icon" style="background: #f3e8ff; color: #7c3aed;">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Charts Section -->
-        <div class="charts-section">
-            <div class="chart-card">
-                <div class="chart-title">Prep Status Distribution</div>
-                <div class="chart-container">
-                    <canvas id="statusChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">Workshop Utilisation</div>
-                <div class="chart-container">
-                    <canvas id="utilisationChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">Prep Time by Department</div>
-                <div class="chart-container">
-                    <canvas id="deptChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pipeline Overview -->
-        <div class="pipeline-section">
+        <!-- Workflow Pipeline -->
+        <div class="workflow-section">
             <div class="section-header">
-                <div class="section-title">Prep Lane Overview</div>
-                <div class="active-badge">
-                    <i class="fas fa-cog fa-spin mr-2"></i>
-                    <span id="activeVehicles">0</span> Active Units
+                <div class="section-title">
+                    <i class="fas fa-project-diagram" style="color: #3b82f6;"></i>
+                    Workflow Pipeline
+                </div>
+                <div class="status-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #10b981;"></div>
+                        <span>On Track</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #f59e0b;"></div>
+                        <span>Warning</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #ef4444;"></div>
+                        <span>Overdue</span>
+                    </div>
                 </div>
             </div>
-            
-            <div class="stage-grid" id="pipelineGrid">
+            <div class="workflow-grid" id="workflowPipeline">
                 <!-- Injected by JS -->
             </div>
         </div>
 
-        <!-- Workshop Layout -->
-        <div class="workshop-layout">
-            <!-- Stage Navigation -->
-            <div class="stage-sidebar">
-                <div class="sidebar-title">Preparation Stages</div>
-                <div id="stageNavigation">
-                    <!-- Injected by JS -->
+        <!-- Stuck Vehicles -->
+        <div class="stuck-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-exclamation-circle" style="color: #f59e0b;"></i>
+                    Vehicles Requiring Attention
                 </div>
+                <span style="font-size: 14px; color: #6b7280;" id="stuckCount">0 vehicles</span>
             </div>
-            
-            <!-- Form Area -->
-            <div class="form-area">
-                <div class="form-header">
-                    <div>
-                        <div class="form-title" id="currentStageTitle">Select a Stage</div>
-                        <div class="form-subtitle" id="currentStageSubtitle">Choose a preparation stage from the sidebar to begin</div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Stock No</th>
+                            <th>Vehicle</th>
+                            <th>Registration</th>
+                            <th>Current Stage</th>
+                            <th>Assigned To</th>
+                            <th>Days at Stage</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stuckVehiclesTable">
+                        <!-- Injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="two-column">
+            <!-- Left Column -->
+            <div>
+                <!-- Alerts -->
+                <div class="alerts-section" style="margin-bottom: 24px;">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <i class="fas fa-bell" style="color: #f59e0b;"></i>
+                            Alerts & Notifications
+                        </div>
+                        <button onclick="markAllRead()" style="font-size: 13px; color: #3b82f6; background: none; border: none; cursor: pointer;">Mark all read</button>
                     </div>
-                    <div class="form-actions">
-                        <button class="btn btn-secondary" onclick="saveProgress()">
-                            <i class="fas fa-save"></i> Save
-                        </button>
-                        <button class="btn btn-primary" onclick="completeStage()">
-                            <i class="fas fa-check"></i> Complete
-                        </button>
+                    <div id="alertsList">
+                        <!-- Injected by JS -->
                     </div>
                 </div>
                 
-                <div class="form-content" id="formContent">
-                    <i class="fas fa-clipboard-check"></i>
-                    <h3>Ready to Start</h3>
-                    <p>Select a preparation stage from the left sidebar to view and complete the checklist for that phase of vehicle preparation.</p>
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-box">
+                        <div class="stat-value" style="color: #059669;" id="inStockCount">0</div>
+                        <div class="stat-label">In Stock</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" style="color: #d97706;" id="inTransitCount">0</div>
+                        <div class="stat-label">In Transit</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" style="color: #dc2626;" id="offSiteCount">0</div>
+                        <div class="stat-label">Off-site</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" style="color: #7c3aed;" id="subjectToCount">0</div>
+                        <div class="stat-label">Subject to</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div>
+                <!-- Quick Actions -->
+                <div class="actions-section">
+                    <div class="section-title" style="margin-bottom: 16px;">
+                        <i class="fas fa-bolt" style="color: #f59e0b;"></i>
+                        Quick Actions
+                    </div>
+                    <div class="action-grid">
+                        <a href="./import.html" class="action-item">
+                            <div class="action-icon" style="background: #3b82f6;">
+                                <i class="fas fa-file-import"></i>
+                            </div>
+                            <div>
+                                <div class="action-title">Import Stock</div>
+                                <div class="action-desc">Upload CSV file</div>
+                            </div>
+                        </a>
+                        
+                        <a href="./workflow/stages/stage-1-intake.html" class="action-item">
+                            <div class="action-icon" style="background: #10b981;">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div>
+                                <div class="action-title">Workflow</div>
+                                <div class="action-desc">Vehicle preparation</div>
+                            </div>
+                        </a>
+                        
+                        <a href="./inventory.html" class="action-item">
+                            <div class="action-icon" style="background: #8b5cf6;">
+                                <i class="fas fa-warehouse"></i>
+                            </div>
+                            <div>
+                                <div class="action-title">Inventory</div>
+                                <div class="action-desc">View all vehicles</div>
+                            </div>
+                        </a>
+                        
+                        <a href="./mobile-app.html" class="action-item">
+                            <div class="action-icon" style="background: #f59e0b;">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <div>
+                                <div class="action-title">Mobile App</div>
+                                <div class="action-desc">Field operations</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="activity-section">
+                    <div class="section-title" style="margin-bottom: 16px;">
+                        <i class="fas fa-history" style="color: #6b7280;"></i>
+                        Recent Activity
+                    </div>
+                    <div id="recentActivity">
+                        <p style="color: #9ca3af; font-size: 14px;">No recent activity</p>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        // Motor Industry Terminology Stages
-        const prepStages = [
-            { id: 1, name: 'Goods In', dept: 'Receiving', icon: 'fa-clipboard-check', desc: 'Vehicle receipt and initial inspection' },
-            { id: 2, name: 'Bodyshop', dept: 'Panel Shop', icon: 'fa-car-crash', desc: 'Dent removal and cosmetic repairs' },
-            { id: 3, name: 'Spray Shop', dept: 'Paint Shop', icon: 'fa-spray-can', desc: 'Paint refinishing and colour matching' },
-            { id: 4, name: 'VOSA Prep', dept: 'Compliance', icon: 'fa-file-alt', desc: 'Documentation and legal compliance' },
-            { id: 5, name: 'Mechanical', dept: 'Workshop', icon: 'fa-wrench', desc: 'Engine, brakes and diagnostics' },
-            { id: 6, name: 'Electrical', dept: 'Auto Electric', icon: 'fa-bolt', desc: 'Lights, electrics and diagnostics' },
-            { id: 7, name: 'Valeting', dept: 'Detail Bay', icon: 'fa-sparkles', desc: 'Deep clean and presentation prep' },
-            { id: 8, name: 'Quality Check', dept: 'QC Bay', icon: 'fa-search', desc: 'Final inspection and sign-off' },
-            { id: 9, name: 'Photography', dept: 'Media Bay', icon: 'fa-camera', desc: 'Imaging and listing preparation' },
-            { id: 10, name: 'Handover', dept: 'Sales', icon: 'fa-key', desc: 'Customer collection and delivery' },
-            { id: 11, name: 'Accounts', dept: 'Admin', icon: 'fa-calculator', desc: 'Invoicing and warranty activation' },
-            { id: 12, name: 'Archive', dept: 'Management', icon: 'fa-archive', desc: 'Final review and file closure' }
-        ];
-        
-        let currentStage = null;
-        
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            const session = JSON.parse(localStorage.getItem('capeye_session') || '{}');
+            if (session.username) {
+                document.getElementById('userName').textContent = session.username;
+            }
+            
+            loadWeather();
+            loadFilters();
             loadDashboardData();
-            renderPipeline();
-            renderStageNavigation();
-            initCharts();
+            loadWorkflowPipeline();
+            loadStuckVehicles();
+            loadAlerts();
+            loadRecentActivity();
         });
-        
-        function loadDashboardData() {
-            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            const inPrep = vehicles.filter(v => v.workflowStage && v.workflowStage < 9);
-            
-            // Calculate metrics
-            const stockValue = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
-            const completedToday = 0; // Would calculate from workflow log
-            const bayOccupancy = Math.min(100, Math.round((inPrep.length / 20) * 100));
-            
-            document.getElementById('totalStockValue').textContent = '£' + (stockValue / 1000000).toFixed(1) + 'M';
-            document.getElementById('unitsInPrep').textContent = inPrep.length;
-            document.getElementById('avgPrepTime').textContent = '5.2';
-            document.getElementById('completedToday').textContent = completedToday;
-            document.getElementById('bayOccupancy').textContent = bayOccupancy + '%';
-            document.getElementById('qualityScore').textContent = '94';
-            document.getElementById('activeVehicles').textContent = inPrep.length;
+
+        // Weather Widget
+        function loadWeather() {
+            // Using OpenWeatherMap or similar would require API key
+            // For now, using a simple fetch to a free weather API
+            fetch('https://api.openweathermap.org/data/2.5/weather?q=London,uk&units=metric&appid=demo')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.main) {
+                        document.getElementById('weatherTemp').textContent = Math.round(data.main.temp) + '°';
+                    }
+                })
+                .catch(() => {
+                    // Fallback - you can replace with actual API key
+                    document.getElementById('weatherTemp').textContent = '12°';
+                });
         }
-        
-        function renderPipeline() {
+
+        // Filters
+        function loadFilters() {
             const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            const grid = document.getElementById('pipelineGrid');
+            
+            // Makes
+            const makes = [...new Set(vehicles.map(v => v.make).filter(Boolean))].sort();
+            const makeSelect = document.getElementById('filter-make');
+            makes.forEach(make => {
+                const opt = document.createElement('option');
+                opt.value = make;
+                opt.textContent = make;
+                makeSelect.appendChild(opt);
+            });
+            
+            // Locations
+            const locations = [...new Set(vehicles.map(v => v.location).filter(Boolean))].sort();
+            const locSelect = document.getElementById('filter-location');
+            locations.forEach(loc => {
+                const opt = document.createElement('option');
+                opt.value = loc;
+                opt.textContent = loc;
+                locSelect.appendChild(opt);
+            });
+        }
+
+        function applyFilters() {
+            loadDashboardData();
+            loadWorkflowPipeline();
+            loadStuckVehicles();
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-date-from').value = '';
+            document.getElementById('filter-date-to').value = '';
+            document.getElementById('filter-make').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-location').value = '';
+            document.getElementById('filter-reg').value = '';
+            applyFilters();
+        }
+
+        function getFilteredVehicles() {
+            let vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            
+            const dateFrom = document.getElementById('filter-date-from').value;
+            const dateTo = document.getElementById('filter-date-to').value;
+            const make = document.getElementById('filter-make').value;
+            const status = document.getElementById('filter-status').value;
+            const location = document.getElementById('filter-location').value;
+            const reg = document.getElementById('filter-reg').value.toUpperCase();
+            
+            return vehicles.filter(v => {
+                if (make && v.make !== make) return false;
+                if (status && v.status !== status) return false;
+                if (location && v.location !== location) return false;
+                if (reg && !v.registration?.toUpperCase().includes(reg)) return false;
+                if (dateFrom && v.dateInStock && new Date(v.dateInStock) < new Date(dateFrom)) return false;
+                if (dateTo && v.dateInStock && new Date(v.dateInStock) > new Date(dateTo)) return false;
+                return true;
+            });
+        }
+
+        // Dashboard Data
+        function loadDashboardData() {
+            const vehicles = getFilteredVehicles();
+            
+            const totalValue = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
+            const totalRetail = vehicles.reduce((sum, v) => sum + (parseFloat(v.retailPrice) || 0), 0);
+            const margin = totalRetail - totalValue;
+            
+            const soldThisMonth = vehicles.filter(v => {
+                if (!v.saleDate) return false;
+                const saleDate = new Date(v.saleDate);
+                const now = new Date();
+                return saleDate.getMonth() === now.getMonth() && saleDate.getFullYear() === now.getFullYear();
+            }).length;
+            
+            document.getElementById('totalValue').textContent = '£' + totalValue.toLocaleString('en-GB', {maximumFractionDigits: 0});
+            document.getElementById('totalVehicles').textContent = vehicles.length;
+            document.getElementById('monthlySales').textContent = soldThisMonth;
+            document.getElementById('potentialMargin').textContent = '£' + margin.toLocaleString('en-GB', {maximumFractionDigits: 0});
+            
+            const statusCounts = { 'In Stock': 0, 'In Transit': 0, 'Off-site R': 0, 'Subject to': 0 };
+            vehicles.forEach(v => { if (statusCounts.hasOwnProperty(v.status)) statusCounts[v.status]++; });
+            
+            document.getElementById('inStockCount').textContent = statusCounts['In Stock'];
+            document.getElementById('inTransitCount').textContent = statusCounts['In Transit'];
+            document.getElementById('offSiteCount').textContent = statusCounts['Off-site R'];
+            document.getElementById('subjectToCount').textContent = statusCounts['Subject to'];
+        }
+
+        // Workflow Pipeline
+        function loadWorkflowPipeline() {
+            const vehicles = getFilteredVehicles();
+            const container = document.getElementById('workflowPipeline');
+            
+            const stages = [
+                { id: 1, name: 'Vehicle Intake', dept: 'Sales', icon: '📋', color: 'blue' },
+                { id: 2, name: 'Bodywork & Cosmetic', dept: 'Bodyshop', icon: '🎨', color: 'purple' },
+                { id: 3, name: 'Dent & Paint Repairs', dept: 'Bodyshop', icon: '🖌️', color: 'purple' },
+                { id: 4, name: 'Legal & Documentation', dept: 'Accounts', icon: '📄', color: 'slate' },
+                { id: 5, name: 'Mechanical & Diagnostic', dept: 'Workshop', icon: '🔧', color: 'orange' },
+                { id: 6, name: 'External & Electrical', dept: 'Workshop', icon: '⚡', color: 'orange' },
+                { id: 7, name: 'Interior & Valeting', dept: 'Valeting', icon: '✨', color: 'green' },
+                { id: 8, name: 'Fault Overview', dept: 'Workshop', icon: '📊', color: 'orange' },
+                { id: 9, name: 'Ready for Advertising', dept: 'Sales', icon: '📸', color: 'blue' },
+                { id: 10, name: 'Customer Delivery', dept: 'Sales', icon: '🚗', color: 'blue' },
+                { id: 11, name: 'Accounts & Warranty', dept: 'Accounts', icon: '💰', color: 'slate' },
+                { id: 12, name: 'Management Overview', dept: 'Management', icon: '👔', color: 'indigo' }
+            ];
             
             const stageCounts = {};
-            prepStages.forEach(s => stageCounts[s.id] = 0);
+            stages.forEach(s => stageCounts[s.id] = 0);
             vehicles.forEach(v => {
                 const stage = v.workflowStage || 1;
                 if (stageCounts.hasOwnProperty(stage)) stageCounts[stage]++;
             });
             
-            grid.innerHTML = prepStages.map(stage => {
+            container.innerHTML = stages.map(stage => {
                 const count = stageCounts[stage.id] || 0;
-                const hasVehicles = count > 0;
-                
                 return `
-                    <div class="stage-card ${hasVehicles ? 'active' : ''}" onclick="selectStage(${stage.id})">
-                        ${hasVehicles ? `<div class="stage-count">${count}</div>` : ''}
-                        <div class="stage-number">${stage.id}</div>
-                        <div class="stage-name">${stage.name}</div>
+                    <div class="workflow-card stage-${stage.id}" onclick="window.location.href='./workflow/stages/stage-${stage.id}-${getStageFileName(stage.id)}.html'">
+                        <div class="workflow-card-header">
+                            <span class="workflow-stage-num">Stage ${stage.id}</span>
+                            <span class="workflow-count">${count}</span>
+                        </div>
+                        <div class="workflow-name">${stage.icon} ${stage.name}</div>
+                        <div class="workflow-dept">${stage.dept}</div>
                     </div>
                 `;
             }).join('');
         }
-        
-        function renderStageNavigation() {
-            const container = document.getElementById('stageNavigation');
-            
-            container.innerHTML = prepStages.map(stage => `
-                <div class="stage-nav-item" id="nav-item-${stage.id}" onclick="selectStage(${stage.id})">
-                    <div class="stage-nav-num">${stage.id}</div>
-                    <div class="stage-nav-info">
-                        <div class="stage-nav-name">${stage.name}</div>
-                        <div class="stage-nav-dept">${stage.dept}</div>
-                    </div>
-                    <i class="fas fa-chevron-right stage-nav-arrow"></i>
-                </div>
-            `).join('');
-        }
-        
-        function selectStage(stageId) {
-            currentStage = stageId;
-            const stage = prepStages.find(s => s.id === stageId);
-            
-            // Update UI
-            document.querySelectorAll('.stage-nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`nav-item-${stageId}`).classList.add('active');
-            
-            document.getElementById('currentStageTitle').textContent = `Stage ${stage.id}: ${stage.name}`;
-            document.getElementById('currentStageSubtitle').textContent = stage.desc;
-            
-            // Load form content
-            document.getElementById('formContent').innerHTML = `
-                <div style="text-align: left; color: var(--ac-text);">
-                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px; padding: 24px; background: var(--ac-dark); border-radius: 16px; border: 1px solid var(--ac-light);">
-                        <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--ac-red) 0%, var(--ac-blue) 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px;">
-                            <i class="fas ${stage.icon}" style="color: white;"></i>
-                        </div>
-                        <div>
-                            <div style="font-size: 20px; font-weight: 700; color: white; margin-bottom: 4px;">${stage.dept}</div>
-                            <div style="font-size: 14px; color: var(--ac-muted);">${stage.desc}</div>
-                        </div>
-                    </div>
-                    
-                    <div style="background: var(--ac-dark); border-radius: 16px; padding: 32px; border: 1px solid var(--ac-light);">
-                        <p style="margin-bottom: 24px;">Loading ${stage.name.toLowerCase()} checklist...</p>
-                        <a href="./workflow/stages/stage-${stage.id}-${getStageFileName(stage.id)}.html" class="btn btn-primary" style="display: inline-flex; text-decoration: none;">
-                            <i class="fas fa-external-link-alt"></i>
-                            Open Full Form
-                        </a>
-                    </div>
-                </div>
-            `;
-        }
-        
+
         function getStageFileName(stageId) {
             const names = { 1: 'intake', 2: 'bodywork', 3: 'paint', 4: 'legal', 5: 'mechanical', 6: 'external', 7: 'valeting', 8: 'faults', 9: 'advertising', 10: 'delivery', 11: 'accounts', 12: 'management' };
             return names[stageId] || 'stage';
         }
-        
-        function initCharts() {
-            // Status Chart (Doughnut)
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
-            new Chart(statusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['In Prep', 'Ready', 'Sold'],
-                    datasets: [{
-                        data: [45, 30, 25],
-                        backgroundColor: ['#E31837', '#003366', '#10b981'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: '#94a3b8', font: { size: 11 } }
-                        }
-                    }
-                }
-            });
+
+        // Stuck Vehicles
+        function loadStuckVehicles() {
+            const vehicles = getFilteredVehicles();
+            const tbody = document.getElementById('stuckVehiclesTable');
+            const now = new Date();
             
-            // Utilisation Chart (Gauge-style bar)
-            const utilCtx = document.getElementById('utilisationChart').getContext('2d');
-            new Chart(utilCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Bodyshop', 'Paint', 'Mech', 'Valet', 'QC'],
-                    datasets: [{
-                        label: 'Utilisation %',
-                        data: [85, 72, 90, 65, 45],
-                        backgroundColor: '#E31837',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: { color: '#94a3b8' },
-                            grid: { color: '#2d3748' }
-                        },
-                        x: {
-                            ticks: { color: '#94a3b8' },
-                            grid: { display: false }
-                        }
-                    }
+            const stuckVehicles = vehicles.filter(v => {
+                if (!v.workflowStage || v.workflowStage >= 9) return false;
+                const stageData = JSON.parse(localStorage.getItem(`capeye_workflow_stage_${v.workflowStage}_${v.stockNo}`) || '{}');
+                if (!stageData.timestamp) return true;
+                const daysAtStage = Math.floor((now - new Date(stageData.timestamp)) / (1000 * 60 * 60 * 24));
+                return daysAtStage > 2;
+            }).map(v => {
+                const stageData = JSON.parse(localStorage.getItem(`capeye_workflow_stage_${v.workflowStage}_${v.stockNo}`) || '{}');
+                const timestamp = stageData.timestamp ? new Date(stageData.timestamp) : new Date(v.dateInStock);
+                const daysAtStage = Math.floor((now - timestamp) / (1000 * 60 * 60 * 24));
+                
+                const stages = { 1: 'Intake', 2: 'Bodywork', 3: 'Paint', 4: 'Legal', 5: 'Mechanical', 6: 'External', 7: 'Valeting', 8: 'Faults', 9: 'Advertising', 10: 'Delivery', 11: 'Accounts', 12: 'Management' };
+                
+                let assignedTo = 'Unassigned';
+                if (stageData.data) {
+                    assignedTo = stageData.data.inspector || stageData.data.assessor || stageData.data.mechanic || stageData.data.valeter || stageData.data.salesperson || 'Unassigned';
                 }
-            });
+                
+                return { ...v, stageName: stages[v.workflowStage] || 'Intake', daysAtStage, assignedTo, isOverdue: daysAtStage > 5 };
+            }).sort((a, b) => b.daysAtStage - a.daysAtStage);
             
-            // Department Chart (Line)
-            const deptCtx = document.getElementById('deptChart').getContext('2d');
-            new Chart(deptCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                    datasets: [{
-                        label: 'Avg Days',
-                        data: [3.2, 2.8, 3.5, 2.9, 3.1],
-                        borderColor: '#E31837',
-                        backgroundColor: 'rgba(227, 24, 55, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: {
-                            ticks: { color: '#94a3b8' },
-                            grid: { color: '#2d3748' }
-                        },
-                        x: {
-                            ticks: { color: '#94a3b8' },
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function saveProgress() {
-            alert('Progress saved');
-        }
-        
-        function completeStage() {
-            if (!currentStage) {
-                alert('Please select a stage first');
+            document.getElementById('stuckCount').textContent = `${stuckVehicles.length} vehicles requiring attention`;
+            
+            if (stuckVehicles.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #059669;">
+                            <i class="fas fa-check-circle" style="font-size: 32px; margin-bottom: 12px;"></i>
+                            <p>All vehicles on track! No vehicles stuck at stages.</p>
+                        </td>
+                    </tr>
+                `;
                 return;
             }
-            alert('Stage completed');
+            
+            tbody.innerHTML = stuckVehicles.map(v => {
+                const statusClass = v.isOverdue ? 'red' : v.daysAtStage > 3 ? 'yellow' : 'green';
+                const statusText = v.isOverdue ? 'Overdue' : v.daysAtStage > 3 ? 'Warning' : 'On Track';
+                
+                return `
+                    <tr>
+                        <td><span class="stock-badge">${v.stockNo}</span></td>
+                        <td>${v.make} ${v.model}</td>
+                        <td>${v.registration || '-'}</td>
+                        <td><span class="stage-badge" style="background: #eff6ff; color: #1e40af;">${v.stageName}</span></td>
+                        <td>${v.assignedTo}</td>
+                        <td style="${v.daysAtStage > 5 ? 'color: #dc2626; font-weight: 600;' : ''}">${v.daysAtStage} days</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td><a href="./workflow/stages/stage-${v.workflowStage || 1}-${getStageFileName(v.workflowStage || 1)}.html" class="action-link">View <i class="fas fa-arrow-right"></i></a></td>
+                    </tr>
+                `;
+            }).join('');
         }
-        
+
+        // Alerts
+        function loadAlerts() {
+            const vehicles = getFilteredVehicles();
+            const alerts = [];
+            const now = new Date();
+            
+            vehicles.forEach(v => {
+                if (v.dateInStock && v.status === 'In Stock') {
+                    const daysInStock = Math.floor((now - new Date(v.dateInStock)) / (1000 * 60 * 60 * 24));
+                    if (daysInStock > 90) {
+                        alerts.push({ type: 'danger', icon: 'fa-exclamation-triangle', title: 'Aging Stock', message: `${v.make} ${v.model} (${v.stockNo}) has been in stock for ${daysInStock} days` });
+                    }
+                }
+            });
+            
+            vehicles.forEach(v => {
+                if (v.workflowStage && v.workflowStage < 9) {
+                    const stageData = JSON.parse(localStorage.getItem(`capeye_workflow_stage_${v.workflowStage}_${v.stockNo}`) || '{}');
+                    if (stageData.timestamp) {
+                        const daysAtStage = Math.floor((now - new Date(stageData.timestamp)) / (1000 * 60 * 60 * 24));
+                        if (daysAtStage > 7) {
+                            alerts.push({ type: 'warning', icon: 'fa-clock', title: 'Stuck at Stage', message: `${v.stockNo} stuck at Stage ${v.workflowStage} for ${daysAtStage} days` });
+                        }
+                    }
+                }
+            });
+            
+            if (alerts.length === 0) {
+                alerts.push({ type: 'success', icon: 'fa-check-circle', title: 'All Clear', message: 'All systems operational. No alerts at this time.' });
+            }
+            
+            const container = document.getElementById('alertsList');
+            container.innerHTML = alerts.map(alert => `
+                <div class="alert-item ${alert.type}">
+                    <div class="alert-icon" style="background: ${alert.type === 'danger' ? '#fee2e2' : alert.type === 'warning' ? '#fef3c7' : '#d1fae5'}; color: ${alert.type === 'danger' ? '#dc2626' : alert.type === 'warning' ? '#d97706' : '#059669'};">
+                        <i class="fas ${alert.icon}"></i>
+                    </div>
+                    <div class="alert-content">
+                        <div class="alert-title">${alert.title}</div>
+                        <div class="alert-text">${alert.message}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Recent Activity
+        function loadRecentActivity() {
+            const history = JSON.parse(localStorage.getItem('capeye_import_history') || '[]');
+            const container = document.getElementById('recentActivity');
+            
+            if (history.length === 0) {
+                container.innerHTML = '<p style="color: #9ca3af; font-size: 14px;">No recent imports</p>';
+                return;
+            }
+            
+            const recent = history.slice(-5).reverse();
+            container.innerHTML = recent.map(item => `
+                <div class="activity-item">
+                    <div class="activity-dot"></div>
+                    <div class="activity-text">Imported ${item.total} vehicles</div>
+                    <div class="activity-time">${new Date(item.date).toLocaleDateString('en-GB')}</div>
+                </div>
+            `).join('');
+        }
+
+        function markAllRead() {
+            document.getElementById('alertsList').innerHTML = `
+                <div class="alert-item success">
+                    <div class="alert-icon" style="background: #d1fae5; color: #059669;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <div class="alert-title">All Clear</div>
+                        <div class="alert-text">All alerts marked as read</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
         function logout() {
             localStorage.removeItem('capeye_session');
             window.location.replace('./login.html');
         }
+
+        // Auto refresh
+        setInterval(() => {
+            loadDashboardData();
+            loadWorkflowPipeline();
+            loadStuckVehicles();
+        }, 30000);
     </script>
 </body>
 </html>
