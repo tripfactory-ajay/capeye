@@ -16,15 +16,19 @@
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Capeye Design System -->
-    <link rel="stylesheet" href="./css/capeye-system.css">
-    
-    <!-- Vehicle Store -->
-    <script src="./js/vehicle-store.js"></script>
+    <!-- Papa Parse for CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     
     <style>
-        /* Operations Specific Styles */
         :root {
+            --cy-bg-primary: #0a0a0f;
+            --cy-bg-secondary: #12121a;
+            --cy-bg-tertiary: #1a1a24;
+            --cy-border: rgba(255,255,255,0.06);
+            --cy-border-hover: rgba(255,255,255,0.12);
+            --cy-text-primary: #f8fafc;
+            --cy-text-secondary: #94a3b8;
+            --cy-text-muted: #64748b;
             --stage-intake: #3b82f6;
             --stage-workshop: #f59e0b;
             --stage-prep: #8b5cf6;
@@ -32,6 +36,200 @@
             --stage-advertised: #06b6d4;
             --alert-red: #dc2626;
             --alert-orange: #ea580c;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cy-bg-primary);
+            color: var(--cy-text-primary);
+            margin: 0;
+        }
+        
+        /* Header */
+        .cy-header {
+            background: rgba(18, 18, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--cy-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .cy-header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* Filter Bar */
+        .filter-section {
+            background: var(--cy-bg-secondary);
+            border-bottom: 1px solid var(--cy-border);
+            padding: 16px 24px;
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 140px;
+        }
+        
+        .filter-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .filter-input {
+            padding: 8px 12px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--cy-text-primary);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .filter-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 28px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            height: fit-content;
+            margin-top: auto;
+        }
+        
+        .filter-btn:hover {
+            background: #2563eb;
+        }
+        
+        .filter-btn-secondary {
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            color: var(--cy-text-secondary);
+        }
+        
+        .filter-btn-secondary:hover {
+            background: var(--cy-bg-secondary);
+            color: var(--cy-text-primary);
+        }
+        
+        .filter-badge {
+            padding: 4px 10px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            font-size: 11px;
+            color: #3b82f6;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .filter-badge button {
+            background: none;
+            border: none;
+            color: #3b82f6;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+        }
+        
+        /* Loading State */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 15, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Data Status */
+        .data-status {
+            padding: 12px 24px;
+            background: rgba(16, 185, 129, 0.1);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .data-status.error {
+            background: rgba(220, 38, 38, 0.1);
+            border-bottom-color: rgba(220, 38, 38, 0.2);
+        }
+        
+        .data-status-text {
+            font-size: 13px;
+            color: #10b981;
+        }
+        
+        .data-status.error .data-status-text {
+            color: #dc2626;
         }
         
         /* Pipeline Stages */
@@ -678,14 +876,17 @@
             .pipeline-container { grid-template-columns: 1fr; }
             .workload-grid { grid-template-columns: 1fr; }
             .alert-banner { flex-direction: column; gap: 12px; text-align: center; }
+            .filter-row { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
         }
     </style>
 </head>
 <body>
-    <!-- Background Effects -->
-    <div class="cy-bg-grid"></div>
-    <div class="cy-ambient-glow" style="top: -200px; right: -200px;"></div>
-    <div class="cy-ambient-glow-red" style="bottom: -100px; left: -100px;"></div>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p style="margin-top: 16px; color: #94a3b8; font-size: 14px;">Loading operations data...</p>
+    </div>
 
     <!-- Header -->
     <header class="cy-header">
@@ -743,6 +944,103 @@
         </div>
     </header>
 
+    <!-- Data Status -->
+    <div id="dataStatus" class="data-status" style="display: none;">
+        <i class="fas fa-check-circle"></i>
+        <span class="data-status-text">Data loaded successfully</span>
+        <span id="recordCount" style="margin-left: auto; color: #64748b; font-size: 12px;"></span>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <!-- Row 1: Primary Filters -->
+        <div class="filter-row">
+            <div class="filter-group" style="flex: 2;">
+                <label class="filter-label">Search</label>
+                <input type="text" id="searchInput" class="filter-input" placeholder="Stock No, Registration, Make, Model...">
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Make</label>
+                <select id="filterMake" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Makes</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Model</label>
+                <select id="filterModel" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Models</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Stage</label>
+                <select id="filterStage" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Stages</option>
+                    <option value="INTAKE">Intake</option>
+                    <option value="WORKSHOP">Workshop</option>
+                    <option value="PREP">Prep</option>
+                    <option value="READY">Ready</option>
+                    <option value="ADVERTISED">Advertised</option>
+                    <option value="SOLD">Sold</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Status</label>
+                <select id="filterStatus" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Statuses</option>
+                    <option value="In Stock">In Stock</option>
+                    <option value="In Transit">In Transit</option>
+                    <option value="Sold">Sold</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Row 2: Secondary Filters -->
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">Location</label>
+                <select id="filterLocation" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Locations</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Assigned To</label>
+                <select id="filterStaff" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">All Staff</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Days in Stage</label>
+                <select id="filterDays" class="filter-input filter-select" onchange="applyFilters()">
+                    <option value="">Any</option>
+                    <option value="0-3">0-3 days</option>
+                    <option value="4-7">4-7 days</option>
+                    <option value="8-14">8-14 days</option>
+                    <option value="15+">15+ days (Stuck)</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 8px; margin-top: auto;">
+                <button class="filter-btn" onclick="applyFilters()">
+                    <i class="fas fa-filter"></i>
+                    Apply
+                </button>
+                <button class="filter-btn filter-btn-secondary" onclick="resetFilters()">
+                    <i class="fas fa-undo"></i>
+                    Reset
+                </button>
+            </div>
+        </div>
+        
+        <!-- Active Filters -->
+        <div class="filter-row" id="activeFilters" style="margin-top: 12px; min-height: 28px;"></div>
+    </div>
+
     <!-- Main Content -->
     <main class="cy-container" style="padding: 24px; max-width: 1600px; margin: 0 auto;">
         
@@ -769,22 +1067,6 @@
                 <div style="text-align: right;">
                     <div style="font-family: 'Space Grotesk'; font-size: 28px; font-weight: 700; color: #10b981;" id="readyToAdvertise">0</div>
                     <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Ready to Advertise</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Vehicle Search Section -->
-        <div style="background: var(--cy-bg-secondary); border: 1px solid var(--cy-border); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-            <div style="display: flex; gap: 16px; align-items: end;">
-                <div style="flex: 1;">
-                    <label style="font-size: 11px; color: var(--cy-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block;">Quick Vehicle Search</label>
-                    <div class="search-container" style="position: relative;">
-                        <input type="text" id="quickSearch" class="search-input" placeholder="Enter stock number, registration, make or model...">
-                        <div id="quickSearchResults" class="search-results"></div>
-                    </div>
-                </div>
-                <div id="selectedVehicle" style="flex: 1; display: none;">
-                    <!-- Shows selected vehicle quick actions -->
                 </div>
             </div>
         </div>
@@ -967,38 +1249,313 @@
         };
 
         let allVehicles = [];
+        let filteredVehicles = [];
+        let staffList = [];
         let stuckVehicles = [];
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize VehicleStore
-            VehicleStore.init();
-            
-            // Load data
-            loadData();
-            
-            // Initialize search
-            initQuickSearch();
+            loadCSVData();
             initGlobalSearch();
-            
-            // Render all
-            renderAll();
-            
-            // Auto-refresh every 30 seconds
-            setInterval(refreshOperations, 30000);
-            
-            // Listen for updates from other pages
-            window.addEventListener('vehicleUpdated', function(e) {
-                refreshOperations();
-            });
         });
 
-        function loadData() {
-            allVehicles = VehicleStore.getAll();
+        function loadCSVData() {
+            showLoading(true);
             
+            // Load stock data
+            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                transformHeader: function(header) {
+                    return header.trim();
+                },
+                complete: function(results) {
+                    console.log('CSV loaded:', results.data.length, 'rows');
+                    
+                    if (results.data && results.data.length > 0) {
+                        allVehicles = results.data.map((row, index) => {
+                            return normalizeVehicleData(row, index);
+                        }).filter(v => v.stockNo || v.registration);
+                        
+                        // Load staff list
+                        loadStaffList(() => {
+                            showLoading(false);
+                            showDataStatus(true, allVehicles.length);
+                            populateFilters();
+                            applyFilters();
+                            
+                            // Auto-refresh every 30 seconds
+                            setInterval(refreshOperations, 30000);
+                        });
+                    } else {
+                        showLoading(false);
+                        showDataStatus(false, 0, 'No data found in CSV');
+                    }
+                },
+                error: function(error) {
+                    console.error('Error loading CSV:', error);
+                    showLoading(false);
+                    showDataStatus(false, 0, 'Error loading data: ' + error.message);
+                }
+            });
+        }
+
+        function loadStaffList(callback) {
+            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    if (results.data && results.data.length > 0) {
+                        staffList = results.data
+                            .map(row => row.Name || row.name || row.Staff || row.staff)
+                            .filter(Boolean)
+                            .map(name => ({ name }));
+                    } else {
+                        staffList = [
+                            { name: 'Keith Hardy' },
+                            { name: 'Ibrahim Ata' },
+                            { name: 'Ali Amood' },
+                            { name: 'Morteza Rahamian' },
+                            { name: 'Marcin Kiljan' },
+                            { name: 'Sia Vajihi' },
+                            { name: 'Iman Zarien' },
+                            { name: 'Stash' }
+                        ];
+                    }
+                    if (callback) callback();
+                },
+                error: function() {
+                    staffList = [
+                        { name: 'Keith Hardy' },
+                        { name: 'Ibrahim Ata' },
+                        { name: 'Ali Amood' }
+                    ];
+                    if (callback) callback();
+                }
+            });
+        }
+
+        function normalizeVehicleData(row, index) {
+            const getValue = (...possibleNames) => {
+                for (let name of possibleNames) {
+                    if (row[name] !== undefined && row[name] !== null && row[name] !== '') {
+                        return row[name];
+                    }
+                }
+                return '';
+            };
+
+            const parsePrice = (val) => {
+                if (!val) return 0;
+                const cleaned = String(val).replace(/[£,]/g, '').trim();
+                const num = parseFloat(cleaned);
+                return isNaN(num) ? 0 : num;
+            };
+
+            const parseDate = (val) => {
+                if (!val) return null;
+                const date = new Date(val);
+                return isNaN(date.getTime()) ? null : date;
+            };
+
+            const dateInStock = parseDate(getValue('Date In Stock', 'DateInStock', 'dateInStock'));
+            const daysInStock = dateInStock ? Math.floor((new Date() - dateInStock) / (1000 * 60 * 60 * 24)) : 0;
+
+            // Determine stage based on status/location or default to INTAKE
+            let stage = 'INTAKE';
+            const status = getValue('Status', 'status');
+            const location = getValue('Location', 'location');
+            
+            if (status === 'Sold') stage = 'SOLD';
+            else if (location === 'Stanmore Retail' && daysInStock > 14) stage = 'ADVERTISED';
+            else if (location === 'Stanmore PDI') stage = 'PREP';
+            else if (location === 'With Supplier') stage = 'IN_TRANSIT';
+
+            return {
+                id: index + 1,
+                stockNo: getValue('Stock No', 'StockNo', 'stockNo', 'Stock Number') || '',
+                registration: getValue('Registration', 'registration', 'Reg', 'Reg No') || '',
+                make: getValue('Make', 'make', 'Manufacturer') || '',
+                model: getValue('Model', 'model') || '',
+                variant: getValue('Variant', 'variant', 'Trim') || '',
+                year: parseInt(getValue('Year', 'year')) || 0,
+                colour: getValue('Colour', 'Color', 'colour', 'color') || '',
+                fuelType: getValue('Fuel Type', 'FuelType', 'fuel', 'Fuel') || '',
+                transmission: getValue('Transmission', 'transmission', 'Gearbox') || '',
+                mileage: parseInt(getValue('Mileage', 'mileage')) || 0,
+                body: getValue('Body', 'body', 'Body Type') || '',
+                doors: getValue('Doors', 'doors') || '',
+                location: location || 'Unknown',
+                status: status || 'In Stock',
+                dateInStock: dateInStock,
+                daysInStock: daysInStock,
+                costPrice: parsePrice(getValue('Cost Price', 'CostPrice', 'costPrice', 'Cost')),
+                retailPrice: parsePrice(getValue('Retail Price', 'RetailPrice', 'retailPrice', 'Retail')),
+                stage: stage,
+                assignedTo: '',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+        }
+
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.style.display = show ? 'flex' : 'none';
+        }
+
+        function showDataStatus(success, count, errorMessage) {
+            const status = document.getElementById('dataStatus');
+            const text = status.querySelector('.data-status-text');
+            const countEl = document.getElementById('recordCount');
+            
+            status.style.display = 'flex';
+            status.className = 'data-status' + (success ? '' : ' error');
+            
+            if (success) {
+                text.textContent = `Loaded ${count} vehicles from CSV`;
+                countEl.textContent = new Date().toLocaleTimeString();
+            } else {
+                text.textContent = errorMessage || 'Error loading data';
+                countEl.textContent = '';
+            }
+        }
+
+        function populateFilters() {
+            // Get unique makes
+            const makes = [...new Set(allVehicles.map(v => v.make).filter(Boolean))].sort();
+            const makeSelect = document.getElementById('filterMake');
+            makeSelect.innerHTML = '<option value="">All Makes</option>';
+            makes.forEach(make => {
+                makeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+            });
+
+            // Get unique models
+            const models = [...new Set(allVehicles.map(v => v.model).filter(Boolean))].sort();
+            const modelSelect = document.getElementById('filterModel');
+            modelSelect.innerHTML = '<option value="">All Models</option>';
+            models.forEach(model => {
+                modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+            });
+
+            // Get unique locations
+            const locations = [...new Set(allVehicles.map(v => v.location).filter(Boolean))].sort();
+            const locationSelect = document.getElementById('filterLocation');
+            locationSelect.innerHTML = '<option value="">All Locations</option>';
+            locations.forEach(loc => {
+                locationSelect.innerHTML += `<option value="${loc}">${loc}</option>`;
+            });
+
+            // Staff dropdown
+            const staffSelect = document.getElementById('filterStaff');
+            staffSelect.innerHTML = '<option value="">All Staff</option>';
+            staffList.forEach(person => {
+                staffSelect.innerHTML += `<option value="${person.name}">${person.name}</option>`;
+            });
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const make = document.getElementById('filterMake').value;
+            const model = document.getElementById('filterModel').value;
+            const stage = document.getElementById('filterStage').value;
+            const status = document.getElementById('filterStatus').value;
+            const location = document.getElementById('filterLocation').value;
+            const staff = document.getElementById('filterStaff').value;
+            const daysFilter = document.getElementById('filterDays').value;
+            
+            filteredVehicles = allVehicles.filter(v => {
+                // Search filter
+                if (search && !(
+                    (v.registration && v.registration.toLowerCase().includes(search)) ||
+                    (v.stockNo && v.stockNo.toLowerCase().includes(search)) ||
+                    (v.make && v.make.toLowerCase().includes(search)) ||
+                    (v.model && v.model.toLowerCase().includes(search))
+                )) return false;
+                
+                // Other filters
+                if (make && v.make !== make) return false;
+                if (model && v.model !== model) return false;
+                if (stage && v.stage !== stage) return false;
+                if (status && v.status !== status) return false;
+                if (location && v.location !== location) return false;
+                if (staff && v.assignedTo !== staff) return false;
+                
+                // Days filter
+                if (daysFilter) {
+                    const days = v.daysInStock || 0;
+                    if (daysFilter === '0-3' && days > 3) return false;
+                    if (daysFilter === '4-7' && (days < 4 || days > 7)) return false;
+                    if (daysFilter === '8-14' && (days < 8 || days > 14)) return false;
+                    if (daysFilter === '15+' && days < 15) return false;
+                }
+                
+                return true;
+            });
+            
+            updateActiveFilters();
+            renderAll();
+        }
+
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            const tags = [];
+            
+            const search = document.getElementById('searchInput').value;
+            const make = document.getElementById('filterMake').value;
+            const model = document.getElementById('filterModel').value;
+            const stage = document.getElementById('filterStage').value;
+            const status = document.getElementById('filterStatus').value;
+            const location = document.getElementById('filterLocation').value;
+            const staff = document.getElementById('filterStaff').value;
+            const days = document.getElementById('filterDays').value;
+            
+            if (search) tags.push(`Search: "${search}"`);
+            if (make) tags.push(`Make: ${make}`);
+            if (model) tags.push(`Model: ${model}`);
+            if (stage) tags.push(`Stage: ${stage}`);
+            if (status) tags.push(`Status: ${status}`);
+            if (location) tags.push(`Location: ${location}`);
+            if (staff) tags.push(`Staff: ${staff}`);
+            if (days) tags.push(`Days: ${days}`);
+            
+            container.innerHTML = tags.map(tag => `
+                <span class="filter-badge">
+                    ${tag}
+                    <button onclick="clearFilter('${tag.split(':')[0].toLowerCase()}')">×</button>
+                </span>
+            `).join('');
+        }
+
+        function clearFilter(type) {
+            switch(type) {
+                case 'search': document.getElementById('searchInput').value = ''; break;
+                case 'make': document.getElementById('filterMake').value = ''; break;
+                case 'model': document.getElementById('filterModel').value = ''; break;
+                case 'stage': document.getElementById('filterStage').value = ''; break;
+                case 'status': document.getElementById('filterStatus').value = ''; break;
+                case 'location': document.getElementById('filterLocation').value = ''; break;
+                case 'staff': document.getElementById('filterStaff').value = ''; break;
+                case 'days': document.getElementById('filterDays').value = ''; break;
+            }
+            applyFilters();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterMake').value = '';
+            document.getElementById('filterModel').value = '';
+            document.getElementById('filterStage').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterLocation').value = '';
+            document.getElementById('filterStaff').value = '';
+            document.getElementById('filterDays').value = '';
+            applyFilters();
+        }
+
+        function renderAll() {
             // Identify stuck vehicles (>7 days in current stage)
-            stuckVehicles = allVehicles.filter(v => {
-                const days = VehicleStore.getDaysInStage(v);
-                return days > 7 && v.stage !== 'SOLD';
+            stuckVehicles = filteredVehicles.filter(v => {
+                return v.daysInStock > 7 && v.status !== 'Sold';
             });
             
             // Show alert if stuck vehicles exist
@@ -1010,9 +1567,7 @@
             } else {
                 alertBanner.style.display = 'none';
             }
-        }
-
-        function renderAll() {
+            
             renderPipeline();
             renderWorkshopQueue();
             renderStaffWorkload();
@@ -1035,15 +1590,15 @@
             // Clear containers
             Object.values(stageContainers).forEach(el => el.innerHTML = '');
             
-            // Sort vehicles by days in stage (oldest first)
-            const sortedVehicles = [...allVehicles].sort((a, b) => 
-                VehicleStore.getDaysInStage(b) - VehicleStore.getDaysInStage(a)
+            // Sort vehicles by days in stock (oldest first)
+            const sortedVehicles = [...filteredVehicles].sort((a, b) => 
+                (b.daysInStock || 0) - (a.daysInStock || 0)
             );
             
             sortedVehicles.forEach(vehicle => {
                 if (!stageContainers[vehicle.stage]) return;
                 
-                const days = VehicleStore.getDaysInStage(vehicle);
+                const days = vehicle.daysInStock || 0;
                 const isStuck = days > 7;
                 const isWarning = days > 5;
                 
@@ -1053,16 +1608,19 @@
                 card.className = `vehicle-card ${isStuck ? 'alert' : ''} ${isWarning ? 'warning' : ''}`;
                 card.onclick = () => openVehicleModal(vehicle);
                 
+                const staffInitial = vehicle.assignedTo ? vehicle.assignedTo.charAt(0).toUpperCase() : '?';
+                const staffFirstName = vehicle.assignedTo ? vehicle.assignedTo.split(' ')[0] : 'Unassigned';
+                
                 card.innerHTML = `
-                    <div class="vehicle-reg">${vehicle.registration}</div>
-                    <div class="vehicle-info">${vehicle.make} ${vehicle.model}</div>
+                    <div class="vehicle-reg">${vehicle.registration || 'N/A'}</div>
+                    <div class="vehicle-info">${vehicle.make || 'Unknown'} ${vehicle.model || ''}</div>
                     <div class="vehicle-meta">
                         <span class="vehicle-days ${isStuck ? 'danger' : isWarning ? 'warning' : 'normal'}">
                             ${days}d
                         </span>
                         <div class="vehicle-assignee">
                             <i class="fas fa-user-circle"></i>
-                            <span>${vehicle.assignedTo?.split(' ')[0] || 'Unassigned'}</span>
+                            <span>${staffFirstName}</span>
                         </div>
                     </div>
                 `;
@@ -1078,7 +1636,7 @@
         }
 
         function renderWorkshopQueue() {
-            const workshopVehicles = allVehicles.filter(v => v.stage === 'WORKSHOP');
+            const workshopVehicles = filteredVehicles.filter(v => v.stage === 'WORKSHOP');
             const container = document.getElementById('workshopQueue');
             
             if (workshopVehicles.length === 0) {
@@ -1087,18 +1645,20 @@
             }
             
             container.innerHTML = workshopVehicles.map(v => {
-                const days = VehicleStore.getDaysInStage(v);
+                const days = v.daysInStock || 0;
                 const isUrgent = days > 7;
+                const staffInitial = v.assignedTo ? v.assignedTo.charAt(0).toUpperCase() : '?';
+                const staffFirstName = v.assignedTo ? v.assignedTo.split(' ')[0] : 'Unassigned';
                 
                 return `
                     <div class="job-row ${isUrgent ? 'urgent' : ''}" onclick="openVehicleModalById('${v.stockNo}')">
                         <div class="job-vehicle">
-                            <div class="job-reg">${v.registration}</div>
-                            <div class="job-desc">${v.make} ${v.model} • ${v.assignedTo}</div>
+                            <div class="job-reg">${v.registration || 'N/A'}</div>
+                            <div class="job-desc">${v.make || 'Unknown'} ${v.model || ''} • ${v.assignedTo || 'Unassigned'}</div>
                         </div>
                         <div class="job-mechanic">
-                            <div class="mechanic-avatar">${v.assignedTo?.charAt(0) || '?'}</div>
-                            <span class="mechanic-name">${v.assignedTo?.split(' ')[0] || 'Unassigned'}</span>
+                            <div class="mechanic-avatar">${staffInitial}</div>
+                            <span class="mechanic-name">${staffFirstName}</span>
                         </div>
                         <div class="job-time">
                             <div class="time-elapsed ${isUrgent ? 'text-red-500' : ''}">${days}d</div>
@@ -1118,11 +1678,10 @@
         }
 
         function renderStaffWorkload() {
-            const staff = VehicleStore.getStaff();
             const container = document.getElementById('staffWorkload');
             
-            container.innerHTML = staff.map(person => {
-                const count = allVehicles.filter(v => v.assignedTo === person.name && v.stage !== 'SOLD').length;
+            container.innerHTML = staffList.map(person => {
+                const count = filteredVehicles.filter(v => v.assignedTo === person.name && v.status !== 'Sold').length;
                 return `
                     <div class="workload-item">
                         <div class="workload-name">${person.name.split(' ')[0]}</div>
@@ -1133,16 +1692,16 @@
             }).join('');
             
             // Update capacity bar
-            const totalStaff = staff.length;
-            const avgLoad = totalStaff > 0 ? allVehicles.filter(v => v.stage !== 'SOLD').length / totalStaff : 0;
-            const capacityPercent = Math.min(100, Math.round((avgLoad / 8) * 100)); // Assume 8 is max load
+            const totalStaff = staffList.length;
+            const avgLoad = totalStaff > 0 ? filteredVehicles.filter(v => v.status !== 'Sold').length / totalStaff : 0;
+            const capacityPercent = Math.min(100, Math.round((avgLoad / 8) * 100));
             
             document.getElementById('capacityBar').style.width = capacityPercent + '%';
             document.getElementById('capacityText').textContent = capacityPercent + '%';
         }
 
         function renderReadyToAd() {
-            const readyVehicles = allVehicles.filter(v => v.stage === 'READY');
+            const readyVehicles = filteredVehicles.filter(v => v.stage === 'READY');
             const container = document.getElementById('readyToAdGrid');
             
             if (readyVehicles.length === 0) {
@@ -1156,8 +1715,8 @@
                         <i class="fas fa-camera"></i>
                     </div>
                     <div class="ready-info">
-                        <div class="ready-reg">${v.registration}</div>
-                        <div class="ready-status">${v.make} ${v.model}</div>
+                        <div class="ready-reg">${v.registration || 'N/A'}</div>
+                        <div class="ready-status">${v.make || 'Unknown'} ${v.model || ''}</div>
                     </div>
                     <button class="ready-action" onclick="event.stopPropagation(); advertiseVehicle('${v.stockNo}')">
                         Advertise
@@ -1167,9 +1726,9 @@
         }
 
         function updateHeaderStats() {
-            const active = allVehicles.filter(v => v.stage !== 'SOLD').length;
-            const workshop = allVehicles.filter(v => v.stage === 'WORKSHOP').length;
-            const ready = allVehicles.filter(v => v.stage === 'READY').length;
+            const active = filteredVehicles.filter(v => v.status !== 'Sold').length;
+            const workshop = filteredVehicles.filter(v => v.stage === 'WORKSHOP').length;
+            const ready = filteredVehicles.filter(v => v.stage === 'READY').length;
             
             animateValue('totalActiveVehicles', active, '');
             animateValue('workshopLoad', workshop, '');
@@ -1177,98 +1736,15 @@
         }
 
         function updateAvgTimes() {
-            const stages = ['INTAKE', 'WORKSHOP', 'PREP'];
-            stages.forEach(stage => {
-                const vehicles = allVehicles.filter(v => v.stage === stage);
+            const stageList = ['INTAKE', 'WORKSHOP', 'PREP'];
+            stageList.forEach(stage => {
+                const vehicles = filteredVehicles.filter(v => v.stage === stage);
                 const avg = vehicles.length > 0 
-                    ? Math.round(vehicles.reduce((sum, v) => sum + VehicleStore.getDaysInStage(v), 0) / vehicles.length)
+                    ? Math.round(vehicles.reduce((sum, v) => sum + (v.daysInStock || 0), 0) / vehicles.length)
                     : 0;
                 const el = document.getElementById(`avg${stage.charAt(0) + stage.slice(1).toLowerCase()}Time`);
                 if (el) el.textContent = `Avg: ${avg} days`;
             });
-        }
-
-        function initQuickSearch() {
-            const input = document.getElementById('quickSearch');
-            const results = document.getElementById('quickSearchResults');
-            
-            let searchTimeout;
-            
-            input.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                const query = this.value.trim();
-                
-                if (query.length < 2) {
-                    results.style.display = 'none';
-                    return;
-                }
-                
-                searchTimeout = setTimeout(() => {
-                    const vehicles = VehicleStore.search(query);
-                    showQuickResults(vehicles, results, input);
-                }, 200);
-            });
-            
-            document.addEventListener('click', function(e) {
-                if (!input.contains(e.target) && !results.contains(e.target)) {
-                    results.style.display = 'none';
-                }
-            });
-        }
-
-        function showQuickResults(vehicles, resultsDiv, input) {
-            if (vehicles.length === 0) {
-                resultsDiv.innerHTML = '<div style="padding: 12px; color: #64748b; font-size: 13px;">No vehicles found</div>';
-                resultsDiv.style.display = 'block';
-                return;
-            }
-            
-            resultsDiv.innerHTML = vehicles.slice(0, 5).map(v => {
-                const stage = stages[v.stage];
-                return `
-                    <div class="search-result-item" onclick="selectQuickVehicle('${v.stockNo}')">
-                        <div class="result-stage-icon" style="background: ${stage?.color || '#3b82f6'};">
-                            <i class="fas ${stage?.icon || 'fa-car'}"></i>
-                        </div>
-                        <div class="result-info">
-                            <div class="result-reg">${v.registration}</div>
-                            <div class="result-details">${v.make} ${v.model} • ${stage?.name || v.stage} • ${v.assignedTo}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            resultsDiv.style.display = 'block';
-        }
-
-        function selectQuickVehicle(stockNo) {
-            const vehicle = VehicleStore.get(stockNo);
-            if (!vehicle) return;
-            
-            document.getElementById('quickSearchResults').style.display = 'none';
-            document.getElementById('quickSearch').value = vehicle.registration;
-            
-            const div = document.getElementById('selectedVehicle');
-            div.style.display = 'block';
-            const stage = stages[vehicle.stage];
-            
-            div.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(59,130,246,0.1); border-radius: 8px; border: 1px solid rgba(59,130,246,0.2);">
-                    <div style="width: 40px; height: 40px; background: ${stage?.color || '#3b82f6'}; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-                        <i class="fas ${stage?.icon || 'fa-car'}"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; color: #f8fafc; font-size: 14px;">${vehicle.registration}</div>
-                        <div style="font-size: 11px; color: #94a3b8;">${vehicle.make} ${vehicle.model} | ${stage?.name || vehicle.stage}</div>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button onclick="openVehicleModalById('${vehicle.stockNo}')" style="padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600;">View</button>
-                        ${vehicle.stage !== 'SOLD' ? `
-                            <button onclick="advanceVehicle('${vehicle.stockNo}')" style="padding: 6px 12px; background: #10b981; color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600;">Advance</button>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
         }
 
         function initGlobalSearch() {
@@ -1287,7 +1763,12 @@
                 }
                 
                 searchTimeout = setTimeout(() => {
-                    const vehicles = VehicleStore.search(query);
+                    const vehicles = allVehicles.filter(v => 
+                        (v.registration && v.registration.toLowerCase().includes(query.toLowerCase())) ||
+                        (v.stockNo && v.stockNo.toLowerCase().includes(query.toLowerCase())) ||
+                        (v.make && v.make.toLowerCase().includes(query.toLowerCase())) ||
+                        (v.model && v.model.toLowerCase().includes(query.toLowerCase()))
+                    );
                     showGlobalResults(vehicles, results);
                 }, 200);
             });
@@ -1315,8 +1796,8 @@
                                 <i class="fas ${stage?.icon || 'fa-car'}"></i>
                             </div>
                             <div style="flex: 1;">
-                                <div style="font-weight: 600; color: #f8fafc; font-size: 13px;">${v.registration}</div>
-                                <div style="font-size: 11px; color: #64748b;">${v.make} ${v.model} | ${stage?.name || v.stage}</div>
+                                <div style="font-weight: 600; color: #f8fafc; font-size: 13px;">${v.registration || 'N/A'}</div>
+                                <div style="font-size: 11px; color: #64748b;">${v.make || 'Unknown'} ${v.model || ''} | ${stage?.name || v.stage}</div>
                             </div>
                             <i class="fas fa-chevron-right" style="color: #64748b; font-size: 10px;"></i>
                         </div>
@@ -1334,25 +1815,10 @@
         }
 
         function openVehicleModal(vehicle) {
-            document.getElementById('modalTitle').textContent = `${vehicle.registration} - ${vehicle.make} ${vehicle.model}`;
+            document.getElementById('modalTitle').textContent = `${vehicle.registration || 'N/A'} - ${vehicle.make || 'Unknown'} ${vehicle.model || ''}`;
             
-            const days = VehicleStore.getDaysInStage(vehicle);
+            const days = vehicle.daysInStock || 0;
             const stage = stages[vehicle.stage];
-            const history = VehicleStore.getHistory(vehicle.stockNo);
-            
-            let historyHtml = '';
-            if (history && history.length > 0) {
-                historyHtml = history.map(h => {
-                    const histStage = stages[h.stage] || stages[h.fromStage] || stages[h.toStage];
-                    return `
-                        <div class="timeline-item" style="--stage-color: ${histStage?.color || '#3b82f6'}">
-                            <div class="timeline-date">${new Date(h.timestamp).toLocaleDateString('en-GB')}</div>
-                            <div class="timeline-action">${histStage?.name || h.stage} ${h.action ? `(${h.action})` : ''}</div>
-                            <div class="timeline-person">by ${h.staff}</div>
-                        </div>
-                    `;
-                }).join('');
-            }
             
             document.getElementById('modalBody').innerHTML = `
                 <div style="display: grid; gap: 20px;">
@@ -1364,7 +1830,7 @@
                             </div>
                         </div>
                         <div style="background: var(--cy-bg-tertiary); padding: 16px; border-radius: 10px; text-align: center;">
-                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Days in Stage</div>
+                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Days in Stock</div>
                             <div style="font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; color: ${days > 7 ? '#dc2626' : days > 5 ? '#f59e0b' : '#10b981'};">
                                 ${days} days
                             </div>
@@ -1378,19 +1844,12 @@
                     </div>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
-                        <div><strong>Stock No:</strong> ${vehicle.stockNo}</div>
+                        <div><strong>Stock No:</strong> ${vehicle.stockNo || 'N/A'}</div>
                         <div><strong>Location:</strong> ${vehicle.location || 'Unknown'}</div>
                         <div><strong>Year:</strong> ${vehicle.year || 'N/A'}</div>
-                        <div><strong>Mileage:</strong> ${vehicle.mileage?.toLocaleString() || 'N/A'}</div>
-                        <div><strong>Color:</strong> ${vehicle.color || 'N/A'}</div>
-                        <div><strong>Fuel:</strong> ${vehicle.fuel || 'N/A'}</div>
-                    </div>
-                    
-                    <div>
-                        <div style="font-size: 12px; font-weight: 600; color: var(--cy-text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Stage History</div>
-                        <div class="timeline">
-                            ${historyHtml || '<div style="color: var(--cy-text-muted); font-size: 13px;">No history available</div>'}
-                        </div>
+                        <div><strong>Mileage:</strong> ${vehicle.mileage ? vehicle.mileage.toLocaleString() + ' mi' : 'N/A'}</div>
+                        <div><strong>Colour:</strong> ${vehicle.colour || 'N/A'}</div>
+                        <div><strong>Fuel:</strong> ${vehicle.fuelType || 'N/A'}</div>
                     </div>
                     
                     <div style="display: flex; gap: 10px; padding-top: 16px; border-top: 1px solid var(--cy-border);">
@@ -1399,11 +1858,8 @@
                                 <i class="fas fa-arrow-right"></i> Advance to ${stages[stage?.next]?.name || 'Next'}
                             </button>
                         ` : ''}
-                        <button onclick="window.location.href='./workflow/stages/stage-${stage?.num}-${vehicle.stage.toLowerCase()}.html?stock=${vehicle.stockNo}'" style="padding: 12px 20px; background: #3b82f6; border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer;">
+                        <button onclick="window.location.href='./workflow/stages/stage-${stage?.num || 1}-${(vehicle.stage || 'intake').toLowerCase()}.html?stock=${vehicle.stockNo}'" style="padding: 12px 20px; background: #3b82f6; border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer;">
                             Open Form
-                        </button>
-                        <button onclick="reassignVehicle('${vehicle.stockNo}');" style="padding: 12px 20px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); color: var(--cy-text-primary); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                            Reassign
                         </button>
                     </div>
                 </div>
@@ -1413,7 +1869,7 @@
         }
 
         function openVehicleModalById(stockNo) {
-            const vehicle = VehicleStore.get(stockNo);
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
             if (vehicle) openVehicleModal(vehicle);
         }
 
@@ -1422,33 +1878,30 @@
         }
 
         function advanceVehicle(stockNo) {
-            const result = VehicleStore.advance(stockNo, {
-                staff: 'Current User',
-                notes: 'Advanced from Operations dashboard'
-            });
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (!vehicle) return;
             
-            if (result.success) {
-                alert(`Vehicle advanced to ${stages[result.vehicle.stage]?.name || result.vehicle.stage}`);
-                refreshOperations();
-            } else {
-                alert('Error: ' + result.error);
+            const currentStage = stages[vehicle.stage];
+            if (currentStage && currentStage.next) {
+                vehicle.stage = currentStage.next;
+                vehicle.updatedAt = new Date().toISOString();
+                alert(`Vehicle advanced to ${stages[currentStage.next]?.name || currentStage.next}`);
+                applyFilters();
             }
         }
 
         function advertiseVehicle(stockNo) {
-            const result = VehicleStore.advance(stockNo, {
-                staff: 'Current User',
-                notes: 'Sent to advertising'
-            });
-            
-            if (result.success) {
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (vehicle) {
+                vehicle.stage = 'ADVERTISED';
+                vehicle.updatedAt = new Date().toISOString();
                 alert('Vehicle sent to advertising!');
-                refreshOperations();
+                applyFilters();
             }
         }
 
         function advertiseAll() {
-            const ready = allVehicles.filter(v => v.stage === 'READY');
+            const ready = filteredVehicles.filter(v => v.stage === 'READY');
             if (ready.length === 0) {
                 alert('No vehicles ready to advertise');
                 return;
@@ -1456,33 +1909,22 @@
             
             if (confirm(`Advertise all ${ready.length} ready vehicles?`)) {
                 ready.forEach(v => {
-                    VehicleStore.advance(v.stockNo, { staff: 'System', notes: 'Bulk advertise' });
+                    v.stage = 'ADVERTISED';
+                    v.updatedAt = new Date().toISOString();
                 });
-                refreshOperations();
+                applyFilters();
                 alert(`${ready.length} vehicles sent to advertising`);
-            }
-        }
-
-        function reassignVehicle(stockNo) {
-            const staff = VehicleStore.getStaff();
-            const names = staff.map(s => s.name);
-            const newAssignee = prompt(`Reassign to:\n${names.join('\n')}\n\nCurrent: ${VehicleStore.get(stockNo)?.assignedTo}`);
-            
-            if (newAssignee && names.includes(newAssignee)) {
-                VehicleStore.update(stockNo, { assignedTo: newAssignee });
-                refreshOperations();
             }
         }
 
         function viewStuckVehicles() {
             if (stuckVehicles.length === 0) return;
-            const list = stuckVehicles.map(v => `${v.registration} (${v.stage}, ${VehicleStore.getDaysInStage(v)} days)`).join('\n');
+            const list = stuckVehicles.map(v => `${v.registration || 'N/A'} (${v.stage}, ${v.daysInStock || 0} days)`).join('\n');
             alert(`Stuck Vehicles:\n\n${list}`);
         }
 
         function refreshOperations() {
-            loadData();
-            renderAll();
+            loadCSVData();
             
             const btn = document.querySelector('button[onclick="refreshOperations()"] i');
             if (btn) {
@@ -1518,6 +1960,21 @@
         document.getElementById('vehicleModal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
+        
+        // Search input listener with debounce
+        document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
+        
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
     </script>
 </body>
 </html>
