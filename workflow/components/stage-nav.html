@@ -1,0 +1,111 @@
+<!-- Capeye Stage Navigation Component -->
+<nav class="stage-nav">
+    <div class="stage-nav-header">
+        <div class="stage-nav-title">
+            🔧 Workflow
+        </div>
+        <div class="stage-nav-subtitle">Vehicle Preparation Pipeline</div>
+    </div>
+    
+    <ul class="stage-list" id="stage-list">
+        <!-- Stages populated by JavaScript -->
+    </ul>
+    
+    <div style="margin-top: 2rem; padding-top: 1rem; border-top: 2px solid var(--color-border);">
+        <div class="progress-bar">
+            <div class="progress-fill" id="overall-progress" style="width: 0%"></div>
+        </div>
+        <p style="font-size: 0.875rem; color: var(--color-text-secondary); text-align: center; margin-top: 0.5rem;">
+            <span id="progress-text">0 of 12 stages complete</span>
+        </p>
+    </div>
+</nav>
+
+<script>
+    // Render stage navigation
+    function renderStageNav() {
+        const stageList = document.getElementById('stage-list');
+        const stages = WorkflowEngine.getStages();
+        const currentStage = WorkflowEngine.getCurrentStage();
+        const vehicle = WorkflowEngine.getVehicle();
+        
+        stageList.innerHTML = '';
+        
+        stages.forEach(stage => {
+            const isActive = stage.id === currentStage;
+            const isCompleted = vehicle ? WorkflowEngine.isStageComplete(stage.id, vehicle.stockNo) : false;
+            
+            const li = document.createElement('li');
+            li.className = `stage-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
+            li.onclick = () => navigateToStage(stage.id);
+            
+            li.innerHTML = `
+                <div class="stage-number">${stage.id}</div>
+                <div class="stage-info">
+                    <div class="stage-name">${stage.name}</div>
+                    <div class="stage-dept" style="color: ${stage.color}">${stage.dept}</div>
+                </div>
+            `;
+            
+            stageList.appendChild(li);
+        });
+        
+        // Update progress
+        updateProgress();
+    }
+    
+    function updateProgress() {
+        const vehicle = WorkflowEngine.getVehicle();
+        if (!vehicle) {
+            document.getElementById('overall-progress').style.width = '0%';
+            document.getElementById('progress-text').textContent = '0 of 12 stages complete';
+            return;
+        }
+        
+        const stages = WorkflowEngine.getStages();
+        const completed = stages.filter(s => WorkflowEngine.isStageComplete(s.id, vehicle.stockNo)).length;
+        const percent = (completed / stages.length) * 100;
+        
+        document.getElementById('overall-progress').style.width = percent + '%';
+        document.getElementById('progress-text').textContent = `${completed} of ${stages.length} stages complete`;
+    }
+    
+    function navigateToStage(stageId) {
+        const vehicle = WorkflowEngine.getVehicle();
+        if (!vehicle) {
+            alert('Please select a vehicle first');
+            return;
+        }
+        
+        // Save current form if needed
+        const saveEvent = new CustomEvent('saveCurrentForm');
+        document.dispatchEvent(saveEvent);
+        
+        // Navigate
+        window.location.href = `stage-${stageId}-${getStageFileName(stageId)}.html`;
+    }
+    
+    function getStageFileName(stageId) {
+        const names = {
+            1: 'intake',
+            2: 'bodywork',
+            3: 'paint',
+            4: 'legal',
+            5: 'mechanical',
+            6: 'external',
+            7: 'valeting',
+            8: 'faults',
+            9: 'advertising',
+            10: 'delivery',
+            11: 'accounts',
+            12: 'management'
+        };
+        return names[stageId] || 'stage';
+    }
+    
+    // Listen for stage changes
+    document.addEventListener('stageChange', renderStageNav);
+    
+    // Initial render
+    document.addEventListener('DOMContentLoaded', renderStageNav);
+</script>
