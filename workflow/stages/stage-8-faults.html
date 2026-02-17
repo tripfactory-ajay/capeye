@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 8: Fault Overview - Capeye Workflow</title>
+    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
+    <script src="../../data/staff/staff-list.js"></script>
+    <script src="../../data/faults/fault-types.js"></script>
+    <script src="../../js/workflow/workflow-engine.js"></script>
+    <script src="../../js/workflow/form-components.js"></script>
+</head>
+<body>
+    <div class="workflow-container">
+        <div id="stage-nav-container"></div>
+        <main class="main-content">
+            <div id="header-container"></div>
+            <div class="stage-container">
+                <div class="stage-header">
+                    <h1 class="stage-title"><span style="font-size: 2rem;">📊</span> Stage 8: Fault Overview</h1>
+                    <p class="stage-description">Workshop lead review of all faults, repairs completed, and sign-off for advertising.</p>
+                </div>
+                
+                <div id="vehicle-info-display" class="vehicle-info-card">
+                    <div class="vehicle-info-header">
+                        <div class="vehicle-info-title">Vehicle Details</div>
+                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+                    </div>
+                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                </div>
+                
+                <form id="stage-8-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="workshop-lead">Workshop Lead <span class="required">*</span></label>
+                            <select id="workshop-lead" name="workshopLead" class="form-select" required>
+                                <option value="">Select Lead...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="review-date">Review Date</label>
+                            <input type="date" id="review-date" name="reviewDate" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Fault Summary Review</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Outstanding Faults</label>
+                        <div id="faults-list" style="background: var(--color-bg); padding: 1rem; border-radius: var(--radius-md);">
+                            <p style="color: var(--color-text-secondary);">Loading previous stage data...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="repairs-completed">Repairs Completed</label>
+                        <select id="repairs-completed" name="repairsCompleted" class="form-select">
+                            <option value="all">All Repairs Completed</option>
+                            <option value="minor">Minor Items Remaining</option>
+                            <option value="major">Major Items Outstanding</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="outstanding-items">Outstanding Items (if any)</label>
+                        <textarea id="outstanding-items" name="outstandingItems" class="form-textarea" rows="3" placeholder="List any remaining work..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="quality-rating">Overall Quality Rating</label>
+                        <select id="quality-rating" name="qualityRating" class="form-select">
+                            <option value="excellent">Excellent - Ready for Sale</option>
+                            <option value="good">Good - Minor Issues Noted</option>
+                            <option value="fair">Fair - Price Adjustment Needed</option>
+                            <option value="poor">Poor - Further Work Required</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="recommendations">Recommendations</label>
+                        <textarea id="recommendations" name="recommendations" class="form-textarea" rows="3" placeholder="Any recommendations for sales team..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Final Inspection Photos</label>
+                        <div id="inspection-photos-container"></div>
+                        <input type="hidden" id="inspection-photos" name="inspectionPhotos">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Workshop Lead Signature <span class="required">*</span></label>
+                        <div id="signature-container"></div>
+                        <input type="hidden" id="signature" name="signature" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <a href="stage-7-valeting.html" class="btn btn-secondary">← Back</a>
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Approve & Send to Advertising →</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentVehicle = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            WorkflowEngine.setStage(8);
+            loadComponents();
+            populateLeads();
+            initPhotos();
+            initSignature();
+            loadVehicle();
+            loadPreviousFaults();
+            loadSavedData();
+            document.getElementById('review-date').valueAsDate = new Date();
+        });
+        
+        function loadComponents() {
+            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
+            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+        }
+        
+        function populateLeads() {
+            const select = document.getElementById('workshop-lead');
+            if (STAFF_DATA) {
+                STAFF_DATA.getStaffByDept('workshop').forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = s.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+        
+        function initPhotos() {
+            document.getElementById('inspection-photos-container').appendChild(
+                FormComponents.createPhotoUpload({ id: 'inspection-photos', label: 'Inspection Photos', maxPhotos: 6 })
+            );
+        }
+        
+        function initSignature() {
+            document.getElementById('signature-container').appendChild(
+                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
+            );
+        }
+        
+        function loadVehicle() {
+            currentVehicle = WorkflowEngine.getVehicle();
+            if (!currentVehicle) {
+                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
+                return;
+            }
+            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
+            document.getElementById('vehicle-details-content').innerHTML = `
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
+            `;
+        }
+        
+        function loadPreviousFaults() {
+            if (!currentVehicle) return;
+            // Load faults from stages 2, 5, 6
+            const bodywork = WorkflowEngine.loadStageData(2, currentVehicle.stockNo);
+            const mechanical = WorkflowEngine.loadStageData(5, currentVehicle.stockNo);
+            const external = WorkflowEngine.loadStageData(6, currentVehicle.stockNo);
+            
+            let faultsHtml = '';
+            
+            if (bodywork?.data?.dents?.length) {
+                faultsHtml += `<div style="margin-bottom: 1rem;"><strong>Bodywork:</strong> ${bodywork.data.dents.join(', ')}</div>`;
+            }
+            if (mechanical?.data?.mechanicalFaults?.length) {
+                faultsHtml += `<div style="margin-bottom: 1rem;"><strong>Mechanical:</strong> ${mechanical.data.mechanicalFaults.join(', ')}</div>`;
+            }
+            if (external?.data?.lights?.length) {
+                faultsHtml += `<div><strong>Electrical:</strong> ${external.data.lights.join(', ')}</div>`;
+            }
+            
+            document.getElementById('faults-list').innerHTML = faultsHtml || '<p style="color: var(--color-success);">✓ No faults recorded</p>';
+        }
+        
+        function getFormData() {
+            const form = document.getElementById('stage-8-form');
+            const fd = new FormData(form);
+            return {
+                workshopLead: fd.get('workshopLead'),
+                reviewDate: fd.get('reviewDate'),
+                repairsCompleted: fd.get('repairsCompleted'),
+                outstandingItems: fd.get('outstandingItems'),
+                qualityRating: fd.get('qualityRating'),
+                recommendations: fd.get('recommendations'),
+                inspectionPhotos: document.getElementById('inspection-photos').value,
+                signature: document.getElementById('signature').value
+            };
+        }
+        
+        function loadSavedData() {
+            if (!currentVehicle) return;
+            const saved = WorkflowEngine.loadStageData(8, currentVehicle.stockNo);
+            if (saved?.data) {
+                const d = saved.data;
+                if (d.workshopLead) document.getElementById('workshop-lead').value = d.workshopLead;
+                if (d.repairsCompleted) document.getElementById('repairs-completed').value = d.repairsCompleted;
+                if (d.qualityRating) document.getElementById('quality-rating').value = d.qualityRating;
+                if (d.outstandingItems) document.getElementById('outstanding-items').value = d.outstandingItems;
+                if (d.recommendations) document.getElementById('recommendations').value = d.recommendations;
+            }
+        }
+        
+        function saveDraft() {
+            if (!currentVehicle) return;
+            WorkflowEngine.saveStageData(8, getFormData());
+            showAlert('Draft saved', 'success');
+        }
+        
+        function completeStage() {
+            if (!currentVehicle) return;
+            const data = getFormData();
+            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
+            WorkflowEngine.completeStage(8, data);
+            showAlert('Stage 8 complete! Ready for advertising', 'success');
+            setTimeout(() => window.location.href = 'stage-9-advertising.html', 1500);
+        }
+        
+        function showAlert(msg, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${msg}</span>`;
+            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
+    </script>
+</body>
+</html>
