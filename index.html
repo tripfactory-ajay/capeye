@@ -3,299 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capeye | Auto Capital Command Centre</title>
+    <title>Capeye Auto Capital - Welcome Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        :root {
-            --ac-navy: #0a1628;
-            --ac-dark-blue: #1e3a5f;
-            --ac-red: #c41e3a;
-            --ac-dark-red: #8b0000;
-            --ac-gold: #d4af37;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0a1628 0%, #1a1a2e 50%, #16213e 100%);
-            min-height: 100vh;
-            color: #e2e8f0;
-        }
-        
-        .font-display {
-            font-family: 'Space Grotesk', sans-serif;
-        }
-        
-        /* Glassmorphism Cards */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
         .glass-panel {
-            background: rgba(30, 58, 95, 0.25);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
-        .glass-panel-red {
-            background: rgba(196, 30, 58, 0.15);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(196, 30, 58, 0.3);
-        }
-        
-        /* Animated Background Grid */
-        .bg-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(30, 58, 95, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(30, 58, 95, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        .bg-glow {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(196, 30, 58, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-            animation: float 20s infinite ease-in-out;
-        }
-        
-        .bg-glow-2 {
-            position: fixed;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(30, 58, 95, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-            animation: float 15s infinite ease-in-out reverse;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(100px, -50px) scale(1.1); }
-            66% { transform: translate(-50px, 100px) scale(0.9); }
-        }
-        
-        /* Metric Cards with Gradient Borders */
         .metric-card {
-            position: relative;
-            background: linear-gradient(135deg, rgba(30, 58, 95, 0.4) 0%, rgba(10, 22, 40, 0.6) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
         }
-        
-        .metric-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--ac-red), var(--ac-dark-blue), var(--ac-red));
-            background-size: 200% 100%;
-            animation: shimmer 3s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
         .metric-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            border-color: rgba(196, 30, 58, 0.5);
-            box-shadow: 0 30px 60px -15px rgba(196, 30, 58, 0.3);
-        }
-        
-        /* Counter Animation */
-        .counter-value {
-            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* Status Indicators */
-        .status-pulse {
-            position: relative;
-        }
-        
-        .status-pulse::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: inherit;
-            opacity: 0.5;
-            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-        }
-        
-        @keyframes pulse-ring {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
-        }
-        
-        /* Slider/Range Styling */
-        .slider-container {
-            position: relative;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .slider-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--ac-dark-blue), var(--ac-red));
-            border-radius: 3px;
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-        
-        .slider-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: 20px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
-            animation: shimmer-slide 2s infinite;
-        }
-        
-        @keyframes shimmer-slide {
-            0% { transform: translateX(-20px); }
-            100% { transform: translateX(20px); }
-        }
-        
-        /* Navigation */
-        .nav-link {
-            position: relative;
-            color: rgba(255, 255, 255, 0.6);
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link:hover, .nav-link.active {
-            color: #fff;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--ac-red), var(--ac-dark-blue));
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover::after, .nav-link.active::after {
-            width: 100%;
-        }
-        
-        /* Chart Containers */
-        .chart-container {
-            position: relative;
-            background: rgba(10, 22, 40, 0.4);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Quick Action Buttons */
-        .action-btn {
-            background: linear-gradient(135deg, rgba(30, 58, 95, 0.6) 0%, rgba(10, 22, 40, 0.8) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .action-btn:hover::before {
-            left: 100%;
-        }
-        
-        .action-btn:hover {
-            border-color: var(--ac-red);
             transform: translateY(-4px);
-            box-shadow: 0 20px 40px -10px rgba(196, 30, 58, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar {
+        .alert-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .status-dot {
             width: 8px;
             height: 8px;
+            border-radius: 50%;
+            display: inline-block;
         }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(10, 22, 40, 0.5);
+        .live-indicator {
+            animation: live-pulse 2s infinite;
         }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--ac-dark-blue), var(--ac-red));
-            border-radius: 4px;
-        }
-        
-        /* Alert Cards */
-        .alert-card {
-            background: linear-gradient(135deg, rgba(196, 30, 58, 0.2) 0%, rgba(139, 0, 0, 0.3) 100%);
-            border-left: 4px solid var(--ac-red);
-            animation: slideIn 0.5s ease;
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        /* Loading Skeleton */
-        .skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        @keyframes live-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
-<body class="antialiased">
-    <!-- Background Effects -->
-    <div class="bg-grid"></div>
-    <div class="bg-glow" style="top: -200px; right: -200px;"></div>
-    <div class="bg-glow-2" style="bottom: -100px; left: -100px;"></div>
-    
-    <!-- Auth Check -->
+<body class="bg-gray-100 min-h-screen">
+    <!-- Authentication Check -->
     <script>
         if (!localStorage.getItem('capeye_session')) {
             window.location.href = 'login.html';
@@ -303,645 +53,277 @@
     </script>
 
     <!-- Header -->
-    <header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-8">
-                    <!-- Logo -->
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center shadow-lg shadow-red-900/50">
-                            <span class="text-white font-bold text-lg font-display">AC</span>
-                        </div>
-                        <div>
-                            <h1 class="text-xl font-bold font-display tracking-tight text-white">CAPEYE</h1>
-                            <p class="text-xs text-gray-400 tracking-widest uppercase">Auto Capital Intelligence</p>
-                        </div>
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <img src="autocapital-logo.png" alt="Auto Capital" class="h-10 w-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="hidden h-10 w-32 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg items-center justify-center text-white font-bold text-lg" style="display: none;">
+                        AUTO CAPITAL
                     </div>
-                    
-                    <!-- Navigation -->
-                    <nav class="hidden md:flex items-center space-x-6 ml-8">
-                        <a href="index.html" class="nav-link active text-sm font-medium py-2">Dashboard</a>
-                        <a href="operations.html" class="nav-link text-sm font-medium py-2">Operations</a>
-                        <a href="inventory.html" class="nav-link text-sm font-medium py-2">Inventory</a>
-                        <a href="workflow.html" class="nav-link text-sm font-medium py-2">Workflow</a>
-                        <a href="analytics.html" class="nav-link text-sm font-medium py-2">Analytics</a>
+                    <div class="h-8 w-px bg-gray-300 mx-4"></div>
+                    <nav class="flex space-x-8">
+                        <a href="index.html" class="text-blue-600 font-semibold border-b-2 border-blue-600 px-1 pt-1">Dashboard</a>
+                        <a href="operations.html" class="text-gray-500 hover:text-gray-700 px-1 pt-1">Operations</a>
+                        <a href="inventory.html" class="text-gray-500 hover:text-gray-700 px-1 pt-1">Inventory</a>
+                        <a href="workflow.html" class="text-gray-500 hover:text-gray-700 px-1 pt-1">Workflow</a>
+                        <a href="analytics.html" class="text-gray-500 hover:text-gray-700 px-1 pt-1">Analytics</a>
                     </nav>
                 </div>
-                
-                <!-- Right Side -->
-                <div class="flex items-center space-x-6">
-                    <!-- Live Indicator -->
-                    <div class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/30">
-                        <div class="w-2 h-2 rounded-full bg-green-500 status-pulse"></div>
-                        <span class="text-xs font-medium text-green-400 uppercase tracking-wider">Live</span>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <span class="status-dot bg-green-500 mr-2 live-indicator"></span>
+                        <span>Live Data</span>
                     </div>
-                    
-                    <!-- Refresh -->
-                    <button onclick="refreshAll()" class="p-2 rounded-lg hover:bg-white/5 transition-colors group">
-                        <i class="fas fa-sync-alt text-gray-400 group-hover:text-white transition-all duration-500" id="refresh-icon"></i>
+                    <button onclick="refreshData()" class="p-2 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-sync-alt"></i>
                     </button>
-                    
-                    <!-- User -->
-                    <div class="flex items-center space-x-3 pl-6 border-l border-white/10">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-medium text-white">Ajay Kawa</p>
-                            <p class="text-xs text-gray-400">Business Transition</p>
-                        </div>
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-white font-semibold border-2 border-white/10">
+                    <div class="flex items-center space-x-2">
+                        <div class="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
                             AK
                         </div>
-                        <button onclick="logout()" class="ml-2 text-gray-400 hover:text-red-400 transition-colors">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
+                        <span class="text-sm font-medium text-gray-700">Ajay Kawa</span>
                     </div>
+                    <button onclick="logout()" class="text-sm text-red-600 hover:text-red-800">Logout</button>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="relative z-10 pt-24 pb-12 px-6 max-w-7xl mx-auto">
-        
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Welcome Section -->
-        <div class="mb-8 flex items-end justify-between">
-            <div>
-                <p class="text-gray-400 text-sm mb-1 uppercase tracking-wider" id="current-date"></p>
-                <h2 class="text-4xl font-bold font-display text-white mb-2">
-                    Command <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">Centre</span>
-                </h2>
-                <p class="text-gray-400">Real-time business intelligence & vehicle management</p>
-            </div>
-            <div class="hidden md:flex items-center space-x-2 text-sm text-gray-400">
-                <i class="fas fa-database"></i>
-                <span id="data-timestamp">Updated: Just now</span>
-            </div>
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Welcome to Capeye</h1>
+            <p class="mt-2 text-gray-600">Auto Capital Business Intelligence Dashboard</p>
         </div>
 
-        <!-- Critical Alerts -->
-        <div id="alerts-container" class="mb-8 space-y-3"></div>
+        <!-- Alerts Section -->
+        <div id="alerts-container" class="mb-8">
+            <!-- Dynamic alerts will be inserted here -->
+        </div>
 
-        <!-- KPI Grid -->
+        <!-- Key Metrics Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Total Stock -->
-            <div class="metric-card rounded-2xl p-6" data-gsap="slide-up">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 rounded-xl bg-blue-500/20 border border-blue-500/30">
-                        <i class="fas fa-warehouse text-2xl text-blue-400"></i>
-                    </div>
-                    <span class="text-xs font-medium text-green-400 flex items-center">
-                        <i class="fas fa-arrow-up mr-1"></i> <span id="stock-trend">12%</span>
-                    </span>
-                </div>
-                <h3 class="text-gray-400 text-sm font-medium mb-1">Total Stock</h3>
-                <p class="text-4xl font-bold font-display counter-value" id="total-stock">0</p>
-                <div class="mt-4">
-                    <div class="flex justify-between text-xs text-gray-500 mb-2">
-                        <span>Capacity</span>
-                        <span id="capacity-percent">0%</span>
-                    </div>
-                    <div class="slider-container">
-                        <div class="slider-fill" id="capacity-bar" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stock Value -->
-            <div class="metric-card rounded-2xl p-6" data-gsap="slide-up" data-delay="0.1">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 rounded-xl bg-red-500/20 border border-red-500/30">
-                        <i class="fas fa-pound-sign text-2xl text-red-400"></i>
-                    </div>
-                    <span class="text-xs font-medium text-gray-400">GBP</span>
-                </div>
-                <h3 class="text-gray-400 text-sm font-medium mb-1">Total Value</h3>
-                <p class="text-4xl font-bold font-display counter-value">£<span id="total-value">0</span></p>
-                <div class="mt-4 flex items-center space-x-2">
-                    <span class="text-xs text-gray-500">Avg. per unit:</span>
-                    <span class="text-sm font-semibold text-white">£<span id="avg-value">0</span></span>
-                </div>
-            </div>
-
-            <!-- Sales Performance -->
-            <div class="metric-card rounded-2xl p-6" data-gsap="slide-up" data-delay="0.2">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 rounded-xl bg-green-500/20 border border-green-500/30">
-                        <i class="fas fa-chart-line text-2xl text-green-400"></i>
-                    </div>
-                    <span class="text-xs font-medium text-green-400 flex items-center">
-                        <i class="fas fa-arrow-up mr-1"></i> 8.3%
-                    </span>
-                </div>
-                <h3 class="text-gray-400 text-sm font-medium mb-1">Monthly Sales</h3>
-                <p class="text-4xl font-bold font-display counter-value" id="monthly-sales">0</p>
-                <div class="mt-4">
-                    <div class="flex justify-between text-xs text-gray-500 mb-2">
-                        <span>Target: 45</span>
-                        <span id="sales-progress-text">0%</span>
-                    </div>
-                    <div class="slider-container">
-                        <div class="slider-fill bg-gradient-to-r from-green-600 to-green-400" id="sales-bar" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Workflow Status -->
-            <div class="metric-card rounded-2xl p-6" data-gsap="slide-up" data-delay="0.3">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 rounded-xl bg-purple-500/20 border border-purple-500/30">
-                        <i class="fas fa-cogs text-2xl text-purple-400"></i>
-                    </div>
-                    <span class="text-xs font-medium text-orange-400" id="urgent-badge" style="display: none;">
-                        <i class="fas fa-exclamation mr-1"></i> <span id="urgent-count">0</span> urgent
-                    </span>
-                </div>
-                <h3 class="text-gray-400 text-sm font-medium mb-1">In Workshop</h3>
-                <p class="text-4xl font-bold font-display counter-value" id="workshop-count">0</p>
-                <div class="mt-4 flex space-x-3">
-                    <div class="flex items-center space-x-1">
-                        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
-                        <span class="text-xs text-gray-400" id="pending-count">0 pending</span>
-                    </div>
-                    <div class="flex items-center space-x-1">
-                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <span class="text-xs text-gray-400" id="active-count">0 active</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <!-- Status Distribution -->
-            <div class="glass-panel rounded-2xl p-6" data-gsap="fade-in">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-white font-display">Stock by Status</h3>
-                    <button class="text-xs text-gray-400 hover:text-white transition-colors">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
-                </div>
-                <div class="chart-container h-64">
-                    <canvas id="statusChart"></canvas>
-                </div>
-                <div class="mt-4 grid grid-cols-3 gap-2 text-center">
-                    <div class="p-2 rounded-lg bg-white/5">
-                        <p class="text-xs text-gray-400">In Stock</p>
-                        <p class="text-lg font-bold text-green-400" id="stat-instock">0</p>
-                    </div>
-                    <div class="p-2 rounded-lg bg-white/5">
-                        <p class="text-xs text-gray-400">In Transit</p>
-                        <p class="text-lg font-bold text-orange-400" id="stat-transit">0</p>
-                    </div>
-                    <div class="p-2 rounded-lg bg-white/5">
-                        <p class="text-xs text-gray-400">Sold</p>
-                        <p class="text-lg font-bold text-blue-400" id="stat-sold">0</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Location Distribution -->
-            <div class="glass-panel rounded-2xl p-6" data-gsap="fade-in" data-delay="0.1">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-white font-display">By Location</h3>
-                    <button class="text-xs text-gray-400 hover:text-white transition-colors">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
-                </div>
-                <div class="chart-container h-64">
-                    <canvas id="locationChart"></canvas>
-                </div>
-                <div class="mt-4 space-y-2" id="location-legend">
-                    <!-- Dynamic legend items -->
-                </div>
-            </div>
-
-            <!-- Sales Trend -->
-            <div class="glass-panel rounded-2xl p-6" data-gsap="fade-in" data-delay="0.2">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-white font-display">7-Day Trend</h3>
-                    <div class="flex items-center space-x-2">
-                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
-                        <span class="text-xs text-gray-400">Sales</span>
-                    </div>
-                </div>
-                <div class="chart-container h-64">
-                    <canvas id="trendChart"></canvas>
-                </div>
-                <div class="mt-4 flex justify-between items-center">
+            <!-- Stock in Hand -->
+            <div class="metric-card glass-panel rounded-xl p-6 shadow-lg border border-gray-200">
+                <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-xs text-gray-400">Week Total</p>
-                        <p class="text-xl font-bold text-white" id="week-total">£0</p>
+                        <p class="text-sm font-medium text-gray-600">Stock in Hand</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2" id="stock-count">0</p>
+                        <p class="text-sm text-green-600 mt-1">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            <span id="stock-change">+12</span> this week
+                        </p>
                     </div>
-                    <div class="text-right">
-                        <p class="text-xs text-gray-400">vs Last Week</p>
-                        <p class="text-sm font-semibold text-green-400">+23.5%</p>
+                    <div class="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-car text-2xl text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yesterday's Sales -->
+            <div class="metric-card glass-panel rounded-xl p-6 shadow-lg border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Yesterday's Sales</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2" id="yesterday-sales">0</p>
+                        <p class="text-sm text-gray-500 mt-1">
+                            £<span id="yesterday-value">0</span> total value
+                        </p>
+                    </div>
+                    <div class="h-14 w-14 rounded-full bg-green-100 flex items-center justify-center">
+                        <i class="fas fa-pound-sign text-2xl text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Stock Value -->
+            <div class="metric-card glass-panel rounded-xl p-6 shadow-lg border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Stock Value</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">£<span id="total-value">0</span></p>
+                        <p class="text-sm text-blue-600 mt-1">
+                            <span id="avg-vehicle">0</span> avg. per vehicle
+                        </p>
+                    </div>
+                    <div class="h-14 w-14 rounded-full bg-purple-100 flex items-center justify-center">
+                        <i class="fas fa-chart-line text-2xl text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Actions -->
+            <div class="metric-card glass-panel rounded-xl p-6 shadow-lg border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Pending Actions</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2" id="pending-actions">0</p>
+                        <p class="text-sm text-orange-600 mt-1">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            <span id="urgent-count">0</span> urgent
+                        </p>
+                    </div>
+                    <div class="h-14 w-14 rounded-full bg-orange-100 flex items-center justify-center">
+                        <i class="fas fa-tasks text-2xl text-orange-600"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Actions & Recent -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Quick Actions & Status -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             <!-- Quick Actions -->
-            <div class="lg:col-span-2 glass-panel rounded-2xl p-6" data-gsap="slide-up">
-                <h3 class="text-lg font-semibold text-white font-display mb-6">Quick Actions</h3>
+            <div class="lg:col-span-2 glass-panel rounded-xl p-6 shadow-lg border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <a href="import.html" class="action-btn rounded-xl p-6 text-center group">
-                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <i class="fas fa-file-import text-2xl text-blue-400"></i>
-                        </div>
-                        <p class="font-medium text-white mb-1">Import Stock</p>
-                        <p class="text-xs text-gray-400">CSV Upload</p>
+                    <a href="import.html" class="flex flex-col items-center p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
+                        <i class="fas fa-file-import text-2xl text-blue-600 mb-2"></i>
+                        <span class="text-sm font-medium text-gray-700">Import Stock</span>
                     </a>
-                    
-                    <a href="workflow.html" class="action-btn rounded-xl p-6 text-center group">
-                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-orange-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <i class="fas fa-tasks text-2xl text-orange-400"></i>
-                        </div>
-                        <p class="font-medium text-white mb-1">Workflow</p>
-                        <p class="text-xs text-gray-400">12 Stages</p>
+                    <a href="workflow.html" class="flex flex-col items-center p-4 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors">
+                        <i class="fas fa-wrench text-2xl text-orange-600 mb-2"></i>
+                        <span class="text-sm font-medium text-gray-700">Workflow</span>
                     </a>
-                    
-                    <a href="inventory.html" class="action-btn rounded-xl p-6 text-center group">
-                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <i class="fas fa-search text-2xl text-green-400"></i>
-                        </div>
-                        <p class="font-medium text-white mb-1">Inventory</p>
-                        <p class="text-xs text-gray-400">Search & Filter</p>
+                    <a href="inventory.html" class="flex flex-col items-center p-4 rounded-lg bg-green-50 hover:bg-green-100 transition-colors">
+                        <i class="fas fa-search text-2xl text-green-600 mb-2"></i>
+                        <span class="text-sm font-medium text-gray-700">Search Stock</span>
                     </a>
-                    
-                    <a href="mobile-app.html" class="action-btn rounded-xl p-6 text-center group">
-                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <i class="fas fa-mobile-alt text-2xl text-purple-400"></i>
-                        </div>
-                        <p class="font-medium text-white mb-1">Field App</p>
-                        <p class="text-xs text-gray-400">Mobile PWA</p>
+                    <a href="mobile-app.html" class="flex flex-col items-center p-4 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors">
+                        <i class="fas fa-mobile-alt text-2xl text-purple-600 mb-2"></i>
+                        <span class="text-sm font-medium text-gray-700">Mobile App</span>
                     </a>
                 </div>
             </div>
 
-            <!-- System Health -->
-            <div class="glass-panel rounded-2xl p-6" data-gsap="slide-up" data-delay="0.1">
-                <h3 class="text-lg font-semibold text-white font-display mb-6">System Health</h3>
-                <div class="space-y-6">
-                    <div>
-                        <div class="flex justify-between mb-2">
-                            <span class="text-sm text-gray-400">Database</span>
-                            <span class="text-sm font-medium text-green-400">Optimal</span>
-                        </div>
-                        <div class="slider-container">
-                            <div class="slider-fill bg-green-500" style="width: 98%"></div>
-                        </div>
+            <!-- System Status -->
+            <div class="glass-panel rounded-xl p-6 shadow-lg border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">System Status</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Last Import</span>
+                        <span class="text-sm font-medium text-gray-900" id="last-import">Never</span>
                     </div>
-                    
-                    <div>
-                        <div class="flex justify-between mb-2">
-                            <span class="text-sm text-gray-400">Sync Status</span>
-                            <span class="text-sm font-medium text-blue-400">Real-time</span>
-                        </div>
-                        <div class="slider-container">
-                            <div class="slider-fill bg-blue-500" style="width: 100%"></div>
-                        </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Data Status</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800" id="data-status">
+                            Active
+                        </span>
                     </div>
-                    
-                    <div>
-                        <div class="flex justify-between mb-2">
-                            <span class="text-sm text-gray-400">Storage</span>
-                            <span class="text-sm font-medium text-yellow-400" id="storage-percent">45%</span>
-                        </div>
-                        <div class="slider-container">
-                            <div class="slider-fill bg-yellow-500" id="storage-bar" style="width: 45%"></div>
-                        </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Vehicles in Workflow</span>
+                        <span class="text-sm font-medium text-gray-900" id="workflow-count">0</span>
                     </div>
-                    
-                    <div class="pt-4 border-t border-white/10">
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-gray-400">Last Backup</span>
-                            <span class="text-white" id="last-backup">2 hours ago</span>
-                        </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Staff Online</span>
+                        <span class="text-sm font-medium text-gray-900">3/17</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Stats Bar -->
-        <div class="mt-8 glass-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 text-sm">
-            <div class="flex items-center space-x-6">
-                <div class="flex items-center space-x-2">
-                    <div class="w-2 h-2 rounded-full bg-blue-500 status-pulse"></div>
-                    <span class="text-gray-400">System Operational</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-users text-gray-500"></i>
-                    <span class="text-gray-400"><span id="staff-online">3</span>/17 Staff Online</span>
+        <!-- Recent Activity & Top Performers -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Recent Activity -->
+            <div class="glass-panel rounded-xl p-6 shadow-lg border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
+                <div class="space-y-4" id="recent-activity">
+                    <div class="flex items-center space-x-3 text-sm text-gray-500">
+                        <i class="fas fa-info-circle text-blue-500"></i>
+                        <span>No recent activity</span>
+                    </div>
                 </div>
             </div>
-            <div class="flex items-center space-x-6 text-gray-500">
-                <span>Capeye v2.0</span>
-                <span>•</span>
-                <span>Auto Capital Ltd</span>
+
+            <!-- Sales Leaderboard -->
+            <div class="glass-panel rounded-xl p-6 shadow-lg border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Top Performers (7 Days)</h2>
+                <div class="space-y-3" id="sales-leaderboard">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <div class="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-700 font-bold">1</div>
+                            <span class="font-medium text-gray-900">Ibrahim Ata</span>
+                        </div>
+                        <span class="font-semibold text-gray-900">£45,200</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-bold">2</div>
+                            <span class="font-medium text-gray-900">Keith Hardy</span>
+                        </div>
+                        <span class="font-semibold text-gray-900">£32,800</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <div class="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 font-bold">3</div>
+                            <span class="font-medium text-gray-900">Ali Amood</span>
+                        </div>
+                        <span class="font-semibold text-gray-900">£28,500</span>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
-        // Initialize GSAP Animations
+        // Load data on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Set date
-            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-GB', dateOptions);
-            
-            // Animate elements
-            gsap.from("[data-gsap='slide-up']", {
-                y: 60,
-                opacity: 0,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: "power3.out"
-            });
-            
-            gsap.from("[data-gsap='fade-in']", {
-                opacity: 0,
-                duration: 1,
-                stagger: 0.15,
-                delay: 0.3,
-                ease: "power2.out"
-            });
-            
             loadDashboardData();
-            initCharts();
             checkAlerts();
         });
 
-        // Counter Animation
-        function animateCounter(elementId, target, prefix = '', suffix = '') {
-            const element = document.getElementById(elementId);
-            const duration = 2000;
-            const start = 0;
-            const increment = target / (duration / 16);
-            let current = start;
-            
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    current = target;
-                    clearInterval(timer);
-                }
-                element.textContent = prefix + Math.floor(current).toLocaleString('en-GB') + suffix;
-            }, 16);
-        }
-
-        // Load Data
         function loadDashboardData() {
             const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            const sales = JSON.parse(localStorage.getItem('capeye_sales') || '[]');
+            const importHistory = JSON.parse(localStorage.getItem('capeye_import_history') || '[]');
             
             // Calculate metrics
-            const totalStock = vehicles.length;
-            const totalValue = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
-            const avgValue = totalStock > 0 ? totalValue / totalStock : 0;
             const inStock = vehicles.filter(v => v.status === 'In Stock').length;
-            const inTransit = vehicles.filter(v => v.status === 'In Transit').length;
-            const sold = vehicles.filter(v => v.status === 'Sold').length;
-            const inWorkshop = vehicles.filter(v => !['In Stock', 'Sold'].includes(v.status)).length;
+            const totalValue = vehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
+            const avgValue = vehicles.length > 0 ? totalValue / vehicles.length : 0;
             
-            // Monthly sales (mock calculation)
-            const monthlySales = sales.filter(s => {
-                const saleDate = new Date(s.date);
-                const now = new Date();
-                return saleDate.getMonth() === now.getMonth() && saleDate.getFullYear() === now.getFullYear();
-            }).length;
+            // Update DOM
+            document.getElementById('stock-count').textContent = vehicles.length;
+            document.getElementById('total-value').textContent = totalValue.toLocaleString('en-GB', {maximumFractionDigits: 0});
+            document.getElementById('avg-vehicle').textContent = '£' + avgValue.toLocaleString('en-GB', {maximumFractionDigits: 0});
             
-            // Animate counters
-            setTimeout(() => {
-                animateCounter('total-stock', totalStock);
-                animateCounter('total-value', totalValue, '', '');
-                animateCounter('avg-value', avgValue, '', '');
-                animateCounter('monthly-sales', monthlySales || 12);
-                animateCounter('workshop-count', inWorkshop);
-            }, 500);
-            
-            // Update static values
-            document.getElementById('stat-instock').textContent = inStock;
-            document.getElementById('stat-transit').textContent = inTransit;
-            document.getElementById('stat-sold').textContent = sold;
-            
-            // Capacity bar (assuming 400 max capacity)
-            const capacityPercent = Math.min((totalStock / 400) * 100, 100);
-            document.getElementById('capacity-percent').textContent = Math.round(capacityPercent) + '%';
-            setTimeout(() => {
-                document.getElementById('capacity-bar').style.width = capacityPercent + '%';
-            }, 800);
-            
-            // Sales progress bar (target 45)
-            const salesProgress = Math.min((monthlySales / 45) * 100, 100) || 26;
-            document.getElementById('sales-progress-text').textContent = Math.round(salesProgress) + '%';
-            setTimeout(() => {
-                document.getElementById('sales-bar').style.width = salesProgress + '%';
-            }, 1000);
-            
-            // Workshop breakdown
-            const pending = vehicles.filter(v => v.workshopStatus === 'Pending').length;
-            const active = vehicles.filter(v => v.workshopStatus === 'In Progress').length;
-            document.getElementById('pending-count').textContent = pending + ' pending';
-            document.getElementById('active-count').textContent = active + ' active';
-            
-            // Urgent badge
-            const urgent = vehicles.filter(v => v.daysInStock > 90).length;
-            if (urgent > 0) {
-                document.getElementById('urgent-count').textContent = urgent;
-                document.getElementById('urgent-badge').style.display = 'flex';
+            // Last import
+            if (importHistory.length > 0) {
+                const lastImport = new Date(importHistory[importHistory.length - 1].timestamp);
+                document.getElementById('last-import').textContent = lastImport.toLocaleDateString('en-GB');
             }
             
-            // Week total
-            const weekTotal = sales.reduce((sum, s) => sum + (parseFloat(s.price) || 0), 0) || 125000;
-            document.getElementById('week-total').textContent = '£' + weekTotal.toLocaleString('en-GB');
-            
-            updateCharts(vehicles);
+            // Workflow count (vehicles with status not In Stock/Sold)
+            const inWorkflow = vehicles.filter(v => !['In Stock', 'Sold'].includes(v.status)).length;
+            document.getElementById('workflow-count').textContent = inWorkflow;
         }
 
-        // Charts
-        let statusChart, locationChart, trendChart;
-        
-        function initCharts() {
-            Chart.defaults.color = '#94a3b8';
-            Chart.defaults.font.family = 'Inter';
-            
-            // Status Chart
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
-            statusChart = new Chart(statusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['In Stock', 'In Transit', 'Off-site', 'Subject to', 'Sold'],
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#10b981',
-                            '#f59e0b',
-                            '#ef4444',
-                            '#8b5cf6',
-                            '#3b82f6'
-                        ],
-                        borderWidth: 0,
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    animation: {
-                        animateScale: true,
-                        animateRotate: true,
-                        duration: 1500,
-                        easing: 'easeOutQuart'
-                    }
-                }
-            });
-            
-            // Location Chart
-            const locationCtx = document.getElementById('locationChart').getContext('2d');
-            locationChart = new Chart(locationCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Stanmore Retail', 'Stanmore 2', 'PDI', 'With Supplier', 'ACL'],
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#1e3a5f',
-                            '#c41e3a',
-                            '#d4af37',
-                            '#10b981',
-                            '#8b5cf6'
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#0f172a'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-            
-            // Trend Chart
-            const trendCtx = document.getElementById('trendChart').getContext('2d');
-            trendChart = new Chart(trendCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [{
-                        label: 'Sales',
-                        data: [2, 4, 3, 5, 4, 6, 3],
-                        borderColor: '#c41e3a',
-                        backgroundColor: 'rgba(196, 30, 58, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#c41e3a',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#64748b' }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#64748b' }
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateCharts(vehicles) {
-            if (!statusChart || !locationChart) return;
-            
-            // Status data
-            const statusCounts = {
-                'In Stock': vehicles.filter(v => v.status === 'In Stock').length,
-                'In Transit': vehicles.filter(v => v.status === 'In Transit').length,
-                'Off-site R': vehicles.filter(v => v.status === 'Off-site R').length,
-                'Subject to': vehicles.filter(v => v.status === 'Subject to').length,
-                'Sold': vehicles.filter(v => v.status === 'Sold').length
-            };
-            
-            statusChart.data.datasets[0].data = Object.values(statusCounts);
-            statusChart.update();
-            
-            // Location data
-            const locationCounts = {
-                'Stanmore Retail': vehicles.filter(v => v.location?.includes('Retail')).length,
-                'Stanmore 2': vehicles.filter(v => v.location?.includes('2')).length,
-                'PDI': vehicles.filter(v => v.location?.includes('PDI')).length,
-                'With Supplier': vehicles.filter(v => v.location?.includes('Supplier')).length,
-                'ACL': vehicles.filter(v => v.location?.includes('ACL')).length
-            };
-            
-            locationChart.data.datasets[0].data = Object.values(locationCounts);
-            locationChart.update();
-            
-            // Update location legend
-            const legendContainer = document.getElementById('location-legend');
-            legendContainer.innerHTML = Object.entries(locationCounts).map(([loc, count], i) => `
-                <div class="flex items-center justify-between p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-3 h-3 rounded-full" style="background-color: ${locationChart.data.datasets[0].backgroundColor[i]}"></div>
-                        <span class="text-sm text-gray-300">${loc}</span>
-                    </div>
-                    <span class="text-sm font-semibold text-white">${count}</span>
-                </div>
-            `).join('');
-        }
-
-        // Alerts
         function checkAlerts() {
             const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
             const alerts = [];
             
-            // Aging stock alert
-            const aging = vehicles.filter(v => {
-                if (!v.dateInStock || v.status === 'Sold') return false;
+            // Check for vehicles in stock > 90 days
+            const oldStock = vehicles.filter(v => {
+                if (!v.dateInStock) return false;
                 const days = Math.floor((new Date() - new Date(v.dateInStock)) / (1000 * 60 * 60 * 24));
-                return days > 90;
+                return days > 90 && v.status === 'In Stock';
             });
             
-            if (aging.length > 0) {
+            if (oldStock.length > 0) {
                 alerts.push({
-                    type: 'critical',
-                    icon: 'fa-exclamation-triangle',
-                    title: 'Aging Stock Alert',
-                    message: `${aging.length} vehicles in stock over 90 days require attention`,
-                    action: 'View Report',
-                    link: 'inventory.html?filter=aging'
+                    type: 'warning',
+                    message: `${oldStock.length} vehicles in stock over 90 days`,
+                    action: 'View Aging Report'
                 });
             }
             
-            // Low stock alert
-            const inStock = vehicles.filter(v => v.status === 'In Stock').length;
-            if (inStock < 50) {
+            // Check for pending actions
+            const pending = vehicles.filter(v => v.workshopStatus === 'Pending' || v.valetStatus === 'Pending').length;
+            if (pending > 0) {
                 alerts.push({
-                    type: 'warning',
-                    icon: 'fa-chart-line',
-                    title: 'Low Stock Warning',
-                    message: 'Current stock levels below minimum threshold',
-                    action: 'Import Now',
-                    link: 'import.html'
+                    type: 'info',
+                    message: `${pending} vehicles awaiting workshop/valeting`,
+                    action: 'View Workflow'
                 });
             }
             
@@ -949,44 +331,28 @@
             const container = document.getElementById('alerts-container');
             if (alerts.length > 0) {
                 container.innerHTML = alerts.map(alert => `
-                    <div class="alert-card rounded-xl p-4 flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
-                                <i class="fas ${alert.icon} text-red-400 text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-white mb-1">${alert.title}</h4>
-                                <p class="text-sm text-gray-300">${alert.message}</p>
-                            </div>
+                    <div class="rounded-lg p-4 ${alert.type === 'warning' ? 'bg-yellow-50 border border-yellow-200' : 'bg-blue-50 border border-blue-200'} flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas ${alert.type === 'warning' ? 'fa-exclamation-triangle text-yellow-600' : 'fa-info-circle text-blue-600'} mr-3"></i>
+                            <span class="${alert.type === 'warning' ? 'text-yellow-800' : 'text-blue-800'} font-medium">${alert.message}</span>
                         </div>
-                        <a href="${alert.link}" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors">
-                            ${alert.action}
-                        </a>
+                        <button class="text-sm font-medium ${alert.type === 'warning' ? 'text-yellow-700 hover:text-yellow-900' : 'text-blue-700 hover:text-blue-900'}">
+                            ${alert.action} →
+                        </button>
                     </div>
                 `).join('');
             }
         }
 
-        // Refresh
-        function refreshAll() {
-            const icon = document.getElementById('refresh-icon');
-            icon.classList.add('fa-spin');
-            
-            // Simulate refresh
+        function refreshData() {
+            const btn = document.querySelector('button[onclick="refreshData()"] i');
+            btn.classList.add('fa-spin');
             setTimeout(() => {
                 loadDashboardData();
-                icon.classList.remove('fa-spin');
-                document.getElementById('data-timestamp').textContent = 'Updated: Just now';
-                
-                // Flash effect on metrics
-                document.querySelectorAll('.metric-card').forEach(card => {
-                    card.style.transform = 'scale(1.02)';
-                    setTimeout(() => card.style.transform = '', 200);
-                });
+                btn.classList.remove('fa-spin');
             }, 1000);
         }
 
-        // Logout
         function logout() {
             localStorage.removeItem('capeye_session');
             window.location.href = 'login.html';
