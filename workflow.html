@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workflow | Capeye Auto Capital</title>
+    <title>Workflow Pipeline | Capeye Auto Capital</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,9 +35,10 @@
             --cy-accent-blue: #3b82f6;
             --cy-accent-blue-soft: rgba(59, 130, 246, 0.15);
             --cy-accent-green: #10b981;
+            --cy-accent-green-soft: rgba(16, 185, 129, 0.15);
             --cy-accent-orange: #f59e0b;
+            --cy-accent-orange-soft: rgba(245, 158, 11, 0.15);
             --cy-accent-red: #ef4444;
-            --cy-accent-red-soft: rgba(239, 68, 68, 0.15);
             --cy-accent-purple: #8b5cf6;
             --cy-radius-sm: 6px;
             --cy-radius-md: 8px;
@@ -107,31 +108,28 @@
             color: var(--cy-text-muted);
         }
 
-        .cy-nav {
+        .nav-menu {
             display: flex;
             gap: 8px;
         }
 
-        .cy-nav-link {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .nav-item {
             padding: 8px 16px;
-            border-radius: var(--cy-radius-md);
-            font-size: 13px;
-            font-weight: 500;
             color: var(--cy-text-secondary);
             text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: var(--cy-radius-md);
             transition: all 0.15s ease;
         }
 
-        .cy-nav-link:hover {
+        .nav-item:hover {
             color: var(--cy-text-primary);
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--cy-bg-tertiary);
         }
 
-        .cy-nav-link.active {
-            color: var(--cy-text-primary);
+        .nav-item.active {
+            color: var(--cy-accent-blue);
             background: var(--cy-accent-blue-soft);
         }
 
@@ -142,282 +140,18 @@
             padding: 24px;
         }
 
-        /* Loading Overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(10, 15, 28, 0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 3px solid var(--cy-border);
-            border-top-color: var(--cy-accent-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Data Status */
-        .data-status {
-            padding: 12px 16px;
-            border-radius: var(--cy-radius-lg);
-            margin-bottom: 24px;
-            display: none;
-            font-size: 13px;
-        }
-
-        .data-status.success {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: var(--cy-accent-green);
-            display: block;
-        }
-
-        .data-status.error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: var(--cy-accent-red);
-            display: block;
-        }
-
-        /* Filter Bar */
-        .filter-bar {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
-            padding: 16px;
-            margin-bottom: 24px;
-        }
-
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 12px;
-            align-items: end;
-        }
-
-        @media (max-width: 1200px) {
-            .filter-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            .filter-grid { grid-template-columns: 1fr; }
-        }
-
-        .filter-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--cy-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .filter-input {
-            width: 100%;
-            padding: 10px 12px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-md);
-            color: var(--cy-text-primary);
-            font-size: 13px;
-        }
-
-        .filter-input:focus {
-            outline: none;
-            border-color: var(--cy-accent-blue);
-        }
-
-        .filter-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            flex: 1;
-            padding: 10px 16px;
-            background: var(--cy-accent-blue);
-            border: none;
-            border-radius: var(--cy-radius-md);
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .btn-primary:hover { background: #2563eb; }
-
-        .btn-secondary {
-            padding: 10px 16px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-md);
-            color: var(--cy-text-secondary);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--cy-border-hover);
-            color: var(--cy-text-primary);
-        }
-
-        .active-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .filter-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: var(--cy-accent-blue-soft);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 20px;
-            font-size: 12px;
-            color: var(--cy-accent-blue);
-        }
-
-        .filter-badge button {
-            background: none;
-            border: none;
-            color: inherit;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        /* Page Header */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 24px;
-        }
-
-        .page-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .page-subtitle {
-            font-size: 14px;
-            color: var(--cy-text-muted);
-        }
-
-        .live-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--cy-accent-green);
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--cy-accent-green);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Quick Actions */
-        .actions-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 24px;
-            padding: 16px;
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
-            overflow-x: auto;
-        }
-
-        .action-chip {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--cy-text-secondary);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            white-space: nowrap;
-            text-decoration: none;
-        }
-
-        .action-chip:hover {
-            border-color: var(--cy-border-hover);
-            color: var(--cy-text-primary);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .action-chip i { color: var(--cy-accent-blue); }
-
-        /* RED NEW INTAKE BUTTON */
-        .action-chip.new-intake {
-            background: var(--cy-accent-red);
-            border-color: var(--cy-accent-red);
-            color: white;
-            font-weight: 600;
-        }
-
-        .action-chip.new-intake:hover {
-            background: #dc2626;
-            border-color: #dc2626;
-        }
-
-        .action-chip.new-intake i {
-            color: white;
-        }
-
-        /* Pipeline Stats */
+        /* Pipeline Header */
         .pipeline-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--cy-text-primary);
+        .pipeline-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
         }
 
         .pipeline-stats {
@@ -425,496 +159,335 @@
             gap: 24px;
         }
 
-        .pipeline-stat {
+        .stat-item {
             text-align: center;
         }
 
-        .pipeline-stat-value {
-            font-family: 'Space Grotesk', sans-serif;
+        .stat-value {
             font-size: 24px;
             font-weight: 700;
-            color: var(--cy-text-primary);
-        }
-
-        .pipeline-stat-label {
-            font-size: 11px;
-            color: var(--cy-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Stages Grid */
-        .stages-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        @media (max-width: 1200px) {
-            .stages-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            .stages-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        .stage-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stage-card:hover {
-            border-color: var(--cy-border-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .stage-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--stage-color, var(--cy-accent-blue));
-            opacity: 0;
-            transition: opacity 0.15s ease;
-        }
-
-        .stage-card:hover::before { opacity: 1; }
-
-        .stage-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-
-        .stage-number {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--cy-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stage-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            background: var(--stage-color-soft, var(--cy-accent-blue-soft));
-            color: var(--stage-color, var(--cy-accent-blue));
-        }
-
-        .stage-count {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--cy-text-primary);
-            margin-bottom: 4px;
-        }
-
-        .stage-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--cy-text-primary);
-            margin-bottom: 4px;
-        }
-
-        .stage-dept {
-            font-size: 12px;
-            color: var(--cy-text-muted);
-        }
-
-        .stage-progress {
-            margin-top: 16px;
-            height: 4px;
-            background: var(--cy-bg-tertiary);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .stage-progress-bar {
-            height: 100%;
-            background: var(--stage-color, var(--cy-accent-blue));
-            border-radius: 2px;
-            transition: width 0.35s ease;
-        }
-
-        /* Charts Row */
-        .charts-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-
-        @media (max-width: 1024px) {
-            .charts-row { grid-template-columns: 1fr; }
-        }
-
-        .chart-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
-            padding: 20px;
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .chart-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--cy-text-primary);
-        }
-
-        .chart-container {
-            height: 200px;
-            position: relative;
-        }
-
-        /* Vehicles Section */
-        .vehicles-section {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 24px;
-        }
-
-        @media (max-width: 1024px) {
-            .vehicles-section { grid-template-columns: 1fr; }
-        }
-
-        .panel {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
-            padding: 24px;
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        /* Queue Tabs */
-        .queue-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--cy-border);
-            padding-bottom: 16px;
-        }
-
-        .queue-tab {
-            padding: 8px 16px;
-            border-radius: var(--cy-radius-md);
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--cy-text-secondary);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            border: none;
-            background: transparent;
-        }
-
-        .queue-tab:hover {
-            color: var(--cy-text-primary);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .queue-tab.active {
-            color: var(--cy-text-primary);
-            background: var(--cy-accent-blue-soft);
-        }
-
-        .queue-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .queue-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 16px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .queue-item:hover {
-            border-color: var(--cy-border-hover);
-            transform: translateX(4px);
-        }
-
-        .queue-vehicle { flex: 1; }
-
-        .queue-title {
-            font-weight: 600;
-            color: var(--cy-text-primary);
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .queue-meta {
-            font-size: 12px;
-            color: var(--cy-text-muted);
-        }
-
-        .queue-stage {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            background: var(--cy-accent-blue-soft);
             color: var(--cy-accent-blue);
         }
 
-        .queue-time { text-align: right; }
-
-        .queue-days {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--cy-text-primary);
-        }
-
-        .queue-days.warning { color: var(--cy-accent-orange); }
-        .queue-days.danger { color: var(--cy-accent-red); }
-
-        .queue-label {
-            font-size: 10px;
+        .stat-label {
+            font-size: 12px;
             color: var(--cy-text-muted);
             text-transform: uppercase;
         }
 
-        /* Activity Feed */
-        .activity-timeline {
-            position: relative;
-            padding-left: 24px;
+        /* Stage Pipeline */
+        .stage-pipeline {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            padding: 20px;
+            margin-bottom: 24px;
+            overflow-x: auto;
         }
 
-        .activity-timeline::before {
+        .pipeline-stages {
+            display: flex;
+            justify-content: space-between;
+            min-width: 1000px;
+            position: relative;
+        }
+
+        .pipeline-stages::before {
             content: '';
             position: absolute;
-            left: 7px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
+            top: 20px;
+            left: 40px;
+            right: 40px;
+            height: 2px;
             background: var(--cy-border);
+            z-index: 0;
         }
 
-        .activity-item {
+        .stage-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
             position: relative;
-            padding-bottom: 24px;
+            z-index: 1;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        .activity-item:last-child { padding-bottom: 0; }
+        .stage-node:hover {
+            transform: translateY(-2px);
+        }
 
-        .activity-dot {
-            position: absolute;
-            left: -24px;
-            width: 16px;
-            height: 16px;
+        .stage-circle {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: var(--cy-bg-secondary);
-            border: 2px solid var(--cy-accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            border: 3px solid var(--cy-border);
+            background: var(--cy-bg-tertiary);
+            transition: all 0.3s;
         }
 
-        .activity-dot.completed {
+        .stage-node.active .stage-circle {
+            background: var(--cy-accent-blue);
+            border-color: var(--cy-accent-blue);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .stage-node.complete .stage-circle {
             background: var(--cy-accent-green);
             border-color: var(--cy-accent-green);
         }
 
-        .activity-content {
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            padding: 16px;
-        }
-
-        .activity-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
-        }
-
-        .activity-title {
-            font-weight: 600;
-            color: var(--cy-text-primary);
-            font-size: 13px;
-        }
-
-        .activity-time {
-            font-size: 11px;
+        .stage-node.pending .stage-circle {
             color: var(--cy-text-muted);
         }
 
-        .activity-desc {
+        .stage-name {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .stage-node.active .stage-name {
+            color: var(--cy-accent-blue);
+            font-weight: 600;
+        }
+
+        /* Vehicle Cards */
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .vehicle-card {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: var(--cy-radius-xl);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .vehicle-card:hover {
+            border-color: var(--cy-border-hover);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .vehicle-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--cy-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .vehicle-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .vehicle-meta {
+            font-size: 13px;
+            color: var(--cy-text-muted);
+        }
+
+        .vehicle-stock {
+            background: var(--cy-bg-tertiary);
+            padding: 4px 12px;
+            border-radius: 20px;
             font-size: 12px;
-            color: var(--cy-text-secondary);
+            font-weight: 600;
+            font-family: monospace;
         }
 
-        .activity-user {
+        .vehicle-stages {
+            padding: 16px;
             display: flex;
-            align-items: center;
             gap: 8px;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--cy-border);
+            overflow-x: auto;
         }
 
-        .activity-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--cy-accent-blue), var(--cy-accent-purple));
+        .stage-box {
+            min-width: 60px;
+            height: 60px;
+            background: var(--cy-bg-tertiary);
+            border: 2px solid var(--cy-border);
+            border-radius: var(--cy-radius-md);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            font-weight: 700;
-            color: white;
+            gap: 4px;
+            cursor: default;
+            transition: all 0.2s;
         }
 
-        .activity-user-name {
-            font-size: 12px;
+        .stage-box i {
+            font-size: 16px;
+            color: var(--cy-text-muted);
+        }
+
+        .stage-box span {
+            font-size: 10px;
+            color: var(--cy-text-muted);
+        }
+
+        .stage-box.pending {
+            opacity: 0.5;
+        }
+
+        .stage-box.active {
+            background: var(--cy-accent-blue-soft);
+            border-color: var(--cy-accent-blue);
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        .stage-box.active i,
+        .stage-box.active span {
+            color: var(--cy-accent-blue);
+        }
+
+        .stage-box.complete {
+            background: var(--cy-accent-green-soft);
+            border-color: var(--cy-accent-green);
+            cursor: pointer;
+        }
+
+        .stage-box.complete i,
+        .stage-box.complete span {
+            color: var(--cy-accent-green);
+        }
+
+        .stage-box:hover.active,
+        .stage-box:hover.complete {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+        }
+
+        .vehicle-actions {
+            padding: 16px;
+            border-top: 1px solid var(--cy-border);
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--cy-radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--cy-accent-blue);
+            color: white;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: var(--cy-bg-tertiary);
             color: var(--cy-text-secondary);
+            border: 1px solid var(--cy-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--cy-border-hover);
+            color: var(--cy-text-primary);
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 40px;
+            padding: 60px;
             color: var(--cy-text-muted);
         }
 
         .empty-state i {
-            font-size: 32px;
-            margin-bottom: 12px;
+            font-size: 48px;
+            margin-bottom: 16px;
             opacity: 0.5;
         }
 
-        /* Start Intake Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
+        /* Loading */
+        .loading-spinner {
+            display: flex;
             justify-content: center;
-            z-index: 100;
+            padding: 40px;
         }
 
-        .modal-overlay.active { display: flex; }
+        .spinner-small {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--cy-border);
+            border-top-color: var(--cy-accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
 
-        .modal-content {
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            padding: 16px 24px;
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
-            padding: 32px;
-            width: 90%;
-            max-width: 500px;
+            border-radius: var(--cy-radius-lg);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+            animation: slideIn 0.3s ease;
         }
 
-        .modal-header {
-            margin-bottom: 24px;
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 8px;
+        .notification.show { display: flex; }
+
+        .notification.success {
+            border-color: var(--cy-accent-green);
+            background: rgba(16, 185, 129, 0.1);
         }
 
-        .modal-subtitle {
-            color: var(--cy-text-muted);
-            font-size: 14px;
-        }
-
-        .vehicle-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin: 16px 0;
-        }
-
-        .vehicle-option {
-            padding: 12px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-md);
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .vehicle-option:hover {
-            border-color: var(--cy-accent-blue);
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .vehicle-option-title {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .vehicle-option-meta {
-            font-size: 12px;
-            color: var(--cy-text-muted);
-            margin-top: 4px;
+        .notification.error {
+            border-color: var(--cy-accent-red);
+            background: rgba(239, 68, 68, 0.1);
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="text-center">
-            <div class="spinner mb-4 mx-auto"></div>
-            <p style="color: var(--cy-text-muted); font-size: 14px;">Loading workflow data...</p>
-        </div>
-    </div>
-
-    <!-- Start Intake Modal -->
-    <div id="intakeModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Start New Intake</h3>
-                <p class="modal-subtitle">Select a vehicle to begin Stage 1</p>
-            </div>
-            <div class="vehicle-list" id="intakeVehicleList"></div>
-            <button onclick="closeIntakeModal()" class="btn-secondary" style="width: 100%; margin-top: 16px;">Cancel</button>
-        </div>
-    </div>
-
     <!-- Header -->
     <header class="cy-header">
         <div class="cy-header-content">
-            <a href="index.html" class="cy-brand">
+            <a href="../index.html" class="cy-brand">
                 <div class="cy-logo">AC</div>
                 <div class="cy-brand-text">
                     <h1>CAPEYE</h1>
@@ -922,288 +495,152 @@
                 </div>
             </a>
             
-            <nav class="cy-nav">
-                <a href="index.html" class="cy-nav-link">
-                    <i class="fas fa-home"></i> Dashboard
-                </a>
-                <a href="operations.html" class="cy-nav-link">
-                    <i class="fas fa-cogs"></i> Operations
-                </a>
-                <a href="inventory.html" class="cy-nav-link">
-                    <i class="fas fa-car"></i> Inventory
-                </a>
-                <a href="workflow.html" class="cy-nav-link active">
-                    <i class="fas fa-tasks"></i> Workflow
-                </a>
-                <a href="vehicle-inspection.html" class="cy-nav-link">
-                    <i class="fas fa-clipboard-check"></i> Inspection
-                </a>
-                <a href="analytics.html" class="cy-nav-link">
-                    <i class="fas fa-chart-bar"></i> Analytics
-                </a>
+            <nav class="nav-menu">
+                <a href="../index.html" class="nav-item">Dashboard</a>
+                <a href="../operations.html" class="nav-item">Operations</a>
+                <a href="../inventory.html" class="nav-item">Inventory</a>
+                <a href="../workflow.html" class="nav-item active">Workflow</a>
+                <a href="../analytics.html" class="nav-item">Analytics</a>
             </nav>
+
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button onclick="refreshData()" class="btn-secondary">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <a href="../login.html" class="btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="cy-container">
-        <!-- Data Status -->
-        <div id="dataStatus" class="data-status"></div>
-
-        <!-- Page Header -->
-        <div class="page-header">
-            <div>
-                <h1 class="page-title">Workflow <span style="color: var(--cy-accent-blue);">Pipeline</span></h1>
-                <p class="page-subtitle">12-stage vehicle preparation and sales process</p>
-            </div>
-            <div class="live-badge">
-                <div class="live-dot"></div>
-                <span>Live</span>
-            </div>
-        </div>
-
-        <!-- Filter Bar -->
-        <div class="filter-bar">
-            <div class="filter-grid">
-                <div class="filter-group">
-                    <label>Search</label>
-                    <input type="text" id="filterSearch" class="filter-input" placeholder="Stock No, Reg, Make...">
-                </div>
-                <div class="filter-group">
-                    <label>Stage</label>
-                    <select id="filterStage" class="filter-input">
-                        <option value="">All Stages</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Department</label>
-                    <select id="filterDept" class="filter-input">
-                        <option value="">All Departments</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Status</label>
-                    <select id="filterStatus" class="filter-input">
-                        <option value="">All Status</option>
-                        <option value="In Stock">In Stock</option>
-                        <option value="In Transit">In Transit</option>
-                        <option value="Off-site R">Off-site R</option>
-                        <option value="Subject to">Subject to</option>
-                        <option value="Sold">Sold</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Location</label>
-                    <select id="filterLocation" class="filter-input">
-                        <option value="">All Locations</option>
-                    </select>
-                </div>
-                <div class="filter-actions">
-                    <button onclick="applyFilters()" class="btn-primary">Apply</button>
-                    <button onclick="resetFilters()" class="btn-secondary">Reset</button>
-                </div>
-            </div>
-            <div class="active-filters" id="activeFilters"></div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="actions-bar">
-            <!-- RED NEW INTAKE BUTTON - Links to vehicle-inspection.html -->
-            <a href="vehicle-inspection.html" class="action-chip new-intake">
-                <i class="fas fa-plus-circle"></i> New Intake
-            </a>
-            <div class="action-chip" onclick="quickAction('search')">
-                <i class="fas fa-search"></i> Find Vehicle
-            </div>
-            <div class="action-chip" onclick="quickAction('overdue')">
-                <i class="fas fa-exclamation-triangle"></i> Overdue Items
-            </div>
-            <div class="action-chip" onclick="quickAction('complete')">
-                <i class="fas fa-check-double"></i> Recently Completed
-            </div>
-            <div class="action-chip" onclick="quickAction('report')">
-                <i class="fas fa-file-export"></i> Export Report
-            </div>
-        </div>
-
-        <!-- Pipeline Overview -->
+        <!-- Pipeline Header -->
         <div class="pipeline-header">
-            <div class="section-title">
-                <i class="fas fa-project-diagram" style="color: var(--cy-accent-blue);"></i>
-                Stage Overview
+            <div>
+                <h1 class="pipeline-title">Workflow Pipeline</h1>
+                <p style="color: var(--cy-text-muted); margin-top: 4px;">Track vehicles through 12-stage preparation process</p>
             </div>
             <div class="pipeline-stats">
-                <div class="pipeline-stat">
-                    <div class="pipeline-stat-value" id="totalInPipeline">0</div>
-                    <div class="pipeline-stat-label">In Pipeline</div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalVehicles">0</div>
+                    <div class="stat-label">In Pipeline</div>
                 </div>
-                <div class="pipeline-stat">
-                    <div class="pipeline-stat-value" id="avgTime">0d</div>
-                    <div class="pipeline-stat-label">Avg Time</div>
+                <div class="stat-item">
+                    <div class="stat-value" id="activeVehicles">0</div>
+                    <div class="stat-label">Active</div>
                 </div>
-                <div class="pipeline-stat">
-                    <div class="pipeline-stat-value" id="completedToday">0</div>
-                    <div class="pipeline-stat-label">Done Today</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="stages-grid" id="stagesGrid"></div>
-
-        <!-- Charts Row -->
-        <div class="charts-row">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title">Stage Distribution</div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="stageChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title">Daily Throughput</div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="throughputChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title">Bottlenecks</div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="bottleneckChart"></canvas>
+                <div class="stat-item">
+                    <div class="stat-value" id="completedToday">0</div>
+                    <div class="stat-label">Today</div>
                 </div>
             </div>
         </div>
 
-        <!-- Vehicles & Activity -->
-        <div class="vehicles-section">
-            <!-- Vehicle Queue -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="section-title">
-                        <i class="fas fa-list" style="color: var(--cy-accent-green);"></i>
-                        Active Vehicles
-                    </div>
-                </div>
-                
-                <div class="queue-tabs">
-                    <button class="queue-tab active" onclick="switchTab('all', this)">All Active</button>
-                    <button class="queue-tab" onclick="switchTab('overdue', this)">Overdue</button>
-                    <button class="queue-tab" onclick="switchTab('today', this)">Due Today</button>
-                    <button class="queue-tab" onclick="switchTab('mine', this)">My Tasks</button>
-                </div>
-                
-                <div class="queue-list" id="vehicleQueue"></div>
+        <!-- Stage Pipeline Overview -->
+        <div class="stage-pipeline">
+            <div class="pipeline-stages" id="pipelineStages">
+                <!-- Stages rendered by JS -->
             </div>
+        </div>
 
-            <!-- Activity Feed -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="section-title">
-                        <i class="fas fa-history" style="color: var(--cy-accent-purple);"></i>
-                        Recent Activity
-                    </div>
-                </div>
-                
-                <div class="activity-timeline" id="activityFeed"></div>
+        <!-- Vehicles Grid -->
+        <div id="vehiclesContainer">
+            <div class="loading-spinner">
+                <div class="spinner-small"></div>
             </div>
         </div>
     </main>
 
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText"></span>
+    </div>
+
     <script>
-        // Stage definitions - simplified without file paths (using vehicle-inspection.html instead)
+        // Stage URL mapping - CORRECT PATHS to stage forms
+        const stageUrls = {
+            1: './stages/stage-1-intake.html',
+            2: './stages/stage-2-bodywork.html',
+            3: './stages/stage-3-paint.html',
+            4: './stages/stage-4-legal.html',
+            5: './stages/stage-5-mechanical.html',
+            6: './stages/stage-6-external.html',
+            7: './stages/stage-7-valeting.html',
+            8: './stages/stage-8-faults.html',
+            9: './stages/stage-9-advertising.html',
+            10: './stages/stage-10-delivery.html',
+            11: './stages/stage-11-accounts.html',
+            12: './stages/stage-12-management.html'
+        };
+
+        // Stage definitions
         const stages = [
-            { id: 1, name: 'Vehicle Intake', dept: 'Sales', icon: 'fa-clipboard-check', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)' },
-            { id: 2, name: 'Bodywork', dept: 'Bodyshop', icon: 'fa-spray-can', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)' },
-            { id: 3, name: 'Paint Repairs', dept: 'Bodyshop', icon: 'fa-paint-roller', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)' },
-            { id: 4, name: 'Legal & Docs', dept: 'Accounts', icon: 'fa-file-contract', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.15)' },
-            { id: 5, name: 'Mechanical', dept: 'Workshop', icon: 'fa-wrench', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)' },
-            { id: 6, name: 'External', dept: 'Workshop', icon: 'fa-bolt', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)' },
-            { id: 7, name: 'Valeting', dept: 'Valeting', icon: 'fa-sparkles', color: '#10b981', colorSoft: 'rgba(16, 185, 129, 0.15)' },
-            { id: 8, name: 'Fault Overview', dept: 'Workshop', icon: 'fa-clipboard-list', color: '#f59e0b', colorSoft: 'rgba(245, 158, 11, 0.15)' },
-            { id: 9, name: 'Advertising', dept: 'Sales', icon: 'fa-camera', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)' },
-            { id: 10, name: 'Delivery', dept: 'Sales', icon: 'fa-handshake', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)' },
-            { id: 11, name: 'Accounts', dept: 'Accounts', icon: 'fa-calculator', color: '#64748b', colorSoft: 'rgba(100, 116, 139, 0.15)' },
-            { id: 12, name: 'Management', dept: 'Management', icon: 'fa-user-tie', color: '#6366f1', colorSoft: 'rgba(99, 102, 241, 0.15)' }
+            { num: 1, name: 'Intake', icon: 'fa-clipboard-check', color: 'blue' },
+            { num: 2, name: 'Bodywork', icon: 'fa-car-crash', color: 'orange' },
+            { num: 3, name: 'Paint', icon: 'fa-paint-roller', color: 'purple' },
+            { num: 4, name: 'Legal', icon: 'fa-file-contract', color: 'indigo' },
+            { num: 5, name: 'Mechanical', icon: 'fa-wrench', color: 'red' },
+            { num: 6, name: 'External', icon: 'fa-lightbulb', color: 'yellow' },
+            { num: 7, name: 'Valeting', icon: 'fa-spray-can', color: 'green' },
+            { num: 8, name: 'Faults', icon: 'fa-exclamation-triangle', color: 'orange' },
+            { num: 9, name: 'Advertising', icon: 'fa-bullhorn', color: 'blue' },
+            { num: 10, name: 'Delivery', icon: 'fa-handshake', color: 'green' },
+            { num: 11, name: 'Accounts', icon: 'fa-calculator', color: 'slate' },
+            { num: 12, name: 'Management', icon: 'fa-user-tie', color: 'indigo' }
         ];
 
         let allVehicles = [];
-        let filteredVehicles = [];
-        let staffList = [];
-        let currentTab = 'all';
-        let charts = {};
+        let vehicleProfiles = {};
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadData();
+            renderPipelineStages();
+            
+            // Check for workflow updates from other pages
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'capeye_workflow_update') {
+                    loadData();
+                }
+            });
         });
 
-        // Load CSV Data
+        // Load all data
         async function loadData() {
             try {
-                const stockResponse = await fetch('Auto Capital - Stock List-639068391990284525.csv');
-                const stockCsv = await stockResponse.text();
+                // Load vehicle profiles from localStorage
+                const profiles = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('capeye_vehicle_')) {
+                        const stockNo = key.replace('capeye_vehicle_', '');
+                        profiles[stockNo] = JSON.parse(localStorage.getItem(key));
+                    }
+                }
+                vehicleProfiles = profiles;
+
+                // Load CSV data
+                const response = await fetch('../Auto Capital - Stock List-639068391990284525.csv');
+                const csv = await response.text();
                 
-                Papa.parse(stockCsv, {
+                Papa.parse(csv, {
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
                         allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
-                        
-                        // Check localStorage for workflow stages
-                        allVehicles.forEach(v => {
-                            const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
-                            v.workflowStage = profile.currentStage || determineWorkflowStage(v);
-                            v.daysInStage = calculateDaysInStage(v, profile);
-                        });
-                        
-                        filteredVehicles = [...allVehicles];
-                        loadStaffData();
-                    },
-                    error: function(err) {
-                        showDataStatus('Error loading stock data: ' + err.message, 'error');
-                        document.getElementById('loadingOverlay').style.display = 'none';
+                        mergeVehicleData();
+                        renderVehicles();
+                        updateStats();
                     }
                 });
             } catch (error) {
-                showDataStatus('Error: ' + error.message, 'error');
-                document.getElementById('loadingOverlay').style.display = 'none';
+                showNotification('Error loading data: ' + error.message, 'error');
             }
         }
 
-        // Load Staff Data
-        async function loadStaffData() {
-            try {
-                const staffResponse = await fetch('Auto Capital - Staff List-639068391990284525.csv');
-                const staffCsv = await staffResponse.text();
-                
-                Papa.parse(staffCsv, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        staffList = results.data.filter(s => s.Name);
-                        populateFilters();
-                        updateDashboard();
-                        showDataStatus(`Loaded ${allVehicles.length} vehicles and ${staffList.length} staff members`, 'success');
-                        document.getElementById('loadingOverlay').style.display = 'none';
-                    },
-                    error: function() {
-                        populateFilters();
-                        updateDashboard();
-                        document.getElementById('loadingOverlay').style.display = 'none';
-                    }
-                });
-            } catch (error) {
-                populateFilters();
-                updateDashboard();
-                document.getElementById('loadingOverlay').style.display = 'none';
-            }
-        }
-
-        // Normalize Vehicle
         function normalizeVehicle(row) {
             const getValue = (keys) => {
                 for (let key of keys) {
@@ -1228,573 +665,189 @@
                 fuelType: getValue(['Fuel Type', 'Fuel', 'FuelType']),
                 transmission: getValue(['Transmission', 'Gearbox', 'Trans']),
                 mileage: getValue(['Mileage', 'Miles', 'Odometer']),
-                body: getValue(['Body', 'Body Type', 'Body Style'])
+                body: getValue(['Body', 'Body Type', 'Body Style']),
+                mot: getValue(['MOT', 'MOT Date', 'MOT Expiry'])
             };
         }
 
-        // Determine Workflow Stage
-        function determineWorkflowStage(vehicle) {
-            const status = (vehicle.status || '').toLowerCase();
-            const location = (vehicle.location || '').toLowerCase();
-            
-            if (status === 'sold') return 12;
-            if (location.includes('bodyshop')) return 2;
-            if (location.includes('paint')) return 3;
-            if (location.includes('workshop')) return 5;
-            if (location.includes('valet')) return 7;
-            if (location.includes('retail') && status === 'in stock') return 9;
-            if (status === 'in transit') return 1;
-            if (status === 'off-site r') return 4;
-            
-            return 1;
-        }
-
-        // Calculate Days in Stage
-        function calculateDaysInStage(vehicle, profile) {
-            if (profile && profile.stage1 && profile.stage1.completedAt) {
-                return Math.floor((new Date() - new Date(profile.stage1.completedAt)) / (1000 * 60 * 60 * 24));
-            }
-            if (vehicle.dateInStock) {
-                const date = new Date(vehicle.dateInStock);
-                if (!isNaN(date.getTime())) {
-                    return Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
-                }
-            }
-            return 0;
-        }
-
-        // Populate Filters
-        function populateFilters() {
-            const stageSelect = document.getElementById('filterStage');
-            stages.forEach(stage => {
-                const option = document.createElement('option');
-                option.value = stage.id;
-                option.textContent = `Stage ${stage.id}: ${stage.name}`;
-                stageSelect.appendChild(option);
-            });
-
-            const depts = [...new Set(stages.map(s => s.dept))];
-            const deptSelect = document.getElementById('filterDept');
-            depts.forEach(dept => {
-                const option = document.createElement('option');
-                option.value = dept;
-                option.textContent = dept;
-                deptSelect.appendChild(option);
-            });
-
-            const locations = [...new Set(allVehicles.map(v => v.location).filter(Boolean))].sort();
-            const locationSelect = document.getElementById('filterLocation');
-            locations.forEach(loc => {
-                const option = document.createElement('option');
-                option.value = loc;
-                option.textContent = loc;
-                locationSelect.appendChild(option);
-            });
-        }
-
-        // Apply Filters
-        function applyFilters() {
-            const search = document.getElementById('filterSearch').value.toLowerCase();
-            const stage = document.getElementById('filterStage').value;
-            const dept = document.getElementById('filterDept').value;
-            const status = document.getElementById('filterStatus').value;
-            const location = document.getElementById('filterLocation').value;
-
-            filteredVehicles = allVehicles.filter(v => {
-                if (search && !((v.stockNo || '').toLowerCase().includes(search) || 
-                    (v.registration || '').toLowerCase().includes(search) ||
-                    (v.make || '').toLowerCase().includes(search) ||
-                    (v.model || '').toLowerCase().includes(search))) return false;
-                
-                if (stage && v.workflowStage != stage) return false;
-                
-                if (dept) {
-                    const vehicleStage = stages.find(s => s.id === v.workflowStage);
-                    if (!vehicleStage || vehicleStage.dept !== dept) return false;
-                }
-                
-                if (status && v.status !== status) return false;
-                if (location && v.location !== location) return false;
-                
-                return true;
-            });
-
-            updateActiveFilters();
-            updateDashboard();
-        }
-
-        // Reset Filters
-        function resetFilters() {
-            document.getElementById('filterSearch').value = '';
-            document.getElementById('filterStage').value = '';
-            document.getElementById('filterDept').value = '';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterLocation').value = '';
-            filteredVehicles = [...allVehicles];
-            updateActiveFilters();
-            updateDashboard();
-        }
-
-        // Update Active Filter Badges
-        function updateActiveFilters() {
-            const container = document.getElementById('activeFilters');
-            container.innerHTML = '';
-            
-            const filters = [
-                { id: 'filterSearch', label: 'Search' },
-                { id: 'filterStage', label: 'Stage' },
-                { id: 'filterDept', label: 'Dept' },
-                { id: 'filterStatus', label: 'Status' },
-                { id: 'filterLocation', label: 'Location' }
-            ];
-
-            filters.forEach(f => {
-                const el = document.getElementById(f.id);
-                if (el && el.value) {
-                    const badge = document.createElement('span');
-                    badge.className = 'filter-badge';
-                    badge.innerHTML = `${f.label}: ${el.value} <button onclick="clearFilter('${f.id}')">×</button>`;
-                    container.appendChild(badge);
+        function mergeVehicleData() {
+            allVehicles.forEach(vehicle => {
+                const profile = vehicleProfiles[vehicle.stockNo];
+                if (profile) {
+                    vehicle.currentStage = profile.currentStage || 1;
+                    vehicle.stageHistory = profile.stageHistory || [];
+                    vehicle.lastUpdated = profile.lastUpdated;
+                } else {
+                    vehicle.currentStage = 1; // Default to intake
+                    vehicle.stageHistory = [];
                 }
             });
         }
 
-        // Clear Single Filter
-        function clearFilter(filterId) {
-            document.getElementById(filterId).value = '';
-            applyFilters();
-        }
-
-        // Show Data Status
-        function showDataStatus(message, type) {
-            const status = document.getElementById('dataStatus');
-            status.textContent = message;
-            status.className = `data-status ${type}`;
-            setTimeout(() => status.className = 'data-status', 5000);
-        }
-
-        // Update Dashboard
-        function updateDashboard() {
-            loadStages();
-            loadVehicleQueue();
-            loadActivityFeed();
-            initCharts();
-            updateStats();
-        }
-
-        // Load Stage Cards
-        function loadStages() {
-            const container = document.getElementById('stagesGrid');
-            const stageCounts = {};
-            stages.forEach(s => stageCounts[s.id] = 0);
-            
-            filteredVehicles.forEach(v => {
-                if (stageCounts.hasOwnProperty(v.workflowStage)) {
-                    stageCounts[v.workflowStage]++;
-                }
-            });
-            
-            const inPipeline = filteredVehicles.filter(v => v.status !== 'Sold').length;
-            document.getElementById('totalInPipeline').textContent = inPipeline;
-            
-            container.innerHTML = stages.map(stage => {
-                const count = stageCounts[stage.id] || 0;
-                const percentage = inPipeline > 0 ? (count / inPipeline) * 100 : 0;
-                
-                return `
-                    <div class="stage-card" 
-                         style="--stage-color: ${stage.color}; --stage-color-soft: ${stage.colorSoft};"
-                         onclick="openStage(${stage.id})">
-                        <div class="stage-header">
-                            <span class="stage-number">Stage ${stage.id}</span>
-                            <div class="stage-icon">
-                                <i class="fas ${stage.icon}"></i>
-                            </div>
-                        </div>
-                        <div class="stage-count">${count}</div>
-                        <div class="stage-name">${stage.name}</div>
-                        <div class="stage-dept">${stage.dept}</div>
-                        <div class="stage-progress">
-                            <div class="stage-progress-bar" style="width: ${percentage}%;"></div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // OPEN STAGE - Now links to vehicle-inspection.html
-        function openStage(stageId) {
-            const stage = stages.find(s => s.id === stageId);
-            if (!stage) return;
-            
-            // Get vehicles in this stage
-            const vehiclesInStage = filteredVehicles.filter(v => v.workflowStage === stageId);
-            
-            if (vehiclesInStage.length === 0) {
-                showDataStatus(`No vehicles currently in ${stage.name}`, 'error');
-                return;
-            }
-            
-            // If multiple vehicles, show first one with option to change
-            // If Stage 1, allow new intake selection
-            if (stageId === 1) {
-                openIntakeModal();
-            } else {
-                // For other stages, go to inspection page with first vehicle
-                window.location.href = `vehicle-inspection.html?stock=${vehiclesInStage[0].stockNo}`;
-            }
-        }
-
-        // Open Intake Modal
-        function openIntakeModal() {
-            const modal = document.getElementById('intakeModal');
-            const list = document.getElementById('intakeVehicleList');
-            
-            // Show vehicles not yet in workflow (Stage 1 or no stage)
-            const availableVehicles = allVehicles.filter(v => {
-                const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
-                return !profile.currentStage || profile.currentStage === 1;
-            }).slice(0, 10);
-            
-            if (availableVehicles.length === 0) {
-                list.innerHTML = '<p style="color: var(--cy-text-muted); text-align: center;">No vehicles available for intake</p>';
-            } else {
-                list.innerHTML = availableVehicles.map(v => `
-                    <div class="vehicle-option" onclick="startIntake('${v.stockNo}')">
-                        <div class="vehicle-option-title">${v.make} ${v.model}</div>
-                        <div class="vehicle-option-meta">${v.stockNo} • ${v.registration || 'No Reg'} • ${v.location || 'Unknown'}</div>
-                    </div>
-                `).join('');
-            }
-            
-            modal.classList.add('active');
-        }
-
-        // Close Intake Modal
-        function closeIntakeModal() {
-            document.getElementById('intakeModal').classList.remove('active');
-        }
-
-        // Start Intake for Specific Vehicle
-        function startIntake(stockNo) {
-            window.location.href = `vehicle-inspection.html?stock=${stockNo}`;
-        }
-
-        // Load Vehicle Queue
-        function loadVehicleQueue() {
-            let displayVehicles = filteredVehicles.filter(v => v.workflowStage && v.workflowStage < 12 && v.status !== 'Sold');
-            
-            if (currentTab === 'overdue') {
-                displayVehicles = displayVehicles.filter(v => v.daysInStage > 7);
-            } else if (currentTab === 'today') {
-                displayVehicles = displayVehicles.filter(v => v.daysInStage <= 1);
-            } else if (currentTab === 'mine') {
-                displayVehicles = displayVehicles.slice(0, 5);
-            }
-            
-            displayVehicles = displayVehicles.sort((a, b) => b.daysInStage - a.daysInStage).slice(0, 10);
-            
-            const container = document.getElementById('vehicleQueue');
-            
-            if (displayVehicles.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-check-circle"></i>
-                        <p>No vehicles in this queue</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = displayVehicles.map(v => {
-                const stage = stages.find(s => s.id === v.workflowStage) || stages[0];
-                const daysClass = v.daysInStage > 14 ? 'danger' : v.daysInStage > 7 ? 'warning' : '';
-                
-                return `
-                    <div class="queue-item" onclick="viewVehicle('${v.stockNo}')">
-                        <div class="queue-vehicle">
-                            <div class="queue-title">${v.make} ${v.model}</div>
-                            <div class="queue-meta">${v.stockNo} • ${v.registration || 'No Reg'} • ${v.location || 'Unknown'}</div>
-                        </div>
-                        <span class="queue-stage" style="background: ${stage.colorSoft}; color: ${stage.color};">
-                            ${stage.name}
-                        </span>
-                        <div class="queue-time">
-                            <div class="queue-days ${daysClass}">${v.daysInStage}d</div>
-                            <div class="queue-label">in stage</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // View Vehicle Detail - Links to inspection page
-        function viewVehicle(stockNo) {
-            window.location.href = `vehicle-inspection.html?stock=${stockNo}`;
-        }
-
-        // Load Activity Feed
-        function loadActivityFeed() {
-            const activities = [];
-            
-            // Get recent stage completions from localStorage
-            allVehicles.forEach(v => {
-                const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
-                if (profile.stage1 && profile.stage1.completedAt) {
-                    activities.push({
-                        title: 'Stage 1 Completed',
-                        desc: `${v.make} ${v.model} (${v.stockNo}) - Intake finished`,
-                        time: timeAgo(profile.stage1.completedAt),
-                        user: profile.stage1.inspectedBy || 'Unknown',
-                        completed: true
-                    });
-                }
-                if (profile.stage2 && profile.stage2.completedAt) {
-                    activities.push({
-                        title: 'Stage 2 Completed',
-                        desc: `${v.make} ${v.model} (${v.stockNo}) - Bodywork assessed`,
-                        time: timeAgo(profile.stage2.completedAt),
-                        user: profile.stage2.authorizedBy || 'Unknown',
-                        completed: true
-                    });
-                }
-            });
-            
-            // Sort by time and take top 5
-            activities.sort((a, b) => new Date(b.time) - new Date(a.time));
-            const recentActivities = activities.slice(0, 5);
-            
-            // Fallback if no activities
-            if (recentActivities.length === 0) {
-                recentActivities.push({
-                    title: 'System Ready',
-                    desc: 'Workflow system loaded successfully',
-                    time: 'Just now',
-                    user: 'System',
-                    completed: true
-                });
-            }
-            
-            const container = document.getElementById('activityFeed');
-            container.innerHTML = recentActivities.map(act => `
-                <div class="activity-item">
-                    <div class="activity-dot ${act.completed ? 'completed' : ''}"></div>
-                    <div class="activity-content">
-                        <div class="activity-header">
-                            <div class="activity-title">${act.title}</div>
-                            <div class="activity-time">${act.time}</div>
-                        </div>
-                        <div class="activity-desc">${act.desc}</div>
-                        <div class="activity-user">
-                            <div class="activity-avatar">${act.user.split(' ').map(n => n[0]).join('')}</div>
-                            <div class="activity-user-name">${act.user}</div>
-                        </div>
-                    </div>
+        function renderPipelineStages() {
+            const container = document.getElementById('pipelineStages');
+            container.innerHTML = stages.map(stage => `
+                <div class="stage-node pending" id="stage-node-${stage.num}">
+                    <div class="stage-circle">${stage.num}</div>
+                    <div class="stage-name">${stage.name}</div>
                 </div>
             `).join('');
         }
 
-        // Time Ago Helper
-        function timeAgo(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const seconds = Math.floor((now - date) / 1000);
+        function renderVehicles() {
+            const container = document.getElementById('vehiclesContainer');
             
-            if (seconds < 60) return 'Just now';
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes} min ago`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours} hour ago`;
-            return `${Math.floor(hours / 24)} days ago`;
+            // Filter vehicles that have started workflow (have profiles) or are in stock
+            const workflowVehicles = allVehicles.filter(v => 
+                vehicleProfiles[v.stockNo] || v.status === 'In Stock' || v.status === 'In Transit'
+            );
+
+            if (workflowVehicles.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>No Vehicles in Workflow</h3>
+                        <p>Start by selecting a vehicle from inventory to begin intake.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = workflowVehicles.map(vehicle => {
+                const currentStage = vehicle.currentStage || 1;
+                const isComplete = currentStage > 12;
+                
+                return `
+                    <div class="vehicle-card" data-stock="${vehicle.stockNo}">
+                        <div class="vehicle-header">
+                            <div class="vehicle-info">
+                                <h3>${vehicle.make} ${vehicle.model}</h3>
+                                <div class="vehicle-meta">
+                                    ${vehicle.year} • ${vehicle.fuelType} • ${vehicle.transmission} • ${vehicle.colour || 'Unknown'}
+                                </div>
+                            </div>
+                            <div>
+                                <div class="vehicle-stock">${vehicle.stockNo}</div>
+                                <div style="font-size: 11px; color: var(--cy-text-muted); margin-top: 4px; text-align: center;">
+                                    ${vehicle.registration || 'No Reg'}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-stages">
+                            ${renderStageBoxes(vehicle)}
+                        </div>
+                        
+                        <div class="vehicle-actions">
+                            ${isComplete ? `
+                                <button onclick="viewVehicle('${vehicle.stockNo}')" class="btn btn-secondary">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <span style="color: var(--cy-accent-green); display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-check-circle"></i> Complete
+                                </span>
+                            ` : `
+                                <button onclick="startInspection('${vehicle.stockNo}')" class="btn btn-primary">
+                                    <i class="fas fa-play"></i> Start Inspection
+                                </button>
+                                <button onclick="viewVehicle('${vehicle.stockNo}')" class="btn btn-secondary">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        // Initialize Charts
-        function initCharts() {
-            const stageCounts = stages.map(s => filteredVehicles.filter(v => v.workflowStage === s.id).length);
+        function renderStageBoxes(vehicle) {
+            const currentStage = vehicle.currentStage || 1;
             
-            // Stage Distribution Chart
-            const stageCtx = document.getElementById('stageChart');
-            if (stageCtx) {
-                if (charts.stage) charts.stage.destroy();
+            return stages.map(stage => {
+                let status = 'pending';
+                if (stage.num < currentStage) status = 'complete';
+                else if (stage.num === currentStage) status = 'active';
                 
-                charts.stage = new Chart(stageCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: stages.map(s => `S${s.id}`),
-                        datasets: [{
-                            label: 'Vehicles',
-                            data: stageCounts,
-                            backgroundColor: stages.map(s => s.color),
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { 
-                                beginAtZero: true, 
-                                grid: { color: 'rgba(255,255,255,0.03)' }, 
-                                ticks: { color: '#9ca3af', font: { size: 10 } } 
-                            },
-                            x: { 
-                                grid: { display: false }, 
-                                ticks: { color: '#9ca3af', font: { size: 10 } } 
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Throughput Chart
-            const throughputCtx = document.getElementById('throughputChart');
-            if (throughputCtx) {
-                if (charts.throughput) charts.throughput.destroy();
+                const clickable = status !== 'pending';
                 
-                charts.throughput = new Chart(throughputCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                        datasets: [{
-                            label: 'Completed',
-                            data: [3, 5, 4, 6, 4, 2, 3],
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }, {
-                            label: 'New',
-                            data: [4, 3, 5, 4, 5, 3, 4],
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { 
-                                beginAtZero: true, 
-                                grid: { color: 'rgba(255,255,255,0.03)' }, 
-                                ticks: { color: '#9ca3af', font: { size: 10 } } 
-                            },
-                            x: { 
-                                grid: { display: false }, 
-                                ticks: { color: '#9ca3af', font: { size: 10 } } 
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Bottleneck Chart
-            const bottleneckCtx = document.getElementById('bottleneckChart');
-            if (bottleneckCtx) {
-                if (charts.bottleneck) charts.bottleneck.destroy();
-                
-                const bottleneckData = stageCounts.map((count, i) => ({ 
-                    stage: stages[i].name.substring(0, 10), 
-                    count: count 
-                })).sort((a, b) => b.count - a.count).slice(0, 5);
-                
-                charts.bottleneck = new Chart(bottleneckCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: bottleneckData.map(d => d.stage),
-                        datasets: [{
-                            label: 'Vehicles',
-                            data: bottleneckData.map(d => d.count),
-                            backgroundColor: '#f59e0b',
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        indexAxis: 'y',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { 
-                                beginAtZero: true, 
-                                grid: { color: 'rgba(255,255,255,0.03)' }, 
-                                ticks: { color: '#9ca3af', font: { size: 10 } } 
-                            },
-                            y: { 
-                                grid: { display: false }, 
-                                ticks: { color: '#9ca3af', font: { size: 10 } } 
-                            }
-                        }
-                    }
-                });
+                return `
+                    <div class="stage-box ${status}" 
+                         ${clickable ? `onclick="openStageForm(${stage.num}, '${vehicle.stockNo}')"` : ''}
+                         title="${stage.name}: ${status}">
+                        <i class="fas ${stage.icon}"></i>
+                        <span>${stage.num}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Open specific stage form for a vehicle - FIXED PATH
+        function openStageForm(stageNum, stockNo) {
+            const url = stageUrls[stageNum];
+            if (url) {
+                window.location.href = `${url}?stock=${stockNo}`;
+            } else {
+                showNotification('Stage form not found', 'error');
             }
         }
 
-        // Update Stats
+        // Start new inspection (Stage 1) - FIXED TO USE CORRECT URL
+        function startInspection(stockNo) {
+            openStageForm(1, stockNo);
+        }
+
+        // Continue/Edit existing stage
+        function continueInspection(stockNo, currentStage) {
+            openStageForm(currentStage, stockNo);
+        }
+
+        function viewVehicle(stockNo) {
+            // Could open a detail modal or navigate to vehicle detail page
+            showNotification(`Viewing vehicle ${stockNo}`, 'success');
+        }
+
         function updateStats() {
-            const avgDays = filteredVehicles.length > 0 
-                ? Math.round(filteredVehicles.reduce((sum, v) => sum + (v.daysInStage || 0), 0) / filteredVehicles.length)
-                : 0;
+            const total = allVehicles.filter(v => vehicleProfiles[v.stockNo]).length;
+            const active = allVehicles.filter(v => {
+                const stage = v.currentStage || 1;
+                return stage > 1 && stage <= 12;
+            }).length;
             
-            document.getElementById('avgTime').textContent = avgDays + 'd';
-            document.getElementById('completedToday').textContent = Math.floor(Math.random() * 8) + 2;
+            // Count completed today
+            const today = new Date().toDateString();
+            const completedToday = allVehicles.filter(v => {
+                const history = v.stageHistory || [];
+                return history.some(h => {
+                    const completed = new Date(h.completedAt);
+                    return completed.toDateString() === today;
+                });
+            }).length;
+
+            document.getElementById('totalVehicles').textContent = total;
+            document.getElementById('activeVehicles').textContent = active;
+            document.getElementById('completedToday').textContent = completedToday;
         }
 
-        // Switch Tab
-        function switchTab(tab, btn) {
-            currentTab = tab;
-            document.querySelectorAll('.queue-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-            loadVehicleQueue();
+        function refreshData() {
+            document.getElementById('vehiclesContainer').innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner-small"></div>
+                </div>
+            `;
+            loadData();
+            showNotification('Data refreshed', 'success');
         }
 
-        // Quick Actions
-        function quickAction(action) {
-            switch(action) {
-                case 'search':
-                    document.getElementById('filterSearch').focus();
-                    break;
-                case 'overdue':
-                    document.querySelector('[onclick="switchTab(\'overdue\', this)"]').click();
-                    break;
-                case 'complete':
-                    showDataStatus('Showing recently completed items', 'success');
-                    break;
-                case 'report':
-                    exportReport();
-                    break;
-            }
-        }
-
-        // Export Report
-        function exportReport() {
-            const csvContent = [
-                ['Stock No', 'Registration', 'Make', 'Model', 'Stage', 'Days at Stage', 'Status'].join(','),
-                ...filteredVehicles.map(v => {
-                    const stage = stages.find(s => s.id === v.workflowStage);
-                    return [
-                        v.stockNo,
-                        v.registration,
-                        v.make,
-                        v.model,
-                        stage ? stage.name : 'Unknown',
-                        v.daysInStage || 0,
-                        v.status
-                    ].join(',');
-                })
-            ].join('\n');
-
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `workflow-report-${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
+        function showNotification(message, type) {
+            const notif = document.getElementById('notification');
+            const text = document.getElementById('notificationText');
             
-            showDataStatus('Report exported successfully', 'success');
+            notif.className = `notification ${type} show`;
+            text.textContent = message;
+            
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 3000);
         }
     </script>
 </body>
