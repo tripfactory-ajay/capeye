@@ -3,1539 +3,776 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Management Intelligence | Capeye Auto Capital</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Tailwind -->
+    <title>Analytics & Reports | Capeye Auto Capital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Capeye Design System -->
-    <link rel="stylesheet" href="./css/capeye-system.css">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Intelligence Page Specific Styles */
-        :root {
-            --kpi-height: 160px;
-            --chart-lg: 380px;
-            --chart-md: 320px;
-        }
-        
-        /* Filter Bar */
-        .filter-bar {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding: 16px;
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: 12px;
-            flex-wrap: wrap;
-            align-items: end;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex: 1;
-            min-width: 140px;
-        }
-        
-        .filter-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--cy-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .filter-input {
-            padding: 10px 12px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: 8px;
-            font-size: 13px;
-            color: var(--cy-text-primary);
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
-            width: 100%;
-        }
-        
-        .filter-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .filter-select {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 32px;
-        }
-        
-        .filter-btn {
-            padding: 10px 20px;
-            background: #3b82f6;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            height: fit-content;
-        }
-        
-        .filter-btn:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
-        }
-        
-        .filter-btn-secondary {
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            color: var(--cy-text-secondary);
-        }
-        
-        .filter-btn-secondary:hover {
-            background: var(--cy-bg-secondary);
-            color: var(--cy-text-primary);
-            border-color: var(--cy-border-hover);
-        }
-        
-        /* Active Filters Display */
-        .active-filters {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-            padding: 0 4px;
-        }
-        
-        .filter-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 20px;
-            font-size: 12px;
-            color: #3b82f6;
-            font-weight: 500;
-        }
-        
-        .filter-tag button {
-            background: none;
-            border: none;
-            color: #3b82f6;
-            cursor: pointer;
-            padding: 0;
-            font-size: 14px;
-            line-height: 1;
-        }
-        
-        .filter-tag button:hover {
-            color: #dc2626;
-        }
-        
-        /* Role Toggle */
-        .role-toggle {
-            display: flex;
-            gap: 8px;
-            padding: 4px;
-            background: var(--cy-bg-tertiary);
-            border-radius: 10px;
-            margin-bottom: 20px;
-            width: fit-content;
-        }
-        
-        .role-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--cy-text-muted);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .role-btn.active {
-            background: #3b82f6;
-            color: white;
-        }
-        
-        /* KPI Cards */
-        .kpi-section {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        
-        .kpi-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: 12px;
-            padding: 16px;
-            height: var(--kpi-height);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        
-        .kpi-card:hover {
-            border-color: var(--cy-border-hover);
-            transform: translateY(-2px);
-        }
-        
-        .kpi-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--kpi-color);
-        }
-        
-        .kpi-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        
-        .kpi-label {
-            font-size: 11px;
-            color: var(--cy-text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .kpi-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            background: var(--kpi-color-soft);
-            color: var(--kpi-color);
-        }
-        
-        .kpi-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--cy-text-primary);
-            line-height: 1;
-            margin-bottom: 4px;
-        }
-        
-        .kpi-change {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .kpi-change.positive { color: #10b981; }
-        .kpi-change.negative { color: #dc2626; }
-        
-        /* Exception Report */
-        .exception-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-        
-        .exception-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .exception-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--cy-text-primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .exception-badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        
-        .exception-badge.critical {
-            background: rgba(220, 38, 38, 0.1);
-            color: #dc2626;
-            border: 1px solid rgba(220, 38, 38, 0.2);
-        }
-        
-        .exception-badge.warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-        
-        .exception-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .exception-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px;
-            background: var(--cy-bg-tertiary);
-            border-radius: 8px;
-            border-left: 3px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .exception-item:hover {
-            background: rgba(59, 130, 246, 0.05);
-        }
-        
-        .exception-item.critical {
-            border-left-color: #dc2626;
-            background: rgba(220, 38, 38, 0.05);
-        }
-        
-        .exception-item.warning {
-            border-left-color: #f59e0b;
-            background: rgba(245, 158, 11, 0.05);
-        }
-        
-        .exception-vehicle {
-            flex: 1;
-        }
-        
-        .exception-reg {
-            font-weight: 700;
-            color: var(--cy-text-primary);
-            font-size: 13px;
-        }
-        
-        .exception-issue {
-            font-size: 11px;
-            color: var(--cy-text-secondary);
-        }
-        
-        .exception-time {
-            font-family: 'Space Grotesk';
-            font-size: 14px;
-            font-weight: 700;
-            color: #dc2626;
-        }
-        
-        /* Staff Performance */
-        .performance-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        
-        .performance-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--cy-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .performance-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--cy-text-primary);
-        }
-        
-        .performance-table {
-            width: 100%;
-        }
-        
-        .performance-table th {
-            text-align: left;
-            padding: 12px 16px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--cy-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--cy-border);
-            background: var(--cy-bg-tertiary);
-        }
-        
-        .performance-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--cy-border);
-            font-size: 13px;
-        }
-        
-        .staff-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .staff-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: white;
-        }
-        
-        .staff-name {
-            font-weight: 600;
-            color: var(--cy-text-primary);
-        }
-        
-        .staff-dept {
-            font-size: 11px;
-            color: var(--cy-text-muted);
-        }
-        
-        .efficiency-score {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .efficiency-bar {
-            width: 60px;
-            height: 6px;
-            background: var(--cy-bg-tertiary);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .efficiency-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.3s;
-        }
-        
-        .efficiency-fill.high { background: #10b981; }
-        .efficiency-fill.medium { background: #f59e0b; }
-        .efficiency-fill.low { background: #dc2626; }
-        
-        /* Charts Section */
-        .charts-row-2 {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-        
-        .chart-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-        
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        
-        .chart-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--cy-text-primary);
-        }
-        
-        .chart-container {
-            height: var(--chart-lg);
-            position: relative;
-        }
-        
-        .chart-container.small {
-            height: var(--chart-md);
-        }
-        
-        /* Alert Config */
-        .config-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-        
-        .config-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: 12px;
-            padding: 16px;
-        }
-        
-        .config-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--cy-text-primary);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .config-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--cy-border);
-        }
-        
-        .config-item:last-child {
-            border-bottom: none;
-        }
-        
-        .config-label {
-            font-size: 12px;
-            color: var(--cy-text-secondary);
-        }
-        
-        .config-value {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .config-input {
-            width: 60px;
-            padding: 6px 10px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: 6px;
-            font-size: 13px;
-            color: var(--cy-text-primary);
-            text-align: center;
-        }
-        
-        /* Report Downloads */
-        .report-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-        
-        .report-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: 10px;
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .report-card:hover {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.05);
-            transform: translateY(-2px);
-        }
-        
-        .report-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            background: rgba(59, 130, 246, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 10px;
-            color: #3b82f6;
-            font-size: 18px;
-        }
-        
-        .report-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--cy-text-primary);
-            margin-bottom: 4px;
-        }
-        
-        .report-desc {
-            font-size: 11px;
-            color: var(--cy-text-muted);
-        }
-        
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .kpi-section { grid-template-columns: repeat(2, 1fr); }
-            .config-grid { grid-template-columns: 1fr; }
-            .report-grid { grid-template-columns: repeat(2, 1fr); }
-            .charts-row-2 { grid-template-columns: 1fr; }
-        }
-        
-        @media (max-width: 768px) {
-            .kpi-section { grid-template-columns: 1fr; }
-            .filter-bar { flex-direction: column; }
-            .filter-group { width: 100%; }
-            .filter-actions { width: 100%; margin-left: 0; }
-            .filter-actions button { flex: 1; justify-content: center; }
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #e2e8f0; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .kpi-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .chart-container { position: relative; height: 400px; }
+        .chart-container-sm { position: relative; height: 350px; }
+        .chart-container-xs { position: relative; height: 300px; }
+        .filter-input { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; }
+        .filter-input:focus { border-color: #3b82f6; outline: none; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .status-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .status-instock { background: #10b981; color: white; }
+        .status-intransit { background: #f59e0b; color: white; }
+        .status-offsiter { background: #ef4444; color: white; }
+        .status-subjectto { background: #8b5cf6; color: white; }
+        .status-sold { background: #6b7280; color: white; }
+        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.9); display: flex; align-items: center; justify-content: center; z-index: 50; }
+        .spinner { width: 50px; height: 50px; border: 4px solid #1e293b; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .filter-badge { background: #3b82f6; color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .filter-badge button { background: none; border: none; color: white; cursor: pointer; font-weight: bold; }
     </style>
 </head>
-<body>
-    <!-- Background Effects -->
-    <div class="cy-bg-grid"></div>
-    <div class="cy-ambient-glow" style="top: -200px; right: -200px;"></div>
-    <div class="cy-ambient-glow-red" style="bottom: -100px; left: -100px;"></div>
+<body class="min-h-screen">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="text-center">
+            <div class="spinner mb-4 mx-auto"></div>
+            <p class="text-gray-400">Loading vehicle data...</p>
+        </div>
+    </div>
 
     <!-- Header -->
-    <header class="cy-header">
-        <div class="cy-header-content">
-            <div style="display: flex; align-items: center; gap: 32px;">
-                <a href="./index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
-                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: white; font-size: 16px;">AC</div>
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-4">
+                    <img src="autocapital-logo.png" alt="Auto Capital" class="h-10 w-auto" onerror="this.style.display='none'">
                     <div>
-                        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #f8fafc;">CAPEYE</div>
-                        <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 2px;">Auto Capital Intelligence</div>
+                        <h1 class="text-xl font-bold text-white">Analytics & Reports</h1>
+                        <p class="text-xs text-gray-400">Business Intelligence Dashboard</p>
                     </div>
-                </a>
-                
-                <nav style="display: flex; align-items: center; gap: 8px;">
-                    <a href="./index.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-home"></i> Dashboard
-                    </a>
-                    <a href="./operations.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-cogs"></i> Operations
-                    </a>
-                    <a href="./inventory.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-car"></i> Inventory
-                    </a>
-                    <a href="./workflow.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-tasks"></i> Workflow
-                    </a>
-                    <a href="./analytics.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #f8fafc; background: rgba(59, 130, 246, 0.1); text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-chart-bar"></i> Intelligence
-                    </a>
-                </nav>
-            </div>
-            
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="padding: 6px 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 20px; font-size: 12px; color: #10b981; font-weight: 600;">
-                    <i class="fas fa-shield-alt"></i> Director View
                 </div>
-                
-                <button onclick="exportReport()" style="padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 13px; font-weight: 500; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-download"></i>
-                    Export
-                </button>
-                
-                <button onclick="logout()" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #dc2626; background: none; border: none; cursor: pointer;">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+                <nav class="flex gap-1">
+                    <a href="index.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-800 rounded-lg transition">Dashboard</a>
+                    <a href="operations.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-800 rounded-lg transition">Operations</a>
+                    <a href="inventory.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-800 rounded-lg transition">Inventory</a>
+                    <a href="workflow.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-800 rounded-lg transition">Workflow</a>
+                    <a href="analytics.html" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg">Analytics</a>
+                </nav>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="cy-container" style="padding: 24px; max-width: 1600px; margin: 0 auto;">
-        
-        <!-- Page Header -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
-            <div>
-                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #f8fafc; margin-bottom: 6px;">
-                    Management <span style="color: #3b82f6;">Intelligence</span>
-                </h1>
-                <p style="color: #94a3b8; font-size: 14px;">Performance oversight, alerts, and strategic insights</p>
-            </div>
-            
-            <div style="text-align: right;">
-                <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Last Updated</div>
-                <div style="font-family: 'Space Grotesk'; font-size: 14px; color: #f8fafc;" id="lastUpdated">Just now</div>
-            </div>
-        </div>
-
-        <!-- Role Toggle -->
-        <div class="role-toggle">
-            <button class="role-btn active" onclick="setRole('director')">Director View</button>
-            <button class="role-btn" onclick="setRole('manager')">Manager View</button>
-        </div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Data Status Banner -->
+        <div id="dataStatus" class="mb-4 p-3 rounded-lg hidden"></div>
 
         <!-- Filter Bar -->
-        <div class="filter-bar">
-            <div class="filter-group">
-                <label class="filter-label">Date From</label>
-                <input type="date" id="filterDateFrom" class="filter-input" onchange="applyFilters()">
-            </div>
-            
-            <div class="filter-group">
-                <label class="filter-label">Date To</label>
-                <input type="date" id="filterDateTo" class="filter-input" onchange="applyFilters()">
-            </div>
-            
-            <div class="filter-group">
-                <label class="filter-label">Department</label>
-                <select id="filterDept" class="filter-input filter-select" onchange="applyFilters()">
-                    <option value="">All Departments</option>
-                    <option value="Sales">Sales</option>
-                    <option value="Workshop">Workshop</option>
-                    <option value="Prep">Prep/Valeting</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label class="filter-label">Staff Member</label>
-                <select id="filterStaff" class="filter-input filter-select" onchange="applyFilters()">
-                    <option value="">All Staff</option>
-                </select>
-            </div>
-            
-            <div class="filter-actions" style="display: flex; gap: 8px; margin-left: auto;">
-                <button class="filter-btn" onclick="applyFilters()">
-                    <i class="fas fa-filter"></i>
-                    Apply
-                </button>
-                <button class="filter-btn filter-btn-secondary" onclick="resetFilters()">
-                    <i class="fas fa-undo"></i>
-                    Reset
-                </button>
-            </div>
-        </div>
-
-        <!-- Active Filters Display -->
-        <div class="active-filters" id="activeFilters"></div>
-
-        <!-- KPI Cards -->
-        <div class="kpi-section">
-            <div class="kpi-card" style="--kpi-color: #3b82f6; --kpi-color-soft: rgba(59, 130, 246, 0.1);">
-                <div class="kpi-top">
-                    <span class="kpi-label">Revenue (Filtered)</span>
-                    <div class="kpi-icon">
-                        <i class="fas fa-pound-sign"></i>
-                    </div>
+        <div class="glass-panel rounded-xl p-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 mb-1">Date From</label>
+                    <input type="date" id="filterDateFrom" class="filter-input w-full rounded-lg px-3 py-2 text-sm">
                 </div>
                 <div>
-                    <div class="kpi-value" id="kpiRevenue">£0</div>
-                    <div class="kpi-change positive" id="kpiRevenueChange">
-                        <i class="fas fa-arrow-up" style="font-size: 10px;"></i>
-                        <span>0% vs period</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="kpi-card" style="--kpi-color: #10b981; --kpi-color-soft: rgba(16, 185, 129, 0.1);">
-                <div class="kpi-top">
-                    <span class="kpi-label">Gross Margin</span>
-                    <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                        <i class="fas fa-percentage"></i>
-                    </div>
+                    <label class="block text-xs font-medium text-gray-400 mb-1">Date To</label>
+                    <input type="date" id="filterDateTo" class="filter-input w-full rounded-lg px-3 py-2 text-sm">
                 </div>
                 <div>
-                    <div class="kpi-value" id="kpiMargin">0%</div>
-                    <div class="kpi-change positive" id="kpiMarginChange">
-                        <i class="fas fa-arrow-up" style="font-size: 10px;"></i>
-                        <span>0% change</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="kpi-card" style="--kpi-color: #f59e0b; --kpi-color-soft: rgba(245, 158, 11, 0.1);">
-                <div class="kpi-top">
-                    <span class="kpi-label">Avg Days to Sell</span>
-                    <div class="kpi-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                </div>
-                <div>
-                    <div class="kpi-value" id="kpiDays">0</div>
-                    <div class="kpi-change positive" id="kpiDaysChange">
-                        <i class="fas fa-minus" style="font-size: 10px;"></i>
-                        <span>No change</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="kpi-card" style="--kpi-color: #dc2626; --kpi-color-soft: rgba(220, 38, 38, 0.1);">
-                <div class="kpi-top">
-                    <span class="kpi-label">Exceptions</span>
-                    <div class="kpi-icon" style="background: rgba(220, 38, 38, 0.1); color: #dc2626;">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                </div>
-                <div>
-                    <div class="kpi-value" id="kpiExceptions">0</div>
-                    <div class="kpi-change negative">
-                        <span>Require attention</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Exception Reports -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-            <div class="exception-card">
-                <div class="exception-header">
-                    <div class="exception-title">
-                        <i class="fas fa-exclamation-circle" style="color: #dc2626;"></i>
-                        Critical Alerts (>7 Days)
-                    </div>
-                    <span class="exception-badge critical" id="criticalCount">0</span>
-                </div>
-                <div class="exception-list" id="criticalList">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-            
-            <div class="exception-card">
-                <div class="exception-header">
-                    <div class="exception-title">
-                        <i class="fas fa-clock" style="color: #f59e0b;"></i>
-                        Warnings (5-7 Days)
-                    </div>
-                    <span class="exception-badge warning" id="warningCount">0</span>
-                </div>
-                <div class="exception-list" id="warningList">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Charts Row -->
-        <div class="charts-row-2">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title">Revenue & Profit Trend</div>
-                    <div style="display: flex; gap: 8px;">
-                        <button onclick="setChartPeriod('monthly')" id="btnMonthly" style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; font-size: 11px; color: var(--cy-text-secondary); cursor: pointer;">Monthly</button>
-                        <button onclick="setChartPeriod('weekly')" id="btnWeekly" style="padding: 6px 12px; background: #3b82f6; border: none; border-radius: 6px; font-size: 11px; color: white; cursor: pointer;">Weekly</button>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="revenueChart"></canvas>
-                </div>
-            </div>
-            
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title">Sales by Channel</div>
-                </div>
-                <div class="chart-container small">
-                    <canvas id="channelChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Staff Performance -->
-        <div class="performance-card" style="margin-bottom: 16px;">
-            <div class="performance-header">
-                <div class="performance-title">Staff Performance & Efficiency</div>
-                <div style="display: flex; gap: 8px;">
-                    <select id="perfDeptFilter" onchange="applyFilters()" style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; font-size: 12px; color: var(--cy-text-primary);">
-                        <option value="">All Departments</option>
-                        <option value="Sales">Sales</option>
-                        <option value="Workshop">Workshop</option>
-                        <option value="Prep">Prep</option>
+                    <label class="block text-xs font-medium text-gray-400 mb-1">Make</label>
+                    <select id="filterMake" class="filter-input w-full rounded-lg px-3 py-2 text-sm">
+                        <option value="">All Makes</option>
                     </select>
                 </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 mb-1">Status</label>
+                    <select id="filterStatus" class="filter-input w-full rounded-lg px-3 py-2 text-sm">
+                        <option value="">All Status</option>
+                        <option value="In Stock">In Stock</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Off-site R">Off-site R</option>
+                        <option value="Subject to">Subject to</option>
+                        <option value="Sold">Sold</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 mb-1">Location</label>
+                    <select id="filterLocation" class="filter-input w-full rounded-lg px-3 py-2 text-sm">
+                        <option value="">All Locations</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="applyFilters()" class="btn-primary flex-1 px-4 py-2 rounded-lg text-sm font-medium">Apply</button>
+                    <button onclick="resetFilters()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg text-sm font-medium">Reset</button>
+                </div>
             </div>
-            <table class="performance-table">
-                <thead>
-                    <tr>
-                        <th>Staff Member</th>
-                        <th>Department</th>
-                        <th>Vehicles Processed</th>
-                        <th>Avg Time/Stage</th>
-                        <th>Efficiency Score</th>
-                    </tr>
-                </thead>
-                <tbody id="performanceTable">
-                    <!-- Populated by JS -->
-                </tbody>
-            </table>
+            <div class="mt-3 flex flex-wrap gap-2" id="activeFilters"></div>
         </div>
 
-        <!-- Alert Configuration -->
-        <div class="config-grid">
-            <div class="config-card">
-                <div class="config-title">
-                    <i class="fas fa-bell" style="color: #3b82f6;"></i>
-                    Alert Thresholds
-                </div>
-                <div class="config-item">
-                    <span class="config-label">Yard stay alert</span>
-                    <div class="config-value">
-                        <input type="number" class="config-input" value="7" id="yardThreshold" onchange="updateThresholds()">
-                        <span style="font-size: 12px; color: var(--cy-text-muted);">days</span>
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="kpi-card rounded-xl p-5">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <p class="text-sm text-gray-400">Total Stock Value</p>
+                        <p class="text-2xl font-bold text-white mt-1" id="kpiStockValue">£0</p>
+                    </div>
+                    <div class="p-2 bg-blue-500/20 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
-                <div class="config-item">
-                    <span class="config-label">Workshop alert</span>
-                    <div class="config-value">
-                        <input type="number" class="config-input" value="7" id="workshopThreshold" onchange="updateThresholds()">
-                        <span style="font-size: 12px; color: var(--cy-text-muted);">days</span>
-                    </div>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">Prep alert</span>
-                    <div class="config-value">
-                        <input type="number" class="config-input" value="3" id="prepThreshold" onchange="updateThresholds()">
-                        <span style="font-size: 12px; color: var(--cy-text-muted);">days</span>
-                    </div>
-                </div>
+                <p class="text-xs text-gray-500">Total investment in stock</p>
             </div>
-            
-            <div class="config-card">
-                <div class="config-title">
-                    <i class="fas fa-mobile-alt" style="color: #10b981;"></i>
-                    Notification Settings
+            <div class="kpi-card rounded-xl p-5">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <p class="text-sm text-gray-400">Total Vehicles</p>
+                        <p class="text-2xl font-bold text-white mt-1" id="kpiTotalVehicles">0</p>
+                    </div>
+                    <div class="p-2 bg-green-500/20 rounded-lg">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
+                    </div>
                 </div>
-                <div class="config-item">
-                    <span class="config-label">Push notifications</span>
-                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
-                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
-                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #10b981; border-radius: 24px; transition: 0.3s;"></span>
-                    </label>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">Email alerts</span>
-                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
-                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
-                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #10b981; border-radius: 24px; transition: 0.3s;"></span>
-                    </label>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">SMS critical only</span>
-                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
-                        <input type="checkbox" style="opacity: 0; width: 0; height: 0;">
-                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--cy-bg-tertiary); border-radius: 24px; transition: 0.3s; border: 1px solid var(--cy-border);"></span>
-                    </label>
-                </div>
+                <p class="text-xs text-gray-500">Current inventory count</p>
             </div>
-            
-            <div class="config-card">
-                <div class="config-title">
-                    <i class="fas fa-cog" style="color: #8b5cf6;"></i>
-                    Auto-Actions
+            <div class="kpi-card rounded-xl p-5">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <p class="text-sm text-gray-400">Sales This Month</p>
+                        <p class="text-2xl font-bold text-white mt-1" id="kpiMonthlySales">0</p>
+                    </div>
+                    <div class="p-2 bg-purple-500/20 rounded-lg">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    </div>
                 </div>
-                <div class="config-item">
-                    <span class="config-label">Auto-escalate</span>
-                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
-                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
-                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #10b981; border-radius: 24px; transition: 0.3s;"></span>
-                    </label>
+                <p class="text-xs text-gray-500">Units sold this month</p>
+            </div>
+            <div class="kpi-card rounded-xl p-5">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <p class="text-sm text-gray-400">Potential Margin</p>
+                        <p class="text-2xl font-bold text-white mt-1" id="kpiMargin">£0</p>
+                    </div>
+                    <div class="p-2 bg-orange-500/20 rounded-lg">
+                        <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
                 </div>
-                <div class="config-item">
-                    <span class="config-label">Daily summary</span>
-                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
-                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
-                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #10b981; border-radius: 24px; transition: 0.3s;"></span>
-                    </label>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">Weekly report</span>
-                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
-                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
-                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #10b981; border-radius: 24px; transition: 0.3s;"></span>
-                    </label>
-                </div>
+                <p class="text-xs text-gray-500">Retail minus cost price</p>
             </div>
         </div>
 
-        <!-- Report Downloads -->
-        <div class="exception-card">
-            <div class="exception-header">
-                <div class="exception-title">
-                    <i class="fas fa-file-download" style="color: #3b82f6;"></i>
-                    Automated Reports
+        <!-- Charts Row 1 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="glass-panel rounded-xl p-5">
+                <h3 class="text-lg font-semibold text-white mb-4">Stock by Status</h3>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2 justify-center" id="statusLegend"></div>
+            </div>
+            <div class="glass-panel rounded-xl p-5">
+                <h3 class="text-lg font-semibold text-white mb-4">Stock by Location</h3>
+                <div class="chart-container">
+                    <canvas id="locationChart"></canvas>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2 justify-center" id="locationLegend"></div>
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="glass-panel rounded-xl p-5">
+                <h3 class="text-lg font-semibold text-white mb-4">Sales Trend (Last 7 Days)</h3>
+                <div class="chart-container-sm">
+                    <canvas id="salesTrendChart"></canvas>
                 </div>
             </div>
-            <div class="report-grid">
-                <div class="report-card" onclick="downloadReport('daily')">
-                    <div class="report-icon">
-                        <i class="fas fa-file-pdf"></i>
-                    </div>
-                    <div class="report-title">Daily Briefing</div>
-                    <div class="report-desc">Ready to advertise, workshop status</div>
-                </div>
-                
-                <div class="report-card" onclick="downloadReport('workshop')">
-                    <div class="report-icon">
-                        <i class="fas fa-wrench"></i>
-                    </div>
-                    <div class="report-title">Workshop Status</div>
-                    <div class="report-desc">Jobs queue & completion rates</div>
-                </div>
-                
-                <div class="report-card" onclick="downloadReport('performance')">
-                    <div class="report-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="report-title">Performance</div>
-                    <div class="report-desc">Staff efficiency & metrics</div>
-                </div>
-                
-                <div class="report-card" onclick="downloadReport('exceptions')">
-                    <div class="report-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="report-title">Exceptions</div>
-                    <div class="report-desc">Stuck vehicles & alerts</div>
+            <div class="glass-panel rounded-xl p-5">
+                <h3 class="text-lg font-semibold text-white mb-4">Vehicles by Make</h3>
+                <div class="chart-container-sm">
+                    <canvas id="makeChart"></canvas>
                 </div>
             </div>
         </div>
 
+        <!-- Charts Row 3 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="glass-panel rounded-xl p-5">
+                <h3 class="text-lg font-semibold text-white mb-4">Workflow Pipeline</h3>
+                <div class="chart-container-xs">
+                    <canvas id="workflowChart"></canvas>
+                </div>
+            </div>
+            <div class="glass-panel rounded-xl p-5">
+                <h3 class="text-lg font-semibold text-white mb-4">Stock Value Trend</h3>
+                <div class="chart-container-xs">
+                    <canvas id="valueTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboards -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="glass-panel rounded-xl p-5">
+                <h3 class="text-lg font-semibold text-white mb-4">Sales Leaderboard (Last 7 Days)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="text-xs text-gray-400 uppercase bg-slate-800/50">
+                            <tr>
+                                <th class="px-4 py-3 text-left">Staff</th>
+                                <th class="px-4 py-3 text-left">Department</th>
+                                <th class="px-4 py-3 text-right">Sales</th>
+                                <th class="px-4 py-3 text-right">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesLeaderboard" class="divide-y divide-slate-700">
+                            <tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">No data available</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="glass-panel rounded-xl p-5">
+                <h3 class="text-lg font-semibold text-white mb-4">Longest in Stock (Aging Report)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="text-xs text-gray-400 uppercase bg-slate-800/50">
+                            <tr>
+                                <th class="px-4 py-3 text-left">Stock No</th>
+                                <th class="px-4 py-3 text-left">Vehicle</th>
+                                <th class="px-4 py-3 text-right">Days</th>
+                                <th class="px-4 py-3 text-right">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody id="agingReport" class="divide-y divide-slate-700">
+                            <tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">No data available</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <script src="./js/capeye-core.js"></script>
     <script>
-        let charts = {};
+        // Global Data Store
         let allVehicles = [];
         let filteredVehicles = [];
-        let currentRole = 'director';
-        let chartPeriod = 'weekly';
-        
-        // Alert thresholds
-        let thresholds = {
-            yard: 7,
-            workshop: 7,
-            prep: 3
-        };
-        
-        const staff = [
-            { name: 'Ibrahim Ata', dept: 'Sales', avatar: 'IA' },
-            { name: 'Keith Hardy', dept: 'Management', avatar: 'KH' },
-            { name: 'Ali Amood', dept: 'Workshop', avatar: 'AA' },
-            { name: 'Morteza Rahamian', dept: 'Workshop', avatar: 'MR' },
-            { name: 'Marcin Kiljan', dept: 'Workshop', avatar: 'MK' },
-            { name: 'Sia Vajihi', dept: 'Workshop', avatar: 'SV' },
-            { name: 'Iman Zarien', dept: 'Workshop', avatar: 'IZ' },
-            { name: 'Stash', dept: 'Prep', avatar: 'ST' }
-        ];
-        
+        let staffList = [];
+        let charts = {};
+
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadData();
-            initializeFilters();
-            initCharts();
-            applyFilters(); // This will call renderAll with initial data
-            updateTimestamp();
         });
 
-        function loadData() {
-            allVehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            if (allVehicles.length === 0) {
-                allVehicles = generateSampleData();
-                localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
-            }
-            filteredVehicles = [...allVehicles];
-        }
-
-        function generateSampleData() {
-            const makes = ['Ford', 'VW', 'Mercedes', 'Peugeot', 'Renault'];
-            const models = ['Transit', 'Crafter', 'Sprinter', 'Boxer', 'Master'];
-            const stages = ['INTAKE', 'WORKSHOP', 'PREP', 'READY', 'ADVERTISED', 'SOLD'];
-            
-            const vehicles = [];
-            const today = new Date();
-            
-            for (let i = 0; i < 80; i++) {
-                const stage = stages[Math.floor(Math.random() * stages.length)];
-                const daysInStage = Math.floor(Math.random() * 20);
-                const saleDate = stage === 'SOLD' ? new Date(today.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000) : null;
-                const dateInStock = new Date(today.getTime() - (daysInStage + Math.random() * 30) * 24 * 60 * 60 * 1000);
+        // Load CSV Data
+        async function loadData() {
+            try {
+                // Load stock data
+                const stockResponse = await fetch('Auto Capital - Stock List-639068391990284525.csv');
+                const stockCsv = await stockResponse.text();
                 
-                vehicles.push({
-                    stockNo: `R${String(1000 + i).padStart(4, '0')}`,
-                    registration: `RF${Math.floor(Math.random() * 90 + 10)} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
-                    make: makes[Math.floor(Math.random() * makes.length)],
-                    model: models[Math.floor(Math.random() * models.length)],
-                    stage: stage,
-                    stageEntered: new Date(today.getTime() - daysInStage * 24 * 60 * 60 * 1000).toISOString(),
-                    dateInStock: dateInStock.toISOString(),
-                    assignedTo: staff[Math.floor(Math.random() * staff.length)].name,
-                    saleDate: saleDate ? saleDate.toISOString() : null,
-                    salePrice: stage === 'SOLD' ? Math.floor(Math.random() * 20000 + 15000) : null,
-                    costPrice: Math.floor(Math.random() * 15000 + 10000),
-                    channel: ['B2B', 'B2C', 'Trade', 'Online'][Math.floor(Math.random() * 4)]
+                Papa.parse(stockCsv, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
+                        filteredVehicles = [...allVehicles];
+                        
+                        // Load staff data
+                        loadStaffData();
+                    },
+                    error: function(err) {
+                        showDataStatus('Error loading stock data: ' + err.message, 'error');
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                    }
                 });
+            } catch (error) {
+                showDataStatus('Error: ' + error.message, 'error');
+                document.getElementById('loadingOverlay').style.display = 'none';
             }
-            return vehicles;
         }
 
-        function initializeFilters() {
-            // Populate staff dropdown
-            const staffSelect = document.getElementById('filterStaff');
-            staff.forEach(s => {
-                const option = document.createElement('option');
-                option.value = s.name;
-                option.textContent = s.name;
-                staffSelect.appendChild(option);
-            });
+        // Load Staff Data
+        async function loadStaffData() {
+            try {
+                const staffResponse = await fetch('Auto Capital - Staff List-639068391990284525.csv');
+                const staffCsv = await staffResponse.text();
+                
+                Papa.parse(staffCsv, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        staffList = results.data.filter(s => s.Name);
+                        populateFilters();
+                        updateDashboard();
+                        showDataStatus(`Loaded ${allVehicles.length} vehicles and ${staffList.length} staff members`, 'success');
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                    },
+                    error: function() {
+                        // Continue without staff data
+                        populateFilters();
+                        updateDashboard();
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                    }
+                });
+            } catch (error) {
+                populateFilters();
+                updateDashboard();
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+
+        // Normalize Vehicle Data
+        function normalizeVehicle(row) {
+            const getValue = (keys) => {
+                for (let key of keys) {
+                    if (row[key] !== undefined && row[key] !== '') return row[key];
+                }
+                return '';
+            };
+
+            const costPrice = parseFloat(getValue(['Cost Price', 'CostPrice', 'Cost'])?.toString().replace(/[£,]/g, '')) || 0;
+            const retailPrice = parseFloat(getValue(['Retail Price', 'RetailPrice', 'Retail'])?.toString().replace(/[£,]/g, '')) || 0;
             
-            // Set default dates (last 30 days)
-            const today = new Date();
-            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-            document.getElementById('filterDateTo').value = today.toISOString().split('T')[0];
-            document.getElementById('filterDateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
+            return {
+                stockNo: getValue(['Stock No', 'StockNo', 'Stock Number', 'StockNo.']),
+                registration: getValue(['Registration', 'Reg', 'Reg No', 'RegNo']),
+                make: getValue(['Make', 'Manufacturer', 'Brand']),
+                model: getValue(['Model', 'Model Name']),
+                variant: getValue(['Variant', 'Trim', 'Spec']),
+                year: getValue(['Year', 'Year Reg', 'Reg Year']),
+                colour: getValue(['Colour', 'Color', 'Body Colour']),
+                location: getValue(['Location', 'Vehicle Location', 'Current Location']),
+                status: getValue(['Status', 'Vehicle Status', 'Stock Status']),
+                dateInStock: getValue(['Date In Stock', 'DateInStock', 'In Stock Date']),
+                costPrice: costPrice,
+                retailPrice: retailPrice,
+                daysInStock: calculateDaysInStock(getValue(['Date In Stock', 'DateInStock', 'In Stock Date'])),
+                fuelType: getValue(['Fuel Type', 'Fuel', 'FuelType']),
+                transmission: getValue(['Transmission', 'Gearbox', 'Trans']),
+                mileage: getValue(['Mileage', 'Miles', 'Odometer']),
+                body: getValue(['Body', 'Body Type', 'Body Style']),
+                doors: getValue(['Doors', 'Door Count']),
+                mot: getValue(['MOT', 'MOT Date', 'MOT Expiry'])
+            };
         }
 
+        // Calculate Days in Stock
+        function calculateDaysInStock(dateString) {
+            if (!dateString) return 0;
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return 0;
+            const today = new Date();
+            return Math.floor((today - date) / (1000 * 60 * 60 * 24));
+        }
+
+        // Populate Filter Dropdowns
+        function populateFilters() {
+            const makes = [...new Set(allVehicles.map(v => v.make).filter(Boolean))].sort();
+            const locations = [...new Set(allVehicles.map(v => v.location).filter(Boolean))].sort();
+            
+            const makeSelect = document.getElementById('filterMake');
+            makes.forEach(make => {
+                const option = document.createElement('option');
+                option.value = make;
+                option.textContent = make;
+                makeSelect.appendChild(option);
+            });
+
+            const locationSelect = document.getElementById('filterLocation');
+            locations.forEach(location => {
+                const option = document.createElement('option');
+                option.value = location;
+                option.textContent = location;
+                locationSelect.appendChild(option);
+            });
+        }
+
+        // Apply Filters
         function applyFilters() {
             const dateFrom = document.getElementById('filterDateFrom').value;
             const dateTo = document.getElementById('filterDateTo').value;
-            const dept = document.getElementById('filterDept').value;
-            const staffMember = document.getElementById('filterStaff').value;
-            const perfDept = document.getElementById('perfDeptFilter').value;
-            
-            // Filter vehicles
+            const make = document.getElementById('filterMake').value;
+            const status = document.getElementById('filterStatus').value;
+            const location = document.getElementById('filterLocation').value;
+
             filteredVehicles = allVehicles.filter(v => {
-                // Date filter - check sale date for sold vehicles, or date in stock for active
-                if (dateFrom || dateTo) {
-                    const checkDate = v.saleDate || v.dateInStock;
-                    if (dateFrom && checkDate < dateFrom) return false;
-                    if (dateTo && checkDate > dateTo) return false;
-                }
-                
-                // Department filter (based on assigned staff dept)
-                if (dept) {
-                    const staffDept = staff.find(s => s.name === v.assignedTo)?.dept;
-                    if (staffDept !== dept) return false;
-                }
-                
-                // Staff filter
-                if (staffMember && v.assignedTo !== staffMember) return false;
-                
+                if (make && v.make !== make) return false;
+                if (status && v.status !== status) return false;
+                if (location && v.location !== location) return false;
+                if (dateFrom && v.dateInStock && new Date(v.dateInStock) < new Date(dateFrom)) return false;
+                if (dateTo && v.dateInStock && new Date(v.dateInStock) > new Date(dateTo)) return false;
                 return true;
             });
-            
-            // Update active filters display
-            updateActiveFilters({ dateFrom, dateTo, dept, staffMember });
-            
-            // Render everything with filtered data
-            renderAll();
+
+            updateActiveFilters();
+            updateDashboard();
         }
 
-        function updateActiveFilters(filters) {
-            const container = document.getElementById('activeFilters');
-            const tags = [];
-            
-            if (filters.dateFrom || filters.dateTo) {
-                const dateRange = `${filters.dateFrom || 'Start'} to ${filters.dateTo || 'End'}`;
-                tags.push(`<span class="filter-tag">Date: ${dateRange} <button onclick="clearFilter('date')">×</button></span>`);
-            }
-            if (filters.dept) tags.push(`<span class="filter-tag">Dept: ${filters.dept} <button onclick="clearFilter('dept')">×</button></span>`);
-            if (filters.staffMember) tags.push(`<span class="filter-tag">Staff: ${filters.staffMember} <button onclick="clearFilter('staff')">×</button></span>`);
-            
-            container.innerHTML = tags.join('');
-        }
-
-        function clearFilter(type) {
-            switch(type) {
-                case 'date':
-                    document.getElementById('filterDateFrom').value = '';
-                    document.getElementById('filterDateTo').value = '';
-                    break;
-                case 'dept':
-                    document.getElementById('filterDept').value = '';
-                    break;
-                case 'staff':
-                    document.getElementById('filterStaff').value = '';
-                    break;
-            }
-            applyFilters();
-        }
-
+        // Reset Filters
         function resetFilters() {
             document.getElementById('filterDateFrom').value = '';
             document.getElementById('filterDateTo').value = '';
-            document.getElementById('filterDept').value = '';
-            document.getElementById('filterStaff').value = '';
-            document.getElementById('perfDeptFilter').value = '';
-            document.getElementById('activeFilters').innerHTML = '';
+            document.getElementById('filterMake').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterLocation').value = '';
+            filteredVehicles = [...allVehicles];
+            updateActiveFilters();
+            updateDashboard();
+        }
+
+        // Update Active Filter Badges
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            container.innerHTML = '';
             
-            // Reset to default dates
-            const today = new Date();
-            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-            document.getElementById('filterDateTo').value = today.toISOString().split('T')[0];
-            document.getElementById('filterDateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
-            
+            const filters = [
+                { id: 'filterDateFrom', label: 'From' },
+                { id: 'filterDateTo', label: 'To' },
+                { id: 'filterMake', label: 'Make' },
+                { id: 'filterStatus', label: 'Status' },
+                { id: 'filterLocation', label: 'Location' }
+            ];
+
+            filters.forEach(f => {
+                const el = document.getElementById(f.id);
+                if (el.value) {
+                    const badge = document.createElement('span');
+                    badge.className = 'filter-badge';
+                    badge.innerHTML = `${f.label}: ${el.value} <button onclick="clearFilter('${f.id}')">×</button>`;
+                    container.appendChild(badge);
+                }
+            });
+        }
+
+        // Clear Single Filter
+        function clearFilter(filterId) {
+            document.getElementById(filterId).value = '';
             applyFilters();
         }
 
-        function renderAll() {
-            renderKPIs();
-            renderExceptions();
-            renderPerformanceTable();
+        // Show Data Status
+        function showDataStatus(message, type) {
+            const status = document.getElementById('dataStatus');
+            status.textContent = message;
+            status.className = `mb-4 p-3 rounded-lg ${type === 'success' ? 'bg-green-900/50 text-green-400 border border-green-700' : 'bg-red-900/50 text-red-400 border border-red-700'}`;
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 5000);
+        }
+
+        // Update Dashboard
+        function updateDashboard() {
+            updateKPIs();
             updateCharts();
-            updateTimestamp();
+            updateLeaderboards();
         }
 
-        function renderKPIs() {
-            // Calculate based on FILTERED vehicles
-            const soldVehicles = filteredVehicles.filter(v => v.saleDate);
-            const revenue = soldVehicles.reduce((sum, v) => sum + (v.salePrice || 0), 0);
-            const cost = soldVehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0);
-            const profit = revenue - cost;
-            const margin = revenue > 0 ? ((profit / revenue) * 100).toFixed(1) : 0;
+        // Update KPIs
+        function updateKPIs() {
+            const totalValue = filteredVehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0);
+            const totalRetail = filteredVehicles.reduce((sum, v) => sum + (v.retailPrice || 0), 0);
+            const soldThisMonth = filteredVehicles.filter(v => v.status === 'Sold').length;
             
-            // Exceptions count from filtered data
-            const exceptions = filteredVehicles.filter(v => {
-                const days = calculateDaysInStage(v);
-                return days > thresholds.yard && v.stage !== 'SOLD';
-            }).length;
-            
-            // Average days to sell
-            const avgDays = soldVehicles.length > 0 
-                ? Math.round(soldVehicles.reduce((sum, v) => {
-                    const entered = new Date(v.dateInStock);
-                    const sold = new Date(v.saleDate);
-                    return sum + Math.floor((sold - entered) / (1000 * 60 * 60 * 24));
-                }, 0) / soldVehicles.length)
-                : 0;
-            
-            // Animate values
-            animateValue('kpiRevenue', revenue, '£');
-            animateValue('kpiMargin', margin, '', '%');
-            animateValue('kpiDays', avgDays, '', ' days');
-            animateValue('kpiExceptions', exceptions, '');
-            
-            // Update change indicators (simulated comparison)
-            document.getElementById('kpiRevenueChange').innerHTML = 
-                `<i class="fas fa-arrow-up" style="font-size: 10px;"></i><span>${(Math.random() * 20).toFixed(1)}% vs period</span>`;
-            document.getElementById('kpiMarginChange').innerHTML = 
-                `<i class="fas fa-arrow-${margin > 15 ? 'up' : 'down'}" style="font-size: 10px;"></i><span>${Math.abs(margin - 15).toFixed(1)}% ${margin > 15 ? 'above' : 'below'} target</span>`;
-            document.getElementById('kpiDaysChange').innerHTML = 
-                `<i class="fas fa-arrow-${avgDays < 30 ? 'down' : 'up'}" style="font-size: 10px;"></i><span>${avgDays < 30 ? 'Good' : 'Slow'} velocity</span>`;
+            document.getElementById('kpiStockValue').textContent = formatCurrency(totalValue);
+            document.getElementById('kpiTotalVehicles').textContent = filteredVehicles.length;
+            document.getElementById('kpiMonthlySales').textContent = soldThisMonth;
+            document.getElementById('kpiMargin').textContent = formatCurrency(totalRetail - totalValue);
         }
 
-        function renderExceptions() {
-            // Critical: > workshop threshold days in workshop/prep
-            const critical = filteredVehicles.filter(v => {
-                const days = calculateDaysInStage(v);
-                return (v.stage === 'WORKSHOP' && days > thresholds.workshop) ||
-                       (v.stage === 'PREP' && days > thresholds.prep) ||
-                       (v.stage === 'INTAKE' && days > thresholds.yard);
-            }).sort((a, b) => calculateDaysInStage(b) - calculateDaysInStage(a));
-            
-            // Warnings: approaching threshold
-            const warnings = filteredVehicles.filter(v => {
-                const days = calculateDaysInStage(v);
-                return (v.stage === 'WORKSHOP' && days >= 5 && days <= thresholds.workshop) ||
-                       (v.stage === 'PREP' && days >= 2 && days <= thresholds.prep);
-            }).sort((a, b) => calculateDaysInStage(b) - calculateDaysInStage(a));
-            
-            document.getElementById('criticalCount').textContent = critical.length;
-            document.getElementById('warningCount').textContent = warnings.length;
-            
-            renderExceptionList('criticalList', critical, 'critical');
-            renderExceptionList('warningList', warnings, 'warning');
+        // Update All Charts
+        function updateCharts() {
+            updateStatusChart();
+            updateLocationChart();
+            updateSalesTrendChart();
+            updateMakeChart();
+            updateWorkflowChart();
+            updateValueTrendChart();
         }
 
-        function renderExceptionList(containerId, vehicles, type) {
-            const container = document.getElementById(containerId);
-            if (vehicles.length === 0) {
-                container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--cy-text-muted); font-size: 13px;">No ${type} alerts</div>`;
-                return;
-            }
-            
-            container.innerHTML = vehicles.slice(0, 5).map(v => {
-                const days = calculateDaysInStage(v);
-                return `
-                    <div class="exception-item ${type}" onclick="viewVehicle('${v.stockNo}')">
-                        <div class="exception-vehicle">
-                            <div class="exception-reg">${v.registration}</div>
-                            <div class="exception-issue">${v.make} ${v.model} • ${v.stage} • ${v.assignedTo?.split(' ')[0] || 'Unassigned'}</div>
-                        </div>
-                        <div class="exception-time">${days}d</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderPerformanceTable() {
-            const tbody = document.getElementById('performanceTable');
-            const perfDept = document.getElementById('perfDeptFilter').value;
-            
-            // Filter staff by department if selected
-            let displayStaff = staff;
-            if (perfDept) {
-                displayStaff = staff.filter(s => s.dept === perfDept);
-            }
-            
-            // Calculate metrics from FILTERED vehicles
-            const staffPerformance = displayStaff.map(s => {
-                const processed = filteredVehicles.filter(v => v.assignedTo === s.name).length;
-                const avgTime = processed > 0 
-                    ? Math.floor(Math.random() * 5 + 2) // Simulated - would calculate from actual data
-                    : 0;
-                const efficiency = processed > 0 
-                    ? Math.min(95, Math.floor(60 + (processed * 2) + (Math.random() * 20)))
-                    : 0;
-                
-                return { ...s, processed, avgTime, efficiency };
-            }).sort((a, b) => b.efficiency - a.efficiency);
-            
-            tbody.innerHTML = staffPerformance.map(s => {
-                const effClass = s.efficiency >= 80 ? 'high' : s.efficiency >= 60 ? 'medium' : 'low';
-                
-                return `
-                    <tr>
-                        <td>
-                            <div class="staff-info">
-                                <div class="staff-avatar">${s.avatar}</div>
-                                <div>
-                                    <div class="staff-name">${s.name}</div>
-                                    <div class="staff-dept">${s.dept}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td style="color: var(--cy-text-secondary);">${s.dept}</td>
-                        <td style="font-weight: 600; color: var(--cy-text-primary);">${s.processed}</td>
-                        <td style="color: var(--cy-text-secondary);">${s.avgTime > 0 ? s.avgTime + ' days' : '-'}</td>
-                        <td>
-                            <div class="efficiency-score">
-                                <div class="efficiency-bar">
-                                    <div class="efficiency-fill ${effClass}" style="width: ${s.efficiency}%"></div>
-                                </div>
-                                <span style="font-size: 12px; font-weight: 600; color: ${effClass === 'high' ? '#10b981' : effClass === 'medium' ? '#f59e0b' : '#dc2626'};">${s.efficiency}%</span>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function calculateDaysInStage(vehicle) {
-            const entered = new Date(vehicle.stageEntered);
-            const now = new Date();
-            return Math.floor((now - entered) / (1000 * 60 * 60 * 24));
-        }
-
-        function initCharts() {
-            // Revenue Chart
-            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-            charts.revenue = new Chart(revenueCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: [0, 0, 0, 0],
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    }, {
-                        label: 'Profit',
-                        data: [0, 0, 0, 0],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', callback: v => '£' + v/1000 + 'k' } },
-                        x: { grid: { display: false }, ticks: { color: '#64748b' } }
-                    }
-                }
+        // Status Chart
+        function updateStatusChart() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            const statusCounts = {};
+            filteredVehicles.forEach(v => {
+                const status = v.status || 'Unknown';
+                statusCounts[status] = (statusCounts[status] || 0) + 1;
             });
 
-            // Channel Chart
-            const channelCtx = document.getElementById('channelChart').getContext('2d');
-            charts.channel = new Chart(channelCtx, {
+            if (charts.status) charts.status.destroy();
+
+            charts.status = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['B2B', 'B2C', 'Trade', 'Online'],
+                    labels: Object.keys(statusCounts),
                     datasets: [{
-                        data: [0, 0, 0, 0],
-                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'],
+                        data: Object.values(statusCounts),
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280', '#3b82f6'],
                         borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '70%',
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 }, padding: 15, usePointStyle: true } }
+                        legend: { display: false }
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const status = Object.keys(statusCounts)[elements[0].index];
+                            document.getElementById('filterStatus').value = status;
+                            applyFilters();
+                        }
+                    }
+                }
+            });
+
+            // Custom Legend
+            const legend = document.getElementById('statusLegend');
+            legend.innerHTML = Object.keys(statusCounts).map((status, i) => `
+                <button onclick="document.getElementById('filterStatus').value='${status}';applyFilters()" 
+                    class="flex items-center gap-2 px-3 py-1 rounded-full text-xs bg-slate-800 hover:bg-slate-700 transition">
+                    <span class="w-3 h-3 rounded-full" style="background: ${['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280', '#3b82f6'][i % 6]}"></span>
+                    ${status} (${statusCounts[status]})
+                </button>
+            `).join('');
+        }
+
+        // Location Chart
+        function updateLocationChart() {
+            const ctx = document.getElementById('locationChart').getContext('2d');
+            const locationCounts = {};
+            filteredVehicles.forEach(v => {
+                const loc = v.location || 'Unknown';
+                locationCounts[loc] = (locationCounts[loc] || 0) + 1;
+            });
+
+            if (charts.location) charts.location.destroy();
+
+            charts.location = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(locationCounts),
+                    datasets: [{
+                        data: Object.values(locationCounts),
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const location = Object.keys(locationCounts)[elements[0].index];
+                            document.getElementById('filterLocation').value = location;
+                            applyFilters();
+                        }
+                    }
+                }
+            });
+
+            // Custom Legend
+            const legend = document.getElementById('locationLegend');
+            legend.innerHTML = Object.keys(locationCounts).map((loc, i) => `
+                <button onclick="document.getElementById('filterLocation').value='${loc}';applyFilters()" 
+                    class="flex items-center gap-2 px-3 py-1 rounded-full text-xs bg-slate-800 hover:bg-slate-700 transition">
+                    <span class="w-3 h-3 rounded-full" style="background: ${['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316'][i % 7]}"></span>
+                    ${loc} (${locationCounts[loc]})
+                </button>
+            `).join('');
+        }
+
+        // Sales Trend Chart
+        function updateSalesTrendChart() {
+            const ctx = document.getElementById('salesTrendChart').getContext('2d');
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const data = days.map(() => Math.floor(Math.random() * 5) + 1); // Simulated data
+
+            if (charts.salesTrend) charts.salesTrend.destroy();
+
+            charts.salesTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Sales',
+                        data: data,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
                     }
                 }
             });
         }
 
-        function updateCharts() {
-            // Calculate data from FILTERED vehicles
-            const soldVehicles = filteredVehicles.filter(v => v.saleDate);
-            
-            // Revenue by week (simplified - in real app would group by actual weeks)
-            const weeklyRevenue = [0, 0, 0, 0];
-            const weeklyProfit = [0, 0, 0, 0];
-            
-            soldVehicles.forEach(v => {
-                const weekIndex = Math.floor(Math.random() * 4); // Simplified - would use actual date logic
-                weeklyRevenue[weekIndex] += v.salePrice || 0;
-                weeklyProfit[weekIndex] += (v.salePrice || 0) - (v.costPrice || 0);
+        // Make Chart
+        function updateMakeChart() {
+            const ctx = document.getElementById('makeChart').getContext('2d');
+            const makeCounts = {};
+            filteredVehicles.forEach(v => {
+                const make = v.make || 'Unknown';
+                makeCounts[make] = (makeCounts[make] || 0) + 1;
             });
-            
-            charts.revenue.data.datasets[0].data = weeklyRevenue;
-            charts.revenue.data.datasets[1].data = weeklyProfit;
-            charts.revenue.update();
-            
-            // Channel distribution
-            const channelCounts = { 'B2B': 0, 'B2C': 0, 'Trade': 0, 'Online': 0 };
-            soldVehicles.forEach(v => {
-                if (v.channel) channelCounts[v.channel]++;
-            });
-            
-            charts.channel.data.datasets[0].data = [
-                channelCounts['B2B'],
-                channelCounts['B2C'],
-                channelCounts['Trade'],
-                channelCounts['Online']
-            ];
-            charts.channel.update();
-        }
 
-        function setChartPeriod(period) {
-            chartPeriod = period;
-            document.getElementById('btnMonthly').style.background = period === 'monthly' ? '#3b82f6' : 'var(--cy-bg-tertiary)';
-            document.getElementById('btnMonthly').style.color = period === 'monthly' ? 'white' : 'var(--cy-text-secondary)';
-            document.getElementById('btnWeekly').style.background = period === 'weekly' ? '#3b82f6' : 'var(--cy-bg-tertiary)';
-            document.getElementById('btnWeekly').style.color = period === 'weekly' ? 'white' : 'var(--cy-text-secondary)';
-            
-            // Update chart labels and data based on period
-            if (period === 'monthly') {
-                charts.revenue.data.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-            } else {
-                charts.revenue.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-            }
-            updateCharts();
-        }
+            const sortedMakes = Object.entries(makeCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
 
-        function updateThresholds() {
-            thresholds.yard = parseInt(document.getElementById('yardThreshold').value) || 7;
-            thresholds.workshop = parseInt(document.getElementById('workshopThreshold').value) || 7;
-            thresholds.prep = parseInt(document.getElementById('prepThreshold').value) || 3;
-            
-            // Re-render exceptions with new thresholds
-            renderExceptions();
-        }
+            if (charts.make) charts.make.destroy();
 
-        function viewVehicle(stockNo) {
-            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
-            if (vehicle) {
-                alert(`Vehicle: ${vehicle.registration}\nMake: ${vehicle.make} ${vehicle.model}\nStage: ${vehicle.stage}\nAssigned: ${vehicle.assignedTo}\nDays in stage: ${calculateDaysInStage(vehicle)}`);
-            }
-        }
-
-        function downloadReport(type) {
-            const reports = {
-                daily: 'Daily Briefing Report',
-                workshop: 'Workshop Status Report',
-                performance: 'Staff Performance Report',
-                exceptions: 'Exceptions Report'
-            };
-            alert(`Generating ${reports[type]}...\n\nBased on current filters:\n- Date range: ${document.getElementById('filterDateFrom').value} to ${document.getElementById('filterDateTo').value}\n- Department: ${document.getElementById('filterDept').value || 'All'}\n- Staff: ${document.getElementById('filterStaff').value || 'All'}\n\nThis would download a PDF in production.`);
-        }
-
-        function exportReport() {
-            downloadReport('daily');
-        }
-
-        function setRole(role) {
-            currentRole = role;
-            document.querySelectorAll('.role-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.toLowerCase().includes(role)) {
-                    btn.classList.add('active');
+            charts.make = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedMakes.map(m => m[0]),
+                    datasets: [{
+                        label: 'Vehicles',
+                        data: sortedMakes.map(m => m[1]),
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const make = sortedMakes[elements[0].index][0];
+                            document.getElementById('filterMake').value = make;
+                            applyFilters();
+                        }
+                    }
                 }
             });
-            
-            // Update view based on role
-            if (role === 'manager') {
-                document.querySelector('.performance-title').textContent = 'My Team Performance';
-                // Auto-filter to manager's department (would be dynamic in real app)
-                document.getElementById('filterDept').value = 'Workshop';
-            } else {
-                document.querySelector('.performance-title').textContent = 'Staff Performance & Efficiency';
-                document.getElementById('filterDept').value = '';
-            }
-            
-            applyFilters();
         }
 
-        function updateTimestamp() {
-            const now = new Date();
-            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString('en-GB');
-        }
+        // Workflow Chart
+        function updateWorkflowChart() {
+            const ctx = document.getElementById('workflowChart').getContext('2d');
+            const stages = ['Intake', 'Workshop', 'Prep', 'Ready', 'Advertised'];
+            const data = stages.map(() => Math.floor(Math.random() * 20) + 5); // Simulated
 
-        function animateValue(id, value, prefix = '', suffix = '') {
-            const el = document.getElementById(id);
-            const numValue = parseFloat(value.toString().replace(/[^0-9.]/g, '')) || 0;
-            const duration = 1000;
-            const increment = numValue / (duration / 16);
-            let current = 0;
-            
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= numValue) {
-                    current = numValue;
-                    clearInterval(timer);
+            if (charts.workflow) charts.workflow.destroy();
+
+            charts.workflow = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: stages,
+                    datasets: [{
+                        label: 'Vehicles',
+                        data: data,
+                        backgroundColor: ['#f59e0b', '#ef4444', '#8b5cf6', '#10b981', '#3b82f6'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    }
                 }
-                el.textContent = prefix + Math.floor(current).toLocaleString('en-GB') + suffix;
-            }, 16);
+            });
         }
 
-        function logout() {
-            localStorage.removeItem('capeye_session');
-            window.location.href = './login.html';
+        // Value Trend Chart
+        function updateValueTrendChart() {
+            const ctx = document.getElementById('valueTrendChart').getContext('2d');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            const data = months.map(() => Math.floor(Math.random() * 500000) + 1000000);
+
+            if (charts.valueTrend) charts.valueTrend.destroy();
+
+            charts.valueTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Stock Value',
+                        data: data,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#94a3b8', callback: v => '£' + (v/1000) + 'k' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+        }
+
+        // Update Leaderboards
+        function updateLeaderboards() {
+            // Sales Leaderboard (simulated with staff data)
+            const tbody = document.getElementById('salesLeaderboard');
+            if (staffList.length > 0) {
+                const salesStaff = staffList.filter(s => s.Department === 'Sales' || s.Department === 'Management').slice(0, 5);
+                tbody.innerHTML = salesStaff.map((staff, i) => `
+                    <tr class="hover:bg-slate-800/50">
+                        <td class="px-4 py-3 font-medium text-white">${staff.Name}</td>
+                        <td class="px-4 py-3 text-gray-400">${staff.Department || 'Sales'}</td>
+                        <td class="px-4 py-3 text-right text-white">${Math.floor(Math.random() * 10) + 1}</td>
+                        <td class="px-4 py-3 text-right text-green-400">${formatCurrency(Math.floor(Math.random() * 50000) + 10000)}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Aging Report
+            const agingTbody = document.getElementById('agingReport');
+            const sortedByAge = [...filteredVehicles]
+                .filter(v => v.daysInStock > 0)
+                .sort((a, b) => b.daysInStock - a.daysInStock)
+                .slice(0, 5);
+            
+            if (sortedByAge.length > 0) {
+                agingTbody.innerHTML = sortedByAge.map(v => `
+                    <tr class="hover:bg-slate-800/50">
+                        <td class="px-4 py-3 font-medium text-white">${v.stockNo}</td>
+                        <td class="px-4 py-3 text-gray-400">${v.make} ${v.model}</td>
+                        <td class="px-4 py-3 text-right ${v.daysInStock > 90 ? 'text-red-400' : v.daysInStock > 60 ? 'text-orange-400' : 'text-yellow-400'}">${v.daysInStock}</td>
+                        <td class="px-4 py-3 text-right text-white">${formatCurrency(v.costPrice)}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Format Currency
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(value || 0);
         }
     </script>
 </body>
