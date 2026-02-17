@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operations | Capeye Auto Capital</title>
+    <title>Live Operations | Capeye Auto Capital</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,83 +16,508 @@
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Capeye Design System -->
     <link rel="stylesheet" href="./css/capeye-system.css">
     
     <style>
-        /* Operations-specific styles */
-        .ops-grid {
+        /* Operations Specific Styles */
+        :root {
+            --stage-intake: #3b82f6;
+            --stage-workshop: #f59e0b;
+            --stage-prep: #8b5cf6;
+            --stage-ready: #10b981;
+            --stage-advertised: #06b6d4;
+            --alert-red: #dc2626;
+            --alert-orange: #ea580c;
+        }
+        
+        /* Pipeline Stages */
+        .pipeline-container {
             display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 24px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
         }
         
-        @media (max-width: 1024px) {
-            .ops-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .sidebar-card {
+        .pipeline-stage {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-xl);
-            padding: 20px;
-            margin-bottom: 16px;
+            border-radius: 16px;
+            padding: 16px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
         }
         
-        .sidebar-title {
+        .pipeline-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--stage-color);
+        }
+        
+        .pipeline-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .pipeline-count {
+            background: var(--stage-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
             font-size: 12px;
             font-weight: 700;
+        }
+        
+        .pipeline-time {
+            font-size: 11px;
             color: var(--cy-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 16px;
+            margin-top: 4px;
         }
         
-        .dept-list {
-            space-y: 8px;
+        .vehicle-card {
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
         }
         
-        .dept-item {
+        .vehicle-card:hover {
+            border-color: var(--stage-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .vehicle-card.alert {
+            border-left: 3px solid var(--alert-red);
+            animation: pulse-alert 2s infinite;
+        }
+        
+        .vehicle-card.warning {
+            border-left: 3px solid var(--alert-orange);
+        }
+        
+        @keyframes pulse-alert {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0); }
+        }
+        
+        .vehicle-reg {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .vehicle-info {
+            font-size: 11px;
+            color: var(--cy-text-secondary);
+            margin-bottom: 6px;
+        }
+        
+        .vehicle-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+        }
+        
+        .vehicle-days {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .vehicle-days.normal {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        
+        .vehicle-days.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+        
+        .vehicle-days.danger {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+        }
+        
+        .vehicle-assignee {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--cy-text-muted);
+        }
+        
+        /* Alert Banner */
+        .alert-banner {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(220, 38, 38, 0.05));
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .alert-content {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px;
-            border-radius: var(--cy-radius-md);
-            cursor: pointer;
-            transition: all var(--cy-transition-fast);
-            border: 1px solid transparent;
         }
         
-        .dept-item:hover, .dept-item.active {
-            background: var(--cy-bg-tertiary);
-            border-color: var(--cy-border);
-        }
-        
-        .dept-icon {
-            width: 36px;
-            height: 36px;
+        .alert-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(220, 38, 38, 0.2);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            color: #dc2626;
+            font-size: 18px;
         }
         
-        .dept-info {
+        .alert-text h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 2px;
+        }
+        
+        .alert-text p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        
+        /* Workshop Queue */
+        .queue-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .queue-card {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .queue-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .job-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--cy-bg-tertiary);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .job-row:hover {
+            background: rgba(59, 130, 246, 0.05);
+            border-left-color: #3b82f6;
+        }
+        
+        .job-row.urgent {
+            border-left-color: #dc2626;
+            background: rgba(220, 38, 38, 0.05);
+        }
+        
+        .job-vehicle {
             flex: 1;
         }
         
-        .dept-name {
-            font-weight: 600;
+        .job-reg {
+            font-weight: 700;
             color: var(--cy-text-primary);
             font-size: 13px;
         }
         
-        .dept-count {
+        .job-desc {
             font-size: 11px;
+            color: var(--cy-text-secondary);
+            margin-top: 2px;
+        }
+        
+        .job-mechanic {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 140px;
+        }
+        
+        .mechanic-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .mechanic-name {
+            font-size: 12px;
+            color: var(--cy-text-secondary);
+        }
+        
+        .job-time {
+            text-align: right;
+            min-width: 80px;
+        }
+        
+        .time-elapsed {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+        }
+        
+        .time-label {
+            font-size: 10px;
             color: var(--cy-text-muted);
+        }
+        
+        .job-actions {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .job-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid var(--cy-border);
+            background: var(--cy-bg-secondary);
+            color: var(--cy-text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        
+        .job-btn:hover {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+        
+        /* Staff Workload */
+        .workload-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .workload-item {
+            background: var(--cy-bg-tertiary);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .workload-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .workload-count {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        
+        .workload-label {
+            font-size: 10px;
+            color: var(--cy-text-muted);
+        }
+        
+        /* Ready to Advertise */
+        .ready-section {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .ready-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .ready-card {
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .ready-card:hover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+        
+        .ready-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #10b981;
+            font-size: 16px;
+        }
+        
+        .ready-info {
+            flex: 1;
+        }
+        
+        .ready-reg {
+            font-weight: 700;
+            color: var(--cy-text-primary);
+            font-size: 13px;
+        }
+        
+        .ready-status {
+            font-size: 11px;
+            color: #10b981;
+            margin-top: 2px;
+        }
+        
+        .ready-action {
+            padding: 6px 12px;
+            background: #10b981;
+            color: white;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlide 0.3s ease;
+        }
+        
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--cy-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+        }
+        
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--cy-border);
+            background: var(--cy-bg-tertiary);
+            color: var(--cy-text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-body {
+            padding: 20px;
         }
         
         .timeline {
@@ -103,7 +528,7 @@
         .timeline::before {
             content: '';
             position: absolute;
-            left: 7px;
+            left: 8px;
             top: 0;
             bottom: 0;
             width: 2px;
@@ -112,262 +537,49 @@
         
         .timeline-item {
             position: relative;
-            padding-bottom: 24px;
+            padding-bottom: 20px;
         }
         
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-        
-        .timeline-dot {
+        .timeline-item::before {
+            content: '';
             position: absolute;
-            left: -24px;
-            width: 16px;
-            height: 16px;
+            left: -20px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: var(--cy-bg-secondary);
-            border: 2px solid var(--cy-accent-blue);
+            background: var(--stage-color, #3b82f6);
+            border: 2px solid var(--cy-bg-secondary);
         }
         
-        .timeline-content {
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            padding: 16px;
-        }
-        
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
-        }
-        
-        .timeline-title {
-            font-weight: 600;
-            color: var(--cy-text-primary);
-            font-size: 14px;
-        }
-        
-        .timeline-time {
+        .timeline-date {
             font-size: 11px;
             color: var(--cy-text-muted);
-        }
-        
-        .timeline-desc {
-            font-size: 13px;
-            color: var(--cy-text-secondary);
-        }
-        
-        .staff-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-        }
-        
-        .staff-card {
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all var(--cy-transition-fast);
-        }
-        
-        .staff-card:hover {
-            border-color: var(--cy-border-hover);
-            transform: translateY(-2px);
-        }
-        
-        .staff-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--cy-accent-blue), var(--cy-accent-purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: white;
-            font-size: 16px;
-        }
-        
-        .staff-info {
-            flex: 1;
-        }
-        
-        .staff-name {
-            font-weight: 600;
-            color: var(--cy-text-primary);
-            font-size: 14px;
-        }
-        
-        .staff-role {
-            font-size: 12px;
-            color: var(--cy-text-muted);
-        }
-        
-        .staff-status {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--cy-accent-green);
-        }
-        
-        .staff-status.busy {
-            background: var(--cy-accent-orange);
-        }
-        
-        .staff-status.offline {
-            background: var(--cy-text-muted);
-        }
-        
-        .task-list {
-            space-y: 12px;
-        }
-        
-        .task-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            margin-bottom: 12px;
-        }
-        
-        .task-checkbox {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--cy-border);
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--cy-transition-fast);
-        }
-        
-        .task-checkbox:hover {
-            border-color: var(--cy-accent-blue);
-        }
-        
-        .task-checkbox.checked {
-            background: var(--cy-accent-blue);
-            border-color: var(--cy-accent-blue);
-        }
-        
-        .task-content {
-            flex: 1;
-        }
-        
-        .task-title {
-            font-weight: 500;
-            color: var(--cy-text-primary);
-            font-size: 14px;
-            margin-bottom: 2px;
-        }
-        
-        .task-title.completed {
-            text-decoration: line-through;
-            color: var(--cy-text-muted);
-        }
-        
-        .task-meta {
-            font-size: 12px;
-            color: var(--cy-text-muted);
-        }
-        
-        .priority-high {
-            color: var(--cy-accent-red);
-        }
-        
-        .priority-medium {
-            color: var(--cy-accent-orange);
-        }
-        
-        .priority-low {
-            color: var(--cy-accent-green);
-        }
-        
-        .schedule-grid {
-            display: grid;
-            grid-template-columns: 80px 1fr;
-            gap: 16px;
-        }
-        
-        .time-slot {
-            text-align: right;
-            font-size: 12px;
-            color: var(--cy-text-muted);
-            font-weight: 500;
-            padding-top: 12px;
-        }
-        
-        .slot-events {
-            border-left: 2px solid var(--cy-border);
-            padding-left: 16px;
-            padding-bottom: 16px;
-        }
-        
-        .event-card {
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-md);
-            padding: 12px;
-            margin-bottom: 8px;
-            border-left: 3px solid var(--cy-accent-blue);
-        }
-        
-        .event-title {
-            font-weight: 600;
-            color: var(--cy-text-primary);
-            font-size: 13px;
             margin-bottom: 4px;
         }
         
-        .event-meta {
-            font-size: 11px;
-            color: var(--cy-text-muted);
+        .timeline-action {
+            font-size: 13px;
+            color: var(--cy-text-primary);
+            font-weight: 600;
         }
         
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
+        .timeline-person {
+            font-size: 11px;
+            color: var(--cy-text-secondary);
+            margin-top: 2px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .pipeline-container { grid-template-columns: repeat(3, 1fr); }
+            .queue-section { grid-template-columns: 1fr; }
         }
         
         @media (max-width: 768px) {
-            .stats-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        .stat-mini {
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: var(--cy-radius-lg);
-            padding: 16px;
-            text-align: center;
-        }
-        
-        .stat-mini-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--cy-text-primary);
-            margin-bottom: 4px;
-        }
-        
-        .stat-mini-label {
-            font-size: 11px;
-            color: var(--cy-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            .pipeline-container { grid-template-columns: 1fr; }
+            .workload-grid { grid-template-columns: 1fr; }
+            .alert-banner { flex-direction: column; gap: 12px; text-align: center; }
         }
     </style>
 </head>
@@ -380,82 +592,46 @@
     <!-- Header -->
     <header class="cy-header">
         <div class="cy-header-content">
-            <div class="cy-flex cy-items-center" style="gap: 32px;">
-                <a href="./index.html" class="cy-brand">
-                    <div class="cy-logo">AC</div>
-                    <div class="cy-brand-text">
-                        <h1>CAPEYE</h1>
-                        <span>Auto Capital Intelligence</span>
+            <div style="display: flex; align-items: center; gap: 32px;">
+                <a href="./index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: white; font-size: 16px;">AC</div>
+                    <div>
+                        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #f8fafc;">CAPEYE</div>
+                        <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 2px;">Auto Capital Intelligence</div>
                     </div>
                 </a>
                 
-                <nav class="cy-nav">
-                    <a href="./index.html" class="cy-nav-link">
+                <nav style="display: flex; align-items: center; gap: 8px;">
+                    <a href="./index.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-home"></i> Dashboard
                     </a>
-                    <a href="./operations.html" class="cy-nav-link active">
+                    <a href="./operations.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #f8fafc; background: rgba(59, 130, 246, 0.1); text-decoration: none; display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-cogs"></i> Operations
                     </a>
-                    <a href="./inventory.html" class="cy-nav-link">
+                    <a href="./inventory.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-car"></i> Inventory
                     </a>
-                    <a href="./workflow.html" class="cy-nav-link">
+                    <a href="./workflow.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-tasks"></i> Workflow
                     </a>
-                    <a href="./analytics.html" class="cy-nav-link">
+                    <a href="./analytics.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-chart-bar"></i> Analytics
                     </a>
                 </nav>
             </div>
             
-            <div class="cy-flex cy-items-center" style="gap: 16px;">
-                <div class="cy-dropdown">
-                    <button class="cy-dropdown-btn">
-                        <i class="fas fa-toolbox"></i>
-                        Tools
-                        <i class="fas fa-chevron-down" style="font-size: 10px;"></i>
-                    </button>
-                    <div class="cy-dropdown-menu">
-                        <a href="https://myclickdealer.co.uk" target="_blank" class="cy-dropdown-item">
-                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-blue);">
-                                <i class="fas fa-mouse-pointer"></i>
-                            </div>
-                            <div>
-                                <div class="tool-title">Click Dealer</div>
-                                <div class="tool-desc">DMS & Stock</div>
-                            </div>
-                        </a>
-                        <a href="https://autocapital.co.uk" target="_blank" class="cy-dropdown-item">
-                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-green);">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            <div>
-                                <div class="tool-title">Auto Capital</div>
-                                <div class="tool-desc">Website</div>
-                            </div>
-                        </a>
-                        <a href="https://www.gov.uk/get-vehicle-information-from-dvla" target="_blank" class="cy-dropdown-item">
-                            <div class="cy-dropdown-icon" style="color: var(--cy-accent-orange);">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <div>
-                                <div class="tool-title">DVLA Check</div>
-                                <div class="tool-desc">Vehicle Info</div>
-                            </div>
-                        </a>
-                        <a href="https://www.hpicheck.com" target="_blank" class="cy-dropdown-item">
-                            <div class="cy-dropdown-icon" style="color: #ec4899;">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <div>
-                                <div class="tool-title">HPI Check</div>
-                                <div class="tool-desc">History</div>
-                            </div>
-                        </a>
-                    </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="live-indicator" style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 20px; font-size: 12px; color: #10b981; font-weight: 600;">
+                    <span class="pulse-dot" style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></span>
+                    LIVE
                 </div>
                 
-                <button onclick="logout()" class="cy-nav-link" style="color: var(--cy-accent-red);">
+                <button onclick="refreshOperations()" style="padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 13px; font-weight: 500; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+                
+                <button onclick="logout()" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #dc2626; background: none; border: none; cursor: pointer;">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
@@ -463,318 +639,638 @@
     </header>
 
     <!-- Main Content -->
-    <main class="cy-container">
+    <main class="cy-container" style="padding: 24px; max-width: 1600px; margin: 0 auto;">
         
         <!-- Page Header -->
-        <div class="cy-section">
-            <div class="cy-flex cy-justify-between cy-items-end">
-                <div>
-                    <h2 class="cy-font-display" style="font-size: 32px; font-weight: 700; margin-bottom: 8px;">
-                        Operations <span style="color: var(--cy-accent-blue);">Centre</span>
-                    </h2>
-                    <p class="cy-text-secondary">Department management, staff scheduling, and daily operations</p>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+            <div>
+                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #f8fafc; margin-bottom: 6px;">
+                    Live <span style="color: #3b82f6;">Operations</span>
+                </h1>
+                <p style="color: #94a3b8; font-size: 14px;">Real-time vehicle tracking and workshop management</p>
+            </div>
+            
+            <div style="display: flex; gap: 16px; align-items: center;">
+                <div style="text-align: right;">
+                    <div style="font-family: 'Space Grotesk'; font-size: 28px; font-weight: 700; color: #f8fafc;" id="totalActiveVehicles">0</div>
+                    <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Active Vehicles</div>
                 </div>
-                <div class="cy-live-badge">
-                    <div class="cy-live-dot"></div>
-                    <span>Live</span>
+                <div style="width: 1px; height: 40px; background: rgba(255,255,255,0.1);"></div>
+                <div style="text-align: right;">
+                    <div style="font-family: 'Space Grotesk'; font-size: 28px; font-weight: 700; color: #f59e0b;" id="workshopLoad">0</div>
+                    <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">In Workshop</div>
+                </div>
+                <div style="width: 1px; height: 40px; background: rgba(255,255,255,0.1);"></div>
+                <div style="text-align: right;">
+                    <div style="font-family: 'Space Grotesk'; font-size: 28px; font-weight: 700; color: #10b981;" id="readyToAdvertise">0</div>
+                    <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Ready to Advertise</div>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Stats -->
-        <div class="stats-row">
-            <div class="stat-mini">
-                <div class="stat-mini-value" id="staffOnline">0</div>
-                <div class="stat-mini-label">Staff Online</div>
+        <!-- Alert Banner -->
+        <div class="alert-banner" id="alertBanner" style="display: none;">
+            <div class="alert-content">
+                <div class="alert-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="alert-text">
+                    <h3>Attention Required</h3>
+                    <p id="alertMessage"> vehicles have been stuck for over 7 days</p>
+                </div>
             </div>
-            <div class="stat-mini">
-                <div class="stat-mini-value" id="activeTasks">0</div>
-                <div class="stat-mini-label">Active Tasks</div>
+            <button onclick="viewStuckVehicles()" style="padding: 10px 20px; background: #dc2626; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                View Details
+            </button>
+        </div>
+
+        <!-- Pipeline Stages -->
+        <div class="pipeline-container">
+            <!-- Stage 1: Intake/Yard -->
+            <div class="pipeline-stage" style="--stage-color: #3b82f6;">
+                <div class="pipeline-header">
+                    <div>
+                        <div class="pipeline-title">
+                            <i class="fas fa-download"></i>
+                            Intake / Yard
+                        </div>
+                        <div class="pipeline-time">Avg: 2.3 days</div>
+                    </div>
+                    <span class="pipeline-count" id="countIntake">0</span>
+                </div>
+                <div class="pipeline-vehicles" id="intakeVehicles">
+                    <!-- Populated by JS -->
+                </div>
             </div>
-            <div class="stat-mini">
-                <div class="stat-mini-value" id="vehiclesToday">0</div>
-                <div class="stat-mini-label">Vehicles Today</div>
+
+            <!-- Stage 2: Workshop -->
+            <div class="pipeline-stage" style="--stage-color: #f59e0b;">
+                <div class="pipeline-header">
+                    <div>
+                        <div class="pipeline-title">
+                            <i class="fas fa-wrench"></i>
+                            Workshop
+                        </div>
+                        <div class="pipeline-time">Avg: 4.1 days</div>
+                    </div>
+                    <span class="pipeline-count" id="countWorkshop">0</span>
+                </div>
+                <div class="pipeline-vehicles" id="workshopVehicles">
+                    <!-- Populated by JS -->
+                </div>
             </div>
-            <div class="stat-mini">
-                <div class="stat-mini-value" id="completionRate">0%</div>
-                <div class="stat-mini-label">Completion</div>
+
+            <!-- Stage 3: Prep/Valeting -->
+            <div class="pipeline-stage" style="--stage-color: #8b5cf6;">
+                <div class="pipeline-header">
+                    <div>
+                        <div class="pipeline-title">
+                            <i class="fas fa-spray-can"></i>
+                            Prep / Valeting
+                        </div>
+                        <div class="pipeline-time">Avg: 1.8 days</div>
+                    </div>
+                    <span class="pipeline-count" id="countPrep">0</span>
+                </div>
+                <div class="pipeline-vehicles" id="prepVehicles">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Stage 4: Ready -->
+            <div class="pipeline-stage" style="--stage-color: #10b981;">
+                <div class="pipeline-header">
+                    <div>
+                        <div class="pipeline-title">
+                            <i class="fas fa-check-circle"></i>
+                            Ready
+                        </div>
+                        <div class="pipeline-time">Awaiting photos</div>
+                    </div>
+                    <span class="pipeline-count" id="countReady">0</span>
+                </div>
+                <div class="pipeline-vehicles" id="readyVehicles">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Stage 5: Advertised -->
+            <div class="pipeline-stage" style="--stage-color: #06b6d4;">
+                <div class="pipeline-header">
+                    <div>
+                        <div class="pipeline-title">
+                            <i class="fas fa-bullhorn"></i>
+                            Advertised
+                        </div>
+                        <div class="pipeline-time">Live on platforms</div>
+                    </div>
+                    <span class="pipeline-count" id="countAdvertised">0</span>
+                </div>
+                <div class="pipeline-vehicles" id="advertisedVehicles">
+                    <!-- Populated by JS -->
+                </div>
             </div>
         </div>
 
-        <!-- Main Operations Grid -->
-        <div class="ops-grid">
-            <!-- Sidebar -->
-            <div>
-                <!-- Departments -->
-                <div class="sidebar-card">
-                    <div class="sidebar-title">Departments</div>
-                    <div class="dept-list" id="departmentList">
-                        <!-- Injected by JS -->
+        <!-- Workshop Queue & Staff Workload -->
+        <div class="queue-section">
+            <div class="queue-card">
+                <div class="queue-header">
+                    <div class="queue-title">
+                        <i class="fas fa-wrench" style="color: #f59e0b;"></i>
+                        Workshop Jobs Queue
                     </div>
+                    <button style="padding: 6px 12px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; font-size: 12px; font-weight: 600; color: #3b82f6; cursor: pointer;">
+                        + Add Job
+                    </button>
                 </div>
-
-                <!-- Today's Schedule -->
-                <div class="sidebar-card">
-                    <div class="sidebar-title">My Schedule</div>
-                    <div class="timeline" id="todaySchedule">
-                        <!-- Injected by JS -->
-                    </div>
+                
+                <div id="workshopQueue">
+                    <!-- Populated by JS -->
                 </div>
             </div>
 
-            <!-- Main Content Area -->
-            <div>
-                <!-- Staff Overview -->
-                <div class="cy-card" style="margin-bottom: 24px;">
-                    <div class="cy-section-header">
-                        <div class="cy-section-title">
-                            <i class="fas fa-users" style="color: var(--cy-accent-blue);"></i>
-                            Staff Overview
-                        </div>
-                        <div class="cy-flex cy-gap-sm">
-                            <button class="cy-btn cy-btn-secondary cy-btn-sm" onclick="filterStaff('all')">All</button>
-                            <button class="cy-btn cy-btn-secondary cy-btn-sm" onclick="filterStaff('online')">Online</button>
-                            <button class="cy-btn cy-btn-secondary cy-btn-sm" onclick="filterStaff('busy')">Busy</button>
-                        </div>
-                    </div>
-                    <div class="staff-grid" id="staffGrid">
-                        <!-- Injected by JS -->
+            <div class="queue-card">
+                <div class="queue-header">
+                    <div class="queue-title">
+                        <i class="fas fa-users" style="color: #3b82f6;"></i>
+                        Staff Workload
                     </div>
                 </div>
+                
+                <div class="workload-grid" id="staffWorkload">
+                    <!-- Populated by JS -->
+                </div>
+                
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cy-border);">
+                    <div style="font-size: 12px; color: var(--cy-text-muted); margin-bottom: 8px;">Department Capacity</div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="flex: 1; height: 6px; background: var(--cy-bg-tertiary); border-radius: 3px; overflow: hidden;">
+                            <div style="width: 75%; height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); border-radius: 3px;"></div>
+                        </div>
+                        <span style="font-size: 12px; font-weight: 600; color: #3b82f6;">75%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <!-- Task Management -->
-                <div class="cy-card" style="margin-bottom: 24px;">
-                    <div class="cy-section-header">
-                        <div class="cy-section-title">
-                            <i class="fas fa-clipboard-check" style="color: var(--cy-accent-green);"></i>
-                            Priority Tasks
-                        </div>
-                        <button class="cy-btn cy-btn-primary cy-btn-sm" onclick="addTask()">
-                            <i class="fas fa-plus"></i> Add Task
-                        </button>
-                    </div>
-                    <div class="task-list" id="taskList">
-                        <!-- Injected by JS -->
-                    </div>
+        <!-- Ready to Advertise Section -->
+        <div class="ready-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div class="queue-title">
+                    <i class="fas fa-camera" style="color: #10b981;"></i>
+                    Ready for Photography / Advertising
                 </div>
-
-                <!-- Department Schedule -->
-                <div class="cy-card">
-                    <div class="cy-section-header">
-                        <div class="cy-section-title">
-                            <i class="fas fa-calendar-alt" style="color: var(--cy-accent-purple);"></i>
-                            Department Schedule
-                        </div>
-                        <div class="cy-flex cy-gap-sm">
-                            <button class="cy-btn cy-btn-secondary cy-btn-sm" onclick="changeScheduleView('day')">Day</button>
-                            <button class="cy-btn cy-btn-secondary cy-btn-sm" onclick="changeScheduleView('week')">Week</button>
-                        </div>
-                    </div>
-                    <div class="schedule-grid" id="scheduleGrid">
-                        <!-- Injected by JS -->
-                    </div>
+                <div style="display: flex; gap: 8px;">
+                    <button style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; font-size: 12px; color: var(--cy-text-secondary); cursor: pointer;">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <button style="padding: 6px 12px; background: #10b981; color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                        Schedule All
+                    </button>
                 </div>
+            </div>
+            
+            <div class="ready-grid" id="readyToAdGrid">
+                <!-- Populated by JS -->
             </div>
         </div>
 
     </main>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Vehicle Detail Modal -->
+    <div class="modal-overlay" id="vehicleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Vehicle Details</div>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="./js/capeye-core.js"></script>
     <script>
-        // Department data
-        const departments = [
-            { id: 'sales', name: 'Sales', icon: 'fa-handshake', color: '#3b82f6', count: 0 },
-            { id: 'workshop', name: 'Workshop', icon: 'fa-wrench', color: '#f59e0b', count: 0 },
-            { id: 'bodyshop', name: 'Bodyshop', icon: 'fa-spray-can', color: '#8b5cf6', count: 0 },
-            { id: 'valeting', name: 'Valeting', icon: 'fa-sparkles', color: '#10b981', count: 0 },
-            { id: 'accounts', name: 'Accounts', icon: 'fa-calculator', color: '#64748b', count: 0 },
-            { id: 'management', name: 'Management', icon: 'fa-user-tie', color: '#6366f1', count: 0 }
-        ];
+        let allVehicles = [];
+        let stuckVehicles = [];
+        
+        // Stage definitions
+        const stages = {
+            INTAKE: { name: 'Intake', color: '#3b82f6', icon: 'fa-download' },
+            WORKSHOP: { name: 'Workshop', color: '#f59e0b', icon: 'fa-wrench' },
+            PREP: { name: 'Prep', color: '#8b5cf6', icon: 'fa-spray-can' },
+            READY: { name: 'Ready', color: '#10b981', icon: 'fa-check-circle' },
+            ADVERTISED: { name: 'Advertised', color: '#06b6d4', icon: 'fa-bullhorn' }
+        };
 
-        // Staff data
-        const staffData = [
-            { name: 'Keith Hardy', role: 'General Manager', dept: 'management', status: 'online', initials: 'KH' },
-            { name: 'Ibrahim Ata', role: 'Sales Manager', dept: 'sales', status: 'online', initials: 'IA' },
-            { name: 'Ali Amood', role: 'Workshop Lead', dept: 'workshop', status: 'busy', initials: 'AA' },
-            { name: 'Morteza Rahamian', role: 'Technician', dept: 'workshop', status: 'online', initials: 'MR' },
-            { name: 'Marcin Kiljan', role: 'Technician', dept: 'workshop', status: 'busy', initials: 'MK' },
-            { name: 'Sia Vajihi', role: 'Technician', dept: 'workshop', status: 'offline', initials: 'SV' },
-            { name: 'Iman Zarien', role: 'Technician', dept: 'workshop', status: 'online', initials: 'IZ' },
-            { name: 'Stash', role: 'Bodyshop', dept: 'bodyshop', status: 'online', initials: 'ST' }
-        ];
-
-        // Tasks data
-        let tasks = [
-            { id: 1, title: 'Complete PDI on Ford Transit', priority: 'high', dept: 'workshop', completed: false, time: '2 hours' },
-            { id: 2, title: 'Review pricing for Q2', priority: 'medium', dept: 'management', completed: false, time: 'Today' },
-            { id: 3, title: 'Customer handover - Mr. Smith', priority: 'high', dept: 'sales', completed: true, time: '10:00 AM' },
-            { id: 4, title: 'Valeting - 3 vehicles', priority: 'low', dept: 'valeting', completed: false, time: 'This afternoon' }
-        ];
-
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            loadDepartmentStats();
-            loadStaff();
-            loadTasks();
-            loadSchedule();
-            updateQuickStats();
+            loadData();
+            renderAll();
+            setInterval(refreshOperations, 30000); // Auto-refresh every 30s
         });
 
-        function loadDepartmentStats() {
-            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+        function loadData() {
+            // Load from localStorage or generate sample data
+            allVehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
             
-            // Count vehicles per department based on workflow stage
-            departments.forEach(dept => {
-                dept.count = vehicles.filter(v => {
-                    const stage = v.workflowStage || 1;
-                    if (dept.id === 'sales' && [1, 9, 10].includes(stage)) return true;
-                    if (dept.id === 'workshop' && [5, 6, 8].includes(stage)) return true;
-                    if (dept.id === 'bodyshop' && [2, 3].includes(stage)) return true;
-                    if (dept.id === 'valeting' && stage === 7) return true;
-                    if (dept.id === 'accounts' && [4, 11].includes(stage)) return true;
-                    if (dept.id === 'management' && stage === 12) return true;
-                    return false;
-                }).length;
+            if (allVehicles.length === 0) {
+                allVehicles = generateSampleOperationsData();
+                localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
+            }
+            
+            // Identify stuck vehicles (>7 days in current stage)
+            stuckVehicles = allVehicles.filter(v => {
+                const daysInStage = calculateDaysInStage(v);
+                return daysInStage > 7 && v.stage !== 'ADVERTISED';
             });
-
-            const container = document.getElementById('departmentList');
-            container.innerHTML = departments.map(dept => `
-                <div class="dept-item" onclick="filterByDept('${dept.id}')">
-                    <div class="dept-icon" style="background: ${dept.color}20; color: ${dept.color};">
-                        <i class="fas ${dept.icon}"></i>
-                    </div>
-                    <div class="dept-info">
-                        <div class="dept-name">${dept.name}</div>
-                        <div class="dept-count">${dept.count} vehicles</div>
-                    </div>
-                    <i class="fas fa-chevron-right" style="color: var(--cy-text-muted); font-size: 12px;"></i>
-                </div>
-            `).join('');
-        }
-
-        function loadStaff(filter = 'all') {
-            let filtered = staffData;
-            if (filter === 'online') filtered = staffData.filter(s => s.status === 'online');
-            if (filter === 'busy') filtered = staffData.filter(s => s.status === 'busy');
-
-            const container = document.getElementById('staffGrid');
-            container.innerHTML = filtered.map(staff => `
-                <div class="staff-card">
-                    <div class="staff-avatar">${staff.initials}</div>
-                    <div class="staff-info">
-                        <div class="staff-name">${staff.name}</div>
-                        <div class="staff-role">${staff.role}</div>
-                    </div>
-                    <div class="staff-status ${staff.status}" title="${staff.status}"></div>
-                </div>
-            `).join('');
-        }
-
-        function filterStaff(type) {
-            loadStaff(type);
-        }
-
-        function loadTasks() {
-            const container = document.getElementById('taskList');
-            container.innerHTML = tasks.map(task => `
-                <div class="task-item">
-                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})">
-                        ${task.completed ? '<i class="fas fa-check" style="color: white; font-size: 12px;"></i>' : ''}
-                    </div>
-                    <div class="task-content">
-                        <div class="task-title ${task.completed ? 'completed' : ''}">${task.title}</div>
-                        <div class="task-meta">
-                            <span class="priority-${task.priority}">${task.priority}</span> • 
-                            ${task.dept} • 
-                            ${task.time}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function toggleTask(id) {
-            const task = tasks.find(t => t.id === id);
-            if (task) {
-                task.completed = !task.completed;
-                loadTasks();
-                updateQuickStats();
-            }
-        }
-
-        function addTask() {
-            const title = prompt('Enter task title:');
-            if (title) {
-                tasks.push({
-                    id: tasks.length + 1,
-                    title: title,
-                    priority: 'medium',
-                    dept: 'general',
-                    completed: false,
-                    time: 'Now'
-                });
-                loadTasks();
-                updateQuickStats();
-            }
-        }
-
-        function loadSchedule() {
-            const schedule = [
-                { time: '09:00', events: [{ title: 'Morning Briefing', dept: 'All', duration: '30 min' }] },
-                { time: '10:00', events: [{ title: 'PDI Check - Ford Transit', dept: 'Workshop', duration: '1 hour' }] },
-                { time: '11:30', events: [{ title: 'Customer Handover', dept: 'Sales', duration: '45 min' }] },
-                { time: '13:00', events: [{ title: 'Lunch Break', dept: 'All', duration: '1 hour' }] },
-                { time: '14:00', events: [{ title: 'Valeting - 3 vehicles', dept: 'Valeting', duration: '2 hours' }] },
-                { time: '16:00', events: [{ title: 'Management Review', dept: 'Management', duration: '1 hour' }] }
-            ];
-
-            const container = document.getElementById('scheduleGrid');
-            container.innerHTML = schedule.map(slot => `
-                <div class="time-slot">${slot.time}</div>
-                <div class="slot-events">
-                    ${slot.events.map(event => `
-                        <div class="event-card">
-                            <div class="event-title">${event.title}</div>
-                            <div class="event-meta">${event.dept} • ${event.duration}</div>
-                        </div>
-                    `).join('')}
-                </div>
-            `).join('');
-        }
-
-        function updateQuickStats() {
-            const online = staffData.filter(s => s.status === 'online').length;
-            const active = tasks.filter(t => !t.completed).length;
-            const completed = tasks.filter(t => t.completed).length;
-            const rate = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
-
-            document.getElementById('staffOnline').textContent = online;
-            document.getElementById('activeTasks').textContent = active;
-            document.getElementById('vehiclesToday').textContent = '12'; // Mock data
-            document.getElementById('completionRate').textContent = rate + '%';
-        }
-
-        function filterByDept(deptId) {
-            // Highlight selected department
-            document.querySelectorAll('.dept-item').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
             
-            // Filter staff and tasks by department
-            const deptName = departments.find(d => d.id === deptId)?.name;
-            Capeye.notify(`Filtered by ${deptName}`, 'info');
+            // Show alert if stuck vehicles exist
+            if (stuckVehicles.length > 0) {
+                document.getElementById('alertBanner').style.display = 'flex';
+                document.getElementById('alertMessage').textContent = 
+                    `${stuckVehicles.length} vehicle${stuckVehicles.length > 1 ? 's have' : ' has'} been stuck for over 7 days`;
+            }
         }
 
-        function changeScheduleView(view) {
-            Capeye.notify(`Switched to ${view} view`, 'info');
+        function generateSampleOperationsData() {
+            const makes = ['Ford', 'VW', 'Mercedes', 'Peugeot', 'Renault', 'Vauxhall'];
+            const models = ['Transit', 'Crafter', 'Sprinter', 'Boxer', 'Master', 'Movano'];
+            const staff = ['Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan', 'Sia Vajihi', 'Iman Zarien', 'Stash'];
+            
+            const vehicles = [];
+            const now = new Date();
+            
+            for (let i = 0; i < 45; i++) {
+                const stageKeys = Object.keys(stages);
+                const stage = stageKeys[Math.floor(Math.random() * stageKeys.length)];
+                const daysInStage = Math.floor(Math.random() * 12);
+                
+                vehicles.push({
+                    stockNo: `R${String(1000 + i).padStart(4, '0')}`,
+                    registration: `${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${Math.floor(Math.random() * 90 + 10)} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
+                    make: makes[Math.floor(Math.random() * makes.length)],
+                    model: models[Math.floor(Math.random() * models.length)],
+                    stage: stage,
+                    stageEntered: new Date(now.getTime() - daysInStage * 24 * 60 * 60 * 1000).toISOString(),
+                    assignedTo: staff[Math.floor(Math.random() * staff.length)],
+                    location: ['Stanmore Retail', 'Stanmore 2', 'Stanmore PDI'][Math.floor(Math.random() * 3)],
+                    status: daysInStage > 7 ? 'STUCK' : 'NORMAL',
+                    jobs: stage === 'WORKSHOP' ? generateJobs() : [],
+                    history: generateHistory(stage, daysInStage)
+                });
+            }
+            
+            return vehicles;
         }
 
-        // Refresh function for auto-refresh
-        window.refreshData = function() {
-            loadDepartmentStats();
-            updateQuickStats();
-        };
+        function generateJobs() {
+            const jobTypes = ['Mechanical Repair', 'Bodywork', 'Diagnostics', 'Service', 'MOT Prep'];
+            return [{
+                type: jobTypes[Math.floor(Math.random() * jobTypes.length)],
+                description: 'Replace brake pads, check suspension',
+                estimatedHours: Math.floor(Math.random() * 4 + 1),
+                started: new Date().toISOString()
+            }];
+        }
+
+        function generateHistory(currentStage, daysInStage) {
+            const history = [];
+            const stages = ['INTAKE', 'WORKSHOP', 'PREP', 'READY', 'ADVERTISED'];
+            const currentIndex = stages.indexOf(currentStage);
+            
+            for (let i = 0; i <= currentIndex; i++) {
+                history.push({
+                    stage: stages[i],
+                    date: new Date(Date.now() - (daysInStage + (currentIndex - i) * 2) * 24 * 60 * 60 * 1000).toISOString(),
+                    person: ['Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan'][Math.floor(Math.random() * 3)],
+                    action: i === currentIndex ? 'Current stage' : 'Completed'
+                });
+            }
+            
+            return history;
+        }
+
+        function calculateDaysInStage(vehicle) {
+            const entered = new Date(vehicle.stageEntered);
+            const now = new Date();
+            return Math.floor((now - entered) / (1000 * 60 * 60 * 24));
+        }
+
+        function renderAll() {
+            renderPipeline();
+            renderWorkshopQueue();
+            renderStaffWorkload();
+            renderReadyToAd();
+            updateHeaderStats();
+        }
+
+        function renderPipeline() {
+            const stageContainers = {
+                INTAKE: document.getElementById('intakeVehicles'),
+                WORKSHOP: document.getElementById('workshopVehicles'),
+                PREP: document.getElementById('prepVehicles'),
+                READY: document.getElementById('readyVehicles'),
+                ADVERTISED: document.getElementById('advertisedVehicles')
+            };
+            
+            const stageCounts = {
+                INTAKE: 0, WORKSHOP: 0, PREP: 0, READY: 0, ADVERTISED: 0
+            };
+            
+            // Clear containers
+            Object.values(stageContainers).forEach(el => el.innerHTML = '');
+            
+            // Sort vehicles by days in stage (oldest first)
+            allVehicles.sort((a, b) => calculateDaysInStage(b) - calculateDaysInStage(a));
+            
+            allVehicles.forEach(vehicle => {
+                const days = calculateDaysInStage(vehicle);
+                const isStuck = days > 7;
+                const isWarning = days > 5;
+                
+                stageCounts[vehicle.stage]++;
+                
+                const card = document.createElement('div');
+                card.className = `vehicle-card ${isStuck ? 'alert' : ''} ${isWarning ? 'warning' : ''}`;
+                card.onclick = () => openVehicleModal(vehicle);
+                
+                card.innerHTML = `
+                    <div class="vehicle-reg">${vehicle.registration}</div>
+                    <div class="vehicle-info">${vehicle.make} ${vehicle.model}</div>
+                    <div class="vehicle-meta">
+                        <span class="vehicle-days ${isStuck ? 'danger' : isWarning ? 'warning' : 'normal'}">
+                            ${days}d
+                        </span>
+                        <div class="vehicle-assignee">
+                            <i class="fas fa-user-circle"></i>
+                            <span>${vehicle.assignedTo?.split(' ')[0] || 'Unassigned'}</span>
+                        </div>
+                    </div>
+                `;
+                
+                if (stageContainers[vehicle.stage]) {
+                    stageContainers[vehicle.stage].appendChild(card);
+                }
+            });
+            
+            // Update counts
+            Object.keys(stageCounts).forEach(stage => {
+                const el = document.getElementById(`count${stage.charAt(0) + stage.slice(1).toLowerCase()}`);
+                if (el) el.textContent = stageCounts[stage];
+            });
+        }
+
+        function renderWorkshopQueue() {
+            const workshopVehicles = allVehicles.filter(v => v.stage === 'WORKSHOP');
+            const container = document.getElementById('workshopQueue');
+            
+            if (workshopVehicles.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--cy-text-muted);">No active workshop jobs</div>';
+                return;
+            }
+            
+            container.innerHTML = workshopVehicles.map(v => {
+                const days = calculateDaysInStage(v);
+                const isUrgent = days > 7;
+                const job = v.jobs?.[0] || { type: 'General Repair', description: 'Awaiting assessment' };
+                
+                return `
+                    <div class="job-row ${isUrgent ? 'urgent' : ''}">
+                        <div class="job-vehicle">
+                            <div class="job-reg">${v.registration}</div>
+                            <div class="job-desc">${job.type} - ${job.description}</div>
+                        </div>
+                        <div class="job-mechanic">
+                            <div class="mechanic-avatar">${v.assignedTo?.charAt(0) || '?'}</div>
+                            <span class="mechanic-name">${v.assignedTo || 'Unassigned'}</span>
+                        </div>
+                        <div class="job-time">
+                            <div class="time-elapsed ${isUrgent ? 'text-red-500' : ''}">${days}d</div>
+                            <div class="time-label">in stage</div>
+                        </div>
+                        <div class="job-actions">
+                            <button class="job-btn" onclick="event.stopPropagation(); advanceVehicle('${v.stockNo}')" title="Complete & Move">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="job-btn" onclick="event.stopPropagation(); openVehicleModalById('${v.stockNo}')" title="Details">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderStaffWorkload() {
+            const staff = ['Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan', 'Sia Vajihi', 'Iman Zarien', 'Stash'];
+            const container = document.getElementById('staffWorkload');
+            
+            container.innerHTML = staff.map(person => {
+                const count = allVehicles.filter(v => v.assignedTo === person).length;
+                return `
+                    <div class="workload-item">
+                        <div class="workload-name">${person.split(' ')[0]}</div>
+                        <div class="workload-count">${count}</div>
+                        <div class="workload-label">vehicles</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderReadyToAd() {
+            const readyVehicles = allVehicles.filter(v => v.stage === 'READY');
+            const container = document.getElementById('readyToAdGrid');
+            
+            if (readyVehicles.length === 0) {
+                container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--cy-text-muted);">No vehicles ready for advertising</div>';
+                return;
+            }
+            
+            container.innerHTML = readyVehicles.map(v => `
+                <div class="ready-card" onclick="openVehicleModal(${JSON.stringify(v).replace(/"/g, '&quot;')})">
+                    <div class="ready-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="ready-info">
+                        <div class="ready-reg">${v.registration}</div>
+                        <div class="ready-status">${v.make} ${v.model}</div>
+                    </div>
+                    <button class="ready-action" onclick="event.stopPropagation(); advertiseVehicle('${v.stockNo}')">
+                        Advertise
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateHeaderStats() {
+            const active = allVehicles.filter(v => v.stage !== 'ADVERTISED' && v.stage !== 'SOLD').length;
+            const workshop = allVehicles.filter(v => v.stage === 'WORKSHOP').length;
+            const ready = allVehicles.filter(v => v.stage === 'READY').length;
+            
+            animateValue('totalActiveVehicles', active, '');
+            animateValue('workshopLoad', workshop, '');
+            animateValue('readyToAdvertise', ready, '');
+        }
+
+        function animateValue(id, value, prefix) {
+            const el = document.getElementById(id);
+            const current = parseInt(el.textContent) || 0;
+            const diff = value - current;
+            if (diff === 0) return;
+            
+            const steps = 20;
+            const increment = diff / steps;
+            let step = 0;
+            
+            const timer = setInterval(() => {
+                step++;
+                const newVal = Math.round(current + (increment * step));
+                el.textContent = prefix + newVal;
+                if (step >= steps) clearInterval(timer);
+            }, 30);
+        }
+
+        function openVehicleModal(vehicle) {
+            document.getElementById('modalTitle').textContent = `${vehicle.registration} - ${vehicle.make} ${vehicle.model}`;
+            
+            const days = calculateDaysInStage(vehicle);
+            const stageInfo = stages[vehicle.stage];
+            
+            let historyHtml = '';
+            if (vehicle.history) {
+                historyHtml = vehicle.history.map(h => `
+                    <div class="timeline-item" style="--stage-color: ${stages[h.stage]?.color || '#3b82f6'}">
+                        <div class="timeline-date">${new Date(h.date).toLocaleDateString('en-GB')}</div>
+                        <div class="timeline-action">${stages[h.stage]?.name || h.stage}</div>
+                        <div class="timeline-person">by ${h.person}</div>
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('modalContent').innerHTML = `
+                <div style="display: grid; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                        <div style="background: var(--cy-bg-tertiary); padding: 16px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Current Stage</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; color: ${stageInfo.color};">
+                                ${stageInfo.name}
+                            </div>
+                        </div>
+                        <div style="background: var(--cy-bg-tertiary); padding: 16px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Days in Stage</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; color: ${days > 7 ? '#dc2626' : days > 5 ? '#f59e0b' : '#10b981'};">
+                                ${days} days
+                            </div>
+                        </div>
+                        <div style="background: var(--cy-bg-tertiary); padding: 16px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 11px; color: var(--cy-text-muted); margin-bottom: 4px;">Assigned To</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; color: var(--cy-text-primary);">
+                                ${vehicle.assignedTo?.split(' ')[0] || 'Unassigned'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="font-size: 12px; font-weight: 600; color: var(--cy-text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Stage History</div>
+                        <div class="timeline">
+                            ${historyHtml || '<div style="color: var(--cy-text-muted); font-size: 13px;">No history available</div>'}
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; padding-top: 16px; border-top: 1px solid var(--cy-border);">
+                        ${vehicle.stage !== 'ADVERTISED' ? `
+                            <button onclick="advanceVehicle('${vehicle.stockNo}'); closeModal();" style="flex: 1; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                <i class="fas fa-arrow-right"></i> Advance to Next Stage
+                            </button>
+                        ` : ''}
+                        <button onclick="reassignVehicle('${vehicle.stockNo}'); closeModal();" style="padding: 12px 20px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); color: var(--cy-text-primary); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            Reassign
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('vehicleModal').classList.add('active');
+        }
+
+        function openVehicleModalById(stockNo) {
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (vehicle) openVehicleModal(vehicle);
+        }
+
+        function closeModal() {
+            document.getElementById('vehicleModal').classList.remove('active');
+        }
+
+        function advanceVehicle(stockNo) {
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (!vehicle) return;
+            
+            const stageOrder = ['INTAKE', 'WORKSHOP', 'PREP', 'READY', 'ADVERTISED'];
+            const currentIndex = stageOrder.indexOf(vehicle.stage);
+            
+            if (currentIndex < stageOrder.length - 1) {
+                vehicle.stage = stageOrder[currentIndex + 1];
+                vehicle.stageEntered = new Date().toISOString();
+                vehicle.history.push({
+                    stage: vehicle.stage,
+                    date: new Date().toISOString(),
+                    person: 'Current User',
+                    action: 'Advanced'
+                });
+                
+                localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
+                renderAll();
+            }
+        }
+
+        function advertiseVehicle(stockNo) {
+            advanceVehicle(stockNo);
+            alert('Vehicle scheduled for advertising!');
+        }
+
+        function reassignVehicle(stockNo) {
+            const staff = ['Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan', 'Sia Vajihi', 'Iman Zarien', 'Stash'];
+            const newAssignee = staff[Math.floor(Math.random() * staff.length)];
+            
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (vehicle) {
+                vehicle.assignedTo = newAssignee;
+                localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
+                renderAll();
+            }
+        }
+
+        function viewStuckVehicles() {
+            // Filter to show only stuck vehicles
+            alert(`${stuckVehicles.length} vehicles stuck:\n${stuckVehicles.map(v => v.registration).join(', ')}`);
+        }
+
+        function refreshOperations() {
+            loadData();
+            renderAll();
+            
+            // Visual feedback
+            const btn = document.querySelector('button[onclick="refreshOperations()"] i');
+            btn.style.animation = 'spin 1s linear';
+            setTimeout(() => btn.style.animation = '', 1000);
+        }
+
+        function logout() {
+            localStorage.removeItem('capeye_session');
+            window.location.href = './login.html';
+        }
+
+        // Close modal on outside click
+        document.getElementById('vehicleModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
     </script>
 </body>
 </html>
