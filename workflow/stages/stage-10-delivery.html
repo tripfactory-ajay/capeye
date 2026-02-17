@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 10: Customer Delivery - Capeye Workflow</title>
+    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
+    <script src="../../data/staff/staff-list.js"></script>
+    <script src="../../js/workflow/workflow-engine.js"></script>
+    <script src="../../js/workflow/form-components.js"></script>
+</head>
+<body>
+    <div class="workflow-container">
+        <div id="stage-nav-container"></div>
+        <main class="main-content">
+            <div id="header-container"></div>
+            <div class="stage-container">
+                <div class="stage-header">
+                    <h1 class="stage-title"><span style="font-size: 2rem;">🚗</span> Stage 10: Customer Delivery</h1>
+                    <p class="stage-description">Complete customer handover, final checks, and delivery documentation.</p>
+                </div>
+                
+                <div id="vehicle-info-display" class="vehicle-info-card">
+                    <div class="vehicle-info-header">
+                        <div class="vehicle-info-title">Vehicle Details</div>
+                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+                    </div>
+                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                </div>
+                
+                <form id="stage-10-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="salesperson">Salesperson <span class="required">*</span></label>
+                            <select id="salesperson" name="salesperson" class="form-select" required>
+                                <option value="">Select...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="delivery-date">Delivery Date</label>
+                            <input type="date" id="delivery-date" name="deliveryDate" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Customer Details</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="customer-name">Customer Name <span class="required">*</span></label>
+                            <input type="text" id="customer-name" name="customerName" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="customer-phone">Phone Number</label>
+                            <input type="tel" id="customer-phone" name="customerPhone" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="customer-email">Email Address</label>
+                        <input type="email" id="customer-email" name="customerEmail" class="form-input">
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Handover Checklist</h3>
+                    
+                    <div class="checkbox-grid cols-2">
+                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="v5-present"><span>V5C Handed Over</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="mot-present"><span>MOT Certificate</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="service-history"><span>Service History</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="spare-key"><span>Spare Key</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="handbook"><span>Handbook</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="fuel"><span>Fuel Provided</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="vehicle-clean"><span>Vehicle Clean</span></label>
+                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="features-explained"><span>Features Explained</span></label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="warranty-given">Warranty Given</label>
+                        <select id="warranty-given" name="warrantyGiven" class="form-select">
+                            <option value="3-month">3 Month</option>
+                            <option value="6-month">6 Month</option>
+                            <option value="12-month">12 Month</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Handover Photos</label>
+                        <div id="handover-photos-container"></div>
+                        <input type="hidden" id="handover-photos" name="handoverPhotos">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="delivery-notes">Delivery Notes</label>
+                        <textarea id="delivery-notes" name="deliveryNotes" class="form-textarea" rows="3" placeholder="Customer feedback, special instructions..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Customer Signature <span class="required">*</span></label>
+                        <div id="customer-sig-container"></div>
+                        <input type="hidden" id="customer-signature" name="customerSignature" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Salesperson Signature <span class="required">*</span></label>
+                        <div id="sales-sig-container"></div>
+                        <input type="hidden" id="sales-signature" name="salesSignature" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <a href="stage-9-advertising.html" class="btn btn-secondary">← Back</a>
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete Delivery →</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentVehicle = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            WorkflowEngine.setStage(10);
+            loadComponents();
+            populateSales();
+            initPhotos();
+            initSignatures();
+            loadVehicle();
+            loadSavedData();
+            document.getElementById('delivery-date').valueAsDate = new Date();
+        });
+        
+        function loadComponents() {
+            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
+            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+        }
+        
+        function populateSales() {
+            const select = document.getElementById('salesperson');
+            if (STAFF_DATA) {
+                STAFF_DATA.getStaffByDept('sales').forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = s.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+        
+        function initPhotos() {
+            document.getElementById('handover-photos-container').appendChild(
+                FormComponents.createPhotoUpload({ id: 'handover-photos', label: 'Handover Photos', maxPhotos: 6 })
+            );
+        }
+        
+        function initSignatures() {
+            document.getElementById('customer-sig-container').appendChild(
+                FormComponents.createSignaturePad({ id: 'customer-signature', label: '', required: true })
+            );
+            document.getElementById('sales-sig-container').appendChild(
+                FormComponents.createSignaturePad({ id: 'sales-signature', label: '', required: true })
+            );
+        }
+        
+        function loadVehicle() {
+            currentVehicle = WorkflowEngine.getVehicle();
+            if (!currentVehicle) {
+                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
+                return;
+            }
+            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
+            document.getElementById('vehicle-details-content').innerHTML = `
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
+                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
+            `;
+        }
+        
+        function getFormData() {
+            const form = document.getElementById('stage-10-form');
+            const fd = new FormData(form);
+            return {
+                salesperson: fd.get('salesperson'),
+                deliveryDate: fd.get('deliveryDate'),
+                customerName: fd.get('customerName'),
+                customerPhone: fd.get('customerPhone'),
+                customerEmail: fd.get('customerEmail'),
+                handover: fd.getAll('handover[]'),
+                warrantyGiven: fd.get('warrantyGiven'),
+                handoverPhotos: document.getElementById('handover-photos').value,
+                deliveryNotes: fd.get('deliveryNotes'),
+                customerSignature: document.getElementById('customer-signature').value,
+                salesSignature: document.getElementById('sales-signature').value
+            };
+        }
+        
+        function loadSavedData() {
+            if (!currentVehicle) return;
+            const saved = WorkflowEngine.loadStageData(10, currentVehicle.stockNo);
+            if (saved?.data) {
+                const d = saved.data;
+                if (d.salesperson) document.getElementById('salesperson').value = d.salesperson;
+                if (d.customerName) document.getElementById('customer-name').value = d.customerName;
+                if (d.customerPhone) document.getElementById('customer-phone').value = d.customerPhone;
+                if (d.customerEmail) document.getElementById('customer-email').value = d.customerEmail;
+                if (d.warrantyGiven) document.getElementById('warranty-given').value = d.warrantyGiven;
+                if (d.deliveryNotes) document.getElementById('delivery-notes').value = d.deliveryNotes;
+                if (d.handover) d.handover.forEach(v => { const cb = document.querySelector(`input[value="${v}"]`); if (cb) cb.checked = true; });
+            }
+        }
+        
+        function saveDraft() {
+            if (!currentVehicle) return;
+            WorkflowEngine.saveStageData(10, getFormData());
+            showAlert('Draft saved', 'success');
+        }
+        
+        function completeStage() {
+            if (!currentVehicle) return;
+            const data = getFormData();
+            if (!data.customerSignature || !data.salesSignature) { showAlert('Both signatures required', 'danger'); return; }
+            WorkflowEngine.completeStage(10, data);
+            showAlert('Delivery completed!', 'success');
+            setTimeout(() => window.location.href = 'stage-11-accounts.html', 1500);
+        }
+        
+        function showAlert(msg, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${msg}</span>`;
+            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
+    </script>
+</body>
+</html>
