@@ -1,0 +1,38 @@
+<!-- Capeye Workflow Header Component -->
+<header class="workflow-header">
+    <div class="workflow-header-left">
+        <div class="logo">
+            <img src="../../../autocapital-logo.png" alt="Auto Capital" height="40" onerror="this.style.display='none'">
+            <span style="font-size: 1.5rem; font-weight: 700; color: #2563eb;">CAPEYE</span>
+        </div>
+        <div class="workflow-meta">
+            <span id="current-date"></span>
+            <span id="current-user">👤 <span class="user-name">Loading...</span></span>
+        </div>
+    </div>
+    <div class="workflow-actions">
+        <button class="btn btn-secondary" onclick="WorkflowEngine.autoSave()">
+            💾 Save Draft
+        </button>
+        <button class="btn btn-secondary" onclick="window.print()">
+            🖨️ Print
+        </button>
+        <a href="../../../index.html" class="btn btn-secondary">
+            ← Back to Dashboard
+        </a>
+    </div>
+</header>
+
+<script>
+    // Set current date
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-GB', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    // Set current user
+    const user = localStorage.getItem('capeye_user') || 'Unknown User';
+    document.querySelector('.user-name').textContent = user;
+</script>
