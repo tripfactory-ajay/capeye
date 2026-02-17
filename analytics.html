@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics | Capeye Auto Capital</title>
+    <title>Management Intelligence | Capeye Auto Capital</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,79 +23,18 @@
     <link rel="stylesheet" href="./css/capeye-system.css">
     
     <style>
-        /* Fixed Analytics Styles */
+        /* Intelligence Page Specific Styles */
         :root {
-            --kpi-height: 180px;
-            --chart-lg: 400px;
-            --chart-md: 350px;
-            --chart-sm: 300px;
+            --kpi-height: 160px;
+            --chart-lg: 380px;
+            --chart-md: 320px;
         }
         
-        /* Header Fix - Match Other Pages Exactly */
-        .cy-header {
-            background: rgba(18, 18, 26, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--cy-border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .cy-header-content {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 0 24px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        /* Analytics Specific Header */
-        .analytics-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--cy-border);
-        }
-        
-        .header-main {
-            flex: 1;
-        }
-        
-        .header-stats {
-            display: flex;
-            gap: 32px;
-            align-items: flex-end;
-        }
-        
-        .header-stat {
-            text-align: right;
-        }
-        
-        .header-stat-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--cy-text-primary);
-            line-height: 1;
-        }
-        
-        .header-stat-label {
-            font-size: 11px;
-            color: var(--cy-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 4px;
-        }
-        
-        /* Filter Bar - Matching Dashboard */
+        /* Filter Bar */
         .filter-bar {
             display: flex;
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             padding: 16px;
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
@@ -135,11 +74,6 @@
         .filter-input:focus {
             outline: none;
             border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .filter-input::placeholder {
-            color: var(--cy-text-muted);
         }
         
         .filter-select {
@@ -169,7 +103,6 @@
         
         .filter-btn:hover {
             background: #2563eb;
-            transform: translateY(-1px);
         }
         
         .filter-btn-secondary {
@@ -180,41 +113,56 @@
         
         .filter-btn-secondary:hover {
             background: var(--cy-bg-secondary);
-            border-color: var(--cy-border-hover);
             color: var(--cy-text-primary);
         }
         
-        .filter-actions {
+        /* Role Toggle */
+        .role-toggle {
             display: flex;
             gap: 8px;
-            margin-left: auto;
+            padding: 4px;
+            background: var(--cy-bg-tertiary);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            width: fit-content;
         }
         
-        /* KPI Section - Uniform 4-Column Grid */
+        .role-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--cy-text-muted);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .role-btn.active {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        /* KPI Cards */
         .kpi-section {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 24px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
         
         .kpi-card {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 16px;
             height: var(--kpi-height);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .kpi-card:hover {
-            border-color: var(--cy-border-hover);
-            transform: translateY(-2px);
         }
         
         .kpi-card::before {
@@ -225,12 +173,6 @@
             right: 0;
             height: 3px;
             background: var(--kpi-color);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .kpi-card:hover::before {
-            opacity: 1;
         }
         
         .kpi-top {
@@ -240,7 +182,7 @@
         }
         
         .kpi-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--cy-text-muted);
             font-weight: 600;
             text-transform: uppercase;
@@ -248,333 +190,384 @@
         }
         
         .kpi-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             background: var(--kpi-color-soft);
             color: var(--kpi-color);
-            flex-shrink: 0;
-        }
-        
-        .kpi-bottom {
-            margin-top: auto;
         }
         
         .kpi-value {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 36px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--cy-text-primary);
             line-height: 1;
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            margin-bottom: 4px;
         }
         
         .kpi-change {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 13px;
+            gap: 4px;
+            font-size: 12px;
             font-weight: 600;
         }
         
-        .kpi-change.positive {
-            color: var(--cy-accent-green);
-        }
+        .kpi-change.positive { color: #10b981; }
+        .kpi-change.negative { color: #dc2626; }
         
-        .kpi-change.negative {
-            color: var(--cy-accent-red);
-        }
-        
-        /* Charts Grid - Consistent Sizing */
-        .charts-grid {
-            display: grid;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .charts-row-2 {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .charts-row-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .chart-card {
+        /* Exception Report */
+        .exception-card {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
-            border-radius: 16px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
         }
         
-        .chart-card.large {
-            height: var(--chart-lg);
-        }
-        
-        .chart-card.medium {
-            height: var(--chart-md);
-        }
-        
-        .chart-card.small {
-            height: var(--chart-sm);
-        }
-        
-        .chart-header {
+        .exception-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-            flex-shrink: 0;
+            align-items: center;
+            margin-bottom: 12px;
         }
         
-        .chart-title-group {
+        .exception-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--cy-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .exception-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        
+        .exception-badge.critical {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+        
+        .exception-badge.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+        
+        .exception-list {
             display: flex;
             flex-direction: column;
-            gap: 4px;
-        }
-        
-        .chart-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--cy-text-primary);
-        }
-        
-        .chart-subtitle {
-            font-size: 13px;
-            color: var(--cy-text-muted);
-        }
-        
-        .chart-actions {
-            display: flex;
             gap: 8px;
         }
         
-        .chart-action {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+        .exception-item {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 12px;
+            padding: 10px;
             background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            color: var(--cy-text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
+            border-radius: 8px;
+            border-left: 3px solid transparent;
         }
         
-        .chart-action:hover {
-            border-color: var(--cy-border-hover);
-            color: var(--cy-text-primary);
+        .exception-item.critical {
+            border-left-color: #dc2626;
+            background: rgba(220, 38, 38, 0.05);
         }
         
-        .chart-container {
+        .exception-item.warning {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
+        }
+        
+        .exception-vehicle {
             flex: 1;
-            position: relative;
-            min-height: 0;
         }
         
-        .chart-legend {
-            display: flex;
-            gap: 20px;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--cy-border);
-            flex-shrink: 0;
+        .exception-reg {
+            font-weight: 700;
+            color: var(--cy-text-primary);
+            font-size: 13px;
         }
         
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
+        .exception-issue {
+            font-size: 11px;
             color: var(--cy-text-secondary);
         }
         
-        .legend-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+        .exception-time {
+            font-family: 'Space Grotesk';
+            font-size: 14px;
+            font-weight: 700;
+            color: #dc2626;
         }
         
-        /* Insight Cards - Fixed Height */
-        .insight-section {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        
-        .insight-card {
+        /* Staff Performance */
+        .performance-card {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
-            border-radius: 16px;
-            padding: 20px;
-            height: 160px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+            border-radius: 12px;
             overflow: hidden;
         }
         
-        .insight-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+        .performance-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--cy-border);
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-bottom: 12px;
-            background: var(--insight-bg);
-            color: var(--insight-color);
         }
         
-        .insight-title {
-            font-size: 13px;
-            color: var(--cy-text-muted);
-            margin-bottom: 4px;
-        }
-        
-        .insight-value {
+        .performance-title {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 28px;
+            font-size: 14px;
             font-weight: 700;
-            color: var(--insight-color);
-            margin-bottom: 4px;
+            color: var(--cy-text-primary);
         }
         
-        .insight-desc {
-            font-size: 12px;
-            color: var(--cy-text-secondary);
-            line-height: 1.4;
-        }
-        
-        /* Data Section */
-        .data-section {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-        
-        .data-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: 16px;
-            padding: 24px;
-        }
-        
-        .data-table-premium {
+        .performance-table {
             width: 100%;
         }
         
-        .data-table-premium th {
+        .performance-table th {
             text-align: left;
-            padding: 12px;
+            padding: 12px 16px;
             font-size: 11px;
             font-weight: 700;
             color: var(--cy-text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 1px solid var(--cy-border);
+            background: var(--cy-bg-tertiary);
         }
         
-        .data-table-premium td {
-            padding: 14px 12px;
+        .performance-table td {
+            padding: 14px 16px;
             border-bottom: 1px solid var(--cy-border);
             font-size: 13px;
         }
         
-        /* Date Range in Header */
-        .date-range {
+        .staff-info {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 8px 16px;
-            background: var(--cy-bg-tertiary);
-            border: 1px solid var(--cy-border);
-            border-radius: 8px;
-            font-size: 13px;
-            color: var(--cy-text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
         }
         
-        .date-range:hover {
-            border-color: var(--cy-border-hover);
+        .staff-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .staff-name {
+            font-weight: 600;
             color: var(--cy-text-primary);
         }
         
-        /* Active Filters Display */
-        .active-filters {
+        .staff-dept {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+        }
+        
+        .efficiency-score {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-            padding: 0 4px;
-        }
-        
-        .filter-tag {
-            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 20px;
-            font-size: 12px;
-            color: #3b82f6;
-            font-weight: 500;
+            gap: 8px;
         }
         
-        .filter-tag button {
-            background: none;
-            border: none;
-            color: #3b82f6;
-            cursor: pointer;
-            padding: 0;
+        .efficiency-bar {
+            width: 60px;
+            height: 6px;
+            background: var(--cy-bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .efficiency-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        
+        .efficiency-fill.high { background: #10b981; }
+        .efficiency-fill.medium { background: #f59e0b; }
+        .efficiency-fill.low { background: #dc2626; }
+        
+        /* Charts Section */
+        .charts-row-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .chart-card {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .chart-title {
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 14px;
-            line-height: 1;
+            font-weight: 700;
+            color: var(--cy-text-primary);
         }
         
-        .filter-tag button:hover {
-            color: #dc2626;
+        .chart-container {
+            height: var(--chart-lg);
+            position: relative;
+        }
+        
+        .chart-container.small {
+            height: var(--chart-md);
+        }
+        
+        /* Alert Config */
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .config-card {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        
+        .config-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--cy-border);
+        }
+        
+        .config-item:last-child {
+            border-bottom: none;
+        }
+        
+        .config-label {
+            font-size: 12px;
+            color: var(--cy-text-secondary);
+        }
+        
+        .config-value {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .config-input {
+            width: 60px;
+            padding: 6px 10px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--cy-text-primary);
+            text-align: center;
+        }
+        
+        /* Report Downloads */
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .report-card {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .report-card:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+        
+        .report-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(59, 130, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: #3b82f6;
+            font-size: 18px;
+        }
+        
+        .report-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .report-desc {
+            font-size: 11px;
+            color: var(--cy-text-muted);
         }
         
         /* Responsive */
         @media (max-width: 1200px) {
             .kpi-section { grid-template-columns: repeat(2, 1fr); }
-            .insight-section { grid-template-columns: 1fr; }
-            .charts-row-2,
-            .charts-row-3,
-            .data-section { grid-template-columns: 1fr; }
-            .header-stats { display: none; }
-            .filter-bar { flex-direction: column; }
-            .filter-group { width: 100%; }
-            .filter-actions { width: 100%; margin-left: 0; }
-            .filter-actions button { flex: 1; justify-content: center; }
+            .config-grid { grid-template-columns: 1fr; }
+            .report-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-row-2 { grid-template-columns: 1fr; }
         }
         
         @media (max-width: 768px) {
             .kpi-section { grid-template-columns: 1fr; }
-            .analytics-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .filter-bar { flex-direction: column; }
+            .filter-group { width: 100%; }
         }
     </style>
 </head>
@@ -584,7 +577,7 @@
     <div class="cy-ambient-glow" style="top: -200px; right: -200px;"></div>
     <div class="cy-ambient-glow-red" style="bottom: -100px; left: -100px;"></div>
 
-    <!-- Header - Fixed Layout -->
+    <!-- Header -->
     <header class="cy-header">
         <div class="cy-header-content">
             <div style="display: flex; align-items: center; gap: 32px;">
@@ -610,24 +603,20 @@
                         <i class="fas fa-tasks"></i> Workflow
                     </a>
                     <a href="./analytics.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #f8fafc; background: rgba(59, 130, 246, 0.1); text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-chart-bar"></i> Analytics
+                        <i class="fas fa-chart-bar"></i> Intelligence
                     </a>
                 </nav>
             </div>
             
             <div style="display: flex; align-items: center; gap: 12px;">
-                <div class="date-range" onclick="changeDateRange()">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Last 30 Days</span>
-                    <i class="fas fa-chevron-down" style="font-size: 10px;"></i>
+                <div style="padding: 6px 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 20px; font-size: 12px; color: #10b981; font-weight: 600;">
+                    <i class="fas fa-shield-alt"></i> Director View
                 </div>
                 
-                <div style="position: relative;">
-                    <button style="padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 13px; font-weight: 500; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-download"></i>
-                        Export
-                    </button>
-                </div>
+                <button onclick="exportReport()" style="padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 13px; font-weight: 500; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
                 
                 <button onclick="logout()" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #dc2626; background: none; border: none; cursor: pointer;">
                     <i class="fas fa-sign-out-alt"></i>
@@ -639,29 +628,25 @@
     <!-- Main Content -->
     <main class="cy-container" style="padding: 24px; max-width: 1600px; margin: 0 auto;">
         
-        <!-- Analytics Header -->
-        <div class="analytics-header">
-            <div class="header-main">
+        <!-- Page Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+            <div>
                 <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #f8fafc; margin-bottom: 6px;">
-                    Business <span style="color: #3b82f6;">Intelligence</span>
+                    Management <span style="color: #3b82f6;">Intelligence</span>
                 </h1>
-                <p style="color: #94a3b8; font-size: 14px;">Comprehensive analytics and performance metrics</p>
+                <p style="color: #94a3b8; font-size: 14px;">Performance oversight, alerts, and strategic insights</p>
             </div>
             
-            <div class="header-stats">
-                <div class="header-stat">
-                    <div class="header-stat-value" id="headerRevenue">£0</div>
-                    <div class="header-stat-label">Revenue MTD</div>
-                </div>
-                <div class="header-stat">
-                    <div class="header-stat-value" id="headerUnits">0</div>
-                    <div class="header-stat-label">Units Sold</div>
-                </div>
-                <div class="header-stat">
-                    <div class="header-stat-value" id="headerMargin">0%</div>
-                    <div class="header-stat-label">Avg Margin</div>
-                </div>
+            <div style="text-align: right;">
+                <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Last Updated</div>
+                <div style="font-family: 'Space Grotesk'; font-size: 14px; color: #f8fafc;" id="lastUpdated">Just now</div>
             </div>
+        </div>
+
+        <!-- Role Toggle -->
+        <div class="role-toggle">
+            <button class="role-btn active" onclick="setRole('director')">Director View</button>
+            <button class="role-btn" onclick="setRole('manager')">Manager View</button>
         </div>
 
         <!-- Filter Bar -->
@@ -677,64 +662,46 @@
             </div>
             
             <div class="filter-group">
-                <label class="filter-label">Make</label>
-                <select id="filterMake" class="filter-input filter-select">
-                    <option value="">All Makes</option>
+                <label class="filter-label">Department</label>
+                <select id="filterDept" class="filter-input filter-select">
+                    <option value="">All Departments</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Workshop">Workshop</option>
+                    <option value="Prep">Prep/Valeting</option>
                 </select>
             </div>
             
             <div class="filter-group">
-                <label class="filter-label">Status</label>
-                <select id="filterStatus" class="filter-input filter-select">
-                    <option value="">All Statuses</option>
-                    <option value="In Stock">In Stock</option>
-                    <option value="In Transit">In Transit</option>
-                    <option value="Sold">Sold</option>
-                    <option value="Off-site R">Off-site R</option>
-                    <option value="Subject to">Subject to</option>
+                <label class="filter-label">Staff Member</label>
+                <select id="filterStaff" class="filter-input filter-select">
+                    <option value="">All Staff</option>
                 </select>
             </div>
             
-            <div class="filter-group">
-                <label class="filter-label">Location</label>
-                <select id="filterLocation" class="filter-input filter-select">
-                    <option value="">All Locations</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label class="filter-label">Registration</label>
-                <input type="text" id="filterReg" class="filter-input" placeholder="Search reg...">
-            </div>
-            
-            <div class="filter-actions">
+            <div class="filter-actions" style="display: flex; gap: 8px; margin-left: auto;">
                 <button class="filter-btn" onclick="applyFilters()">
                     <i class="fas fa-filter"></i>
                     Apply
                 </button>
                 <button class="filter-btn filter-btn-secondary" onclick="resetFilters()">
                     <i class="fas fa-undo"></i>
-                    Reset
                 </button>
             </div>
         </div>
 
-        <!-- Active Filters Display -->
-        <div class="active-filters" id="activeFilters"></div>
-
-        <!-- KPI Cards - Uniform 180px Height -->
+        <!-- KPI Cards -->
         <div class="kpi-section">
             <div class="kpi-card" style="--kpi-color: #3b82f6; --kpi-color-soft: rgba(59, 130, 246, 0.1);">
                 <div class="kpi-top">
-                    <span class="kpi-label">Total Revenue</span>
+                    <span class="kpi-label">Revenue MTD</span>
                     <div class="kpi-icon">
                         <i class="fas fa-pound-sign"></i>
                     </div>
                 </div>
-                <div class="kpi-bottom">
+                <div>
                     <div class="kpi-value" id="kpiRevenue">£0</div>
                     <div class="kpi-change positive">
-                        <i class="fas fa-arrow-up" style="font-size: 11px;"></i>
+                        <i class="fas fa-arrow-up" style="font-size: 10px;"></i>
                         <span>12.5% vs last month</span>
                     </div>
                 </div>
@@ -742,32 +709,16 @@
             
             <div class="kpi-card" style="--kpi-color: #10b981; --kpi-color-soft: rgba(16, 185, 129, 0.1);">
                 <div class="kpi-top">
-                    <span class="kpi-label">Gross Profit</span>
+                    <span class="kpi-label">Gross Margin</span>
                     <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                        <i class="fas fa-chart-line"></i>
+                        <i class="fas fa-percentage"></i>
                     </div>
                 </div>
-                <div class="kpi-bottom">
-                    <div class="kpi-value" id="kpiProfit">£0</div>
+                <div>
+                    <div class="kpi-value" id="kpiMargin">0%</div>
                     <div class="kpi-change positive">
-                        <i class="fas fa-arrow-up" style="font-size: 11px;"></i>
-                        <span>8.3% vs last month</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="kpi-card" style="--kpi-color: #8b5cf6; --kpi-color-soft: rgba(139, 92, 246, 0.1);">
-                <div class="kpi-top">
-                    <span class="kpi-label">Stock Turnover</span>
-                    <div class="kpi-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
-                        <i class="fas fa-sync-alt"></i>
-                    </div>
-                </div>
-                <div class="kpi-bottom">
-                    <div class="kpi-value" id="kpiTurnover">0</div>
-                    <div class="kpi-change positive">
-                        <i class="fas fa-arrow-up" style="font-size: 11px;"></i>
-                        <span>2.1x per month</span>
+                        <i class="fas fa-arrow-up" style="font-size: 10px;"></i>
+                        <span>2.1% improvement</span>
                     </div>
                 </div>
             </div>
@@ -779,551 +730,450 @@
                         <i class="fas fa-clock"></i>
                     </div>
                 </div>
-                <div class="kpi-bottom">
+                <div>
                     <div class="kpi-value" id="kpiDays">0</div>
                     <div class="kpi-change positive">
-                        <i class="fas fa-arrow-down" style="font-size: 11px;"></i>
-                        <span>5 days faster</span>
+                        <i class="fas fa-arrow-down" style="font-size: 10px;"></i>
+                        <span>3 days faster</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="kpi-card" style="--kpi-color: #dc2626; --kpi-color-soft: rgba(220, 38, 38, 0.1);">
+                <div class="kpi-top">
+                    <span class="kpi-label">Exceptions</span>
+                    <div class="kpi-icon" style="background: rgba(220, 38, 38, 0.1); color: #dc2626;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+                <div>
+                    <div class="kpi-value" id="kpiExceptions">0</div>
+                    <div class="kpi-change negative">
+                        <span>Require attention</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Insight Cards - Fixed Height -->
-        <div class="insight-section">
-            <div class="insight-card" style="--insight-bg: rgba(59, 130, 246, 0.1); --insight-color: #3b82f6;">
-                <div class="insight-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                    <i class="fas fa-trophy"></i>
+        <!-- Exception Reports -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div class="exception-card">
+                <div class="exception-header">
+                    <div class="exception-title">
+                        <i class="fas fa-exclamation-circle" style="color: #dc2626;"></i>
+                        Critical Alerts (>7 Days)
+                    </div>
+                    <span class="exception-badge critical" id="criticalCount">0</span>
                 </div>
-                <div class="insight-title">Top Performer</div>
-                <div class="insight-value" id="topPerformer">Ibrahim</div>
-                <div class="insight-desc">£45,200 in sales this month with 8 units sold</div>
+                <div class="exception-list" id="criticalList">
+                    <!-- Populated by JS -->
+                </div>
             </div>
             
-            <div class="insight-card" style="--insight-bg: rgba(16, 185, 129, 0.1); --insight-color: #10b981;">
-                <div class="insight-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                    <i class="fas fa-car"></i>
+            <div class="exception-card">
+                <div class="exception-header">
+                    <div class="exception-title">
+                        <i class="fas fa-clock" style="color: #f59e0b;"></i>
+                        Warnings (5-7 Days)
+                    </div>
+                    <span class="exception-badge warning" id="warningCount">0</span>
                 </div>
-                <div class="insight-title">Best Selling Make</div>
-                <div class="insight-value" id="bestMake">Ford</div>
-                <div class="insight-desc">12 units sold with £180k revenue contribution</div>
-            </div>
-            
-            <div class="insight-card" style="--insight-bg: rgba(245, 158, 11, 0.1); --insight-color: #f59e0b;">
-                <div class="insight-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div class="insight-title">Attention Needed</div>
-                <div class="insight-value" id="attentionCount">7</div>
-                <div class="insight-desc">Vehicles in stock over 90 days need pricing review</div>
-            </div>
-        </div>
-
-        <!-- Main Revenue Chart - 400px -->
-        <div class="chart-card large" style="margin-bottom: 20px;">
-            <div class="chart-header">
-                <div class="chart-title-group">
-                    <div class="chart-title">Revenue & Profit Trend</div>
-                    <div class="chart-subtitle">Monthly performance over the last 12 months</div>
-                </div>
-                <div class="chart-actions">
-                    <button class="chart-action" title="Download">
-                        <i class="fas fa-download"></i>
-                    </button>
-                    <button class="chart-action" title="Expand">
-                        <i class="fas fa-expand"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="revenueChart"></canvas>
-            </div>
-            <div class="chart-legend">
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: #3b82f6;"></div>
-                    <span>Revenue</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: #10b981;"></div>
-                    <span>Gross Profit</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: #8b5cf6;"></div>
-                    <span>Target</span>
+                <div class="exception-list" id="warningList">
+                    <!-- Populated by JS -->
                 </div>
             </div>
         </div>
 
-        <!-- Secondary Charts - 350px -->
+        <!-- Charts Row -->
         <div class="charts-row-2">
-            <div class="chart-card medium">
+            <div class="chart-card">
                 <div class="chart-header">
-                    <div class="chart-title-group">
-                        <div class="chart-title">Sales by Make</div>
-                        <div class="chart-subtitle">Units sold by manufacturer</div>
+                    <div class="chart-title">Revenue & Profit Trend</div>
+                    <div style="display: flex; gap: 8px;">
+                        <button style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; font-size: 11px; color: var(--cy-text-secondary); cursor: pointer;">Monthly</button>
+                        <button style="padding: 6px 12px; background: #3b82f6; border: none; border-radius: 6px; font-size: 11px; color: white; cursor: pointer;">Weekly</button>
                     </div>
                 </div>
                 <div class="chart-container">
-                    <canvas id="makeChart"></canvas>
+                    <canvas id="revenueChart"></canvas>
                 </div>
             </div>
             
-            <div class="chart-card medium">
+            <div class="chart-card">
                 <div class="chart-header">
-                    <div class="chart-title-group">
-                        <div class="chart-title">Sales Channel Mix</div>
-                        <div class="chart-subtitle">Revenue distribution</div>
-                    </div>
+                    <div class="chart-title">Sales by Channel</div>
                 </div>
-                <div class="chart-container">
+                <div class="chart-container small">
                     <canvas id="channelChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Tertiary Charts - 300px -->
-        <div class="charts-row-3">
-            <div class="chart-card small">
-                <div class="chart-header">
-                    <div class="chart-title-group">
-                        <div class="chart-title">Weekly Trend</div>
-                        <div class="chart-subtitle">Last 7 days</div>
+        <!-- Staff Performance -->
+        <div class="performance-card" style="margin-bottom: 16px;">
+            <div class="performance-header">
+                <div class="performance-title">Staff Performance & Efficiency</div>
+                <div style="display: flex; gap: 8px;">
+                    <select style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; font-size: 12px; color: var(--cy-text-primary);">
+                        <option>All Departments</option>
+                        <option>Sales</option>
+                        <option>Workshop</option>
+                    </select>
+                </div>
+            </div>
+            <table class="performance-table">
+                <thead>
+                    <tr>
+                        <th>Staff Member</th>
+                        <th>Department</th>
+                        <th>Vehicles Processed</th>
+                        <th>Avg Time/Stage</th>
+                        <th>Efficiency Score</th>
+                    </tr>
+                </thead>
+                <tbody id="performanceTable">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Alert Configuration -->
+        <div class="config-grid">
+            <div class="config-card">
+                <div class="config-title">
+                    <i class="fas fa-bell" style="color: #3b82f6;"></i>
+                    Alert Thresholds
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Yard stay alert</span>
+                    <div class="config-value">
+                        <input type="number" class="config-input" value="7" id="yardThreshold">
+                        <span style="font-size: 12px; color: var(--cy-text-muted);">days</span>
                     </div>
                 </div>
-                <div class="chart-container">
-                    <canvas id="weeklyChart"></canvas>
+                <div class="config-item">
+                    <span class="config-label">Workshop alert</span>
+                    <div class="config-value">
+                        <input type="number" class="config-input" value="7" id="workshopThreshold">
+                        <span style="font-size: 12px; color: var(--cy-text-muted);">days</span>
+                    </div>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Prep alert</span>
+                    <div class="config-value">
+                        <input type="number" class="config-input" value="3" id="prepThreshold">
+                        <span style="font-size: 12px; color: var(--cy-text-muted);">days</span>
+                    </div>
                 </div>
             </div>
             
-            <div class="chart-card small">
-                <div class="chart-header">
-                    <div class="chart-title-group">
-                        <div class="chart-title">Margin Analysis</div>
-                        <div class="chart-subtitle">By price band</div>
-                    </div>
+            <div class="config-card">
+                <div class="config-title">
+                    <i class="fas fa-mobile-alt" style="color: #10b981;"></i>
+                    Notification Settings
                 </div>
-                <div class="chart-container">
-                    <canvas id="marginChart"></canvas>
+                <div class="config-item">
+                    <span class="config-label">Push notifications</span>
+                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #10b981; border-radius: 24px; transition: 0.3s;"></span>
+                    </label>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Email alerts</span>
+                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #10b981; border-radius: 24px; transition: 0.3s;"></span>
+                    </label>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">SMS critical only</span>
+                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                        <input type="checkbox" style="opacity: 0; width: 0; height: 0;">
+                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--cy-bg-tertiary); border-radius: 24px; transition: 0.3s; border: 1px solid var(--cy-border);"></span>
+                    </label>
                 </div>
             </div>
             
-            <div class="chart-card small">
-                <div class="chart-header">
-                    <div class="chart-title-group">
-                        <div class="chart-title">Stock Age Distribution</div>
-                        <div class="chart-subtitle">Current inventory</div>
-                    </div>
+            <div class="config-card">
+                <div class="config-title">
+                    <i class="fas fa-cog" style="color: #8b5cf6;"></i>
+                    Auto-Actions
                 </div>
-                <div class="chart-container">
-                    <canvas id="ageChart"></canvas>
+                <div class="config-item">
+                    <span class="config-label">Auto-escalate</span>
+                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #10b981; border-radius: 24px; transition: 0.3s;"></span>
+                    </label>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Daily summary</span>
+                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #10b981; border-radius: 24px; transition: 0.3s;"></span>
+                    </label>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Weekly report</span>
+                    <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #10b981; border-radius: 24px; transition: 0.3s;"></span>
+                    </label>
                 </div>
             </div>
         </div>
 
-        <!-- Data Tables -->
-        <div class="data-section">
-            <div class="data-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <div style="font-size: 16px; font-weight: 600; color: #f8fafc; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-users" style="color: #3b82f6;"></i>
-                        Sales Leaderboard
-                    </div>
-                    <button style="padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; font-size: 12px; font-weight: 500; color: #94a3b8; cursor: pointer;">View All</button>
+        <!-- Report Downloads -->
+        <div class="exception-card">
+            <div class="exception-header">
+                <div class="exception-title">
+                    <i class="fas fa-file-download" style="color: #3b82f6;"></i>
+                    Automated Reports
                 </div>
-                
-                <table class="data-table-premium">
-                    <thead>
-                        <tr>
-                            <th>Salesperson</th>
-                            <th>Units</th>
-                            <th>Revenue</th>
-                            <th>Margin</th>
-                            <th>Trend</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardTable">
-                        <!-- Injected by JS -->
-                    </tbody>
-                </table>
             </div>
-            
-            <div class="data-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <div style="font-size: 16px; font-weight: 600; color: #f8fafc; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-shopping-cart" style="color: #10b981;"></i>
-                        Recent Sales
+            <div class="report-grid">
+                <div class="report-card" onclick="downloadReport('daily')">
+                    <div class="report-icon">
+                        <i class="fas fa-file-pdf"></i>
                     </div>
+                    <div class="report-title">Daily Briefing</div>
+                    <div class="report-desc">Ready to advertise, workshop status</div>
                 </div>
                 
-                <div id="recentSalesList">
-                    <!-- Injected by JS -->
+                <div class="report-card" onclick="downloadReport('workshop')">
+                    <div class="report-icon">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <div class="report-title">Workshop Status</div>
+                    <div class="report-desc">Jobs queue & completion rates</div>
+                </div>
+                
+                <div class="report-card" onclick="downloadReport('performance')">
+                    <div class="report-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="report-title">Performance</div>
+                    <div class="report-desc">Staff efficiency & metrics</div>
+                </div>
+                
+                <div class="report-card" onclick="downloadReport('exceptions')">
+                    <div class="report-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="report-title">Exceptions</div>
+                    <div class="report-desc">Stuck vehicles & alerts</div>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- Scripts -->
     <script src="./js/capeye-core.js"></script>
     <script>
         let charts = {};
         let allVehicles = [];
-        let filteredVehicles = [];
+        let currentRole = 'director';
+        
+        const staff = [
+            { name: 'Ibrahim Ata', dept: 'Sales', avatar: 'IA' },
+            { name: 'Keith Hardy', dept: 'Management', avatar: 'KH' },
+            { name: 'Ali Amood', dept: 'Workshop', avatar: 'AA' },
+            { name: 'Morteza Rahamian', dept: 'Workshop', avatar: 'MR' },
+            { name: 'Marcin Kiljan', dept: 'Workshop', avatar: 'MK' },
+            { name: 'Sia Vajihi', dept: 'Workshop', avatar: 'SV' },
+            { name: 'Iman Zarien', dept: 'Workshop', avatar: 'IZ' },
+            { name: 'Stash', dept: 'Bodyshop', avatar: 'ST' }
+        ];
         
         document.addEventListener('DOMContentLoaded', function() {
-            loadReferenceData();
-            loadAllVehicles();
+            loadData();
             initializeFilters();
-            applyFilters();
+            initCharts();
+            renderAll();
+            updateTimestamp();
         });
 
-        function loadReferenceData() {
-            // Load makes from localStorage or use defaults
-            const makes = JSON.parse(localStorage.getItem('capeye_makes') || '[]');
-            const makeSelect = document.getElementById('filterMake');
-            const defaultMakes = ['Ford', 'VW', 'Mercedes', 'Peugeot', 'Renault', 'Vauxhall', 'Citroen', 'Fiat'];
-            
-            [...new Set([...defaultMakes, ...makes])].sort().forEach(make => {
-                const option = document.createElement('option');
-                option.value = make;
-                option.textContent = make;
-                makeSelect.appendChild(option);
-            });
-            
-            // Load locations
-            const locations = JSON.parse(localStorage.getItem('capeye_locations') || '[]');
-            const locationSelect = document.getElementById('filterLocation');
-            const defaultLocations = ['Stanmore Retail', 'Stanmore 2', 'Stanmore PDI', 'With Supplier', 'ACL'];
-            
-            [...new Set([...defaultLocations, ...locations])].forEach(loc => {
-                const option = document.createElement('option');
-                option.value = loc;
-                option.textContent = loc;
-                locationSelect.appendChild(option);
-            });
-        }
-
-        function loadAllVehicles() {
+        function loadData() {
             allVehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            
-            // If no vehicles in storage, create sample data for demonstration
             if (allVehicles.length === 0) {
                 allVehicles = generateSampleData();
-                localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
             }
-            
-            filteredVehicles = [...allVehicles];
         }
 
         function generateSampleData() {
+            // Same sample data generator as operations page
             const makes = ['Ford', 'VW', 'Mercedes', 'Peugeot', 'Renault'];
             const models = ['Transit', 'Crafter', 'Sprinter', 'Boxer', 'Master'];
-            const statuses = ['In Stock', 'In Transit', 'Sold', 'Off-site R', 'Subject to'];
-            const locations = ['Stanmore Retail', 'Stanmore 2', 'Stanmore PDI', 'With Supplier', 'ACL'];
-            const salespeople = ['Ibrahim Ata', 'Keith Hardy', 'Ali Amood', 'Marcin Kiljan', 'Stash'];
+            const stages = ['INTAKE', 'WORKSHOP', 'PREP', 'READY', 'ADVERTISED'];
             
             const vehicles = [];
-            const now = new Date();
-            
-            for (let i = 0; i < 150; i++) {
-                const make = makes[Math.floor(Math.random() * makes.length)];
-                const dateInStock = new Date(now.getTime() - Math.random() * 180 * 24 * 60 * 60 * 1000);
-                const isSold = Math.random() > 0.6;
-                const saleDate = isSold ? new Date(dateInStock.getTime() + Math.random() * 90 * 24 * 60 * 60 * 1000) : null;
-                const daysInStock = isSold ? Math.floor((saleDate - dateInStock) / (1000 * 60 * 60 * 24)) : Math.floor((now - dateInStock) / (1000 * 60 * 60 * 24));
+            for (let i = 0; i < 50; i++) {
+                const stage = stages[Math.floor(Math.random() * stages.length)];
+                const daysInStage = Math.floor(Math.random() * 15);
                 
                 vehicles.push({
                     stockNo: `R${String(1000 + i).padStart(4, '0')}`,
-                    registration: `${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${Math.floor(Math.random() * 90 + 10)} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
-                    make: make,
+                    registration: `RF${Math.floor(Math.random() * 90 + 10)} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}BC`,
+                    make: makes[Math.floor(Math.random() * makes.length)],
                     model: models[Math.floor(Math.random() * models.length)],
-                    status: isSold ? 'Sold' : statuses[Math.floor(Math.random() * (statuses.length - 1))],
-                    location: locations[Math.floor(Math.random() * locations.length)],
-                    costPrice: Math.floor(Math.random() * 20000 + 10000),
-                    retailPrice: Math.floor(Math.random() * 30000 + 15000),
-                    salePrice: isSold ? Math.floor(Math.random() * 28000 + 12000) : null,
-                    dateInStock: dateInStock.toISOString().split('T')[0],
-                    saleDate: saleDate ? saleDate.toISOString().split('T')[0] : null,
-                    daysInStock: daysInStock,
-                    salesperson: isSold ? salespeople[Math.floor(Math.random() * salespeople.length)] : null
+                    stage: stage,
+                    stageEntered: new Date(Date.now() - daysInStage * 24 * 60 * 60 * 1000).toISOString(),
+                    assignedTo: staff[Math.floor(Math.random() * staff.length)].name,
+                    saleDate: Math.random() > 0.6 ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString() : null,
+                    salePrice: Math.floor(Math.random() * 20000 + 15000)
                 });
             }
-            
             return vehicles;
         }
 
         function initializeFilters() {
-            // Set default date range (last 30 days)
+            // Populate staff dropdown
+            const staffSelect = document.getElementById('filterStaff');
+            staff.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.name;
+                option.textContent = s.name;
+                staffSelect.appendChild(option);
+            });
+            
+            // Set default dates (last 30 days)
             const today = new Date();
             const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-            
             document.getElementById('filterDateTo').value = today.toISOString().split('T')[0];
             document.getElementById('filterDateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
-            
-            // Add enter key support for registration filter
-            document.getElementById('filterReg').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') applyFilters();
-            });
         }
 
-        function applyFilters() {
-            const dateFrom = document.getElementById('filterDateFrom').value;
-            const dateTo = document.getElementById('filterDateTo').value;
-            const make = document.getElementById('filterMake').value;
-            const status = document.getElementById('filterStatus').value;
-            const location = document.getElementById('filterLocation').value;
-            const reg = document.getElementById('filterReg').value.toLowerCase();
-            
-            filteredVehicles = allVehicles.filter(v => {
-                // Date filter (check sale date for sold vehicles, or date in stock for current inventory)
-                if (dateFrom || dateTo) {
-                    const checkDate = v.status === 'Sold' && v.saleDate ? v.saleDate : v.dateInStock;
-                    if (dateFrom && checkDate < dateFrom) return false;
-                    if (dateTo && checkDate > dateTo) return false;
+        function setRole(role) {
+            currentRole = role;
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(role)) {
+                    btn.classList.add('active');
                 }
-                
-                // Make filter
-                if (make && v.make !== make) return false;
-                
-                // Status filter
-                if (status && v.status !== status) return false;
-                
-                // Location filter
-                if (location && v.location !== location) return false;
-                
-                // Registration filter
-                if (reg && !v.registration.toLowerCase().includes(reg)) return false;
-                
-                return true;
             });
             
-            updateActiveFiltersDisplay({ dateFrom, dateTo, make, status, location, reg });
-            updateAllData();
-        }
-
-        function updateActiveFiltersDisplay(filters) {
-            const container = document.getElementById('activeFilters');
-            const tags = [];
-            
-            if (filters.dateFrom || filters.dateTo) {
-                const dateRange = `${filters.dateFrom || 'Start'} to ${filters.dateTo || 'End'}`;
-                tags.push(`<span class="filter-tag">Date: ${dateRange} <button onclick="clearFilter('date')">×</button></span>`);
+            // Update view based on role
+            if (role === 'manager') {
+                // Filter to show only relevant department data
+                document.querySelector('.performance-title').textContent = 'My Team Performance';
+            } else {
+                document.querySelector('.performance-title').textContent = 'Staff Performance & Efficiency';
             }
-            if (filters.make) tags.push(`<span class="filter-tag">Make: ${filters.make} <button onclick="clearFilter('make')">×</button></span>`);
-            if (filters.status) tags.push(`<span class="filter-tag">Status: ${filters.status} <button onclick="clearFilter('status')">×</button></span>`);
-            if (filters.location) tags.push(`<span class="filter-tag">Location: ${filters.location} <button onclick="clearFilter('location')">×</button></span>`);
-            if (filters.reg) tags.push(`<span class="filter-tag">Reg: ${filters.reg} <button onclick="clearFilter('reg')">×</button></span>`);
             
-            container.innerHTML = tags.join('');
+            renderAll();
         }
 
-        function clearFilter(type) {
-            switch(type) {
-                case 'date':
-                    document.getElementById('filterDateFrom').value = '';
-                    document.getElementById('filterDateTo').value = '';
-                    break;
-                case 'make':
-                    document.getElementById('filterMake').value = '';
-                    break;
-                case 'status':
-                    document.getElementById('filterStatus').value = '';
-                    break;
-                case 'location':
-                    document.getElementById('filterLocation').value = '';
-                    break;
-                case 'reg':
-                    document.getElementById('filterReg').value = '';
-                    break;
-            }
-            applyFilters();
-        }
-
-        function resetFilters() {
-            document.getElementById('filterDateFrom').value = '';
-            document.getElementById('filterDateTo').value = '';
-            document.getElementById('filterMake').value = '';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterLocation').value = '';
-            document.getElementById('filterReg').value = '';
-            
-            document.getElementById('activeFilters').innerHTML = '';
-            filteredVehicles = [...allVehicles];
-            updateAllData();
-        }
-
-        function updateAllData() {
-            loadKPIs();
+        function renderAll() {
+            renderKPIs();
+            renderExceptions();
+            renderPerformanceTable();
             updateCharts();
-            loadLeaderboard();
-            loadRecentSales();
-            updateInsights();
         }
 
-        function loadKPIs() {
-            const totalValue = filteredVehicles.reduce((sum, v) => sum + (parseFloat(v.costPrice) || 0), 0);
-            const totalRetail = filteredVehicles.reduce((sum, v) => sum + (parseFloat(v.retailPrice) || 0), 0);
-            const profit = totalRetail - totalValue;
+        function renderKPIs() {
+            const soldVehicles = allVehicles.filter(v => v.saleDate);
+            const revenue = soldVehicles.reduce((sum, v) => sum + (v.salePrice || 0), 0);
+            const exceptions = allVehicles.filter(v => {
+                const days = calculateDaysInStage(v);
+                return days > 7;
+            }).length;
             
-            const soldVehicles = filteredVehicles.filter(v => v.status === 'Sold');
-            const revenue = soldVehicles.reduce((sum, v) => sum + (parseFloat(v.salePrice) || parseFloat(v.retailPrice) || 0), 0);
-            
-            // Calculate average days to sell for sold vehicles
+            // Calculate average days to sell
             const avgDays = soldVehicles.length > 0 
-                ? Math.round(soldVehicles.reduce((sum, v) => sum + (v.daysInStock || 0), 0) / soldVehicles.length)
+                ? Math.round(soldVehicles.reduce((sum, v) => {
+                    const entered = new Date(v.stageEntered);
+                    const sold = new Date(v.saleDate);
+                    return sum + Math.floor((sold - entered) / (1000 * 60 * 60 * 24));
+                }, 0) / soldVehicles.length)
                 : 0;
             
-            // Stock turnover (sold / average inventory)
-            const avgInventory = filteredVehicles.length > 0 ? filteredVehicles.length / 2 : 1;
-            const turnover = soldVehicles.length > 0 ? (soldVehicles.length / avgInventory).toFixed(1) : '0';
-            
             animateValue('kpiRevenue', revenue, '£');
-            animateValue('kpiProfit', profit * 0.6, '£');
-            animateValue('kpiTurnover', turnover, '');
+            animateValue('kpiMargin', 18.5, '', '%');
             animateValue('kpiDays', avgDays, '', ' days');
-            
-            animateValue('headerRevenue', revenue, '£');
-            animateValue('headerUnits', soldVehicles.length, '');
-            
-            const avgMargin = revenue > 0 ? ((profit * 0.6) / revenue * 100).toFixed(1) : '0';
-            animateValue('headerMargin', avgMargin, '', '%');
+            animateValue('kpiExceptions', exceptions, '');
         }
 
-        function updateCharts() {
-            // Update Revenue Chart with filtered data
-            const monthlyData = calculateMonthlyData();
-            charts.revenue.data.datasets[0].data = monthlyData.revenue;
-            charts.revenue.data.datasets[1].data = monthlyData.profit;
-            charts.revenue.update();
+        function renderExceptions() {
+            const critical = allVehicles.filter(v => calculateDaysInStage(v) > 7);
+            const warnings = allVehicles.filter(v => {
+                const days = calculateDaysInStage(v);
+                return days >= 5 && days <= 7;
+            });
             
-            // Update Make Chart
-            const makeData = calculateMakeData();
-            charts.make.data.labels = makeData.labels;
-            charts.make.data.datasets[0].data = makeData.values;
-            charts.make.update();
+            document.getElementById('criticalCount').textContent = critical.length;
+            document.getElementById('warningCount').textContent = warnings.length;
             
-            // Update Weekly Chart
-            const weeklyData = calculateWeeklyData();
-            charts.weekly.data.datasets[0].data = weeklyData;
-            charts.weekly.update();
-            
-            // Update Age Chart
-            const ageData = calculateAgeData();
-            charts.age.data.datasets[0].data = ageData;
-            charts.age.update();
+            renderExceptionList('criticalList', critical, 'critical');
+            renderExceptionList('warningList', warnings, 'warning');
         }
 
-        function calculateMonthlyData() {
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const revenue = new Array(12).fill(0);
-            const profit = new Array(12).fill(0);
+        function renderExceptionList(containerId, vehicles, type) {
+            const container = document.getElementById(containerId);
+            if (vehicles.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--cy-text-muted); font-size: 13px;">No ${type} alerts</div>`;
+                return;
+            }
             
-            filteredVehicles.filter(v => v.status === 'Sold' && v.saleDate).forEach(v => {
-                const date = new Date(v.saleDate);
-                const month = date.getMonth();
-                const salePrice = parseFloat(v.salePrice) || parseFloat(v.retailPrice) || 0;
-                const costPrice = parseFloat(v.costPrice) || 0;
+            container.innerHTML = vehicles.slice(0, 4).map(v => {
+                const days = calculateDaysInStage(v);
+                return `
+                    <div class="exception-item ${type}">
+                        <div class="exception-vehicle">
+                            <div class="exception-reg">${v.registration}</div>
+                            <div class="exception-issue">${v.make} ${v.model} • ${v.stage}</div>
+                        </div>
+                        <div class="exception-time">${days}d</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPerformanceTable() {
+            const tbody = document.getElementById('performanceTable');
+            
+            const staffPerformance = staff.map(s => {
+                const processed = allVehicles.filter(v => v.assignedTo === s.name).length;
+                const efficiency = Math.floor(Math.random() * 40 + 60); // Simulated efficiency score
                 
-                revenue[month] += salePrice;
-                profit[month] += (salePrice - costPrice) * 0.6; // Estimated gross profit
-            });
+                return { ...s, processed, efficiency };
+            }).sort((a, b) => b.efficiency - a.efficiency);
             
-            return { revenue, profit };
+            tbody.innerHTML = staffPerformance.map(s => {
+                const effClass = s.efficiency >= 80 ? 'high' : s.efficiency >= 60 ? 'medium' : 'low';
+                const avgTime = Math.floor(Math.random() * 5 + 2);
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="staff-info">
+                                <div class="staff-avatar">${s.avatar}</div>
+                                <div>
+                                    <div class="staff-name">${s.name}</div>
+                                    <div class="staff-dept">${s.dept}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="color: var(--cy-text-secondary);">${s.dept}</td>
+                        <td style="font-weight: 600; color: var(--cy-text-primary);">${s.processed}</td>
+                        <td style="color: var(--cy-text-secondary);">${avgTime} days</td>
+                        <td>
+                            <div class="efficiency-score">
+                                <div class="efficiency-bar">
+                                    <div class="efficiency-fill ${effClass}" style="width: ${s.efficiency}%"></div>
+                                </div>
+                                <span style="font-size: 12px; font-weight: 600; color: ${effClass === 'high' ? '#10b981' : effClass === 'medium' ? '#f59e0b' : '#dc2626'};">${s.efficiency}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
-        function calculateMakeData() {
-            const makeCounts = {};
-            filteredVehicles.filter(v => v.status === 'Sold').forEach(v => {
-                makeCounts[v.make] = (makeCounts[v.make] || 0) + 1;
-            });
-            
-            const sorted = Object.entries(makeCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
-            return {
-                labels: sorted.map(x => x[0]),
-                values: sorted.map(x => x[1])
-            };
-        }
-
-        function calculateWeeklyData() {
-            const days = [0, 0, 0, 0, 0, 0, 0];
-            const today = new Date();
-            
-            filteredVehicles.filter(v => v.status === 'Sold' && v.saleDate).forEach(v => {
-                const saleDate = new Date(v.saleDate);
-                const diffDays = Math.floor((today - saleDate) / (1000 * 60 * 60 * 24));
-                if (diffDays < 7) {
-                    const dayIndex = saleDate.getDay();
-                    days[dayIndex === 0 ? 6 : dayIndex - 1]++; // Adjust so Monday is 0
-                }
-            });
-            
-            return days;
-        }
-
-        function calculateAgeData() {
-            const ages = [0, 0, 0, 0]; // 0-30, 31-60, 61-90, 90+
-            
-            filteredVehicles.filter(v => v.status !== 'Sold').forEach(v => {
-                const days = v.daysInStock || 0;
-                if (days <= 30) ages[0]++;
-                else if (days <= 60) ages[1]++;
-                else if (days <= 90) ages[2]++;
-                else ages[3]++;
-            });
-            
-            return ages;
-        }
-
-        function updateInsights() {
-            // Top Performer
-            const salesByPerson = {};
-            filteredVehicles.filter(v => v.status === 'Sold').forEach(v => {
-                const person = v.salesperson || 'Unknown';
-                if (!salesByPerson[person]) {
-                    salesByPerson[person] = { units: 0, revenue: 0 };
-                }
-                salesByPerson[person].units++;
-                salesByPerson[person].revenue += parseFloat(v.salePrice) || 0;
-            });
-            
-            const topPerformer = Object.entries(salesByPerson).sort((a, b) => b[1].revenue - a[1].revenue)[0];
-            if (topPerformer) {
-                document.getElementById('topPerformer').textContent = topPerformer[0].split(' ')[0];
-                document.querySelector('.insight-card:nth-child(1) .insight-desc').textContent = 
-                    `£${Math.floor(topPerformer[1].revenue).toLocaleString()} in sales with ${topPerformer[1].units} units sold`;
-            }
-            
-            // Best Selling Make
-            const makeData = calculateMakeData();
-            if (makeData.labels.length > 0) {
-                document.getElementById('bestMake').textContent = makeData.labels[0];
-                const makeRevenue = filteredVehicles
-                    .filter(v => v.status === 'Sold' && v.make === makeData.labels[0])
-                    .reduce((sum, v) => sum + (parseFloat(v.salePrice) || 0), 0);
-                document.querySelector('.insight-card:nth-child(2) .insight-desc').textContent = 
-                    `${makeData.values[0]} units sold with £${Math.floor(makeRevenue/1000)}k revenue contribution`;
-            }
-            
-            // Attention Needed (90+ days in stock)
-            const oldStock = filteredVehicles.filter(v => v.status !== 'Sold' && (v.daysInStock || 0) > 90).length;
-            document.getElementById('attentionCount').textContent = oldStock;
-        }
-
-        function animateValue(id, value, prefix = '', suffix = '') {
-            const el = document.getElementById(id);
-            const numValue = parseFloat(value.toString().replace(/[^0-9.]/g, '')) || 0;
-            const duration = 1500;
-            const increment = numValue / (duration / 16);
-            let current = 0;
-            
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= numValue) {
-                    current = numValue;
-                    clearInterval(timer);
-                }
-                el.textContent = prefix + Math.floor(current).toLocaleString('en-GB') + suffix;
-            }, 16);
+        function calculateDaysInStage(vehicle) {
+            const entered = new Date(vehicle.stageEntered);
+            const now = new Date();
+            return Math.floor((now - entered) / (1000 * 60 * 60 * 24));
         }
 
         function initCharts() {
@@ -1332,34 +1182,23 @@
             charts.revenue = new Chart(revenueCtx, {
                 type: 'line',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
                     datasets: [{
                         label: 'Revenue',
-                        data: new Array(12).fill(0),
+                        data: [85000, 92000, 88000, 95000],
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 3,
+                        borderWidth: 2,
                         tension: 0.4,
-                        fill: true,
-                        pointRadius: 4
+                        fill: true
                     }, {
-                        label: 'Gross Profit',
-                        data: new Array(12).fill(0),
+                        label: 'Profit',
+                        data: [17000, 18400, 17600, 19000],
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 4
-                    }, {
-                        label: 'Target',
-                        data: [350000, 380000, 400000, 430000, 420000, 460000, 500000, 530000, 520000, 560000, 600000, 650000],
-                        borderColor: '#8b5cf6',
-                        backgroundColor: 'transparent',
                         borderWidth: 2,
-                        borderDash: [5, 5],
                         tension: 0.4,
-                        pointRadius: 0
+                        fill: true
                     }]
                 },
                 options: {
@@ -1367,36 +1206,13 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { size: 11 }, callback: v => '£' + (v/1000) + 'k' } },
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 11 } } }
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', callback: v => '£' + v/1000 + 'k' } },
+                        x: { grid: { display: false }, ticks: { color: '#64748b' } }
                     }
                 }
             });
 
-            // Make Chart
-            const makeCtx = document.getElementById('makeChart').getContext('2d');
-            charts.make = new Chart(makeCtx, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        data: [],
-                        backgroundColor: ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899', '#64748b'],
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { size: 11 } } },
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 11 } } }
-                    }
-                }
-            });
-
-            // Channel Chart (static for now, could be made dynamic)
+            // Channel Chart
             const channelCtx = document.getElementById('channelChart').getContext('2d');
             charts.channel = new Chart(channelCtx, {
                 type: 'doughnut',
@@ -1417,194 +1233,65 @@
                     }
                 }
             });
-
-            // Weekly Chart
-            const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
-            charts.weekly = new Chart(weeklyCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { size: 10 } } },
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
-                    }
-                }
-            });
-
-            // Margin Chart (static for now)
-            const marginCtx = document.getElementById('marginChart').getContext('2d');
-            charts.margin = new Chart(marginCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['£0-10k', '£10-20k', '£20-30k', '£30k+'],
-                    datasets: [{
-                        data: [22, 18, 15, 12],
-                        backgroundColor: '#10b981',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { size: 10 }, callback: v => v + '%' } },
-                        y: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
-                    }
-                }
-            });
-
-            // Age Chart
-            const ageCtx = document.getElementById('ageChart').getContext('2d');
-            charts.age = new Chart(ageCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['0-30', '31-60', '61-90', '90+'],
-                    datasets: [{
-                        data: [0, 0, 0, 0],
-                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#dc2626'],
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { size: 10 } } },
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
-                    }
-                }
-            });
         }
 
-        function loadLeaderboard() {
-            const salesByPerson = {};
-            filteredVehicles.filter(v => v.status === 'Sold').forEach(v => {
-                const person = v.salesperson || 'Unknown';
-                if (!salesByPerson[person]) {
-                    salesByPerson[person] = { units: 0, revenue: 0, margin: 0 };
-                }
-                salesByPerson[person].units++;
-                const salePrice = parseFloat(v.salePrice) || parseFloat(v.retailPrice) || 0;
-                const costPrice = parseFloat(v.costPrice) || 0;
-                salesByPerson[person].revenue += salePrice;
-                salesByPerson[person].margin += ((salePrice - costPrice) / salePrice * 100);
-            });
-            
-            const sorted = Object.entries(salesByPerson)
-                .map(([name, data]) => ({
-                    name,
-                    units: data.units,
-                    revenue: data.revenue,
-                    margin: Math.round(data.margin / data.units)
-                }))
-                .sort((a, b) => b.revenue - a.revenue)
-                .slice(0, 5);
-            
-            // Fill with sample data if empty
-            if (sorted.length === 0) {
-                sorted.push(
-                    { name: 'Ibrahim Ata', units: 0, revenue: 0, margin: 0, trend: 'flat' },
-                    { name: 'Keith Hardy', units: 0, revenue: 0, margin: 0, trend: 'flat' }
-                );
-            }
-            
-            document.getElementById('leaderboardTable').innerHTML = sorted.map((person, i) => `
-                <tr>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div style="width: 28px; height: 28px; border-radius: 50%; background: ${i === 0 ? '#fbbf24' : i === 1 ? '#94a3b8' : i === 2 ? '#cd7f32' : 'rgba(255,255,255,0.05)'}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; color: ${i < 3 ? '#0a0a0f' : '#64748b'};">
-                                ${i + 1}
-                            </div>
-                            <span style="font-weight: 600; color: #f8fafc;">${person.name}</span>
-                        </div>
-                    </td>
-                    <td style="color: #94a3b8;">${person.units}</td>
-                    <td style="font-weight: 600; color: #f8fafc;">£${person.revenue.toLocaleString()}</td>
-                    <td><span style="padding: 4px 10px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 6px; font-size: 12px; font-weight: 600;">${person.margin}%</span></td>
-                    <td><i class="fas fa-minus" style="color: #64748b;"></i></td>
-                </tr>
-            `).join('');
+        function updateCharts() {
+            // Update with filtered data if needed
         }
 
-        function loadRecentSales() {
-            const recentSales = filteredVehicles
-                .filter(v => v.status === 'Sold' && v.saleDate)
-                .sort((a, b) => new Date(b.saleDate) - new Date(a.saleDate))
-                .slice(0, 4);
-            
-            if (recentSales.length === 0) {
-                document.getElementById('recentSalesList').innerHTML = '<div style="color: #64748b; text-align: center; padding: 20px;">No sales in selected period</div>';
-                return;
-            }
-            
-            document.getElementById('recentSalesList').innerHTML = recentSales.map(sale => {
-                const timeAgo = getTimeAgo(sale.saleDate);
-                return `
-                <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
-                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; color: #64748b;">
-                        <i class="fas fa-car"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; color: #f8fafc; font-size: 13px;">${sale.make} ${sale.model}</div>
-                        <div style="font-size: 11px; color: #64748b;">${sale.registration}</div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-weight: 700; color: #f8fafc; font-size: 13px;">£${(parseFloat(sale.salePrice) || 0).toLocaleString()}</div>
-                        <div style="font-size: 11px; color: #64748b;">${timeAgo}</div>
-                    </div>
-                </div>
-            `}).join('');
+        function applyFilters() {
+            // Filter logic here
+            renderAll();
         }
 
-        function getTimeAgo(dateString) {
-            const date = new Date(dateString);
+        function resetFilters() {
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+            document.getElementById('filterDept').value = '';
+            document.getElementById('filterStaff').value = '';
+            renderAll();
+        }
+
+        function downloadReport(type) {
+            const reports = {
+                daily: 'Daily Briefing Report',
+                workshop: 'Workshop Status Report',
+                performance: 'Staff Performance Report',
+                exceptions: 'Exceptions Report'
+            };
+            alert(`Generating ${reports[type]}...\n\nThis would download a PDF in production.`);
+        }
+
+        function exportReport() {
+            downloadReport('daily');
+        }
+
+        function updateTimestamp() {
             const now = new Date();
-            const diffHours = Math.floor((now - date) / (1000 * 60 * 60));
-            
-            if (diffHours < 1) return 'Just now';
-            if (diffHours < 24) return `${diffHours} hours ago`;
-            const diffDays = Math.floor(diffHours / 24);
-            if (diffDays === 1) return 'Yesterday';
-            if (diffDays < 7) return `${diffDays} days ago`;
-            return date.toLocaleDateString('en-GB');
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString('en-GB');
         }
 
-        function changeDateRange() {
-            // Could implement a custom date range picker here
-            alert('Date range selector - use the filter bar below for specific dates');
+        function animateValue(id, value, prefix = '', suffix = '') {
+            const el = document.getElementById(id);
+            const numValue = parseFloat(value.toString().replace(/[^0-9.]/g, '')) || 0;
+            const duration = 1000;
+            const increment = numValue / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= numValue) {
+                    current = numValue;
+                    clearInterval(timer);
+                }
+                el.textContent = prefix + Math.floor(current).toLocaleString('en-GB') + suffix;
+            }, 16);
         }
 
         function logout() {
             localStorage.removeItem('capeye_session');
             window.location.href = './login.html';
         }
-
-        window.refreshData = function() {
-            loadAllVehicles();
-            applyFilters();
-        };
-
-        // Initialize charts after DOM loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            initCharts();
-        });
     </script>
 </body>
 </html>
