@@ -1105,6 +1105,7 @@
         let uploadedPhotos = {};
         let signaturePad = null;
         let signatureContext = null;
+        let basePath = ''; // Will be set based on successful CSV load path
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1205,12 +1206,25 @@
             content.innerHTML += message + '<br>';
         }
 
-        // Load CSV Data with multiple path attempts
+        // Get base path based on current URL
+        function getBasePath() {
+            const path = window.location.pathname;
+            // If we're in /capeye/ subdirectory, go up one level
+            if (path.includes('/capeye/')) {
+                return '../';
+            }
+            return '';
+        }
+
+        // Load CSV Data with corrected paths
         async function loadData() {
+            basePath = getBasePath();
+            
             const possiblePaths = [
+                basePath + 'Auto Capital - Stock List-639068391990284525.csv',
+                basePath + 'Auto Capital - Stock List.csv',
                 'Auto Capital - Stock List-639068391990284525.csv',
-                './Auto Capital - Stock List-639068391990284525.csv',
-                '../Auto Capital - Stock List-639068391990284525.csv'
+                './Auto Capital - Stock List-639068391990284525.csv'
             ];
             
             let stockCsv = null;
@@ -1218,6 +1232,7 @@
             
             for (const path of possiblePaths) {
                 try {
+                    console.log('Trying stock path:', path);
                     const response = await fetch(path);
                     if (response.ok) {
                         stockCsv = await response.text();
@@ -1226,12 +1241,14 @@
                         break;
                     }
                 } catch (e) {
+                    console.log('Failed to load:', path, e.message);
                     continue;
                 }
             }
             
             if (!stockCsv) {
-                showStatus('Could not load vehicle data. Please check CSV file location.', 'error');
+                showDebug(`<strong>Stock CSV not found</strong><br>Tried paths: ${possiblePaths.join(', ')}<br>Current URL: ${window.location.href}<br>Please ensure CSV files are in the repository root.`);
+                showStatus('Could not load vehicle data. Check debug panel.', 'error');
                 document.getElementById('loadingOverlay').style.display = 'none';
                 return;
             }
@@ -1243,7 +1260,7 @@
                     allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
                     console.log(`Loaded ${allVehicles.length} vehicles`);
                     populateVehicleSelect();
-                    loadStaffData(successfulPath);
+                    loadStaffData();
                 },
                 error: function(err) {
                     showStatus('Error parsing vehicle data: ' + err.message, 'error');
@@ -1252,23 +1269,16 @@
             });
         }
 
-        // Load Staff Data - FIXED VERSION WITH MULTIPLE PATH ATTEMPTS
-        async function loadStaffData(stockPath) {
-            // Try multiple possible staff file paths
+        // Load Staff Data with corrected paths
+        async function loadStaffData() {
             const possiblePaths = [
+                basePath + 'Auto Capital - Staff List-639068391990284525.csv',
+                basePath + 'Auto Capital - Staff List.csv',
                 'Auto Capital - Staff List-639068391990284525.csv',
                 './Auto Capital - Staff List-639068391990284525.csv',
                 '../Auto Capital - Staff List-639068391990284525.csv',
-                'Auto Capital - Staff List.csv',
-                './Auto Capital - Staff List.csv',
                 '../Auto Capital - Staff List.csv'
             ];
-            
-            // If stock was loaded from a subdirectory, adjust paths
-            if (stockPath.includes('../')) {
-                possiblePaths.unshift('../Auto Capital - Staff List-639068391990284525.csv');
-                possiblePaths.unshift('../Auto Capital - Staff List.csv');
-            }
             
             let staffCsv = null;
             let successfulPath = '';
@@ -1294,7 +1304,7 @@
             }
             
             if (!staffCsv) {
-                showDebug(`<strong>Staff CSV not found</strong><br>Tried paths: ${possiblePaths.join(', ')}<br>Last error: ${lastError}<br><br>Current page URL: ${window.location.href}<br>Please ensure the staff CSV file is in the same directory as this HTML file.`);
+                showDebug(`<strong>Staff CSV not found</strong><br>Tried paths: ${possiblePaths.join(', ')}<br>Last error: ${lastError}<br>Current page URL: ${window.location.href}<br>Please ensure the staff CSV file is in the same directory as this HTML file or in the parent directory.`);
                 
                 document.getElementById('staffCount').textContent = 'Error: Staff file not found (see debug panel above)';
                 document.getElementById('staffCount').style.color = 'var(--cy-accent-red)';
@@ -1302,7 +1312,7 @@
                 // Add manual entry option
                 const select = document.getElementById('inspectedBy');
                 const option = document.createElement('option');
-                option.value = 'manual';
+                option.value = '__manual__';
                 option.textContent = '-- Type name manually --';
                 select.appendChild(option);
                 
@@ -1353,7 +1363,7 @@
                     // Update staff count display
                     const staffCount = document.getElementById('staffCount');
                     if (staffList.length > 0) {
-                        staffCount.textContent = `${staffList.length} staff members loaded from ${successfulPath}`;
+                        staffCount.textContent = `${staffList.length} staff members loaded`;
                         staffCount.style.color = 'var(--cy-accent-green)';
                     } else {
                         staffCount.textContent = 'No staff found in CSV - check column headers';
