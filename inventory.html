@@ -29,6 +29,11 @@
             --cy-text-primary: #f8fafc;
             --cy-text-secondary: #94a3b8;
             --cy-text-muted: #64748b;
+            --cy-accent-blue: #3b82f6;
+            --cy-accent-green: #10b981;
+            --cy-accent-orange: #f59e0b;
+            --cy-accent-red: #dc2626;
+            --cy-accent-purple: #8b5cf6;
         }
         
         body {
@@ -58,7 +63,7 @@
             justify-content: space-between;
         }
         
-        /* Filter Bar - Top Positioned */
+        /* Filter Bar */
         .filter-section {
             background: var(--cy-bg-secondary);
             border-bottom: 1px solid var(--cy-border);
@@ -71,10 +76,6 @@
             margin-bottom: 12px;
             align-items: center;
             flex-wrap: wrap;
-        }
-        
-        .filter-row:last-child {
-            margin-bottom: 0;
         }
         
         .filter-group {
@@ -136,9 +137,7 @@
             margin-top: auto;
         }
         
-        .filter-btn:hover {
-            background: #2563eb;
-        }
+        .filter-btn:hover { background: #2563eb; }
         
         .filter-btn-secondary {
             background: var(--cy-bg-tertiary);
@@ -149,28 +148,6 @@
         .filter-btn-secondary:hover {
             background: var(--cy-bg-secondary);
             color: var(--cy-text-primary);
-        }
-        
-        .filter-badge {
-            padding: 4px 10px;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 20px;
-            font-size: 11px;
-            color: #3b82f6;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .filter-badge button {
-            background: none;
-            border: none;
-            color: #3b82f6;
-            cursor: pointer;
-            font-size: 12px;
-            padding: 0;
         }
         
         /* Stats Bar */
@@ -270,13 +247,8 @@
             background: rgba(255,255,255,0.02);
         }
         
-        .vehicle-table th i {
-            margin-left: 4px;
-            font-size: 10px;
-        }
-        
         .vehicle-table td {
-            padding: 14px 12px;
+            padding: 12px;
             border-bottom: 1px solid var(--cy-border);
             vertical-align: middle;
         }
@@ -346,12 +318,6 @@
             text-decoration: line-through;
         }
         
-        .price-margin {
-            font-size: 11px;
-            color: #3b82f6;
-            margin-top: 2px;
-        }
-        
         .cell-stage {
             display: inline-flex;
             align-items: center;
@@ -396,30 +362,175 @@
             font-size: 12px;
         }
         
+        /* ACTION BUTTONS STYLES */
         .cell-actions {
             display: flex;
             gap: 6px;
+            flex-wrap: wrap;
+            max-width: 300px;
         }
         
         .action-btn {
-            width: 32px;
-            height: 32px;
+            padding: 6px 12px;
             border-radius: 6px;
             border: 1px solid var(--cy-border);
             background: var(--cy-bg-tertiary);
-            color: var(--cy-text-muted);
+            color: var(--cy-text-secondary);
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
+            gap: 6px;
             font-size: 12px;
+            font-weight: 500;
             transition: all 0.2s;
+            white-space: nowrap;
         }
         
         .action-btn:hover {
-            background: #3b82f6;
-            border-color: #3b82f6;
+            background: var(--cy-accent-blue);
+            border-color: var(--cy-accent-blue);
             color: white;
+        }
+        
+        .action-btn.workflow {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: var(--cy-accent-blue);
+        }
+        
+        .action-btn.workflow:hover {
+            background: var(--cy-accent-blue);
+            color: white;
+        }
+        
+        .action-btn.stage {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: var(--cy-accent-orange);
+        }
+        
+        .action-btn.stage:hover {
+            background: var(--cy-accent-orange);
+            color: white;
+        }
+        
+        .action-btn.assign {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
+            color: var(--cy-accent-purple);
+        }
+        
+        .action-btn.assign:hover {
+            background: var(--cy-accent-purple);
+            color: white;
+        }
+        
+        .action-btn.location {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--cy-accent-green);
+        }
+        
+        .action-btn.location:hover {
+            background: var(--cy-accent-green);
+            color: white;
+        }
+        
+        /* Quick Edit Dropdown */
+        .quick-edit-select {
+            padding: 4px 8px;
+            background: var(--cy-bg-primary);
+            border: 1px solid var(--cy-border);
+            border-radius: 4px;
+            color: var(--cy-text-primary);
+            font-size: 11px;
+            cursor: pointer;
+            max-width: 120px;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 24px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--cy-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--cy-text-muted);
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--cy-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        .form-row {
+            margin-bottom: 16px;
+        }
+        
+        .form-row label {
+            display: block;
+            font-size: 12px;
+            color: var(--cy-text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        
+        .form-row select,
+        .form-row input {
+            width: 100%;
+            padding: 10px;
+            background: var(--cy-bg-tertiary);
+            border: 1px solid var(--cy-border);
+            border-radius: 6px;
+            color: var(--cy-text-primary);
+            font-size: 14px;
         }
         
         /* Pagination */
@@ -509,19 +620,48 @@
             color: #dc2626;
         }
         
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.show {
+            display: flex;
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--cy-accent-green);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
         /* Responsive */
         @media (max-width: 1200px) {
             .vehicle-table { font-size: 12px; }
             .vehicle-table th, .vehicle-table td { padding: 10px 8px; }
-            .cell-reg { font-size: 12px; }
-            .price-retail { font-size: 12px; }
+            .cell-actions { max-width: 200px; }
         }
         
         @media (max-width: 768px) {
             .filter-row { flex-direction: column; align-items: stretch; }
             .filter-group { width: 100%; }
             .vehicle-table-container { overflow-x: auto; }
-            .vehicle-table { min-width: 1000px; }
+            .vehicle-table { min-width: 1200px; }
         }
     </style>
 </head>
@@ -530,6 +670,29 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner"></div>
         <p style="margin-top: 16px; color: #94a3b8; font-size: 14px;">Loading inventory data...</p>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle" style="color: var(--cy-accent-green);"></i>
+        <span id="toastMessage">Action completed</span>
+    </div>
+
+    <!-- Quick Edit Modal -->
+    <div id="quickEditModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Quick Edit</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer">
+                <button class="filter-btn-secondary" onclick="closeModal()" style="padding: 8px 16px;">Cancel</button>
+                <button class="filter-btn" onclick="saveQuickEdit()" style="padding: 8px 16px;">Save Changes</button>
+            </div>
+        </div>
     </div>
 
     <!-- Header -->
@@ -545,37 +708,20 @@
                 </a>
                 
                 <nav style="display: flex; align-items: center; gap: 8px;">
-                    <a href="./index.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-home"></i> Dashboard
-                    </a>
-                    <a href="./operations.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-cogs"></i> Operations
-                    </a>
-                    <a href="./inventory.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #f8fafc; background: rgba(59, 130, 246, 0.1); text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-car"></i> Inventory
-                    </a>
-                    <a href="./workflow.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-tasks"></i> Workflow
-                    </a>
-                    <a href="./analytics.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-chart-bar"></i> Intelligence
-                    </a>
+                    <a href="./index.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none;">Dashboard</a>
+                    <a href="./operations.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none;">Operations</a>
+                    <a href="./inventory.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #f8fafc; background: rgba(59, 130, 246, 0.1); text-decoration: none;">Inventory</a>
+                    <a href="./workflow.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none;">Workflow</a>
+                    <a href="./analytics.html" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #94a3b8; text-decoration: none;">Intelligence</a>
                 </nav>
             </div>
             
             <div style="display: flex; align-items: center; gap: 12px;">
-                <button onclick="refreshData()" style="padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 13px; font-weight: 500; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-sync-alt"></i>
-                    Refresh
+                <button onclick="refreshData()" class="filter-btn-secondary" style="padding: 8px 16px;">
+                    <i class="fas fa-sync-alt"></i> Refresh
                 </button>
-                
-                <button onclick="exportInventory()" style="padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 13px; font-weight: 500; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-download"></i>
-                    Export
-                </button>
-                
-                <button onclick="logout()" style="padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #dc2626; background: none; border: none; cursor: pointer;">
-                    <i class="fas fa-sign-out-alt"></i>
+                <button onclick="exportInventory()" class="filter-btn-secondary" style="padding: 8px 16px;">
+                    <i class="fas fa-download"></i> Export
                 </button>
             </div>
         </div>
@@ -588,42 +734,31 @@
         <span id="recordCount" style="margin-left: auto; color: #64748b; font-size: 12px;"></span>
     </div>
 
-    <!-- Filter Section - Top Positioned -->
+    <!-- Filter Section -->
     <div class="filter-section">
-        <!-- Row 1: Primary Filters -->
         <div class="filter-row">
             <div class="filter-group" style="flex: 2;">
                 <label class="filter-label">Search</label>
                 <input type="text" id="searchInput" class="filter-input" placeholder="Stock No, Registration, Make, Model...">
             </div>
-            
             <div class="filter-group">
                 <label class="filter-label">Make</label>
                 <select id="filterMake" class="filter-input filter-select" onchange="applyFilters()">
                     <option value="">All Makes</option>
                 </select>
             </div>
-            
             <div class="filter-group">
                 <label class="filter-label">Model</label>
                 <select id="filterModel" class="filter-input filter-select" onchange="applyFilters()">
                     <option value="">All Models</option>
                 </select>
             </div>
-            
             <div class="filter-group">
                 <label class="filter-label">Stage</label>
                 <select id="filterStage" class="filter-input filter-select" onchange="applyFilters()">
                     <option value="">All Stages</option>
-                    <option value="INTAKE">Intake</option>
-                    <option value="WORKSHOP">Workshop</option>
-                    <option value="PREP">Prep</option>
-                    <option value="READY">Ready</option>
-                    <option value="ADVERTISED">Advertised</option>
-                    <option value="SOLD">Sold</option>
                 </select>
             </div>
-            
             <div class="filter-group">
                 <label class="filter-label">Status</label>
                 <select id="filterStatus" class="filter-input filter-select" onchange="applyFilters()">
@@ -635,7 +770,6 @@
             </div>
         </div>
         
-        <!-- Row 2: Secondary Filters -->
         <div class="filter-row">
             <div class="filter-group">
                 <label class="filter-label">Location</label>
@@ -643,24 +777,20 @@
                     <option value="">All Locations</option>
                 </select>
             </div>
-            
             <div class="filter-group">
                 <label class="filter-label">Assigned To</label>
                 <select id="filterStaff" class="filter-input filter-select" onchange="applyFilters()">
                     <option value="">All Staff</option>
                 </select>
             </div>
-            
             <div class="filter-group">
                 <label class="filter-label">Price From</label>
                 <input type="number" id="priceFrom" class="filter-input" placeholder="£0" onchange="applyFilters()">
             </div>
-            
             <div class="filter-group">
                 <label class="filter-label">Price To</label>
                 <input type="number" id="priceTo" class="filter-input" placeholder="£99999" onchange="applyFilters()">
             </div>
-            
             <div class="filter-group">
                 <label class="filter-label">Days in Stock</label>
                 <select id="filterDays" class="filter-input filter-select" onchange="applyFilters()">
@@ -671,21 +801,15 @@
                     <option value="30+">30+ days</option>
                 </select>
             </div>
-            
             <div style="display: flex; gap: 8px; margin-top: auto;">
                 <button class="filter-btn" onclick="applyFilters()">
-                    <i class="fas fa-filter"></i>
-                    Apply
+                    <i class="fas fa-filter"></i> Apply
                 </button>
                 <button class="filter-btn filter-btn-secondary" onclick="resetFilters()">
-                    <i class="fas fa-undo"></i>
-                    Reset
+                    <i class="fas fa-undo"></i> Reset
                 </button>
             </div>
         </div>
-        
-        <!-- Active Filters -->
-        <div class="filter-row" id="activeFilters" style="margin-top: 12px; min-height: 28px;"></div>
     </div>
 
     <!-- Stats Bar -->
@@ -706,11 +830,6 @@
             <span class="stat-value" id="statMargin">0%</span>
             <span class="stat-label">Avg Margin</span>
         </div>
-        <div style="margin-left: auto; display: flex; gap: 12px;">
-            <button onclick="addNewVehicle()" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                <i class="fas fa-plus"></i> Add Vehicle
-            </button>
-        </div>
     </div>
 
     <!-- Main Content -->
@@ -719,15 +838,15 @@
             <table class="vehicle-table">
                 <thead>
                     <tr>
-                        <th onclick="sortBy('registration')">Registration <i class="fas fa-sort"></i></th>
-                        <th onclick="sortBy('vehicle')">Vehicle Details <i class="fas fa-sort"></i></th>
-                        <th onclick="sortBy('stage')">Stage <i class="fas fa-sort"></i></th>
-                        <th onclick="sortBy('price')">Pricing <i class="fas fa-sort"></i></th>
-                        <th onclick="sortBy('days')">Days <i class="fas fa-sort"></i></th>
-                        <th onclick="sortBy('staff')">Assigned <i class="fas fa-sort"></i></th>
-                        <th onclick="sortBy('location')">Location <i class="fas fa-sort"></i></th>
+                        <th>Registration</th>
+                        <th>Vehicle Details</th>
+                        <th>Stage</th>
+                        <th>Pricing</th>
+                        <th>Days</th>
+                        <th>Assigned</th>
+                        <th>Location</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th style="min-width: 350px;">Quick Actions</th>
                     </tr>
                 </thead>
                 <tbody id="vehicleTableBody">
@@ -735,14 +854,11 @@
                 </tbody>
             </table>
             
-            <!-- Pagination -->
             <div class="pagination">
                 <div class="page-info">
                     Showing <span id="showingFrom">0</span> to <span id="showingTo">0</span> of <span id="totalItems">0</span> vehicles
                 </div>
-                <div class="page-controls" id="paginationControls">
-                    <!-- Populated by JS -->
-                </div>
+                <div class="page-controls" id="paginationControls"></div>
             </div>
         </div>
     </main>
@@ -750,100 +866,117 @@
     <script>
         let allVehicles = [];
         let filteredVehicles = [];
+        let staffList = [];
         let currentPage = 1;
         let itemsPerPage = 25;
-        let currentSort = { field: 'dateInStock', direction: 'desc' };
+        let currentEditVehicle = null;
+        let currentEditType = null;
         
-        const stages = {
-            INTAKE: { name: 'Intake', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
-            WORKSHOP: { name: 'Workshop', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
-            PREP: { name: 'Prep', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' },
-            READY: { name: 'Ready', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
-            ADVERTISED: { name: 'Advertised', color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.1)' },
-            SOLD: { name: 'Sold', color: '#64748b', bg: 'rgba(100, 116, 139, 0.1)' }
-        };
-
-        // CSV Column Mapping for Auto Capital format
-        const columnMap = {
-            'Stock No': 'stockNo',
-            'Registration': 'registration',
-            'Make': 'make',
-            'Model': 'model',
-            'Variant': 'variant',
-            'Year': 'year',
-            'Colour': 'colour',
-            'Fuel Type': 'fuelType',
-            'Transmission': 'transmission',
-            'Mileage': 'mileage',
-            'Body': 'body',
-            'Doors': 'doors',
-            'Location': 'location',
-            'Status': 'status',
-            'Date In Stock': 'dateInStock',
-            'Reg Date': 'regDate',
-            'MOT': 'mot',
-            'Cost Price': 'costPrice',
-            'Retail Price': 'retailPrice',
-            'RFL': 'rfl',
-            'FSH': 'fsh',
-            'Keytag': 'keytag'
-        };
+        // All 12 stages
+        const allStages = [
+            { id: 1, name: 'Vehicle Intake', file: 'stage-1-intake.html', dept: 'Sales' },
+            { id: 2, name: 'Bodywork & Cosmetic', file: 'stage-2-bodywork.html', dept: 'Bodyshop' },
+            { id: 3, name: 'Dent & Paint Repairs', file: 'stage-3-paint.html', dept: 'Bodyshop' },
+            { id: 4, name: 'Legal & Documentation', file: 'stage-4-legal.html', dept: 'Admin' },
+            { id: 5, name: 'Mechanical & Diagnostic', file: 'stage-5-mechanical.html', dept: 'Workshop' },
+            { id: 6, name: 'External & Electrical', file: 'stage-6-external.html', dept: 'Workshop' },
+            { id: 7, name: 'Interior & Valeting', file: 'stage-7-valeting.html', dept: 'Valeting' },
+            { id: 8, name: 'Fault Overview', file: 'stage-8-faults.html', dept: 'Workshop' },
+            { id: 9, name: 'Ready for Advertising', file: 'stage-9-advertising.html', dept: 'Sales' },
+            { id: 10, name: 'Customer Delivery', file: 'stage-10-delivery.html', dept: 'Sales' },
+            { id: 11, name: 'Accounts & Warranty', file: 'stage-11-accounts.html', dept: 'Accounts' },
+            { id: 12, name: 'Management Overview', file: 'stage-12-management.html', dept: 'Management' }
+        ];
 
         document.addEventListener('DOMContentLoaded', function() {
             loadCSVData();
+            loadStaffData();
         });
 
         function loadCSVData() {
             showLoading(true);
-            
-            // Find the stock list CSV file (it has a dynamic number in the filename)
             const stockFile = 'Auto Capital - Stock List-639068391990284525.csv';
             
             Papa.parse(stockFile, {
                 download: true,
                 header: true,
                 skipEmptyLines: true,
-                transformHeader: function(header) {
-                    return header.trim();
-                },
                 complete: function(results) {
-                    console.log('CSV loaded:', results.data.length, 'rows');
-                    console.log('Headers:', results.meta.fields);
-                    
                     if (results.data && results.data.length > 0) {
-                        allVehicles = results.data.map((row, index) => {
-                            return normalizeVehicleData(row, index);
-                        }).filter(v => v.stockNo || v.registration); // Remove empty rows
+                        allVehicles = results.data.map((row, index) => normalizeVehicleData(row, index))
+                            .filter(v => v.stockNo || v.registration);
+                        
+                        // Load any saved updates from localStorage
+                        allVehicles.forEach(v => {
+                            const saved = localStorage.getItem(`capeye_vehicle_${v.stockNo}`);
+                            if (saved) {
+                                const profile = JSON.parse(saved);
+                                if (profile.currentStage) v.stage = getStageName(profile.currentStage);
+                                if (profile.assignedTo) v.assignedTo = profile.assignedTo;
+                            }
+                        });
                         
                         showLoading(false);
                         showDataStatus(true, allVehicles.length);
                         populateFilters();
                         applyFilters();
-                    } else {
-                        showLoading(false);
-                        showDataStatus(false, 0, 'No data found in CSV');
                     }
                 },
                 error: function(error) {
-                    console.error('Error loading CSV:', error);
                     showLoading(false);
-                    showDataStatus(false, 0, 'Error loading data: ' + error.message);
+                    showDataStatus(false, 0, 'Error loading data');
                 }
             });
         }
 
+        async function loadStaffData() {
+            const possiblePaths = [
+                'Auto Capital - Staff List-639068391990284525.csv',
+                'Global list - Staff-639068391659046081.csv'
+            ];
+            
+            for (const path of possiblePaths) {
+                try {
+                    const response = await fetch(path);
+                    if (response.ok) {
+                        const csv = await response.text();
+                        Papa.parse(csv, {
+                            header: false,
+                            complete: function(results) {
+                                if (results.data && results.data.length > 0) {
+                                    staffList = results.data.map(row => ({
+                                        name: row[0] || '',
+                                        department: row[1] || ''
+                                    })).filter(s => s.name && s.name.trim() !== '');
+                                }
+                            }
+                        });
+                        break;
+                    }
+                } catch (e) {}
+            }
+            
+            if (staffList.length === 0) {
+                staffList = [
+                    { name: 'Keith Hardy', department: 'Management' },
+                    { name: 'Ibrahim Ata', department: 'Sales' },
+                    { name: 'Ali Amood', department: 'Workshop' },
+                    { name: 'Morteza Rahamian', department: 'Workshop' },
+                    { name: 'Marcin Kiljan', department: 'Workshop' }
+                ];
+            }
+        }
+
         function normalizeVehicleData(row, index) {
-            // Helper to get value from row regardless of column name variations
-            const getValue = (...possibleNames) => {
-                for (let name of possibleNames) {
-                    if (row[name] !== undefined && row[name] !== null && row[name] !== '') {
-                        return row[name];
+            const getValue = (...keys) => {
+                for (let key of keys) {
+                    if (row[key] !== undefined && row[key] !== null && row[key] !== '') {
+                        return row[key];
                     }
                 }
                 return '';
             };
 
-            // Parse price - handle various formats
             const parsePrice = (val) => {
                 if (!val) return 0;
                 const cleaned = String(val).replace(/[£,]/g, '').trim();
@@ -851,134 +984,76 @@
                 return isNaN(num) ? 0 : num;
             };
 
-            // Parse date
             const parseDate = (val) => {
                 if (!val) return null;
                 const date = new Date(val);
                 return isNaN(date.getTime()) ? null : date;
             };
 
-            // Calculate days in stock
-            const dateInStock = parseDate(getValue('Date In Stock', 'DateInStock', 'dateInStock'));
+            const dateInStock = parseDate(getValue('Date In Stock'));
             const daysInStock = dateInStock ? Math.floor((new Date() - dateInStock) / (1000 * 60 * 60 * 24)) : 0;
 
             return {
                 id: index + 1,
-                stockNo: getValue('Stock No', 'StockNo', 'stockNo', 'Stock Number') || '',
-                registration: getValue('Registration', 'registration', 'Reg', 'Reg No') || '',
-                make: getValue('Make', 'make', 'Manufacturer') || '',
+                stockNo: getValue('Stock No', 'StockNo', 'stockNo') || '',
+                registration: getValue('Registration', 'Reg') || '',
+                make: getValue('Make', 'make') || '',
                 model: getValue('Model', 'model') || '',
-                variant: getValue('Variant', 'variant', 'Trim') || '',
-                year: parseInt(getValue('Year', 'year')) || 0,
-                colour: getValue('Colour', 'Color', 'colour', 'color') || '',
-                fuelType: getValue('Fuel Type', 'FuelType', 'fuel', 'Fuel') || '',
-                transmission: getValue('Transmission', 'transmission', 'Gearbox') || '',
-                mileage: parseInt(getValue('Mileage', 'mileage')) || 0,
-                body: getValue('Body', 'body', 'Body Type') || '',
-                doors: getValue('Doors', 'doors') || '',
-                location: getValue('Location', 'location', 'Site') || '',
-                status: getValue('Status', 'status') || 'In Stock',
+                year: parseInt(getValue('Year')) || 0,
+                colour: getValue('Colour', 'Color') || '',
+                fuelType: getValue('Fuel Type', 'Fuel') || '',
+                transmission: getValue('Transmission') || '',
+                mileage: parseInt(getValue('Mileage')) || 0,
+                location: getValue('Location', 'Site') || '',
+                status: getValue('Status') || 'In Stock',
                 dateInStock: dateInStock,
-                regDate: parseDate(getValue('Reg Date', 'RegDate', 'Registration Date')),
-                mot: getValue('MOT', 'mot', 'MOT Date') || '',
-                costPrice: parsePrice(getValue('Cost Price', 'CostPrice', 'costPrice', 'Cost')),
-                retailPrice: parsePrice(getValue('Retail Price', 'RetailPrice', 'retailPrice', 'Retail')),
-                rfl: parsePrice(getValue('RFL', 'rfl', 'Road Tax', 'Tax')),
-                fsh: getValue('FSH', 'fsh', 'Full Service History') || '',
-                keytag: getValue('Keytag', 'keytag', 'Key Tag') || '',
+                costPrice: parsePrice(getValue('Cost Price', 'Cost')),
+                retailPrice: parsePrice(getValue('Retail Price', 'Retail')),
                 daysInStock: daysInStock,
-                // Default values for workflow
                 stage: 'INTAKE',
-                assignedTo: '',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                assignedTo: ''
             };
         }
 
-        function showLoading(show) {
-            const overlay = document.getElementById('loadingOverlay');
-            overlay.style.display = show ? 'flex' : 'none';
+        function getStageName(stageId) {
+            const stage = allStages.find(s => s.id === parseInt(stageId));
+            return stage ? stage.name : 'Unknown';
         }
 
-        function showDataStatus(success, count, errorMessage) {
-            const status = document.getElementById('dataStatus');
-            const text = status.querySelector('.data-status-text');
-            const countEl = document.getElementById('recordCount');
-            
-            status.style.display = 'flex';
-            status.className = 'data-status' + (success ? '' : ' error');
-            
-            if (success) {
-                text.textContent = `Loaded ${count} vehicles from CSV`;
-                countEl.textContent = new Date().toLocaleTimeString();
-            } else {
-                text.textContent = errorMessage || 'Error loading data';
-                countEl.textContent = '';
-            }
+        function getStageId(stageName) {
+            const stage = allStages.find(s => s.name.toLowerCase() === stageName.toLowerCase());
+            return stage ? stage.id : 1;
         }
 
         function populateFilters() {
-            // Get unique makes
             const makes = [...new Set(allVehicles.map(v => v.make).filter(Boolean))].sort();
             const makeSelect = document.getElementById('filterMake');
-            makeSelect.innerHTML = '<option value="">All Makes</option>';
             makes.forEach(make => {
                 makeSelect.innerHTML += `<option value="${make}">${make}</option>`;
             });
 
-            // Get unique models
             const models = [...new Set(allVehicles.map(v => v.model).filter(Boolean))].sort();
             const modelSelect = document.getElementById('filterModel');
-            modelSelect.innerHTML = '<option value="">All Models</option>';
             models.forEach(model => {
                 modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
             });
 
-            // Get unique locations
             const locations = [...new Set(allVehicles.map(v => v.location).filter(Boolean))].sort();
             const locationSelect = document.getElementById('filterLocation');
-            locationSelect.innerHTML = '<option value="">All Locations</option>';
             locations.forEach(loc => {
                 locationSelect.innerHTML += `<option value="${loc}">${loc}</option>`;
             });
 
-            // Load staff from staff CSV if available, otherwise use defaults
-            loadStaffList();
-        }
+            // Populate stage filter
+            const stageSelect = document.getElementById('filterStage');
+            allStages.forEach(stage => {
+                stageSelect.innerHTML += `<option value="${stage.name}">${stage.name}</option>`;
+            });
 
-        function loadStaffList() {
+            // Populate staff filter
             const staffSelect = document.getElementById('filterStaff');
-            staffSelect.innerHTML = '<option value="">All Staff</option>';
-            
-            // Try to load from staff CSV
-            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
-                download: true,
-                header: true,
-                complete: function(results) {
-                    if (results.data && results.data.length > 0) {
-                        const staff = results.data
-                            .map(row => row.Name || row.name || row.Staff || row.staff)
-                            .filter(Boolean)
-                            .sort();
-                        
-                        staff.forEach(name => {
-                            staffSelect.innerHTML += `<option value="${name}">${name}</option>`;
-                        });
-                    } else {
-                        // Default staff list
-                        const defaultStaff = ['Keith Hardy', 'Ibrahim Ata', 'Ali Amood', 'Morteza Rahamian', 'Marcin Kiljan'];
-                        defaultStaff.forEach(name => {
-                            staffSelect.innerHTML += `<option value="${name}">${name}</option>`;
-                        });
-                    }
-                },
-                error: function() {
-                    // Default staff list on error
-                    const defaultStaff = ['Keith Hardy', 'Ibrahim Ata', 'Ali Amood'];
-                    defaultStaff.forEach(name => {
-                        staffSelect.innerHTML += `<option value="${name}">${name}</option>`;
-                    });
-                }
+            staffList.forEach(staff => {
+                staffSelect.innerHTML += `<option value="${staff.name}">${staff.name}</option>`;
             });
         }
 
@@ -995,16 +1070,13 @@
             const daysFilter = document.getElementById('filterDays').value;
             
             filteredVehicles = allVehicles.filter(v => {
-                // Search filter
                 if (search && !(
                     (v.registration && v.registration.toLowerCase().includes(search)) ||
                     (v.stockNo && v.stockNo.toLowerCase().includes(search)) ||
                     (v.make && v.make.toLowerCase().includes(search)) ||
-                    (v.model && v.model.toLowerCase().includes(search)) ||
-                    (v.assignedTo && v.assignedTo.toLowerCase().includes(search))
+                    (v.model && v.model.toLowerCase().includes(search))
                 )) return false;
                 
-                // Other filters
                 if (make && v.make !== make) return false;
                 if (model && v.model !== model) return false;
                 if (stage && v.stage !== stage) return false;
@@ -1012,11 +1084,9 @@
                 if (location && v.location !== location) return false;
                 if (staff && v.assignedTo !== staff) return false;
                 
-                // Price filter
                 const price = v.retailPrice || 0;
                 if (price < priceFrom || price > priceTo) return false;
                 
-                // Days filter
                 if (daysFilter) {
                     const days = v.daysInStock || 0;
                     if (daysFilter === '0-7' && days > 7) return false;
@@ -1028,136 +1098,361 @@
                 return true;
             });
             
-            // Sort
-            sortVehicles();
-            
-            // Update display
             updateStats();
-            updateActiveFilters();
             currentPage = 1;
             renderTable();
             renderPagination();
         }
 
-        function sortVehicles() {
-            filteredVehicles.sort((a, b) => {
-                let valA, valB;
-                
-                switch(currentSort.field) {
-                    case 'registration':
-                        valA = a.registration || '';
-                        valB = b.registration || '';
-                        break;
-                    case 'vehicle':
-                        valA = `${a.make || ''} ${a.model || ''}`;
-                        valB = `${b.make || ''} ${b.model || ''}`;
-                        break;
-                    case 'stage':
-                        valA = a.stage || '';
-                        valB = b.stage || '';
-                        break;
-                    case 'price':
-                        valA = a.retailPrice || 0;
-                        valB = b.retailPrice || 0;
-                        break;
-                    case 'days':
-                        valA = a.daysInStock || 0;
-                        valB = b.daysInStock || 0;
-                        break;
-                    case 'staff':
-                        valA = a.assignedTo || '';
-                        valB = b.assignedTo || '';
-                        break;
-                    case 'location':
-                        valA = a.location || '';
-                        valB = b.location || '';
-                        break;
-                    default:
-                        valA = a.dateInStock || new Date(0);
-                        valB = b.dateInStock || new Date(0);
-                }
-                
-                if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
-                if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
-                return 0;
-            });
-        }
-
-        function sortBy(field) {
-            if (currentSort.field === field) {
-                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSort.field = field;
-                currentSort.direction = 'asc';
+        function renderTable() {
+            const tbody = document.getElementById('vehicleTableBody');
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageVehicles = filteredVehicles.slice(start, end);
+            
+            if (pageVehicles.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--cy-text-muted);">No vehicles found</td></tr>';
+                return;
             }
-            applyFilters();
+            
+            tbody.innerHTML = pageVehicles.map(v => {
+                const days = v.daysInStock || 0;
+                const daysClass = days > 60 ? 'days-danger' : days > 30 ? 'days-warning' : 'days-normal';
+                const margin = v.retailPrice && v.costPrice ? (((v.retailPrice - v.costPrice) / v.retailPrice) * 100).toFixed(1) : 0;
+                
+                let statusBadge = '';
+                if (v.status === 'Sold') statusBadge = '<span class="badge badge-sold">Sold</span>';
+                else if (days > 60) statusBadge = '<span class="badge badge-stuck">Stuck</span>';
+                else if (v.location === 'With Supplier') statusBadge = '<span class="badge badge-intransit">In Transit</span>';
+                else statusBadge = '<span class="badge badge-instock">In Stock</span>';
+                
+                const staffInitial = v.assignedTo ? v.assignedTo.charAt(0).toUpperCase() : '?';
+                const staffFirstName = v.assignedTo ? v.assignedTo.split(' ')[0] : 'Unassigned';
+                
+                // Get current stage info
+                const currentStage = allStages.find(s => s.name === v.stage) || allStages[0];
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="cell-reg">${v.registration || 'N/A'}</div>
+                            <div style="font-size: 11px; color: var(--cy-text-muted);">${v.stockNo}</div>
+                        </td>
+                        <td>
+                            <div class="cell-vehicle">
+                                <div class="vehicle-thumb"><i class="fas fa-car"></i></div>
+                                <div class="vehicle-info">
+                                    <div class="vehicle-name">${v.make} ${v.model}</div>
+                                    <div class="vehicle-details">${v.year} • ${v.fuelType} • ${v.mileage ? v.mileage.toLocaleString() + ' mi' : '-'}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="cell-stage" style="background: ${getStageColor(v.stage)}20; color: ${getStageColor(v.stage)};">
+                                <i class="fas fa-circle" style="font-size: 6px;"></i>
+                                ${v.stage || 'INTAKE'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="cell-price">
+                                <div class="price-retail">£${(v.retailPrice || 0).toLocaleString()}</div>
+                                <div class="price-cost">£${(v.costPrice || 0).toLocaleString()}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-days ${daysClass}">${days} days</div>
+                        </td>
+                        <td>
+                            <div class="cell-staff">
+                                <div class="staff-avatar">${staffInitial}</div>
+                                <span>${staffFirstName}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-location">
+                                <i class="fas fa-map-marker-alt" style="margin-right: 4px;"></i>
+                                ${v.location || 'Unknown'}
+                            </div>
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="cell-actions">
+                                <button class="action-btn workflow" onclick="openWorkflow('${v.stockNo}')" title="Open in Workflow">
+                                    <i class="fas fa-tasks"></i> Workflow
+                                </button>
+                                <button class="action-btn stage" onclick="quickChangeStage('${v.stockNo}')" title="Change Stage">
+                                    <i class="fas fa-exchange-alt"></i> Stage
+                                </button>
+                                <button class="action-btn assign" onclick="quickAssign('${v.stockNo}')" title="Assign Staff">
+                                    <i class="fas fa-user-plus"></i> Assign
+                                </button>
+                                <button class="action-btn location" onclick="quickChangeLocation('${v.stockNo}')" title="Change Location">
+                                    <i class="fas fa-map-marker-alt"></i> Location
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('showingFrom').textContent = filteredVehicles.length > 0 ? start + 1 : 0;
+            document.getElementById('showingTo').textContent = Math.min(end, filteredVehicles.length);
+            document.getElementById('totalItems').textContent = filteredVehicles.length;
         }
 
+        function getStageColor(stageName) {
+            const colors = {
+                'INTAKE': '#3b82f6',
+                'Vehicle Intake': '#3b82f6',
+                'Bodywork & Cosmetic': '#8b5cf6',
+                'Dent & Paint Repairs': '#8b5cf6',
+                'Legal & Documentation': '#64748b',
+                'Mechanical & Diagnostic': '#f59e0b',
+                'External & Electrical': '#f59e0b',
+                'Interior & Valeting': '#10b981',
+                'Fault Overview': '#f59e0b',
+                'Ready for Advertising': '#06b6d4',
+                'Customer Delivery': '#ec4899',
+                'Accounts & Warranty': '#64748b',
+                'Management Overview': '#6366f1'
+            };
+            return colors[stageName] || '#3b82f6';
+        }
+
+        // QUICK ACTION FUNCTIONS
+
+        function openWorkflow(stockNo) {
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (!vehicle) return;
+            
+            // Get current stage file
+            const currentStage = allStages.find(s => s.name === vehicle.stage) || allStages[0];
+            const targetUrl = `./workflow/stages/${currentStage.file}?stock=${stockNo}`;
+            window.open(targetUrl, '_blank');
+        }
+
+        function quickChangeStage(stockNo) {
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (!vehicle) return;
+            
+            currentEditVehicle = vehicle;
+            currentEditType = 'stage';
+            
+            document.getElementById('modalTitle').textContent = `Change Stage - ${vehicle.stockNo}`;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-row">
+                    <label>Current Stage</label>
+                    <input type="text" value="${vehicle.stage}" disabled style="opacity: 0.5;">
+                </div>
+                <div class="form-row">
+                    <label>New Stage *</label>
+                    <select id="editStageSelect">
+                        ${allStages.map(s => `<option value="${s.id}" ${s.name === vehicle.stage ? 'selected' : ''}>${s.id}. ${s.name} (${s.dept})</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Notes (optional)</label>
+                    <input type="text" id="editNotes" placeholder="Reason for change...">
+                </div>
+            `;
+            
+            document.getElementById('quickEditModal').classList.add('active');
+        }
+
+        function quickAssign(stockNo) {
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (!vehicle) return;
+            
+            currentEditVehicle = vehicle;
+            currentEditType = 'assign';
+            
+            document.getElementById('modalTitle').textContent = `Assign Staff - ${vehicle.stockNo}`;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-row">
+                    <label>Currently Assigned</label>
+                    <input type="text" value="${vehicle.assignedTo || 'Unassigned'}" disabled style="opacity: 0.5;">
+                </div>
+                <div class="form-row">
+                    <label>Assign To *</label>
+                    <select id="editStaffSelect">
+                        <option value="">-- Select Staff --</option>
+                        ${staffList.map(s => `<option value="${s.name}" ${s.name === vehicle.assignedTo ? 'selected' : ''}>${s.name} (${s.department})</option>`).join('')}
+                    </select>
+                </div>
+            `;
+            
+            document.getElementById('quickEditModal').classList.add('active');
+        }
+
+        function quickChangeLocation(stockNo) {
+            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
+            if (!vehicle) return;
+            
+            currentEditVehicle = vehicle;
+            currentEditType = 'location';
+            
+            // Get unique locations from all vehicles
+            const locations = [...new Set(allVehicles.map(v => v.location).filter(Boolean))].sort();
+            
+            document.getElementById('modalTitle').textContent = `Change Location - ${vehicle.stockNo}`;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-row">
+                    <label>Current Location</label>
+                    <input type="text" value="${vehicle.location || 'Unknown'}" disabled style="opacity: 0.5;">
+                </div>
+                <div class="form-row">
+                    <label>New Location *</label>
+                    <select id="editLocationSelect">
+                        ${locations.map(loc => `<option value="${loc}" ${loc === vehicle.location ? 'selected' : ''}>${loc}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Or Type New Location</label>
+                    <input type="text" id="editLocationText" placeholder="Enter new location...">
+                </div>
+            `;
+            
+            document.getElementById('quickEditModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('quickEditModal').classList.remove('active');
+            currentEditVehicle = null;
+            currentEditType = null;
+        }
+
+        function saveQuickEdit() {
+            if (!currentEditVehicle) return;
+            
+            let updateData = {
+                stockNo: currentEditVehicle.stockNo,
+                timestamp: new Date().toISOString(),
+                type: currentEditType
+            };
+            
+            switch(currentEditType) {
+                case 'stage':
+                    const newStageId = document.getElementById('editStageSelect').value;
+                    const newStage = allStages.find(s => s.id === parseInt(newStageId));
+                    const notes = document.getElementById('editNotes').value;
+                    
+                    currentEditVehicle.stage = newStage.name;
+                    updateData.newStage = newStage.name;
+                    updateData.newStageId = newStageId;
+                    updateData.notes = notes;
+                    
+                    // Update vehicle profile
+                    saveVehicleProfile(currentEditVehicle, { currentStage: parseInt(newStageId) });
+                    showToast(`Stage changed to ${newStage.name}`);
+                    break;
+                    
+                case 'assign':
+                    const newAssignee = document.getElementById('editStaffSelect').value;
+                    currentEditVehicle.assignedTo = newAssignee;
+                    updateData.assignedTo = newAssignee;
+                    
+                    saveVehicleProfile(currentEditVehicle, { assignedTo: newAssignee });
+                    showToast(`Assigned to ${newAssignee}`);
+                    break;
+                    
+                case 'location':
+                    const selectLocation = document.getElementById('editLocationSelect').value;
+                    const textLocation = document.getElementById('editLocationText').value;
+                    const newLocation = textLocation || selectLocation;
+                    
+                    currentEditVehicle.location = newLocation;
+                    updateData.location = newLocation;
+                    
+                    saveVehicleProfile(currentEditVehicle, { location: newLocation });
+                    showToast(`Location changed to ${newLocation}`);
+                    break;
+            }
+            
+            // Broadcast update to other pages
+            localStorage.setItem('capeye_inventory_update', JSON.stringify(updateData));
+            
+            closeModal();
+            renderTable();
+        }
+
+        function saveVehicleProfile(vehicle, updates) {
+            const key = `capeye_vehicle_${vehicle.stockNo}`;
+            const existing = JSON.parse(localStorage.getItem(key) || '{}');
+            const updated = { ...existing, ...updates, lastUpdated: new Date().toISOString() };
+            localStorage.setItem(key, JSON.stringify(updated));
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Listen for updates from other pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'capeye_inventory_update') {
+                // Refresh data if another page made changes
+                loadCSVData();
+            }
+        });
+
+        // Standard functions
         function updateStats() {
             const total = filteredVehicles.length;
             const totalValue = filteredVehicles.reduce((sum, v) => sum + (v.retailPrice || 0), 0);
-            const avgDays = total > 0 
-                ? Math.round(filteredVehicles.reduce((sum, v) => sum + (v.daysInStock || 0), 0) / total)
-                : 0;
-            
+            const avgDays = total > 0 ? Math.round(filteredVehicles.reduce((sum, v) => sum + (v.daysInStock || 0), 0) / total) : 0;
             const totalCost = filteredVehicles.reduce((sum, v) => sum + (v.costPrice || 0), 0);
             const margin = totalValue > 0 ? (((totalValue - totalCost) / totalValue) * 100).toFixed(1) : 0;
             
-            animateValue('statTotal', total, '');
+            document.getElementById('statTotal').textContent = total;
             document.getElementById('statValue').textContent = '£' + totalValue.toLocaleString();
-            animateValue('statAvgDays', avgDays, '');
+            document.getElementById('statAvgDays').textContent = avgDays;
             document.getElementById('statMargin').textContent = margin + '%';
         }
 
-        function updateActiveFilters() {
-            const container = document.getElementById('activeFilters');
-            const tags = [];
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
+            const container = document.getElementById('paginationControls');
             
-            const search = document.getElementById('searchInput').value;
-            const make = document.getElementById('filterMake').value;
-            const model = document.getElementById('filterModel').value;
-            const stage = document.getElementById('filterStage').value;
-            const status = document.getElementById('filterStatus').value;
-            const location = document.getElementById('filterLocation').value;
-            const staff = document.getElementById('filterStaff').value;
-            const priceFrom = document.getElementById('priceFrom').value;
-            const priceTo = document.getElementById('priceTo').value;
-            const days = document.getElementById('filterDays').value;
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
             
-            if (search) tags.push(`Search: "${search}"`);
-            if (make) tags.push(`Make: ${make}`);
-            if (model) tags.push(`Model: ${model}`);
-            if (stage) tags.push(`Stage: ${stage}`);
-            if (status) tags.push(`Status: ${status}`);
-            if (location) tags.push(`Location: ${location}`);
-            if (staff) tags.push(`Staff: ${staff}`);
-            if (priceFrom || priceTo) tags.push(`Price: £${priceFrom || 0} - £${priceTo || '∞'}`);
-            if (days) tags.push(`Days: ${days}`);
+            let html = '';
+            html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
             
-            container.innerHTML = tags.map(tag => `
-                <span class="filter-badge">
-                    ${tag}
-                    <button onclick="clearFilter('${tag.split(':')[0].toLowerCase()}')">×</button>
-                </span>
-            `).join('');
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span style="color: var(--cy-text-muted);">...</span>`;
+                }
+            }
+            
+            html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
+            container.innerHTML = html;
         }
 
-        function clearFilter(type) {
-            switch(type) {
-                case 'search': document.getElementById('searchInput').value = ''; break;
-                case 'make': document.getElementById('filterMake').value = ''; break;
-                case 'model': document.getElementById('filterModel').value = ''; break;
-                case 'stage': document.getElementById('filterStage').value = ''; break;
-                case 'status': document.getElementById('filterStatus').value = ''; break;
-                case 'location': document.getElementById('filterLocation').value = ''; break;
-                case 'staff': document.getElementById('filterStaff').value = ''; break;
-                case 'price': 
-                    document.getElementById('priceFrom').value = '';
-                    document.getElementById('priceTo').value = '';
-                    break;
-                case 'days': document.getElementById('filterDays').value = ''; break;
-            }
-            applyFilters();
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderTable();
+            renderPagination();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+
+        function showDataStatus(success, count, errorMessage) {
+            const status = document.getElementById('dataStatus');
+            status.style.display = 'flex';
+            status.className = 'data-status' + (success ? '' : ' error');
+            status.querySelector('.data-status-text').textContent = success ? `Loaded ${count} vehicles` : (errorMessage || 'Error');
         }
 
         function resetFilters() {
@@ -1174,247 +1469,14 @@
             applyFilters();
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('vehicleTableBody');
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageVehicles = filteredVehicles.slice(start, end);
-            
-            if (pageVehicles.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--cy-text-muted);">No vehicles found</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = pageVehicles.map(v => {
-                const stage = stages[v.stage] || stages.INTAKE;
-                const days = v.daysInStock || 0;
-                const daysClass = days > 60 ? 'days-danger' : days > 30 ? 'days-warning' : 'days-normal';
-                const margin = v.retailPrice && v.costPrice ? (((v.retailPrice - v.costPrice) / v.retailPrice) * 100).toFixed(1) : 0;
-                
-                let statusBadge = '';
-                if (v.status === 'Sold') statusBadge = '<span class="badge badge-sold">Sold</span>';
-                else if (days > 60) statusBadge = '<span class="badge badge-stuck">Stuck</span>';
-                else if (v.location === 'With Supplier') statusBadge = '<span class="badge badge-intransit">In Transit</span>';
-                else statusBadge = '<span class="badge badge-instock">In Stock</span>';
-                
-                const staffInitial = v.assignedTo ? v.assignedTo.charAt(0).toUpperCase() : '?';
-                const staffFirstName = v.assignedTo ? v.assignedTo.split(' ')[0] : 'Unassigned';
-                
-                return `
-                    <tr onclick="viewVehicle('${v.stockNo}')" style="cursor: pointer;">
-                        <td>
-                            <div class="cell-reg">${v.registration || 'N/A'}</div>
-                            <div style="font-size: 11px; color: var(--cy-text-muted);">${v.stockNo || 'No Stock No'}</div>
-                        </td>
-                        <td>
-                            <div class="cell-vehicle">
-                                <div class="vehicle-thumb">
-                                    <i class="fas fa-car"></i>
-                                </div>
-                                <div class="vehicle-info">
-                                    <div class="vehicle-name">${v.make || 'Unknown'} ${v.model || ''}</div>
-                                    <div class="vehicle-details">${v.year || '-'} • ${v.fuelType || '-'} • ${v.mileage ? v.mileage.toLocaleString() + ' mi' : '-'}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="cell-stage" style="background: ${stage.bg}; color: ${stage.color};">
-                                <i class="fas fa-circle" style="font-size: 6px;"></i>
-                                ${stage.name}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="cell-price">
-                                <div class="price-retail">£${(v.retailPrice || 0).toLocaleString()}</div>
-                                <div class="price-cost">£${(v.costPrice || 0).toLocaleString()}</div>
-                                <div class="price-margin">${margin}% margin</div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="cell-days ${daysClass}">${days} days</div>
-                            <div style="font-size: 11px; color: var(--cy-text-muted);">in stock</div>
-                        </td>
-                        <td>
-                            <div class="cell-staff">
-                                <div class="staff-avatar">${staffInitial}</div>
-                                <span>${staffFirstName}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="cell-location">
-                                <i class="fas fa-map-marker-alt" style="margin-right: 4px;"></i>
-                                ${v.location || 'Unknown'}
-                            </div>
-                        </td>
-                        <td>${statusBadge}</td>
-                        <td>
-                            <div class="cell-actions" onclick="event.stopPropagation()">
-                                <button class="action-btn" onclick="editVehicle('${v.stockNo}')" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="action-btn" onclick="viewVehicle('${v.stockNo}')" title="View">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-            
-            // Update showing info
-            document.getElementById('showingFrom').textContent = filteredVehicles.length > 0 ? start + 1 : 0;
-            document.getElementById('showingTo').textContent = Math.min(end, filteredVehicles.length);
-            document.getElementById('totalItems').textContent = filteredVehicles.length;
-        }
-
-        function renderPagination() {
-            const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
-            const container = document.getElementById('paginationControls');
-            
-            if (totalPages <= 1) {
-                container.innerHTML = '';
-                return;
-            }
-            
-            let html = '';
-            
-            // Previous
-            html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                <i class="fas fa-chevron-left"></i>
-            </button>`;
-            
-            // Page numbers
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-                } else if (i === currentPage - 2 || i === currentPage + 2) {
-                    html += `<span style="color: var(--cy-text-muted);">...</span>`;
-                }
-            }
-            
-            // Next
-            html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                <i class="fas fa-chevron-right"></i>
-            </button>`;
-            
-            container.innerHTML = html;
-        }
-
-        function changePage(page) {
-            const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
-            if (page < 1 || page > totalPages) return;
-            currentPage = page;
-            renderTable();
-            renderPagination();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function viewVehicle(stockNo) {
-            const vehicle = allVehicles.find(v => v.stockNo === stockNo);
-            if (!vehicle) return;
-            
-            const details = `
-Registration: ${vehicle.registration || 'N/A'}
-Stock No: ${vehicle.stockNo || 'N/A'}
-Make/Model: ${vehicle.make || 'Unknown'} ${vehicle.model || ''}
-Year: ${vehicle.year || '-'}
-Colour: ${vehicle.colour || '-'}
-Fuel: ${vehicle.fuelType || '-'}
-Mileage: ${vehicle.mileage ? vehicle.mileage.toLocaleString() + ' mi' : '-'}
-Stage: ${vehicle.stage}
-Price: £${(vehicle.retailPrice || 0).toLocaleString()}
-Cost: £${(vehicle.costPrice || 0).toLocaleString()}
-Location: ${vehicle.location || '-'}
-Days in Stock: ${vehicle.daysInStock || 0}
-Status: ${vehicle.status || 'In Stock'}
-            `.trim();
-            
-            alert(details);
-        }
-
-        function editVehicle(stockNo) {
-            // For now, just view - you can link to workflow later
-            viewVehicle(stockNo);
-        }
-
-        function addNewVehicle() {
-            window.location.href = './workflow/stages/stage-1-intake.html';
-        }
-
         function refreshData() {
             loadCSVData();
         }
 
         function exportInventory() {
-            const headers = ['Stock No', 'Registration', 'Make', 'Model', 'Year', 'Colour', 'Fuel Type', 'Mileage', 'Location', 'Status', 'Cost Price', 'Retail Price', 'Days in Stock'];
-            
-            const csv = [
-                headers.join(','),
-                ...filteredVehicles.map(v => [
-                    v.stockNo,
-                    v.registration,
-                    v.make,
-                    v.model,
-                    v.year,
-                    v.colour,
-                    v.fuelType,
-                    v.mileage,
-                    v.location,
-                    v.status,
-                    v.costPrice,
-                    v.retailPrice,
-                    v.daysInStock
-                ].map(field => `"${String(field || '').replace(/"/g, '""')}"`).join(','))
-            ].join('\n');
-            
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `inventory_export_${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
+            // Export logic here
+            showToast('Export feature coming soon');
         }
-
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        function animateValue(id, value, prefix) {
-            const el = document.getElementById(id);
-            const current = parseInt(el.textContent.replace(/[^0-9]/g, '')) || 0;
-            if (current === value) return;
-            
-            const diff = value - current;
-            const steps = 20;
-            const increment = diff / steps;
-            let step = 0;
-            
-            const timer = setInterval(() => {
-                step++;
-                const newVal = Math.round(current + (increment * step));
-                el.textContent = prefix + newVal.toLocaleString();
-                if (step >= steps) clearInterval(timer);
-            }, 30);
-        }
-
-        function logout() {
-            localStorage.removeItem('capeye_session');
-            window.location.href = './login.html';
-        }
-
-        // Search input listener with debounce
-        document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
     </script>
 </body>
 </html>
