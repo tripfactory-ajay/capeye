@@ -3,240 +3,1175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stage 8: Fault Overview - Capeye Workflow</title>
-    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
-    <script src="../../data/staff/staff-list.js"></script>
-    <script src="../../data/faults/fault-types.js"></script>
-    <script src="../../js/workflow/workflow-engine.js"></script>
-    <script src="../../js/workflow/form-components.js"></script>
-</head>
-<body>
-    <div class="workflow-container">
-        <div id="stage-nav-container"></div>
-        <main class="main-content">
-            <div id="header-container"></div>
-            <div class="stage-container">
-                <div class="stage-header">
-                    <h1 class="stage-title"><span style="font-size: 2rem;">📊</span> Stage 8: Fault Overview</h1>
-                    <p class="stage-description">Workshop lead review of all faults, repairs completed, and sign-off for advertising.</p>
-                </div>
-                
-                <div id="vehicle-info-display" class="vehicle-info-card">
-                    <div class="vehicle-info-header">
-                        <div class="vehicle-info-title">Vehicle Details</div>
-                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
-                    </div>
-                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
-                </div>
-                
-                <form id="stage-8-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="workshop-lead">Workshop Lead <span class="required">*</span></label>
-                            <select id="workshop-lead" name="workshopLead" class="form-select" required>
-                                <option value="">Select Lead...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="review-date">Review Date</label>
-                            <input type="date" id="review-date" name="reviewDate" class="form-input">
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Fault Summary Review</h3>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Outstanding Faults</label>
-                        <div id="faults-list" style="background: var(--color-bg); padding: 1rem; border-radius: var(--radius-md);">
-                            <p style="color: var(--color-text-secondary);">Loading previous stage data...</p>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="repairs-completed">Repairs Completed</label>
-                        <select id="repairs-completed" name="repairsCompleted" class="form-select">
-                            <option value="all">All Repairs Completed</option>
-                            <option value="minor">Minor Items Remaining</option>
-                            <option value="major">Major Items Outstanding</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="outstanding-items">Outstanding Items (if any)</label>
-                        <textarea id="outstanding-items" name="outstandingItems" class="form-textarea" rows="3" placeholder="List any remaining work..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="quality-rating">Overall Quality Rating</label>
-                        <select id="quality-rating" name="qualityRating" class="form-select">
-                            <option value="excellent">Excellent - Ready for Sale</option>
-                            <option value="good">Good - Minor Issues Noted</option>
-                            <option value="fair">Fair - Price Adjustment Needed</option>
-                            <option value="poor">Poor - Further Work Required</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="recommendations">Recommendations</label>
-                        <textarea id="recommendations" name="recommendations" class="form-textarea" rows="3" placeholder="Any recommendations for sales team..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Final Inspection Photos</label>
-                        <div id="inspection-photos-container"></div>
-                        <input type="hidden" id="inspection-photos" name="inspectionPhotos">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Workshop Lead Signature <span class="required">*</span></label>
-                        <div id="signature-container"></div>
-                        <input type="hidden" id="signature" name="signature" required>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <div class="form-actions-left">
-                            <a href="stage-7-valeting.html" class="btn btn-secondary">← Back</a>
-                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
-                        </div>
-                        <div class="form-actions-right">
-                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Approve & Send to Advertising →</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </main>
-    </div>
-    
-    <script>
-        let currentVehicle = null;
-        document.addEventListener('DOMContentLoaded', function() {
-            WorkflowEngine.setStage(8);
-            loadComponents();
-            populateLeads();
-            initPhotos();
-            initSignature();
-            loadVehicle();
-            loadPreviousFaults();
-            loadSavedData();
-            document.getElementById('review-date').valueAsDate = new Date();
-        });
-        
-        function loadComponents() {
-            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
-            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+    <title>Stage 8: Fault Overview - Capeye Auto Capital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #f59e0b;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card: #1e293b;
+            --border: #334155;
         }
         
-        function populateLeads() {
-            const select = document.getElementById('workshop-lead');
-            if (STAFF_DATA) {
-                STAFF_DATA.getStaffByDept('workshop').forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name;
-                    select.appendChild(opt);
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        
+        .stage-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .form-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section h3 {
+            color: #f59e0b;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-card {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f59e0b;
+        }
+        
+        .summary-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+        
+        .fault-summary {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .fault-category {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .fault-category i {
+            width: 24px;
+            text-align: center;
+        }
+        
+        .fault-count {
+            margin-left: auto;
+            background: var(--border);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .fault-count.critical { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .fault-count.warning { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .fault-count.ok { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        
+        .recommendation-item {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .recommendation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .priority-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .priority-critical { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .priority-high { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .priority-medium { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .priority-low { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: #e2e8f0;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+        }
+        
+        .btn-add {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .btn-add:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+            width: 67%;
+            transition: width 0.3s;
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .stage-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        .stage-step.active {
+            opacity: 1;
+        }
+        
+        .stage-step.completed {
+            opacity: 1;
+        }
+        
+        .stage-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        
+        .stage-step.active .stage-dot {
+            background: #f59e0b;
+            border-color: #fbbf24;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+        }
+        
+        .stage-step.completed .stage-dot {
+            background: #10b981;
+            border-color: #34d399;
+        }
+        
+        .stage-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        .previous-summary {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-banner {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .status-pass { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; }
+        .status-fail { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; }
+        .status-warning { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b; }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="glass-panel p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="stage-badge">Stage 8 of 12</span>
+                        <span class="text-sm text-gray-400">Workshop Lead</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">Fault Overview</h1>
+                    <p class="text-gray-400 mt-1">Final mechanical sign-off and fault summary</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="saveDraft()" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button onclick="submitForm()" class="btn-primary">
+                        <i class="fas fa-check-circle"></i> Complete Stage
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Progress -->
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <!-- Stage Navigation -->
+            <div class="stage-indicator">
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Intake</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Bodywork</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Paint</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Legal</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Mechanical</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">External</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Valeting</span>
+                </div>
+                <div class="stage-step active">
+                    <div class="stage-dot">8</div>
+                    <span class="stage-label">Faults</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">9</div>
+                    <span class="stage-label">Ready</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">10</div>
+                    <span class="stage-label">Delivery</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">11</div>
+                    <span class="stage-label">Accounts</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">12</div>
+                    <span class="stage-label">Management</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Selection -->
+        <div class="glass-panel p-6 mb-6">
+            <h3 class="text-lg font-semibold text-white mb-4"><i class="fas fa-car"></i> Select Vehicle</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Stock Number *</label>
+                    <select id="stockNo" class="form-control" onchange="loadVehicleData()">
+                        <option value="">Select Stock Number...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="registration" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Make & Model</label>
+                    <input type="text" id="makeModel" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Current Stage</label>
+                    <input type="text" id="currentStage" class="form-control" value="Stage 7 Complete" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Previous Stage Summary -->
+        <div id="previousSummary" class="previous-summary" style="display: none;">
+            <h4 class="font-semibold text-emerald-400 mb-2"><i class="fas fa-history"></i> Stage 7 Summary - Valeting</h4>
+            <div id="previousData" class="text-sm text-gray-300"></div>
+        </div>
+
+        <!-- Auto-populated Summary -->
+        <div id="autoSummary" style="display: none;">
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="summary-value" id="totalFaults">0</div>
+                    <div class="summary-label">Total Faults</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" id="criticalFaults">0</div>
+                    <div class="summary-label">Critical</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" id="warningFaults">0</div>
+                    <div class="summary-label">Warnings</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" id="mechanicalGrade">-</div>
+                    <div class="summary-label">Mech Grade</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3><i class="fas fa-clipboard-list"></i> Fault Summary from Previous Stages</h3>
+                
+                <div class="fault-summary">
+                    <div class="fault-category">
+                        <i class="fas fa-engine text-orange-500"></i>
+                        <span>Mechanical & Diagnostic</span>
+                        <span class="fault-count" id="mechFaultCount">0</span>
+                    </div>
+                    <div id="mechFaultDetails" class="text-sm text-gray-400 pl-8"></div>
+                </div>
+                
+                <div class="fault-summary">
+                    <div class="fault-category">
+                        <i class="fas fa-bolt text-yellow-500"></i>
+                        <span>External & Electrical</span>
+                        <span class="fault-count" id="electFaultCount">0</span>
+                    </div>
+                    <div id="electFaultDetails" class="text-sm text-gray-400 pl-8"></div>
+                </div>
+                
+                <div class="fault-summary">
+                    <div class="fault-category">
+                        <i class="fas fa-couch text-blue-500"></i>
+                        <span>Interior & Valeting</span>
+                        <span class="fault-count ok" id="valetFaultCount">0</span>
+                    </div>
+                    <div id="valetFaultDetails" class="text-sm text-gray-400 pl-8"></div>
+                </div>
+            </div>
+        </div>
+
+        <form id="stage8Form">
+            <!-- Section 1: Final Verification -->
+            <div class="form-section">
+                <h3><i class="fas fa-check-double"></i> Final Verification</h3>
+                
+                <div id="statusBanner" class="status-banner status-warning">
+                    <i class="fas fa-exclamation-triangle text-xl"></i>
+                    <div>
+                        <div class="font-semibold">Review Required</div>
+                        <div class="text-sm">Please review all previous stage data before sign-off</div>
+                    </div>
+                </div>
+
+                <div class="form-grid mt-4">
+                    <div class="form-group">
+                        <label>Overall Vehicle Status *</label>
+                        <select id="overallStatus" class="form-control" required onchange="updateStatusBanner()">
+                            <option value="">Select Status...</option>
+                            <option value="pass">Pass - Ready for Advertising</option>
+                            <option value="pass-minor">Pass with Minor Issues</option>
+                            <option value="fail">Fail - Repairs Required</option>
+                            <option value="hold">On Hold - Further Investigation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Workshop Lead *</label>
+                        <select id="workshopLead" class="form-control" required>
+                            <option value="">Select Lead...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Review Date *</label>
+                        <input type="date" id="reviewDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hours Total (All Stages)</label>
+                        <input type="number" id="totalHours" class="form-control" step="0.5" placeholder="Auto-calculated" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Outstanding Issues -->
+            <div class="form-section">
+                <h3><i class="fas fa-exclamation-circle"></i> Outstanding Issues</h3>
+                <p class="text-sm text-gray-400 mb-4">List any issues that need to be addressed before sale</p>
+                
+                <div id="recommendationsList">
+                    <!-- Recommendations will be added here -->
+                </div>
+                
+                <button type="button" class="btn-add mt-4" onclick="addRecommendation()">
+                    <i class="fas fa-plus"></i> Add Issue
+                </button>
+            </div>
+
+            <!-- Section 3: Parts Required -->
+            <div class="form-section">
+                <h3><i class="fas fa-cogs"></i> Parts Required</h3>
+                <div id="partsList" class="space-y-2">
+                    <div class="flex gap-2">
+                        <input type="text" class="form-control flex-1" placeholder="Part name/description">
+                        <input type="text" class="form-control w-24" placeholder="Part No.">
+                        <input type="number" class="form-control w-20" placeholder="Qty" min="1" value="1">
+                        <input type="text" class="form-control w-24" placeholder="Est. £">
+                        <select class="form-control w-32">
+                            <option value="ordered">Ordered</option>
+                            <option value="stock">In Stock</option>
+                            <option value="needed">Needed</option>
+                        </select>
+                        <button type="button" class="btn-secondary px-3" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                <button type="button" class="btn-add mt-2" onclick="addPart()">
+                    <i class="fas fa-plus"></i> Add Part
+                </button>
+            </div>
+
+            <!-- Section 4: Final Notes -->
+            <div class="form-section">
+                <h3><i class="fas fa-sticky-note"></i> Final Notes</h3>
+                <div class="form-group">
+                    <label>Workshop Lead Comments</label>
+                    <textarea id="leadComments" class="form-control" rows="4" placeholder="Overall assessment, recommendations, special notes for sales team..."></textarea>
+                </div>
+                
+                <div class="form-grid mt-4">
+                    <div class="form-group">
+                        <label>Recommended Retail Price</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="recommendedPrice" class="form-control pl-8" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Price</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="minimumPrice" class="form-control pl-8" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Sign-off -->
+            <div class="form-section">
+                <h3><i class="fas fa-signature"></i> Workshop Lead Sign-off</h3>
+                
+                <div class="space-y-3 mb-4">
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" class="w-5 h-5 rounded border-slate-600 text-amber-500 focus:ring-amber-500" id="verifyAllStages" required>
+                        <span class="text-gray-300">I have reviewed all previous stages (1-7) and confirm the vehicle is ready for final preparation</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" class="w-5 h-5 rounded border-slate-600 text-amber-500 focus:ring-amber-500" id="verifySafety" required>
+                        <span class="text-gray-300">I confirm the vehicle is safe and roadworthy</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" class="w-5 h-5 rounded border-slate-600 text-amber-500 focus:ring-amber-500" id="verifyDocumentation" required>
+                        <span class="text-gray-300">All documentation is complete and accurate</span>
+                    </label>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Digital Signature *</label>
+                        <canvas id="signaturePad" class="signature-pad w-full" style="background: white; border-radius: 8px; height: 200px;"></canvas>
+                        <button type="button" class="btn-secondary mt-2" onclick="clearSignature()">
+                            <i class="fas fa-undo"></i> Clear Signature
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-between items-center mt-6">
+            <button onclick="window.location.href='stage-7-valeting.html'" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Stage 7
+            </button>
+            <div class="flex gap-3">
+                <button onclick="saveDraft()" class="btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+                <button onclick="submitForm()" class="btn-primary">
+                    <i class="fas fa-check-circle"></i> Complete Stage 8
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let vehicles = [];
+        let staff = [];
+        let currentVehicle = null;
+        let signaturePad = null;
+        let isDrawing = false;
+        let stageData = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            initSignaturePad();
+            setupAutoSave();
+            document.getElementById('reviewDate').valueAsDate = new Date();
+        });
+
+        function loadData() {
+            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    vehicles = results.data.filter(v => v['Stock No'] || v['StockNo']);
+                    populateVehicleDropdown();
+                }
+            });
+
+            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    staff = results.data.filter(s => s['Name'] || s['Staff Name']);
+                    populateStaffDropdown();
+                }
+            });
+        }
+
+        function populateVehicleDropdown() {
+            const select = document.getElementById('stockNo');
+            vehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle['Stock No'] || vehicle['StockNo'];
+                option.textContent = `${vehicle['Stock No'] || vehicle['StockNo']} - ${vehicle['Make']} ${vehicle['Model']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function populateStaffDropdown() {
+            const select = document.getElementById('workshopLead');
+            const leads = staff.filter(s => 
+                s['Role']?.includes('Lead') || s['Role']?.includes('Manager') || s['Role']?.includes('Supervisor')
+            );
+            
+            leads.forEach(l => {
+                const name = l['Name'] || l['Staff Name'];
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = `${name} - ${l['Role']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadVehicleData() {
+            const stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) return;
+            
+            currentVehicle = vehicles.find(v => (v['Stock No'] || v['StockNo']) === stockNo);
+            if (currentVehicle) {
+                document.getElementById('registration').value = currentVehicle['Registration'] || '';
+                document.getElementById('makeModel').value = `${currentVehicle['Make']} ${currentVehicle['Model']}`;
+                
+                loadAllStageData(stockNo);
+                loadDraft(stockNo);
+            }
+        }
+
+        function loadAllStageData(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            stageData = JSON.parse(saved);
+            
+            // Show previous stage summary
+            if (stageData.stage7) {
+                document.getElementById('previousSummary').style.display = 'block';
+                const s = stageData.stage7;
+                document.getElementById('previousData').innerHTML = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Interior Grade:</strong> ${s.interiorGrade || 'N/A'}</div>
+                        <div><strong>Odometer:</strong> ${s.odometerReading || 'N/A'}</div>
+                        <div><strong>Valeted By:</strong> ${s.completedBy || 'N/A'}</div>
+                        <div><strong>Hours:</strong> ${s.hoursSpent || 'N/A'}</div>
+                    </div>
+                `;
+            }
+            
+            // Calculate and display summary
+            calculateFaultSummary();
+        }
+
+        function calculateFaultSummary() {
+            let totalFaults = 0;
+            let criticalFaults = 0;
+            let warningFaults = 0;
+            let totalHours = 0;
+            
+            // Stage 5 - Mechanical
+            let mechIssues = [];
+            if (stageData.stage5) {
+                const s5 = stageData.stage5;
+                totalHours += parseFloat(s5.hoursSpent) || 0;
+                
+                if (s5.faultCodes && s5.faultCodes.length > 0) {
+                    s5.faultCodes.forEach(fault => {
+                        if (fault.severity === 'critical') {
+                            criticalFaults++;
+                            mechIssues.push(`Critical: ${fault.code} - ${fault.description}`);
+                        } else if (fault.severity === 'major') {
+                            warningFaults++;
+                            mechIssues.push(`Major: ${fault.code} - ${fault.description}`);
+                        }
+                    });
+                }
+                
+                if (s5.mechanicalGrade) {
+                    document.getElementById('mechanicalGrade').textContent = s5.mechanicalGrade;
+                }
+            }
+            
+            // Stage 6 - External
+            let electIssues = [];
+            if (stageData.stage6) {
+                const s6 = stageData.stage6;
+                totalHours += parseFloat(s6.hoursSpent) || 0;
+                
+                // Check for failed items
+                if (s6.electrical) {
+                    Object.keys(s6.electrical).forEach(key => {
+                        if (!s6.electrical[key]) {
+                            warningFaults++;
+                            electIssues.push(key.replace(/([A-Z])/g, ' $1').trim());
+                        }
+                    });
+                }
+                
+                // Check tyre depths
+                ['nsf', 'osf', 'nsr', 'osr'].forEach(pos => {
+                    const depth = parseFloat(s6[pos + 'Depth']) || 0;
+                    if (depth < 1.6) {
+                        criticalFaults++;
+                        electIssues.push(`${pos.toUpperCase()} tyre illegal (${depth}mm)`);
+                    } else if (depth < 3) {
+                        warningFaults++;
+                        electIssues.push(`${pos.toUpperCase()} tyre low (${depth}mm)`);
+                    }
                 });
             }
-        }
-        
-        function initPhotos() {
-            document.getElementById('inspection-photos-container').appendChild(
-                FormComponents.createPhotoUpload({ id: 'inspection-photos', label: 'Inspection Photos', maxPhotos: 6 })
-            );
-        }
-        
-        function initSignature() {
-            document.getElementById('signature-container').appendChild(
-                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
-            );
-        }
-        
-        function loadVehicle() {
-            currentVehicle = WorkflowEngine.getVehicle();
-            if (!currentVehicle) {
-                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
-                return;
+            
+            // Stage 7 - Valeting
+            let valetIssues = [];
+            if (stageData.stage7) {
+                const s7 = stageData.stage7;
+                totalHours += parseFloat(s7.hoursSpent) || 0;
+                
+                // Check interior conditions
+                ['driverSeat', 'passengerSeat', 'rearSeats', 'dashboard', 'carpets'].forEach(item => {
+                    if (s7[item] && s7[item].condition === 'poor') {
+                        warningFaults++;
+                        valetIssues.push(`${item} condition poor`);
+                    }
+                });
             }
-            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
-            document.getElementById('vehicle-details-content').innerHTML = `
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
+            
+            totalFaults = criticalFaults + warningFaults;
+            
+            // Update display
+            document.getElementById('totalFaults').textContent = totalFaults;
+            document.getElementById('criticalFaults').textContent = criticalFaults;
+            document.getElementById('warningFaults').textContent = warningFaults;
+            document.getElementById('totalHours').value = totalHours.toFixed(1);
+            
+            // Update fault categories
+            document.getElementById('mechFaultCount').textContent = mechIssues.length;
+            document.getElementById('mechFaultCount').className = 'fault-count ' + (mechIssues.length > 0 ? 'critical' : 'ok');
+            document.getElementById('mechFaultDetails').innerHTML = mechIssues.length > 0 ? mechIssues.join('<br>') : 'No mechanical faults recorded';
+            
+            document.getElementById('electFaultCount').textContent = electIssues.length;
+            document.getElementById('electFaultCount').className = 'fault-count ' + (electIssues.length > 0 ? 'warning' : 'ok');
+            document.getElementById('electFaultDetails').innerHTML = electIssues.length > 0 ? electIssues.join('<br>') : 'No external/electrical faults recorded';
+            
+            document.getElementById('valetFaultCount').textContent = valetIssues.length;
+            document.getElementById('valetFaultDetails').innerHTML = valetIssues.length > 0 ? valetIssues.join('<br>') : 'No valeting issues recorded';
+            
+            // Show summary
+            document.getElementById('autoSummary').style.display = 'block';
+            
+            // Auto-populate recommendations
+            populateRecommendations(mechIssues, electIssues, valetIssues);
+        }
+
+        function populateRecommendations(mech, elect, valet) {
+            const container = document.getElementById('recommendationsList');
+            container.innerHTML = '';
+            
+            const allIssues = [...mech, ...elect, ...valet];
+            allIssues.forEach((issue, index) => {
+                const div = document.createElement('div');
+                div.className = 'recommendation-item';
+                div.innerHTML = `
+                    <div class="recommendation-header">
+                        <input type="text" class="form-control flex-1" value="${issue}" placeholder="Issue description">
+                        <select class="form-control w-32 priority-badge priority-high">
+                            <option value="critical" class="priority-critical">Critical</option>
+                            <option value="high" class="priority-high" selected>High</option>
+                            <option value="medium" class="priority-medium">Medium</option>
+                            <option value="low" class="priority-low">Low</option>
+                        </select>
+                        <button type="button" class="btn-secondary px-3" onclick="this.closest('.recommendation-item').remove()"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <textarea class="form-control mt-2" rows="2" placeholder="Action required..."></textarea>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addRecommendation() {
+            const container = document.getElementById('recommendationsList');
+            const div = document.createElement('div');
+            div.className = 'recommendation-item';
+            div.innerHTML = `
+                <div class="recommendation-header">
+                    <input type="text" class="form-control flex-1" placeholder="Issue description">
+                    <select class="form-control w-32 priority-badge priority-medium">
+                        <option value="critical" class="priority-critical">Critical</option>
+                        <option value="high" class="priority-high">High</option>
+                        <option value="medium" class="priority-medium" selected>Medium</option>
+                        <option value="low" class="priority-low">Low</option>
+                    </select>
+                    <button type="button" class="btn-secondary px-3" onclick="this.closest('.recommendation-item').remove()"><i class="fas fa-trash"></i></button>
+                </div>
+                <textarea class="form-control mt-2" rows="2" placeholder="Action required..."></textarea>
             `;
+            container.appendChild(div);
         }
-        
-        function loadPreviousFaults() {
-            if (!currentVehicle) return;
-            // Load faults from stages 2, 5, 6
-            const bodywork = WorkflowEngine.loadStageData(2, currentVehicle.stockNo);
-            const mechanical = WorkflowEngine.loadStageData(5, currentVehicle.stockNo);
-            const external = WorkflowEngine.loadStageData(6, currentVehicle.stockNo);
-            
-            let faultsHtml = '';
-            
-            if (bodywork?.data?.dents?.length) {
-                faultsHtml += `<div style="margin-bottom: 1rem;"><strong>Bodywork:</strong> ${bodywork.data.dents.join(', ')}</div>`;
-            }
-            if (mechanical?.data?.mechanicalFaults?.length) {
-                faultsHtml += `<div style="margin-bottom: 1rem;"><strong>Mechanical:</strong> ${mechanical.data.mechanicalFaults.join(', ')}</div>`;
-            }
-            if (external?.data?.lights?.length) {
-                faultsHtml += `<div><strong>Electrical:</strong> ${external.data.lights.join(', ')}</div>`;
-            }
-            
-            document.getElementById('faults-list').innerHTML = faultsHtml || '<p style="color: var(--color-success);">✓ No faults recorded</p>';
+
+        function addPart() {
+            const container = document.getElementById('partsList');
+            const div = document.createElement('div');
+            div.className = 'flex gap-2';
+            div.innerHTML = `
+                <input type="text" class="form-control flex-1" placeholder="Part name/description">
+                <input type="text" class="form-control w-24" placeholder="Part No.">
+                <input type="number" class="form-control w-20" placeholder="Qty" min="1" value="1">
+                <input type="text" class="form-control w-24" placeholder="Est. £">
+                <select class="form-control w-32">
+                    <option value="ordered">Ordered</option>
+                    <option value="stock">In Stock</option>
+                    <option value="needed">Needed</option>
+                </select>
+                <button type="button" class="btn-secondary px-3" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>
+            `;
+            container.appendChild(div);
         }
-        
-        function getFormData() {
-            const form = document.getElementById('stage-8-form');
-            const fd = new FormData(form);
+
+        function updateStatusBanner() {
+            const status = document.getElementById('overallStatus').value;
+            const banner = document.getElementById('statusBanner');
+            
+            banner.className = 'status-banner ';
+            if (status === 'pass') {
+                banner.classList.add('status-pass');
+                banner.innerHTML = '<i class="fas fa-check-circle text-xl"></i><div><div class="font-semibold">Pass</div><div class="text-sm">Vehicle ready for advertising</div></div>';
+            } else if (status === 'pass-minor') {
+                banner.classList.add('status-warning');
+                banner.innerHTML = '<i class="fas fa-exclamation-circle text-xl"></i><div><div class="font-semibold">Pass with Minor Issues</div><div class="text-sm">Issues noted but not preventing sale</div></div>';
+            } else if (status === 'fail') {
+                banner.classList.add('status-fail');
+                banner.innerHTML = '<i class="fas fa-times-circle text-xl"></i><div><div class="font-semibold">Fail</div><div class="text-sm">Repairs required before sale</div></div>';
+            } else {
+                banner.classList.add('status-warning');
+                banner.innerHTML = '<i class="fas fa-pause-circle text-xl"></i><div><div class="font-semibold">On Hold</div><div class="text-sm">Further investigation required</div></div>';
+            }
+        }
+
+        function initSignaturePad() {
+            const canvas = document.getElementById('signaturePad');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', stopDrawing);
+            
+            signaturePad = { canvas, ctx };
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = signaturePad.canvas.getBoundingClientRect();
+            signaturePad.ctx.beginPath();
+            signaturePad.ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = signaturePad.canvas.getBoundingClientRect();
+            signaturePad.ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            signaturePad.ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            signaturePad.canvas.dispatchEvent(mouseEvent);
+        }
+
+        function clearSignature() {
+            if (signaturePad) {
+                signaturePad.ctx.clearRect(0, 0, signaturePad.canvas.width, signaturePad.canvas.height);
+            }
+        }
+
+        function submitForm() {
+            if (!validateForm()) return;
+            
+            const stockNo = document.getElementById('stockNo').value;
+            const formData = collectFormData();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage8 = formData;
+            vehicleData.currentStage = 9;
+            vehicleData.lastUpdated = new Date().toISOString();
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            
+            alert('Stage 8 completed successfully! Moving to Stage 9: Ready for Advertising.');
+            window.location.href = 'stage-9-advertising.html?stockNo=' + stockNo;
+        }
+
+        function validateForm() {
+            const required = ['stockNo', 'overallStatus', 'workshopLead', 'reviewDate'];
+            for (let field of required) {
+                const el = document.getElementById(field);
+                if (!el.value) {
+                    el.focus();
+                    alert('Please fill in all required fields');
+                    return false;
+                }
+            }
+            
+            const checkboxes = ['verifyAllStages', 'verifySafety', 'verifyDocumentation'];
+            for (let id of checkboxes) {
+                if (!document.getElementById(id).checked) {
+                    alert('Please complete all verification checkboxes');
+                    return false;
+                }
+            }
+            
+            if (signaturePad) {
+                const pixelData = signaturePad.canvas.toDataURL();
+                if (pixelData.length < 1000) {
+                    alert('Please provide a signature');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function collectFormData() {
+            const recommendations = [];
+            document.querySelectorAll('.recommendation-item').forEach(item => {
+                const inputs = item.querySelectorAll('input, textarea, select');
+                recommendations.push({
+                    issue: inputs[0].value,
+                    priority: inputs[1].value,
+                    action: inputs[2].value
+                });
+            });
+            
+            const parts = [];
+            document.querySelectorAll('#partsList > div').forEach(item => {
+                const inputs = item.querySelectorAll('input, select');
+                parts.push({
+                    name: inputs[0].value,
+                    partNumber: inputs[1].value,
+                    quantity: inputs[2].value,
+                    estimatedCost: inputs[3].value,
+                    status: inputs[4].value
+                });
+            });
+            
             return {
-                workshopLead: fd.get('workshopLead'),
-                reviewDate: fd.get('reviewDate'),
-                repairsCompleted: fd.get('repairsCompleted'),
-                outstandingItems: fd.get('outstandingItems'),
-                qualityRating: fd.get('qualityRating'),
-                recommendations: fd.get('recommendations'),
-                inspectionPhotos: document.getElementById('inspection-photos').value,
-                signature: document.getElementById('signature').value
+                overallStatus: document.getElementById('overallStatus').value,
+                workshopLead: document.getElementById('workshopLead').value,
+                reviewDate: document.getElementById('reviewDate').value,
+                totalHours: document.getElementById('totalHours').value,
+                recommendations: recommendations,
+                partsRequired: parts,
+                leadComments: document.getElementById('leadComments').value,
+                recommendedPrice: document.getElementById('recommendedPrice').value,
+                minimumPrice: document.getElementById('minimumPrice').value,
+                verifyAllStages: document.getElementById('verifyAllStages').checked,
+                verifySafety: document.getElementById('verifySafety').checked,
+                verifyDocumentation: document.getElementById('verifyDocumentation').checked,
+                signature: signaturePad ? signaturePad.canvas.toDataURL() : null,
+                submittedAt: new Date().toISOString()
             };
         }
-        
-        function loadSavedData() {
-            if (!currentVehicle) return;
-            const saved = WorkflowEngine.loadStageData(8, currentVehicle.stockNo);
-            if (saved?.data) {
-                const d = saved.data;
-                if (d.workshopLead) document.getElementById('workshop-lead').value = d.workshopLead;
-                if (d.repairsCompleted) document.getElementById('repairs-completed').value = d.repairsCompleted;
-                if (d.qualityRating) document.getElementById('quality-rating').value = d.qualityRating;
-                if (d.outstandingItems) document.getElementById('outstanding-items').value = d.outstandingItems;
-                if (d.recommendations) document.getElementById('recommendations').value = d.recommendations;
+
+        function setupAutoSave() {
+            setInterval(() => {
+                const stockNo = document.getElementById('stockNo').value;
+                if (stockNo) saveDraft(stockNo, true);
+            }, 30000);
+        }
+
+        function saveDraft(stockNo = null, silent = false) {
+            if (!stockNo) stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) {
+                if (!silent) alert('Please select a vehicle first');
+                return;
+            }
+            
+            const draftData = collectFormData();
+            draftData.isDraft = true;
+            draftData.lastSaved = new Date().toISOString();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage8Draft = draftData;
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            if (!silent) alert('Draft saved successfully!');
+        }
+
+        function loadDraft(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            const data = JSON.parse(saved);
+            if (data.stage8Draft) {
+                const draft = data.stage8Draft;
+                
+                ['overallStatus', 'workshopLead', 'leadComments', 'recommendedPrice', 'minimumPrice'].forEach(field => {
+                    if (draft[field]) document.getElementById(field).value = draft[field];
+                });
+                
+                if (draft.overallStatus) updateStatusBanner();
+                
+                // Load recommendations
+                if (draft.recommendations) {
+                    const container = document.getElementById('recommendationsList');
+                    container.innerHTML = '';
+                    draft.recommendations.forEach(rec => {
+                        const div = document.createElement('div');
+                        div.className = 'recommendation-item';
+                        div.innerHTML = `
+                            <div class="recommendation-header">
+                                <input type="text" class="form-control flex-1" value="${rec.issue}">
+                                <select class="form-control w-32 priority-badge priority-${rec.priority}">
+                                    <option value="critical" class="priority-critical" ${rec.priority === 'critical' ? 'selected' : ''}>Critical</option>
+                                    <option value="high" class="priority-high" ${rec.priority === 'high' ? 'selected' : ''}>High</option>
+                                    <option value="medium" class="priority-medium" ${rec.priority === 'medium' ? 'selected' : ''}>Medium</option>
+                                    <option value="low" class="priority-low" ${rec.priority === 'low' ? 'selected' : ''}>Low</option>
+                                </select>
+                                <button type="button" class="btn-secondary px-3" onclick="this.closest('.recommendation-item').remove()"><i class="fas fa-trash"></i></button>
+                            </div>
+                            <textarea class="form-control mt-2" rows="2">${rec.action}</textarea>
+                        `;
+                        container.appendChild(div);
+                    });
+                }
+                
+                // Load parts
+                if (draft.partsRequired) {
+                    const container = document.getElementById('partsList');
+                    container.innerHTML = '';
+                    draft.partsRequired.forEach(part => {
+                        const div = document.createElement('div');
+                        div.className = 'flex gap-2';
+                        div.innerHTML = `
+                            <input type="text" class="form-control flex-1" value="${part.name}" placeholder="Part name/description">
+                            <input type="text" class="form-control w-24" value="${part.partNumber}" placeholder="Part No.">
+                            <input type="number" class="form-control w-20" value="${part.quantity}" placeholder="Qty" min="1">
+                            <input type="text" class="form-control w-24" value="${part.estimatedCost}" placeholder="Est. £">
+                            <select class="form-control w-32">
+                                <option value="ordered" ${part.status === 'ordered' ? 'selected' : ''}>Ordered</option>
+                                <option value="stock" ${part.status === 'stock' ? 'selected' : ''}>In Stock</option>
+                                <option value="needed" ${part.status === 'needed' ? 'selected' : ''}>Needed</option>
+                            </select>
+                            <button type="button" class="btn-secondary px-3" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>
+                        `;
+                        container.appendChild(div);
+                    });
+                }
             }
         }
-        
-        function saveDraft() {
-            if (!currentVehicle) return;
-            WorkflowEngine.saveStageData(8, getFormData());
-            showAlert('Draft saved', 'success');
-        }
-        
-        function completeStage() {
-            if (!currentVehicle) return;
-            const data = getFormData();
-            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
-            WorkflowEngine.completeStage(8, data);
-            showAlert('Stage 8 complete! Ready for advertising', 'success');
-            setTimeout(() => window.location.href = 'stage-9-advertising.html', 1500);
-        }
-        
-        function showAlert(msg, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `<span>${msg}</span>`;
-            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
-            setTimeout(() => alert.remove(), 5000);
-        }
-        
-        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
     </script>
 </body>
 </html>
