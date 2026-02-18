@@ -589,6 +589,13 @@
             color: var(--cy-accent-blue);
             font-weight: 500;
         }
+
+        /* Staff Select Debug Info */
+        .staff-info {
+            font-size: 11px;
+            color: var(--cy-text-muted);
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -995,8 +1002,9 @@
                     <div class="form-group">
                         <label class="required">Inspected By</label>
                         <select id="inspectedBy" class="form-select" required>
-                            <option value="">Select Staff Member</option>
+                            <option value="">-- Select Staff Member --</option>
                         </select>
+                        <div class="staff-info" id="staffCount">Loading staff...</div>
                     </div>
                     <div class="form-group">
                         <label class="required">Assign to Next Stage</label>
@@ -1206,7 +1214,7 @@
             });
         }
 
-        // Load Staff Data
+        // Load Staff Data - FIXED VERSION
         async function loadStaffData(stockPath) {
             const staffFile = 'Auto Capital - Staff List-639068391990284525.csv';
             let staffPath = staffFile;
@@ -1215,34 +1223,70 @@
                 staffPath = '../' + staffFile;
             }
             
+            console.log('Attempting to load staff from:', staffPath);
+            
             try {
                 const response = await fetch(staffPath);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const staffCsv = await response.text();
+                console.log('Staff CSV loaded, length:', staffCsv.length);
                 
                 Papa.parse(staffCsv, {
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        staffList = results.data.filter(s => s.Name);
+                        console.log('Staff parse complete. Raw data:', results.data);
+                        console.log('Staff columns:', results.meta.fields);
+                        
+                        // Normalize staff data with flexible column matching
+                        staffList = results.data.map(row => {
+                            const normalized = {};
+                            // Try to find name column
+                            normalized.name = row['Name'] || row['Staff Name'] || row['name'] || row['Full Name'] || '';
+                            // Try to find department/role column
+                            normalized.department = row['Department'] || row['Dept'] || row['department'] || row['Role'] || row['Position'] || '';
+                            normalized.role = row['Role'] || row['Position'] || row['Job Title'] || normalized.department;
+                            
+                            return normalized;
+                        }).filter(s => s.name && s.name.trim() !== '');
+                        
+                        console.log('Normalized staff list:', staffList);
+                        
                         populateStaffSelect();
+                        
+                        // Update staff count display
+                        const staffCount = document.getElementById('staffCount');
+                        if (staffList.length > 0) {
+                            staffCount.textContent = `${staffList.length} staff members loaded`;
+                            staffCount.style.color = 'var(--cy-accent-green)';
+                        } else {
+                            staffCount.textContent = 'No staff found in CSV';
+                            staffCount.style.color = 'var(--cy-accent-red)';
+                        }
                         
                         // Check for stock parameter in URL
                         const urlParams = new URLSearchParams(window.location.search);
                         const stockNo = urlParams.get('stock');
                         if (stockNo) {
                             document.getElementById('stockNoInput').value = stockNo;
-                            // Wait for dropdown to populate then search
                             setTimeout(() => searchVehicle(), 100);
                         }
                         
                         document.getElementById('loadingOverlay').style.display = 'none';
                     },
-                    error: function() {
+                    error: function(err) {
+                        console.error('Staff CSV parse error:', err);
+                        showStatus('Error parsing staff data', 'error');
                         document.getElementById('loadingOverlay').style.display = 'none';
                     }
                 });
             } catch (error) {
                 console.error('Staff load error:', error);
+                document.getElementById('staffCount').textContent = 'Error loading staff: ' + error.message;
+                document.getElementById('staffCount').style.color = 'var(--cy-accent-red)';
                 document.getElementById('loadingOverlay').style.display = 'none';
             }
         }
@@ -1293,19 +1337,50 @@
             });
         }
 
-        // Populate Staff Select
+        // Populate Staff Select - FIXED VERSION
         function populateStaffSelect() {
             const select = document.getElementById('inspectedBy');
-            const salesStaff = staffList.filter(s => 
-                s.Department === 'Sales' || s.Department === 'Management'
-            );
             
-            salesStaff.forEach(s => {
-                const option = document.createElement('option');
-                option.value = s.Name;
-                option.textContent = `${s.Name} (${s.Department})`;
-                select.appendChild(option);
+            // Clear existing options except first
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Filter for Sales and Management staff
+            const relevantStaff = staffList.filter(s => {
+                const dept = (s.department || '').toLowerCase();
+                const role = (s.role || '').toLowerCase();
+                return dept.includes('sales') || dept.includes('management') || 
+                       dept.includes('admin') || role.includes('manager') ||
+                       role.includes('sales') || role.includes('director');
             });
+            
+            console.log('Relevant staff for dropdown:', relevantStaff);
+            
+            if (relevantStaff.length === 0) {
+                // If no filtered staff, show all staff
+                staffList.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.name;
+                    option.textContent = `${s.name}${s.department ? ' (' + s.department + ')' : ''}`;
+                    select.appendChild(option);
+                });
+            } else {
+                relevantStaff.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.name;
+                    option.textContent = `${s.name}${s.department ? ' (' + s.department + ')' : ''}`;
+                    select.appendChild(option);
+                });
+            }
+            
+            // Add manual entry option if no staff loaded
+            if (staffList.length === 0) {
+                const option = document.createElement('option');
+                option.value = 'manual';
+                option.textContent = '-- Enter manually --';
+                select.appendChild(option);
+            }
         }
 
         // Search Vehicle
