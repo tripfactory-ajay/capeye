@@ -596,6 +596,30 @@
             color: var(--cy-text-muted);
             margin-top: 4px;
         }
+
+        /* Debug Panel */
+        .debug-panel {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--cy-radius-lg);
+            padding: 16px;
+            margin-bottom: 24px;
+            font-size: 12px;
+            color: var(--cy-text-secondary);
+        }
+
+        .debug-panel h4 {
+            color: var(--cy-accent-red);
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .debug-panel code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -634,6 +658,12 @@
 
     <!-- Main Content -->
     <main class="cy-container">
+        <!-- Debug Panel (shows file path issues) -->
+        <div id="debugPanel" class="debug-panel" style="display: none;">
+            <h4><i class="fas fa-bug"></i> Debug Info</h4>
+            <div id="debugContent"></div>
+        </div>
+
         <!-- Status Message -->
         <div id="statusMessage" class="status-message">
             <i class="fas fa-check-circle"></i>
@@ -1167,6 +1197,14 @@
             return !pixelData.some((pixel, index) => index % 4 === 3 && pixel < 255);
         }
 
+        // Show Debug Info
+        function showDebug(message) {
+            const panel = document.getElementById('debugPanel');
+            const content = document.getElementById('debugContent');
+            panel.style.display = 'block';
+            content.innerHTML += message + '<br>';
+        }
+
         // Load CSV Data with multiple path attempts
         async function loadData() {
             const possiblePaths = [
@@ -1214,81 +1252,132 @@
             });
         }
 
-        // Load Staff Data - FIXED VERSION
+        // Load Staff Data - FIXED VERSION WITH MULTIPLE PATH ATTEMPTS
         async function loadStaffData(stockPath) {
-            const staffFile = 'Auto Capital - Staff List-639068391990284525.csv';
-            let staffPath = staffFile;
+            // Try multiple possible staff file paths
+            const possiblePaths = [
+                'Auto Capital - Staff List-639068391990284525.csv',
+                './Auto Capital - Staff List-639068391990284525.csv',
+                '../Auto Capital - Staff List-639068391990284525.csv',
+                'Auto Capital - Staff List.csv',
+                './Auto Capital - Staff List.csv',
+                '../Auto Capital - Staff List.csv'
+            ];
             
+            // If stock was loaded from a subdirectory, adjust paths
             if (stockPath.includes('../')) {
-                staffPath = '../' + staffFile;
+                possiblePaths.unshift('../Auto Capital - Staff List-639068391990284525.csv');
+                possiblePaths.unshift('../Auto Capital - Staff List.csv');
             }
             
-            console.log('Attempting to load staff from:', staffPath);
+            let staffCsv = null;
+            let successfulPath = '';
+            let lastError = '';
             
-            try {
-                const response = await fetch(staffPath);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const staffCsv = await response.text();
-                console.log('Staff CSV loaded, length:', staffCsv.length);
-                
-                Papa.parse(staffCsv, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        console.log('Staff parse complete. Raw data:', results.data);
-                        console.log('Staff columns:', results.meta.fields);
-                        
-                        // Normalize staff data with flexible column matching
-                        staffList = results.data.map(row => {
-                            const normalized = {};
-                            // Try to find name column
-                            normalized.name = row['Name'] || row['Staff Name'] || row['name'] || row['Full Name'] || '';
-                            // Try to find department/role column
-                            normalized.department = row['Department'] || row['Dept'] || row['department'] || row['Role'] || row['Position'] || '';
-                            normalized.role = row['Role'] || row['Position'] || row['Job Title'] || normalized.department;
-                            
-                            return normalized;
-                        }).filter(s => s.name && s.name.trim() !== '');
-                        
-                        console.log('Normalized staff list:', staffList);
-                        
-                        populateStaffSelect();
-                        
-                        // Update staff count display
-                        const staffCount = document.getElementById('staffCount');
-                        if (staffList.length > 0) {
-                            staffCount.textContent = `${staffList.length} staff members loaded`;
-                            staffCount.style.color = 'var(--cy-accent-green)';
-                        } else {
-                            staffCount.textContent = 'No staff found in CSV';
-                            staffCount.style.color = 'var(--cy-accent-red)';
-                        }
-                        
-                        // Check for stock parameter in URL
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const stockNo = urlParams.get('stock');
-                        if (stockNo) {
-                            document.getElementById('stockNoInput').value = stockNo;
-                            setTimeout(() => searchVehicle(), 100);
-                        }
-                        
-                        document.getElementById('loadingOverlay').style.display = 'none';
-                    },
-                    error: function(err) {
-                        console.error('Staff CSV parse error:', err);
-                        showStatus('Error parsing staff data', 'error');
-                        document.getElementById('loadingOverlay').style.display = 'none';
+            for (const path of possiblePaths) {
+                try {
+                    console.log('Trying staff path:', path);
+                    const response = await fetch(path);
+                    if (response.ok) {
+                        staffCsv = await response.text();
+                        successfulPath = path;
+                        console.log('Staff CSV loaded from:', path);
+                        break;
+                    } else {
+                        lastError = `HTTP ${response.status}`;
+                        console.log('Failed:', path, '- Status:', response.status);
                     }
-                });
-            } catch (error) {
-                console.error('Staff load error:', error);
-                document.getElementById('staffCount').textContent = 'Error loading staff: ' + error.message;
-                document.getElementById('staffCount').style.color = 'var(--cy-accent-red)';
-                document.getElementById('loadingOverlay').style.display = 'none';
+                } catch (e) {
+                    lastError = e.message;
+                    console.log('Failed:', path, '- Error:', e.message);
+                }
             }
+            
+            if (!staffCsv) {
+                showDebug(`<strong>Staff CSV not found</strong><br>Tried paths: ${possiblePaths.join(', ')}<br>Last error: ${lastError}<br><br>Current page URL: ${window.location.href}<br>Please ensure the staff CSV file is in the same directory as this HTML file.`);
+                
+                document.getElementById('staffCount').textContent = 'Error: Staff file not found (see debug panel above)';
+                document.getElementById('staffCount').style.color = 'var(--cy-accent-red)';
+                
+                // Add manual entry option
+                const select = document.getElementById('inspectedBy');
+                const option = document.createElement('option');
+                option.value = 'manual';
+                option.textContent = '-- Type name manually --';
+                select.appendChild(option);
+                
+                document.getElementById('loadingOverlay').style.display = 'none';
+                return;
+            }
+            
+            console.log('Staff CSV loaded from:', successfulPath);
+            
+            Papa.parse(staffCsv, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    console.log('Staff parse complete. Columns found:', results.meta.fields);
+                    console.log('First row sample:', results.data[0]);
+                    
+                    // Normalize staff data with flexible column matching
+                    staffList = results.data.map(row => {
+                        const normalized = {};
+                        
+                        // Find name column (case insensitive)
+                        const nameKey = results.meta.fields.find(f => 
+                            f.toLowerCase().includes('name') || 
+                            f.toLowerCase() === 'staff' ||
+                            f.toLowerCase() === 'employee'
+                        );
+                        
+                        // Find department/role column
+                        const deptKey = results.meta.fields.find(f => 
+                            f.toLowerCase().includes('dept') || 
+                            f.toLowerCase().includes('department') ||
+                            f.toLowerCase().includes('role') ||
+                            f.toLowerCase().includes('position') ||
+                            f.toLowerCase().includes('job')
+                        );
+                        
+                        normalized.name = nameKey ? row[nameKey] : '';
+                        normalized.department = deptKey ? row[deptKey] : '';
+                        normalized.role = normalized.department;
+                        
+                        return normalized;
+                    }).filter(s => s.name && s.name.trim() !== '');
+                    
+                    console.log('Normalized staff list:', staffList);
+                    
+                    populateStaffSelect();
+                    
+                    // Update staff count display
+                    const staffCount = document.getElementById('staffCount');
+                    if (staffList.length > 0) {
+                        staffCount.textContent = `${staffList.length} staff members loaded from ${successfulPath}`;
+                        staffCount.style.color = 'var(--cy-accent-green)';
+                    } else {
+                        staffCount.textContent = 'No staff found in CSV - check column headers';
+                        staffCount.style.color = 'var(--cy-accent-orange)';
+                    }
+                    
+                    // Check for stock parameter in URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const stockNo = urlParams.get('stock');
+                    if (stockNo) {
+                        document.getElementById('stockNoInput').value = stockNo;
+                        setTimeout(() => searchVehicle(), 100);
+                    }
+                    
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                },
+                error: function(err) {
+                    console.error('Staff CSV parse error:', err);
+                    showDebug(`Error parsing staff CSV: ${err.message}`);
+                    document.getElementById('staffCount').textContent = 'Error parsing staff data';
+                    document.getElementById('staffCount').style.color = 'var(--cy-accent-red)';
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }
+            });
         }
 
         // Normalize Vehicle
@@ -1337,7 +1426,7 @@
             });
         }
 
-        // Populate Staff Select - FIXED VERSION
+        // Populate Staff Select
         function populateStaffSelect() {
             const select = document.getElementById('inspectedBy');
             
@@ -1352,35 +1441,26 @@
                 const role = (s.role || '').toLowerCase();
                 return dept.includes('sales') || dept.includes('management') || 
                        dept.includes('admin') || role.includes('manager') ||
-                       role.includes('sales') || role.includes('director');
+                       role.includes('sales') || role.includes('director') ||
+                       role.includes('gm') || role.includes('general manager');
             });
             
             console.log('Relevant staff for dropdown:', relevantStaff);
             
-            if (relevantStaff.length === 0) {
-                // If no filtered staff, show all staff
-                staffList.forEach(s => {
-                    const option = document.createElement('option');
-                    option.value = s.name;
-                    option.textContent = `${s.name}${s.department ? ' (' + s.department + ')' : ''}`;
-                    select.appendChild(option);
-                });
-            } else {
-                relevantStaff.forEach(s => {
-                    const option = document.createElement('option');
-                    option.value = s.name;
-                    option.textContent = `${s.name}${s.department ? ' (' + s.department + ')' : ''}`;
-                    select.appendChild(option);
-                });
-            }
+            const staffToShow = relevantStaff.length > 0 ? relevantStaff : staffList;
             
-            // Add manual entry option if no staff loaded
-            if (staffList.length === 0) {
+            staffToShow.forEach(s => {
                 const option = document.createElement('option');
-                option.value = 'manual';
-                option.textContent = '-- Enter manually --';
+                option.value = s.name;
+                option.textContent = `${s.name}${s.department ? ' (' + s.department + ')' : ''}`;
                 select.appendChild(option);
-            }
+            });
+            
+            // Add manual entry option
+            const manualOption = document.createElement('option');
+            manualOption.value = '__manual__';
+            manualOption.textContent = '-- Other (type below) --';
+            select.appendChild(manualOption);
         }
 
         // Search Vehicle
