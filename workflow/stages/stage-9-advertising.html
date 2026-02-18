@@ -3,214 +3,1019 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stage 9: Ready for Advertising - Capeye Workflow</title>
-    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
-    <script src="../../data/staff/staff-list.js"></script>
-    <script src="../../js/workflow/workflow-engine.js"></script>
-    <script src="../../js/workflow/form-components.js"></script>
+    <title>Stage 9: Ready for Advertising - Capeye Auto Capital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #3b82f6;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card: #1e293b;
+            --border: #334155;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        
+        .stage-badge {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .form-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section h3 {
+            color: #3b82f6;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .price-display {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .price-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .price-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        
+        .photo-upload-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .photo-upload-slot {
+            aspect-ratio: 16/10;
+            background: var(--darker);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .photo-upload-slot:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .photo-upload-slot.has-image {
+            border-style: solid;
+            border-color: #3b82f6;
+        }
+        
+        .photo-upload-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-upload-slot .remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .photo-upload-slot:hover .remove-btn {
+            opacity: 1;
+        }
+        
+        .photo-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+        
+        .feature-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .feature-tag:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+        
+        .feature-tag.selected {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: #e2e8f0;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            width: 75%;
+            transition: width 0.3s;
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .stage-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        .stage-step.active {
+            opacity: 1;
+        }
+        
+        .stage-step.completed {
+            opacity: 1;
+        }
+        
+        .stage-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        
+        .stage-step.active .stage-dot {
+            background: #3b82f6;
+            border-color: #60a5fa;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .stage-step.completed .stage-dot {
+            background: #10b981;
+            border-color: #34d399;
+        }
+        
+        .stage-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        .previous-summary {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .listing-preview {
+            background: white;
+            color: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .listing-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .listing-price {
+            font-size: 1.5rem;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body>
-    <div class="workflow-container">
-        <div id="stage-nav-container"></div>
-        <main class="main-content">
-            <div id="header-container"></div>
-            <div class="stage-container">
-                <div class="stage-header">
-                    <h1 class="stage-title"><span style="font-size: 2rem;">📸</span> Stage 9: Ready for Advertising</h1>
-                    <p class="stage-description">Photograph vehicle, set pricing, and prepare marketing materials.</p>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="glass-panel p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="stage-badge">Stage 9 of 12</span>
+                        <span class="text-sm text-gray-400">Sales Department</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">Ready for Advertising</h1>
+                    <p class="text-gray-400 mt-1">Photography, pricing, and listing preparation</p>
                 </div>
-                
-                <div id="vehicle-info-display" class="vehicle-info-card">
-                    <div class="vehicle-info-header">
-                        <div class="vehicle-info-title">Vehicle Details</div>
-                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
-                    </div>
-                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                <div class="flex items-center gap-3">
+                    <button onclick="saveDraft()" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button onclick="submitForm()" class="btn-primary">
+                        <i class="fas fa-check-circle"></i> Complete Stage
+                    </button>
                 </div>
-                
-                <form id="stage-9-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="photographer">Photographer <span class="required">*</span></label>
-                            <select id="photographer" name="photographer" class="form-select" required>
-                                <option value="">Select...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="photo-date">Photo Date</label>
-                            <input type="date" id="photo-date" name="photoDate" class="form-input">
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Photography Checklist</h3>
-                    
-                    <div class="checkbox-grid cols-3">
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="front"><span>Front</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="rear"><span>Rear</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="driver-side"><span>Driver Side</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="passenger-side"><span>Passenger Side</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="interior-front"><span>Interior Front</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="interior-rear"><span>Interior Rear</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="dashboard"><span>Dashboard</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="engine"><span>Engine Bay</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="boot"><span>Boot</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="wheels"><span>Wheels</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="details"><span>Detail Shots</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="photos[]" value="video"><span>Video Walkaround</span></label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Marketing Photos</label>
-                        <div id="marketing-photos-container"></div>
-                        <input type="hidden" id="marketing-photos" name="marketingPhotos">
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Pricing</h3>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="retail-price">Retail Price (£)</label>
-                            <input type="number" id="retail-price" name="retailPrice" class="form-input" step="0.01" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="sale-price">Sale Price (£)</label>
-                            <input type="number" id="sale-price" name="salePrice" class="form-input" step="0.01" min="0">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="advertising-notes">Advertising Notes</label>
-                        <textarea id="advertising-notes" name="advertisingNotes" class="form-textarea" rows="3" placeholder="Key selling points, special features..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Photographer Signature <span class="required">*</span></label>
-                        <div id="signature-container"></div>
-                        <input type="hidden" id="signature" name="signature" required>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <div class="form-actions-left">
-                            <a href="stage-8-faults.html" class="btn btn-secondary">← Back</a>
-                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
-                        </div>
-                        <div class="form-actions-right">
-                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete & List for Sale →</button>
-                        </div>
-                    </div>
-                </form>
             </div>
-        </main>
+            
+            <!-- Progress -->
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <!-- Stage Navigation -->
+            <div class="stage-indicator">
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Intake</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Bodywork</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Paint</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Legal</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Mechanical</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">External</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Valeting</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Faults</span>
+                </div>
+                <div class="stage-step active">
+                    <div class="stage-dot">9</div>
+                    <span class="stage-label">Ready</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">10</div>
+                    <span class="stage-label">Delivery</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">11</div>
+                    <span class="stage-label">Accounts</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">12</div>
+                    <span class="stage-label">Management</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Selection -->
+        <div class="glass-panel p-6 mb-6">
+            <h3 class="text-lg font-semibold text-white mb-4"><i class="fas fa-car"></i> Select Vehicle</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Stock Number *</label>
+                    <select id="stockNo" class="form-control" onchange="loadVehicleData()">
+                        <option value="">Select Stock Number...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="registration" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Make & Model</label>
+                    <input type="text" id="makeModel" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Year</label>
+                    <input type="text" id="year" class="form-control" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Previous Stage Summary -->
+        <div id="previousSummary" class="previous-summary" style="display: none;">
+            <h4 class="font-semibold text-amber-400 mb-2"><i class="fas fa-history"></i> Stage 8 Summary - Fault Overview</h4>
+            <div id="previousData" class="text-sm text-gray-300"></div>
+        </div>
+
+        <form id="stage9Form">
+            <!-- Section 1: Pricing -->
+            <div class="form-section">
+                <h3><i class="fas fa-tag"></i> Pricing</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Cost Price</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="costPrice" class="form-control pl-8" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Workshop Recommended</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="workshopPrice" class="form-control pl-8" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Retail Price *</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="retailPrice" class="form-control pl-8" required step="0.01" onchange="updatePricing()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Internet Price</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="internetPrice" class="form-control pl-8" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="price-display mt-4">
+                    <div class="price-label">Potential Margin</div>
+                    <div class="price-value" id="marginDisplay">£0.00</div>
+                    <div class="text-sm text-gray-400 mt-2" id="marginPercent">0%</div>
+                </div>
+            </div>
+
+            <!-- Section 2: Photography -->
+            <div class="form-section">
+                <h3><i class="fas fa-camera"></i> Photography</h3>
+                <p class="text-sm text-gray-400 mb-4">Upload high-quality photos for advertising. Drag to reorder.</p>
+                
+                <div class="photo-upload-grid" id="photoGrid">
+                    <div class="photo-upload-slot" onclick="triggerUpload(0)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Front 3/4</span>
+                        <input type="file" id="photo0" accept="image/*" style="display: none;" onchange="handlePhoto(0, this)">
+                        <div class="photo-label">Main Photo</div>
+                    </div>
+                    <div class="photo-upload-slot" onclick="triggerUpload(1)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Rear 3/4</span>
+                        <input type="file" id="photo1" accept="image/*" style="display: none;" onchange="handlePhoto(1, this)">
+                    </div>
+                    <div class="photo-upload-slot" onclick="triggerUpload(2)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Side Profile</span>
+                        <input type="file" id="photo2" accept="image/*" style="display: none;" onchange="handlePhoto(2, this)">
+                    </div>
+                    <div class="photo-upload-slot" onclick="triggerUpload(3)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Interior Front</span>
+                        <input type="file" id="photo3" accept="image/*" style="display: none;" onchange="handlePhoto(3, this)">
+                    </div>
+                    <div class="photo-upload-slot" onclick="triggerUpload(4)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Interior Rear</span>
+                        <input type="file" id="photo4" accept="image/*" style="display: none;" onchange="handlePhoto(4, this)">
+                    </div>
+                    <div class="photo-upload-slot" onclick="triggerUpload(5)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Dashboard</span>
+                        <input type="file" id="photo5" accept="image/*" style="display: none;" onchange="handlePhoto(5, this)">
+                    </div>
+                    <div class="photo-upload-slot" onclick="triggerUpload(6)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Engine Bay</span>
+                        <input type="file" id="photo6" accept="image/*" style="display: none;" onchange="handlePhoto(6, this)">
+                    </div>
+                    <div class="photo-upload-slot" onclick="triggerUpload(7)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Boot/Load Area</span>
+                        <input type="file" id="photo7" accept="image/*" style="display: none;" onchange="handlePhoto(7, this)">
+                    </div>
+                    <div class="photo-upload-slot" onclick="triggerUpload(8)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Wheels</span>
+                        <input type="file" id="photo8" accept="image/*" style="display: none;" onchange="handlePhoto(8, this)">
+                    </div>
+                    <div class="photo-upload-slot" onclick="triggerUpload(9)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Details</span>
+                        <input type="file" id="photo9" accept="image/*" style="display: none;" onchange="handlePhoto(9, this)">
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-4 bg-slate-800 rounded-lg">
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" id="photoDisclaimer" checked>
+                        <span class="text-sm">I confirm all photos accurately represent the vehicle condition</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Section 3: Vehicle Description -->
+            <div class="form-section">
+                <h3><i class="fas fa-align-left"></i> Vehicle Description</h3>
+                
+                <div class="form-group mb-4">
+                    <label>Short Title *</label>
+                    <input type="text" id="shortTitle" class="form-control" placeholder="e.g., 2020 Ford Transit Custom 2.0 EcoBlue" maxlength="100" required>
+                    <div class="text-xs text-gray-500 mt-1"><span id="titleChars">0</span>/100 characters</div>
+                </div>
+                
+                <div class="form-group mb-4">
+                    <label>Full Description</label>
+                    <textarea id="fullDescription" class="form-control" rows="6" placeholder="Enter detailed vehicle description..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Key Features (select all that apply)</label>
+                    <div class="flex flex-wrap gap-2 mt-2" id="featuresList">
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Air Conditioning</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Satellite Navigation</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Bluetooth</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Reverse Camera</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Parking Sensors</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Cruise Control</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Alloy Wheels</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Electric Windows</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Electric Mirrors</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Full Service History</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> One Owner</span>
+                        <span class="feature-tag" onclick="toggleFeature(this)"><i class="fas fa-check"></i> Warranty</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Listing Preview -->
+            <div class="form-section">
+                <h3><i class="fas fa-eye"></i> Listing Preview</h3>
+                <div class="listing-preview">
+                    <div class="listing-title" id="previewTitle">Vehicle Title Will Appear Here</div>
+                    <div class="listing-price" id="previewPrice">£0.00</div>
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p id="previewDescription">Description will appear here...</p>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-2" id="previewFeatures"></div>
+                </div>
+            </div>
+
+            <!-- Section 5: Advertising Platforms -->
+            <div class="form-section">
+                <h3><i class="fas fa-bullhorn"></i> Advertising Platforms</h3>
+                <div class="check-grid">
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" id="listWebsite" checked>
+                        <span>Company Website</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" id="listAutotrader" checked>
+                        <span>Autotrader</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" id="listEbay">
+                        <span>eBay Motors</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" id="listGumtree">
+                        <span>Gumtree</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" id="listFacebook">
+                        <span>Facebook Marketplace</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" id="listCommercial">
+                        <span>Commercial Trader</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Section 6: Sign-off -->
+            <div class="form-section">
+                <h3><i class="fas fa-signature"></i> Sales Sign-off</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Prepared By *</label>
+                        <select id="preparedBy" class="form-control" required>
+                            <option value="">Select Salesperson...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preparation Date *</label>
+                        <input type="date" id="prepDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Days to Sell</label>
+                        <input type="number" id="daysToSell" class="form-control" min="1" placeholder="e.g., 30">
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-between items-center mt-6">
+            <button onclick="window.location.href='stage-8-faults.html'" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Stage 8
+            </button>
+            <div class="flex gap-3">
+                <button onclick="saveDraft()" class="btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+                <button onclick="submitForm()" class="btn-primary">
+                    <i class="fas fa-check-circle"></i> Publish Listing
+                </button>
+            </div>
+        </div>
     </div>
-    
+
     <script>
+        let vehicles = [];
+        let staff = [];
         let currentVehicle = null;
+        let uploadedPhotos = {};
+        let selectedFeatures = [];
+
         document.addEventListener('DOMContentLoaded', function() {
-            WorkflowEngine.setStage(9);
-            loadComponents();
-            populatePhotographers();
-            initPhotos();
-            initSignature();
-            loadVehicle();
-            loadSavedData();
-            document.getElementById('photo-date').valueAsDate = new Date();
+            loadData();
+            setupAutoSave();
+            document.getElementById('prepDate').valueAsDate = new Date();
+            
+            // Character counter
+            document.getElementById('shortTitle').addEventListener('input', function() {
+                document.getElementById('titleChars').textContent = this.value.length;
+                updatePreview();
+            });
+            
+            document.getElementById('retailPrice').addEventListener('input', updatePricing);
+            document.getElementById('fullDescription').addEventListener('input', updatePreview);
         });
-        
-        function loadComponents() {
-            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
-            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+
+        function loadData() {
+            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    vehicles = results.data.filter(v => v['Stock No'] || v['StockNo']);
+                    populateVehicleDropdown();
+                }
+            });
+
+            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    staff = results.data.filter(s => s['Name'] || s['Staff Name']);
+                    populateStaffDropdown();
+                }
+            });
         }
-        
-        function populatePhotographers() {
-            const select = document.getElementById('photographer');
-            if (STAFF_DATA) {
-                STAFF_DATA.getStaffByDept('sales').forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name;
-                    select.appendChild(opt);
-                });
+
+        function populateVehicleDropdown() {
+            const select = document.getElementById('stockNo');
+            vehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle['Stock No'] || vehicle['StockNo'];
+                option.textContent = `${vehicle['Stock No'] || vehicle['StockNo']} - ${vehicle['Make']} ${vehicle['Model']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function populateStaffDropdown() {
+            const select = document.getElementById('preparedBy');
+            const sales = staff.filter(s => 
+                s['Department'] === 'Sales' || s['Role']?.includes('Sales')
+            );
+            
+            sales.forEach(s => {
+                const name = s['Name'] || s['Staff Name'];
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = `${name} - ${s['Role']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadVehicleData() {
+            const stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) return;
+            
+            currentVehicle = vehicles.find(v => (v['Stock No'] || v['StockNo']) === stockNo);
+            if (currentVehicle) {
+                document.getElementById('registration').value = currentVehicle['Registration'] || '';
+                document.getElementById('makeModel').value = `${currentVehicle['Make']} ${currentVehicle['Model']}`;
+                document.getElementById('year').value = currentVehicle['Year'] || '';
+                
+                // Load cost price from CSV if available
+                const cost = currentVehicle['Cost Price'] || currentVehicle['CostPrice'];
+                if (cost) {
+                    document.getElementById('costPrice').value = parseFloat(cost.replace(/[£,]/g, '')) || 0;
+                }
+                
+                loadPreviousStage(stockNo);
+                loadDraft(stockNo);
             }
         }
-        
-        function initPhotos() {
-            document.getElementById('marketing-photos-container').appendChild(
-                FormComponents.createPhotoUpload({ id: 'marketing-photos', label: 'Marketing Photos', maxPhotos: 20 })
-            );
-        }
-        
-        function initSignature() {
-            document.getElementById('signature-container').appendChild(
-                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
-            );
-        }
-        
-        function loadVehicle() {
-            currentVehicle = WorkflowEngine.getVehicle();
-            if (!currentVehicle) {
-                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
-                return;
+
+        function loadPreviousStage(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.stage8) {
+                    document.getElementById('previousSummary').style.display = 'block';
+                    const s = data.stage8;
+                    document.getElementById('previousData').innerHTML = `
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><strong>Status:</strong> ${s.overallStatus || 'N/A'}</div>
+                            <div><strong>Recommended:</strong> £${s.recommendedPrice || 'N/A'}</div>
+                            <div><strong>Minimum:</strong> £${s.minimumPrice || 'N/A'}</div>
+                            <div><strong>Lead:</strong> ${s.workshopLead || 'N/A'}</div>
+                        </div>
+                    `;
+                    
+                    if (s.recommendedPrice) {
+                        document.getElementById('workshopPrice').value = s.recommendedPrice;
+                    }
+                }
             }
-            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
-            document.getElementById('vehicle-details-content').innerHTML = `
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Retail</span><span class="vehicle-detail-value">£${currentVehicle.retailPrice}</span></div>
+        }
+
+        function updatePricing() {
+            const cost = parseFloat(document.getElementById('costPrice').value) || 0;
+            const retail = parseFloat(document.getElementById('retailPrice').value) || 0;
+            
+            const margin = retail - cost;
+            const marginPercent = cost > 0 ? ((margin / retail) * 100).toFixed(1) : 0;
+            
+            document.getElementById('marginDisplay').textContent = '£' + margin.toFixed(2);
+            document.getElementById('marginPercent').textContent = marginPercent + '% margin';
+            
+            updatePreview();
+        }
+
+        function triggerUpload(index) {
+            document.getElementById(`photo${index}`).click();
+        }
+
+        function handlePhoto(index, input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const slot = input.closest('.photo-upload-slot');
+                    slot.innerHTML = `
+                        <img src="${e.target.result}" alt="Photo ${index + 1}">
+                        <button type="button" class="remove-btn" onclick="removePhoto(${index}, event)">Remove</button>
+                        ${index === 0 ? '<div class="photo-label">Main Photo</div>' : ''}
+                    `;
+                    slot.classList.add('has-image');
+                    uploadedPhotos[index] = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removePhoto(index, event) {
+            event.stopPropagation();
+            const slot = document.getElementById(`photo${index}`).closest('.photo-upload-slot');
+            const labels = ['Front 3/4', 'Rear 3/4', 'Side Profile', 'Interior Front', 'Interior Rear', 'Dashboard', 'Engine Bay', 'Boot/Load Area', 'Wheels', 'Details'];
+            slot.innerHTML = `
+                <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                <span class="text-xs text-gray-500">${labels[index]}</span>
+                <input type="file" id="photo${index}" accept="image/*" style="display: none;" onchange="handlePhoto(${index}, this)">
+                ${index === 0 ? '<div class="photo-label">Main Photo</div>' : ''}
             `;
-            document.getElementById('retail-price').value = currentVehicle.retailPrice;
+            slot.classList.remove('has-image');
+            delete uploadedPhotos[index];
         }
-        
-        function getFormData() {
-            const form = document.getElementById('stage-9-form');
-            const fd = new FormData(form);
+
+        function toggleFeature(element) {
+            element.classList.toggle('selected');
+            const text = element.textContent.trim();
+            
+            if (element.classList.contains('selected')) {
+                if (!selectedFeatures.includes(text)) selectedFeatures.push(text);
+            } else {
+                selectedFeatures = selectedFeatures.filter(f => f !== text);
+            }
+            
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const title = document.getElementById('shortTitle').value || 'Vehicle Title';
+            const price = document.getElementById('retailPrice').value || '0.00';
+            const description = document.getElementById('fullDescription').value || 'Description will appear here...';
+            
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewPrice').textContent = '£' + parseFloat(price).toLocaleString('en-GB', {minimumFractionDigits: 2});
+            document.getElementById('previewDescription').textContent = description;
+            
+            const featuresContainer = document.getElementById('previewFeatures');
+            featuresContainer.innerHTML = '';
+            selectedFeatures.forEach(feature => {
+                const span = document.createElement('span');
+                span.className = 'feature-tag selected';
+                span.innerHTML = `<i class="fas fa-check"></i> ${feature.replace('✓ ', '')}`;
+                featuresContainer.appendChild(span);
+            });
+        }
+
+        function submitForm() {
+            if (!validateForm()) return;
+            
+            const stockNo = document.getElementById('stockNo').value;
+            const formData = collectFormData();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage9 = formData;
+            vehicleData.currentStage = 10;
+            vehicleData.lastUpdated = new Date().toISOString();
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            
+            alert('Vehicle listed successfully! Moving to Stage 10: Customer Delivery.');
+            window.location.href = 'stage-10-delivery.html?stockNo=' + stockNo;
+        }
+
+        function validateForm() {
+            const required = ['stockNo', 'retailPrice', 'shortTitle', 'preparedBy', 'prepDate'];
+            for (let field of required) {
+                const el = document.getElementById(field);
+                if (!el.value) {
+                    el.focus();
+                    alert('Please fill in all required fields');
+                    return false;
+                }
+            }
+            
+            if (Object.keys(uploadedPhotos).length < 5) {
+                alert('Please upload at least 5 photos');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function collectFormData() {
             return {
-                photographer: fd.get('photographer'),
-                photoDate: fd.get('photoDate'),
-                photos: fd.getAll('photos[]'),
-                marketingPhotos: document.getElementById('marketing-photos').value,
-                retailPrice: fd.get('retailPrice'),
-                salePrice: fd.get('salePrice'),
-                advertisingNotes: fd.get('advertisingNotes'),
-                signature: document.getElementById('signature').value
+                costPrice: document.getElementById('costPrice').value,
+                workshopPrice: document.getElementById('workshopPrice').value,
+                retailPrice: document.getElementById('retailPrice').value,
+                internetPrice: document.getElementById('internetPrice').value,
+                margin: document.getElementById('marginDisplay').textContent,
+                photos: uploadedPhotos,
+                shortTitle: document.getElementById('shortTitle').value,
+                fullDescription: document.getElementById('fullDescription').value,
+                features: selectedFeatures,
+                platforms: {
+                    website: document.getElementById('listWebsite').checked,
+                    autotrader: document.getElementById('listAutotrader').checked,
+                    ebay: document.getElementById('listEbay').checked,
+                    gumtree: document.getElementById('listGumtree').checked,
+                    facebook: document.getElementById('listFacebook').checked,
+                    commercial: document.getElementById('listCommercial').checked
+                },
+                preparedBy: document.getElementById('preparedBy').value,
+                prepDate: document.getElementById('prepDate').value,
+                daysToSell: document.getElementById('daysToSell').value,
+                photoDisclaimer: document.getElementById('photoDisclaimer').checked,
+                submittedAt: new Date().toISOString()
             };
         }
-        
-        function loadSavedData() {
-            if (!currentVehicle) return;
-            const saved = WorkflowEngine.loadStageData(9, currentVehicle.stockNo);
-            if (saved?.data) {
-                const d = saved.data;
-                if (d.photographer) document.getElementById('photographer').value = d.photographer;
-                if (d.salePrice) document.getElementById('sale-price').value = d.salePrice;
-                if (d.advertisingNotes) document.getElementById('advertising-notes').value = d.advertisingNotes;
-                if (d.photos) d.photos.forEach(v => { const cb = document.querySelector(`input[value="${v}"]`); if (cb) cb.checked = true; });
+
+        function setupAutoSave() {
+            setInterval(() => {
+                const stockNo = document.getElementById('stockNo').value;
+                if (stockNo) saveDraft(stockNo, true);
+            }, 30000);
+        }
+
+        function saveDraft(stockNo = null, silent = false) {
+            if (!stockNo) stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) {
+                if (!silent) alert('Please select a vehicle first');
+                return;
+            }
+            
+            const draftData = collectFormData();
+            draftData.isDraft = true;
+            draftData.lastSaved = new Date().toISOString();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage9Draft = draftData;
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            if (!silent) alert('Draft saved successfully!');
+        }
+
+        function loadDraft(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            const data = JSON.parse(saved);
+            if (data.stage9Draft) {
+                const draft = data.stage9Draft;
+                
+                ['retailPrice', 'internetPrice', 'shortTitle', 'fullDescription', 'preparedBy', 'daysToSell'].forEach(field => {
+                    if (draft[field]) document.getElementById(field).value = draft[field];
+                });
+                
+                if (draft.photos) {
+                    uploadedPhotos = draft.photos;
+                    Object.keys(uploadedPhotos).forEach(index => {
+                        const slot = document.getElementById(`photo${index}`).closest('.photo-upload-slot');
+                        slot.innerHTML = `
+                            <img src="${uploadedPhotos[index]}" alt="Photo ${parseInt(index) + 1}">
+                            <button type="button" class="remove-btn" onclick="removePhoto(${index}, event)">Remove</button>
+                            ${index === 0 ? '<div class="photo-label">Main Photo</div>' : ''}
+                        `;
+                        slot.classList.add('has-image');
+                    });
+                }
+                
+                if (draft.features) {
+                    selectedFeatures = draft.features;
+                    document.querySelectorAll('.feature-tag').forEach(tag => {
+                        const text = tag.textContent.trim();
+                        if (selectedFeatures.includes(text)) {
+                            tag.classList.add('selected');
+                        }
+                    });
+                }
+                
+                updatePricing();
+                updatePreview();
             }
         }
-        
-        function saveDraft() {
-            if (!currentVehicle) return;
-            WorkflowEngine.saveStageData(9, getFormData());
-            showAlert('Draft saved', 'success');
-        }
-        
-        function completeStage() {
-            if (!currentVehicle) return;
-            const data = getFormData();
-            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
-            WorkflowEngine.completeStage(9, data);
-            showAlert('Vehicle listed for sale!', 'success');
-            setTimeout(() => window.location.href = 'stage-10-delivery.html', 1500);
-        }
-        
-        function showAlert(msg, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `<span>${msg}</span>`;
-            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
-            setTimeout(() => alert.remove(), 5000);
-        }
-        
-        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
     </script>
 </body>
 </html>
