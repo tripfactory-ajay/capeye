@@ -3,223 +3,1162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stage 4: Legal & Documentation - Capeye Workflow</title>
-    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
-    <script src="../../data/staff/staff-list.js"></script>
-    <script src="../../js/workflow/workflow-engine.js"></script>
-    <script src="../../js/workflow/form-components.js"></script>
+    <title>Stage 4: Legal & Documentation - Capeye Auto Capital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #64748b;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card: #1e293b;
+            --border: #334155;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        
+        .stage-badge {
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .form-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section h3 {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #64748b;
+            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .document-checklist {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .check-item {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .check-item:hover {
+            border-color: #64748b;
+            background: rgba(100, 116, 139, 0.1);
+        }
+        
+        .check-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: #64748b;
+        }
+        
+        .check-item-content {
+            flex: 1;
+        }
+        
+        .check-item-title {
+            font-weight: 500;
+            color: #e2e8f0;
+            margin-bottom: 0.25rem;
+        }
+        
+        .check-item-desc {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-present { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-missing { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-na { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(100, 116, 139, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: #e2e8f0;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+        }
+        
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--darker);
+        }
+        
+        .upload-zone:hover {
+            border-color: #64748b;
+            background: rgba(100, 116, 139, 0.1);
+        }
+        
+        .upload-zone.has-file {
+            border-style: solid;
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .file-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .file-tag {
+            background: rgba(100, 116, 139, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .file-tag button {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #64748b, #475569);
+            width: 33%;
+            transition: width 0.3s;
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .stage-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        .stage-step.active {
+            opacity: 1;
+        }
+        
+        .stage-step.completed {
+            opacity: 1;
+        }
+        
+        .stage-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        
+        .stage-step.active .stage-dot {
+            background: #64748b;
+            border-color: #94a3b8;
+            box-shadow: 0 0 20px rgba(100, 116, 139, 0.4);
+        }
+        
+        .stage-step.completed .stage-dot {
+            background: #10b981;
+            border-color: #34d399;
+        }
+        
+        .stage-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+        }
+        
+        .previous-summary {
+            background: rgba(100, 116, 139, 0.1);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .summary-item {
+            background: var(--darker);
+            padding: 0.75rem;
+            border-radius: 6px;
+        }
+        
+        .summary-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .summary-value {
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .document-checklist {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body>
-    <div class="workflow-container">
-        <div id="stage-nav-container"></div>
-        <main class="main-content">
-            <div id="header-container"></div>
-            <div class="stage-container">
-                <div class="stage-header">
-                    <h1 class="stage-title"><span style="font-size: 2rem;">📄</span> Stage 4: Legal & Documentation</h1>
-                    <p class="stage-description">Verify and organize all legal documents, service history, and compliance paperwork.</p>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="glass-panel p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="stage-badge">Stage 4 of 12</span>
+                        <span class="text-sm text-gray-400">Admin Department</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">Legal & Documentation</h1>
+                    <p class="text-gray-400 mt-1">V5C, MOT, service history verification and document management</p>
                 </div>
-                
-                <div id="vehicle-info-display" class="vehicle-info-card">
-                    <div class="vehicle-info-header">
-                        <div class="vehicle-info-title">Vehicle Details</div>
-                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
-                    </div>
-                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                <div class="flex items-center gap-3">
+                    <button onclick="saveDraft()" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button onclick="submitForm()" class="btn-primary">
+                        <i class="fas fa-check-circle"></i> Complete Stage
+                    </button>
                 </div>
-                
-                <form id="stage-4-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="processor">Document Processor <span class="required">*</span></label>
-                            <select id="processor" name="processor" class="form-select" required>
-                                <option value="">Select...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="process-date">Processing Date</label>
-                            <input type="date" id="process-date" name="processDate" class="form-input">
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Document Checklist</h3>
-                    
-                    <div class="checkbox-grid cols-2">
-                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="v5"><span>V5C Logbook</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="mot"><span>MOT Certificate</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="service-history"><span>Service History</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="warranty"><span>Warranty Docs</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="purchase-invoice"><span>Purchase Invoice</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="previous-mot"><span>Previous MOTs</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="handbook"><span>Handbook</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="docs[]" value="spare-key"><span>Spare Key</span></label>
-                    </div>
-                    
-                    <div class="form-grid" style="margin-top: 1.5rem;">
-                        <div class="form-group">
-                            <label class="form-label" for="mot-status">MOT Status</label>
-                            <select id="mot-status" name="motStatus" class="form-select">
-                                <option value="valid">Valid</option>
-                                <option value="expired">Expired</option>
-                                <option value="not-required">Not Required</option>
-                                <option value="needed">Needs Renewal</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="mot-expiry">MOT Expiry Date</label>
-                            <input type="date" id="mot-expiry" name="motExpiry" class="form-input">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="service-history-notes">Service History Notes</label>
-                        <textarea id="service-history-notes" name="serviceHistoryNotes" class="form-textarea" rows="3" placeholder="Record service intervals, stamps, digital history..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Document Photos</label>
-                        <div id="doc-photos-container"></div>
-                        <input type="hidden" id="doc-photos" name="docPhotos">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="legal-notes">Legal Notes/Issues</label>
-                        <textarea id="legal-notes" name="legalNotes" class="form-textarea" rows="3" placeholder="Any legal concerns, outstanding finance checks, etc..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Processor Signature <span class="required">*</span></label>
-                        <div id="signature-container"></div>
-                        <input type="hidden" id="signature" name="signature" required>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <div class="form-actions-left">
-                            <a href="stage-3-paint.html" class="btn btn-secondary">← Back</a>
-                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
-                        </div>
-                        <div class="form-actions-right">
-                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete & Send to Mechanical →</button>
-                        </div>
-                    </div>
-                </form>
             </div>
-        </main>
+            
+            <!-- Progress -->
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <!-- Stage Navigation -->
+            <div class="stage-indicator">
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Intake</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Bodywork</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Paint</span>
+                </div>
+                <div class="stage-step active">
+                    <div class="stage-dot">4</div>
+                    <span class="stage-label">Legal</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">5</div>
+                    <span class="stage-label">Mechanical</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">6</div>
+                    <span class="stage-label">External</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">7</div>
+                    <span class="stage-label">Valeting</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">8</div>
+                    <span class="stage-label">Faults</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">9</div>
+                    <span class="stage-label">Ready</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">10</div>
+                    <span class="stage-label">Delivery</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">11</div>
+                    <span class="stage-label">Accounts</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">12</div>
+                    <span class="stage-label">Management</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Selection -->
+        <div class="glass-panel p-6 mb-6">
+            <h3 class="text-lg font-semibold text-white mb-4"><i class="fas fa-car"></i> Select Vehicle</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Stock Number *</label>
+                    <select id="stockNo" class="form-control" onchange="loadVehicleData()">
+                        <option value="">Select Stock Number...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="registration" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Make & Model</label>
+                    <input type="text" id="makeModel" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>VIN Number</label>
+                    <input type="text" id="vinNumber" class="form-control" placeholder="Enter VIN...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Previous Stage Summary -->
+        <div id="previousSummary" class="previous-summary" style="display: none;">
+            <h4 class="font-semibold text-slate-400 mb-3"><i class="fas fa-history"></i> Stage 3 Summary - Paint Repairs</h4>
+            <div id="previousData" class="summary-grid"></div>
+        </div>
+
+        <form id="stage4Form">
+            <!-- Section 1: V5C Registration Document -->
+            <div class="form-section">
+                <h3><i class="fas fa-id-card"></i> V5C Registration Document (Log Book)</h3>
+                <div class="document-checklist">
+                    <div class="check-item">
+                        <input type="checkbox" id="v5cPresent" onchange="updateDocStatus('v5c')">
+                        <div class="check-item-content">
+                            <div class="check-item-title">V5C Document Present</div>
+                            <div class="check-item-desc">Original V5C registration certificate</div>
+                        </div>
+                        <span class="status-badge status-missing" id="v5cStatus">Missing</span>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="v5cCorrectName" onchange="updateDocStatus('v5cCorrect')">
+                        <div class="check-item-content">
+                            <div class="check-item-title">Registered Keeper Correct</div>
+                            <div class="check-item-desc">Name matches seller/supplier</div>
+                        </div>
+                        <span class="status-badge status-na" id="v5cCorrectStatus">N/A</span>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="v5cNewKeeper" onchange="updateDocStatus('v5cNewKeeper')">
+                        <div class="check-item-content">
+                            <div class="check-item-title">New Keeper Supplement (V5C/2)</div>
+                            <div class="check-item-desc">Green slip present if applicable</div>
+                        </div>
+                        <span class="status-badge status-na" id="v5cNewKeeperStatus">N/A</span>
+                    </div>
+                </div>
+                
+                <div class="form-grid mt-4">
+                    <div class="form-group">
+                        <label>Document Reference Number</label>
+                        <input type="text" id="v5cRef" class="form-control" placeholder="V5C document reference">
+                    </div>
+                    <div class="form-group">
+                        <label>Registered Keeper Name</label>
+                        <input type="text" id="keeperName" class="form-control" placeholder="Name on V5C">
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Registration</label>
+                        <input type="date" id="regDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Previous Owners</label>
+                        <input type="number" id="previousOwners" class="form-control" min="0" placeholder="Number of previous keepers">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: MOT Certificate -->
+            <div class="form-section">
+                <h3><i class="fas fa-certificate"></i> MOT Certificate</h3>
+                <div class="document-checklist">
+                    <div class="check-item">
+                        <input type="checkbox" id="motPresent" onchange="updateDocStatus('mot')">
+                        <div class="check-item-content">
+                            <div class="check-item-title">MOT Certificate Present</div>
+                            <div class="check-item-desc">Current valid MOT certificate</div>
+                        </div>
+                        <span class="status-badge status-missing" id="motStatus">Missing</span>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="motValid" onchange="updateDocStatus('motValid')">
+                        <div class="check-item-content">
+                            <div class="check-item-title">MOT Valid & In Date</div>
+                            <div class="check-item-desc">Not expired, minimum 1 month remaining</div>
+                        </div>
+                        <span class="status-badge status-na" id="motValidStatus">N/A</span>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="motNoAdvisories" onchange="updateDocStatus('motAdvisories')">
+                        <div class="check-item-content">
+                            <div class="check-item-title">No Outstanding Advisories</div>
+                            <div class="check-item-desc">All previous advisories addressed</div>
+                        </div>
+                        <span class="status-badge status-na" id="motAdvisoriesStatus">N/A</span>
+                    </div>
+                </div>
+                
+                <div class="form-grid mt-4">
+                    <div class="form-group">
+                        <label>MOT Certificate Number</label>
+                        <input type="text" id="motNumber" class="form-control" placeholder="MOT certificate number">
+                    </div>
+                    <div class="form-group">
+                        <label>MOT Test Date</label>
+                        <input type="date" id="motTestDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>MOT Expiry Date</label>
+                        <input type="date" id="motExpiryDate" class="form-control" onchange="checkMotExpiry()">
+                    </div>
+                    <div class="form-group">
+                        <label>MOT Test Station</label>
+                        <input type="text" id="motStation" class="form-control" placeholder="Test centre name/number">
+                    </div>
+                </div>
+                
+                <div id="motAlert" class="alert alert-warning mt-4" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>MOT expires within 30 days or has expired. Action required.</span>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <label>MOT Advisories / Notes</label>
+                    <textarea id="motNotes" class="form-control" placeholder="List any advisories or notes from MOT..."></textarea>
+                </div>
+            </div>
+
+            <!-- Section 3: Service History -->
+            <div class="form-section">
+                <h3><i class="fas fa-book"></i> Service History</h3>
+                <div class="document-checklist">
+                    <div class="check-item">
+                        <input type="checkbox" id="shPresent" onchange="updateDocStatus('sh')">
+                        <div class="check-item-content">
+                            <div class="check-item-title">Service History Present</div>
+                            <div class="check-item-desc">Stamped service book or invoices</div>
+                        </div>
+                        <span class="status-badge status-missing" id="shStatus">Missing</span>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="shFull" onchange="updateDocStatus('shFull')">
+                        <div class="check-item-content">
+                            <div class="check-item-title">Full Manufacturer History</div>
+                            <div class="check-item-desc">All services at main dealer or specialist</div>
+                        </div>
+                        <span class="status-badge status-na" id="shFullStatus">N/A</span>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="shRecent" onchange="updateDocStatus('shRecent')">
+                        <div class="check-item-content">
+                            <div class="check-item-title">Recent Service (within 6 months)</div>
+                            <div class="check-item-desc">Last service completed recently</div>
+                        </div>
+                        <span class="status-badge status-na" id="shRecentStatus">N/A</span>
+                    </div>
+                </div>
+                
+                <div class="form-grid mt-4">
+                    <div class="form-group">
+                        <label>Last Service Date</label>
+                        <input type="date" id="lastServiceDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Service Mileage</label>
+                        <input type="number" id="lastServiceMileage" class="form-control" placeholder="Miles at last service">
+                    </div>
+                    <div class="form-group">
+                        <label>Service Interval</label>
+                        <select id="serviceInterval" class="form-control">
+                            <option value="">Select...</option>
+                            <option value="annual">Annual / 12 months</option>
+                            <option value="mileage">Mileage based</option>
+                            <option value="variable">Variable / Condition based</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Next Service Due</label>
+                        <input type="date" id="nextServiceDue" class="form-control">
+                    </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <label>Service History Details</label>
+                    <textarea id="shDetails" class="form-control" placeholder="List service dates, mileages, and locations..."></textarea>
+                </div>
+            </div>
+
+            <!-- Section 4: Additional Documents -->
+            <div class="form-section">
+                <h3><i class="fas fa-folder-open"></i> Additional Documents</h3>
+                <div class="document-checklist">
+                    <div class="check-item">
+                        <input type="checkbox" id="invoicePresent">
+                        <div class="check-item-content">
+                            <div class="check-item-title">Purchase Invoice</div>
+                            <div class="check-item-desc">Original purchase invoice/receipt</div>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="warrantyPresent">
+                        <div class="check-item-content">
+                            <div class="check-item-title">Manufacturer Warranty</div>
+                            <div class="check-item-desc">Warranty documents if applicable</div>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="handbookPresent">
+                        <div class="check-item-content">
+                            <div class="check-item-title">Owners Handbook</div>
+                            <div class="check-item-desc">Vehicle manual and pack</div>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="spareKeyPresent">
+                        <div class="check-item-content">
+                            <div class="check-item-title">Spare Key</div>
+                            <div class="check-item-desc">Second key/fob provided</div>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="lockingWheelPresent">
+                        <div class="check-item-content">
+                            <div class="check-item-title">Locking Wheel Nut Key</div>
+                            <div class="check-item-desc">Tool for alloy wheel nuts</div>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="hpiClear">
+                        <div class="check-item-content">
+                            <div class="check-item-title">HPI Clear</div>
+                            <div class="check-item-desc">No outstanding finance, not stolen/write-off</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Document Upload -->
+            <div class="form-section">
+                <h3><i class="fas fa-cloud-upload-alt"></i> Document Upload</h3>
+                <p class="text-sm text-gray-400 mb-4">Upload scanned copies or photos of all documents</p>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>V5C Document</label>
+                        <div class="upload-zone" id="v5cUpload" onclick="triggerUpload('v5cDoc')">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-500 mb-2"></i>
+                            <p class="text-sm text-gray-400">Click to upload V5C</p>
+                            <input type="file" id="v5cDoc" accept="image/*,.pdf" style="display: none;" onchange="handleFile('v5c', this)">
+                        </div>
+                        <div class="file-list" id="v5cFiles"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>MOT Certificate</label>
+                        <div class="upload-zone" id="motUpload" onclick="triggerUpload('motDoc')">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-500 mb-2"></i>
+                            <p class="text-sm text-gray-400">Click to upload MOT</p>
+                            <input type="file" id="motDoc" accept="image/*,.pdf" style="display: none;" onchange="handleFile('mot', this)">
+                        </div>
+                        <div class="file-list" id="motFiles"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Service History</label>
+                        <div class="upload-zone" id="shUpload" onclick="triggerUpload('shDoc')">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-500 mb-2"></i>
+                            <p class="text-sm text-gray-400">Click to upload service records</p>
+                            <input type="file" id="shDoc" accept="image/*,.pdf" style="display: none;" onchange="handleFile('sh', this)" multiple>
+                        </div>
+                        <div class="file-list" id="shFiles"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Other Documents</label>
+                        <div class="upload-zone" id="otherUpload" onclick="triggerUpload('otherDoc')">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-500 mb-2"></i>
+                            <p class="text-sm text-gray-400">Click to upload other docs</p>
+                            <input type="file" id="otherDoc" accept="image/*,.pdf" style="display: none;" onchange="handleFile('other', this)" multiple>
+                        </div>
+                        <div class="file-list" id="otherFiles"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Compliance Check -->
+            <div class="form-section">
+                <h3><i class="fas fa-clipboard-check"></i> Compliance Verification</h3>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" class="w-5 h-5 rounded border-slate-600 text-slate-500 focus:ring-slate-500" id="complianceId" required>
+                        <span class="text-gray-300">I have verified the identity of the seller matches the V5C document</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" class="w-5 h-5 rounded border-slate-600 text-slate-500 focus:ring-slate-500" id="complianceHpi" required>
+                        <span class="text-gray-300">HPI check completed - no outstanding finance, not stolen, not write-off</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" class="w-5 h-5 rounded border-slate-600 text-slate-500 focus:ring-slate-500" id="complianceMileage" required>
+                        <span class="text-gray-300">Mileage verified against MOT history and service records</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" class="w-5 h-5 rounded border-slate-600 text-slate-500 focus:ring-slate-500" id="complianceGdpr" required>
+                        <span class="text-gray-300">Previous keeper data handled in accordance with GDPR</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Section 7: Sign-off -->
+            <div class="form-section">
+                <h3><i class="fas fa-signature"></i> Sign-off</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Verified By *</label>
+                        <select id="verifiedBy" class="form-control" required>
+                            <option value="">Select Staff Member...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Verification Date *</label>
+                        <input type="date" id="verificationDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Next Action Required</label>
+                        <select id="nextAction" class="form-control">
+                            <option value="none">None - Ready for Stage 5</option>
+                            <option value="mot">Book MOT</option>
+                            <option value="service">Book Service</option>
+                            <option value="v5c">Obtain V5C</option>
+                            <option value="documents">Obtain Missing Documents</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <label>Additional Notes</label>
+                    <textarea id="additionalNotes" class="form-control" placeholder="Any additional notes or issues..."></textarea>
+                </div>
+            </div>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-between items-center mt-6">
+            <button onclick="window.location.href='stage-3-paint.html'" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Stage 3
+            </button>
+            <div class="flex gap-3">
+                <button onclick="saveDraft()" class="btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+                <button onclick="submitForm()" class="btn-primary">
+                    <i class="fas fa-check-circle"></i> Complete Stage 4
+                </button>
+            </div>
+        </div>
     </div>
-    
+
     <script>
+        let vehicles = [];
+        let staff = [];
+        let uploadedFiles = { v5c: [], mot: [], sh: [], other: [] };
         let currentVehicle = null;
+
         document.addEventListener('DOMContentLoaded', function() {
-            WorkflowEngine.setStage(4);
-            loadComponents();
-            populateStaff();
-            initPhotos();
-            initSignature();
-            loadVehicle();
-            loadSavedData();
-            document.getElementById('process-date').valueAsDate = new Date();
+            loadData();
+            setupAutoSave();
+            document.getElementById('verificationDate').valueAsDate = new Date();
         });
-        
-        function loadComponents() {
-            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
-            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+
+        function loadData() {
+            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    vehicles = results.data.filter(v => v['Stock No'] || v['StockNo']);
+                    populateVehicleDropdown();
+                }
+            });
+
+            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    staff = results.data.filter(s => s['Name'] || s['Staff Name']);
+                    populateStaffDropdown();
+                }
+            });
         }
-        
-        function populateStaff() {
-            const select = document.getElementById('processor');
-            if (STAFF_DATA) {
-                const accounts = STAFF_DATA.getStaffByDept('accounts');
-                const mgmt = STAFF_DATA.getStaffByDept('management');
-                [...accounts, ...mgmt].forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name;
-                    select.appendChild(opt);
+
+        function populateVehicleDropdown() {
+            const select = document.getElementById('stockNo');
+            vehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle['Stock No'] || vehicle['StockNo'];
+                option.textContent = `${vehicle['Stock No'] || vehicle['StockNo']} - ${vehicle['Make']} ${vehicle['Model']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function populateStaffDropdown() {
+            const select = document.getElementById('verifiedBy');
+            const adminStaff = staff.filter(s => 
+                s['Department'] === 'Admin' || s['Department'] === 'Management' || s['Role']?.includes('Admin')
+            );
+            
+            adminStaff.forEach(s => {
+                const name = s['Name'] || s['Staff Name'];
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = `${name} - ${s['Role']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadVehicleData() {
+            const stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) return;
+            
+            currentVehicle = vehicles.find(v => (v['Stock No'] || v['StockNo']) === stockNo);
+            if (currentVehicle) {
+                document.getElementById('registration').value = currentVehicle['Registration'] || '';
+                document.getElementById('makeModel').value = `${currentVehicle['Make']} ${currentVehicle['Model']}`;
+                
+                // Load previous stage
+                loadPreviousStage(stockNo);
+                // Load draft
+                loadDraft(stockNo);
+            }
+        }
+
+        function loadPreviousStage(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.stage3) {
+                    document.getElementById('previousSummary').style.display = 'block';
+                    const container = document.getElementById('previousData');
+                    const s = data.stage3;
+                    container.innerHTML = `
+                        <div class="summary-item">
+                            <div class="summary-label">Total Estimate</div>
+                            <div class="summary-value">${s.totalEstimate || 'N/A'}</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">Technician</div>
+                            <div class="summary-value">${s.assignedTechnician || 'N/A'}</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">Panels Painted</div>
+                            <div class="summary-value">${s.panelsCount || 'N/A'}</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">Completion Date</div>
+                            <div class="summary-value">${s.completionDate || 'N/A'}</div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function updateDocStatus(type) {
+            const checkbox = document.getElementById(type + (type === 'v5c' || type === 'mot' || type === 'sh' ? 'Present' : ''));
+            const statusEl = document.getElementById(type + 'Status');
+            
+            if (!checkbox || !statusEl) return;
+            
+            if (checkbox.checked) {
+                statusEl.textContent = 'Present';
+                statusEl.className = 'status-badge status-present';
+                
+                // Enable related checkboxes
+                if (type === 'v5c') {
+                    document.getElementById('v5cCorrectName').disabled = false;
+                    document.getElementById('v5cNewKeeper').disabled = false;
+                }
+                if (type === 'mot') {
+                    document.getElementById('motValid').disabled = false;
+                    document.getElementById('motNoAdvisories').disabled = false;
+                }
+                if (type === 'sh') {
+                    document.getElementById('shFull').disabled = false;
+                    document.getElementById('shRecent').disabled = false;
+                }
+            } else {
+                statusEl.textContent = 'Missing';
+                statusEl.className = 'status-badge status-missing';
+                
+                // Disable and reset related
+                if (type === 'v5c') {
+                    document.getElementById('v5cCorrectName').disabled = true;
+                    document.getElementById('v5cCorrectName').checked = false;
+                    document.getElementById('v5cNewKeeper').disabled = true;
+                    document.getElementById('v5cNewKeeper').checked = false;
+                    updateDocStatus('v5cCorrect');
+                    updateDocStatus('v5cNewKeeper');
+                }
+                if (type === 'mot') {
+                    document.getElementById('motValid').disabled = true;
+                    document.getElementById('motValid').checked = false;
+                    document.getElementById('motNoAdvisories').disabled = true;
+                    document.getElementById('motNoAdvisories').checked = false;
+                    updateDocStatus('motValid');
+                    updateDocStatus('motAdvisories');
+                }
+                if (type === 'sh') {
+                    document.getElementById('shFull').disabled = true;
+                    document.getElementById('shFull').checked = false;
+                    document.getElementById('shRecent').disabled = true;
+                    document.getElementById('shRecent').checked = false;
+                    updateDocStatus('shFull');
+                    updateDocStatus('shRecent');
+                }
+            }
+        }
+
+        function checkMotExpiry() {
+            const expiryDate = new Date(document.getElementById('motExpiryDate').value);
+            const today = new Date();
+            const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+            
+            const alert = document.getElementById('motAlert');
+            if (daysUntilExpiry < 30) {
+                alert.style.display = 'flex';
+            } else {
+                alert.style.display = 'none';
+            }
+        }
+
+        function triggerUpload(inputId) {
+            document.getElementById(inputId).click();
+        }
+
+        function handleFile(type, input) {
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    uploadedFiles[type].push(file.name);
                 });
+                updateFileList(type);
+                input.closest('.upload-zone').classList.add('has-file');
             }
         }
-        
-        function initPhotos() {
-            document.getElementById('doc-photos-container').appendChild(
-                FormComponents.createPhotoUpload({ id: 'doc-photos', label: 'Document Photos', maxPhotos: 10 })
-            );
+
+        function updateFileList(type) {
+            const container = document.getElementById(type + 'Files');
+            container.innerHTML = uploadedFiles[type].map((file, index) => `
+                <div class="file-tag">
+                    <i class="fas fa-file"></i>
+                    <span>${file}</span>
+                    <button onclick="removeFile('${type}', ${index})"><i class="fas fa-times"></i></button>
+                </div>
+            `).join('');
         }
-        
-        function initSignature() {
-            document.getElementById('signature-container').appendChild(
-                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
-            );
-        }
-        
-        function loadVehicle() {
-            currentVehicle = WorkflowEngine.getVehicle();
-            if (!currentVehicle) {
-                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
-                return;
+
+        function removeFile(type, index) {
+            uploadedFiles[type].splice(index, 1);
+            updateFileList(type);
+            if (uploadedFiles[type].length === 0) {
+                document.getElementById(type + 'Upload').classList.remove('has-file');
             }
-            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
-            document.getElementById('vehicle-details-content').innerHTML = `
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Year</span><span class="vehicle-detail-value">${currentVehicle.year}</span></div>
-            `;
         }
-        
-        function getFormData() {
-            const form = document.getElementById('stage-4-form');
-            const fd = new FormData(form);
+
+        function submitForm() {
+            if (!validateForm()) return;
+            
+            const stockNo = document.getElementById('stockNo').value;
+            const formData = collectFormData();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage4 = formData;
+            vehicleData.currentStage = 5;
+            vehicleData.lastUpdated = new Date().toISOString();
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            
+            alert('Stage 4 completed successfully! Moving to Stage 5: Mechanical & Diagnostic.');
+            window.location.href = 'stage-5-mechanical.html?stockNo=' + stockNo;
+        }
+
+        function validateForm() {
+            const required = ['stockNo', 'verifiedBy', 'verificationDate'];
+            for (let field of required) {
+                const el = document.getElementById(field);
+                if (!el.value) {
+                    el.focus();
+                    alert('Please fill in all required fields');
+                    return false;
+                }
+            }
+            
+            // Check compliance checkboxes
+            const compliance = ['complianceId', 'complianceHpi', 'complianceMileage', 'complianceGdpr'];
+            for (let field of compliance) {
+                if (!document.getElementById(field).checked) {
+                    alert('Please complete all compliance verification checks');
+                    document.getElementById(field).focus();
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function collectFormData() {
             return {
-                processor: fd.get('processor'),
-                processDate: fd.get('processDate'),
-                docs: fd.getAll('docs[]'),
-                motStatus: fd.get('motStatus'),
-                motExpiry: fd.get('motExpiry'),
-                serviceHistoryNotes: fd.get('serviceHistoryNotes'),
-                docPhotos: document.getElementById('doc-photos').value,
-                legalNotes: fd.get('legalNotes'),
-                signature: document.getElementById('signature').value
+                vinNumber: document.getElementById('vinNumber').value,
+                v5cPresent: document.getElementById('v5cPresent').checked,
+                v5cCorrectName: document.getElementById('v5cCorrectName').checked,
+                v5cNewKeeper: document.getElementById('v5cNewKeeper').checked,
+                v5cRef: document.getElementById('v5cRef').value,
+                keeperName: document.getElementById('keeperName').value,
+                regDate: document.getElementById('regDate').value,
+                previousOwners: document.getElementById('previousOwners').value,
+                motPresent: document.getElementById('motPresent').checked,
+                motValid: document.getElementById('motValid').checked,
+                motNoAdvisories: document.getElementById('motNoAdvisories').checked,
+                motNumber: document.getElementById('motNumber').value,
+                motTestDate: document.getElementById('motTestDate').value,
+                motExpiryDate: document.getElementById('motExpiryDate').value,
+                motStation: document.getElementById('motStation').value,
+                motNotes: document.getElementById('motNotes').value,
+                shPresent: document.getElementById('shPresent').checked,
+                shFull: document.getElementById('shFull').checked,
+                shRecent: document.getElementById('shRecent').checked,
+                lastServiceDate: document.getElementById('lastServiceDate').value,
+                lastServiceMileage: document.getElementById('lastServiceMileage').value,
+                serviceInterval: document.getElementById('serviceInterval').value,
+                nextServiceDue: document.getElementById('nextServiceDue').value,
+                shDetails: document.getElementById('shDetails').value,
+                invoicePresent: document.getElementById('invoicePresent').checked,
+                warrantyPresent: document.getElementById('warrantyPresent').checked,
+                handbookPresent: document.getElementById('handbookPresent').checked,
+                spareKeyPresent: document.getElementById('spareKeyPresent').checked,
+                lockingWheelPresent: document.getElementById('lockingWheelPresent').checked,
+                hpiClear: document.getElementById('hpiClear').checked,
+                uploadedFiles: uploadedFiles,
+                verifiedBy: document.getElementById('verifiedBy').value,
+                verificationDate: document.getElementById('verificationDate').value,
+                nextAction: document.getElementById('nextAction').value,
+                additionalNotes: document.getElementById('additionalNotes').value,
+                submittedAt: new Date().toISOString()
             };
         }
-        
-        function loadSavedData() {
-            if (!currentVehicle) return;
-            const saved = WorkflowEngine.loadStageData(4, currentVehicle.stockNo);
-            if (saved?.data) {
-                const d = saved.data;
-                if (d.processor) document.getElementById('processor').value = d.processor;
-                if (d.processDate) document.getElementById('process-date').value = d.processDate;
-                if (d.motStatus) document.getElementById('mot-status').value = d.motStatus;
-                if (d.motExpiry) document.getElementById('mot-expiry').value = d.motExpiry;
-                if (d.serviceHistoryNotes) document.getElementById('service-history-notes').value = d.serviceHistoryNotes;
-                if (d.legalNotes) document.getElementById('legal-notes').value = d.legalNotes;
-                if (d.docs) d.docs.forEach(v => { const cb = document.querySelector(`input[value="${v}"]`); if (cb) cb.checked = true; });
+
+        function setupAutoSave() {
+            setInterval(() => {
+                const stockNo = document.getElementById('stockNo').value;
+                if (stockNo) saveDraft(stockNo, true);
+            }, 30000);
+        }
+
+        function saveDraft(stockNo = null, silent = false) {
+            if (!stockNo) stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) {
+                if (!silent) alert('Please select a vehicle first');
+                return;
+            }
+            
+            const draftData = collectFormData();
+            draftData.isDraft = true;
+            draftData.lastSaved = new Date().toISOString();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage4Draft = draftData;
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            if (!silent) alert('Draft saved successfully!');
+        }
+
+        function loadDraft(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            const data = JSON.parse(saved);
+            if (data.stage4Draft) {
+                const draft = data.stage4Draft;
+                Object.keys(draft).forEach(key => {
+                    const el = document.getElementById(key);
+                    if (el && draft[key] !== null && typeof draft[key] !== 'object') {
+                        if (el.type === 'checkbox') {
+                            el.checked = draft[key];
+                            if (key.includes('Present')) updateDocStatus(key.replace('Present', ''));
+                        } else {
+                            el.value = draft[key];
+                        }
+                    }
+                });
+                
+                if (draft.uploadedFiles) {
+                    uploadedFiles = draft.uploadedFiles;
+                    Object.keys(uploadedFiles).forEach(type => {
+                        if (uploadedFiles[type].length > 0) {
+                            updateFileList(type);
+                            document.getElementById(type + 'Upload').classList.add('has-file');
+                        }
+                    });
+                }
             }
         }
-        
-        function saveDraft() {
-            if (!currentVehicle) return;
-            WorkflowEngine.saveStageData(4, getFormData());
-            showAlert('Draft saved', 'success');
-        }
-        
-        function completeStage() {
-            if (!currentVehicle) return;
-            const data = getFormData();
-            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
-            WorkflowEngine.completeStage(4, data);
-            showAlert('Stage 4 complete!', 'success');
-            setTimeout(() => window.location.href = 'stage-5-mechanical.html', 1500);
-        }
-        
-        function showAlert(msg, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `<span>${msg}</span>`;
-            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
-            setTimeout(() => alert.remove(), 5000);
-        }
-        
-        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
     </script>
 </body>
 </html>
