@@ -3,251 +3,973 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stage 12: Management Overview - Capeye Workflow</title>
-    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
-    <script src="../../data/staff/staff-list.js"></script>
-    <script src="../../js/workflow/workflow-engine.js"></script>
-    <script src="../../js/workflow/form-components.js"></script>
+    <title>Stage 12: Management Overview - Capeye Auto Capital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #6366f1;
+            --accent: #6366f1;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card: #1e293b;
+            --border: #334155;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        
+        .stage-badge {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .form-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section h3 {
+            color: #818cf8;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .complete-summary {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .summary-item {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .summary-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .summary-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #e2e8f0;
+        }
+        
+        .summary-value.profit { color: #10b981; }
+        .summary-value.loss { color: #ef4444; }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.75rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            border: 2px solid var(--card);
+        }
+        
+        .timeline-item.pending::before {
+            background: #f59e0b;
+        }
+        
+        .timeline-date {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+        
+        .timeline-meta {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        
+        .approval-card {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: #e2e8f0;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+        }
+        
+        .btn-archive {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .signature-pad {
+            background: white;
+            border-radius: 8px;
+            height: 200px;
+            cursor: crosshair;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #4f46e5);
+            width: 100%;
+            transition: width 0.3s;
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .stage-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        .stage-step.active {
+            opacity: 1;
+        }
+        
+        .stage-step.completed {
+            opacity: 1;
+        }
+        
+        .stage-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        
+        .stage-step.active .stage-dot {
+            background: #6366f1;
+            border-color: #818cf8;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+        
+        .stage-step.completed .stage-dot {
+            background: #10b981;
+            border-color: #34d399;
+        }
+        
+        .stage-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body>
-    <div class="workflow-container">
-        <div id="stage-nav-container"></div>
-        <main class="main-content">
-            <div id="header-container"></div>
-            <div class="stage-container">
-                <div class="stage-header">
-                    <h1 class="stage-title"><span style="font-size: 2rem;">👔</span> Stage 12: Management Overview</h1>
-                    <p class="stage-description">Final review, archive vehicle record, and close workflow.</p>
-                </div>
-                
-                <div id="vehicle-info-display" class="vehicle-info-card">
-                    <div class="vehicle-info-header">
-                        <div class="vehicle-info-title">Vehicle Details</div>
-                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="glass-panel p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="stage-badge">Stage 12 of 12</span>
+                        <span class="text-sm text-gray-400">Management</span>
                     </div>
-                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">Management Overview</h1>
+                    <p class="text-gray-400 mt-1">Final review, approval, and vehicle archival</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="saveDraft()" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button onclick="archiveVehicle()" class="btn-archive">
+                        <i class="fas fa-archive"></i> Archive Vehicle
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Progress -->
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <!-- Stage Navigation -->
+            <div class="stage-indicator">
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Intake</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Bodywork</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Paint</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Legal</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Mechanical</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">External</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Valeting</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Faults</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Ready</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Delivery</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Accounts</span>
+                </div>
+                <div class="stage-step active">
+                    <div class="stage-dot">12</div>
+                    <span class="stage-label">Management</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Selection -->
+        <div class="glass-panel p-6 mb-6">
+            <h3 class="text-lg font-semibold text-white mb-4"><i class="fas fa-car"></i> Select Vehicle</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Stock Number *</label>
+                    <select id="stockNo" class="form-control" onchange="loadVehicleData()">
+                        <option value="">Select Stock Number...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="registration" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Vehicle</label>
+                    <input type="text" id="vehicleDetails" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <input type="text" id="vehicleStatus" class="form-control" value="Sold - Pending Archive" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complete Summary -->
+        <div id="completeSummary" class="complete-summary" style="display: none;">
+            <h4 class="font-semibold text-emerald-400 mb-4"><i class="fas fa-chart-line"></i> Complete Vehicle Summary</h4>
+            <div class="summary-grid" id="summaryGrid">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Stage Timeline -->
+        <div class="form-section">
+            <h3><i class="fas fa-history"></i> Stage Completion Timeline</h3>
+            <div class="timeline" id="stageTimeline">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <form id="stage12Form">
+            <!-- Section 1: Financial Review -->
+            <div class="form-section">
+                <h3><i class="fas fa-pound-sign"></i> Financial Review</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Total Cost (Including Prep)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="totalCost" class="form-control pl-8" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Sale Price</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="finalSalePrice" class="form-control pl-8" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gross Profit</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="grossProfit" class="form-control pl-8" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Profit Margin %</label>
+                        <input type="text" id="profitMargin" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Days to Sell</label>
+                        <input type="number" id="daysToSell" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>ROI %</label>
+                        <input type="text" id="roiPercent" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Performance Review -->
+            <div class="form-section">
+                <h3><i class="fas fa-star"></i> Performance Review</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Vehicle Grade</label>
+                        <select id="vehicleGrade" class="form-control">
+                            <option value="A">A - Excellent Investment</option>
+                            <option value="B">B - Good Investment</option>
+                            <option value="C">C - Average</option>
+                            <option value="D">D - Below Average</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Would Buy Similar?</label>
+                        <select id="buySimilar" class="form-control">
+                            <option value="yes">Yes - Definitely</option>
+                            <option value="maybe">Maybe - With Caution</option>
+                            <option value="no">No - Avoid</option>
+                        </select>
+                    </div>
                 </div>
                 
-                <form id="stage-12-form">
-                    <div class="form-grid">
+                <div class="form-group mt-4">
+                    <label>Management Notes</label>
+                    <textarea id="managementNotes" class="form-control" rows="4" placeholder="Overall assessment, lessons learned, recommendations for future..."></textarea>
+                </div>
+            </div>
+
+            <!-- Section 3: Final Approval -->
+            <div class="form-section">
+                <h3><i class="fas fa-check-circle"></i> Final Approval</h3>
+                <div class="approval-card">
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" id="verifyAllStages" class="w-5 h-5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500" required>
+                            <span>I have verified all 12 stages are complete and documentation is accurate</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" id="verifyFinancials" class="w-5 h-5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500" required>
+                            <span>I confirm the financial figures are accurate and match accounts records</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" id="verifyCustomer" class="w-5 h-5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500" required>
+                            <span>I confirm the customer has taken delivery and is satisfied</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" id="approveArchive" class="w-5 h-5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500" required>
+                            <span>I approve this vehicle for archival</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-grid mt-6">
                         <div class="form-group">
-                            <label class="form-label" for="manager">Manager <span class="required">*</span></label>
-                            <select id="manager" name="manager" class="form-select" required>
+                            <label>Approved By *</label>
+                            <select id="approvedBy" class="form-control" required>
                                 <option value="">Select Manager...</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="review-date">Review Date</label>
-                            <input type="date" id="review-date" name="reviewDate" class="form-input">
+                            <label>Approval Date *</label>
+                            <input type="date" id="approvalDate" class="form-control" required>
                         </div>
                     </div>
                     
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Workflow Summary</h3>
-                    
-                    <div id="workflow-summary" style="background: var(--color-bg); padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 2rem;">
-                        <p>Loading workflow history...</p>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Digital Signature *</label>
+                        <canvas id="signaturePad" class="signature-pad w-full"></canvas>
+                        <button type="button" class="btn-secondary mt-2" onclick="clearSignature()">
+                            <i class="fas fa-undo"></i> Clear Signature
+                        </button>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="profit-margin">Profit Margin (%)</label>
-                        <input type="number" id="profit-margin" name="profitMargin" class="form-input" step="0.1">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="customer-satisfaction">Customer Satisfaction</label>
-                        <select id="customer-satisfaction" name="customerSatisfaction" class="form-select">
-                            <option value="excellent">Excellent</option>
-                            <option value="good">Good</option>
-                            <option value="fair">Fair</option>
-                            <option value="poor">Poor</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="issues-raised">Any Issues Raised?</label>
-                        <select id="issues-raised" name="issuesRaised" class="form-select" onchange="toggleIssues()">
-                            <option value="no">No Issues</option>
-                            <option value="yes">Yes - Details Required</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group" id="issues-details-group" style="display: none;">
-                        <label class="form-label" for="issues-details">Issue Details</label>
-                        <textarea id="issues-details" name="issuesDetails" class="form-textarea" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="improvements">Process Improvements</label>
-                        <textarea id="improvements" name="improvements" class="form-textarea" rows="3" placeholder="Suggestions for improving the workflow..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="final-notes">Final Notes</label>
-                        <textarea id="final-notes" name="finalNotes" class="form-textarea" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Manager Signature <span class="required">*</span></label>
-                        <div id="signature-container"></div>
-                        <input type="hidden" id="signature" name="signature" required>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <div class="form-actions-left">
-                            <a href="stage-11-accounts.html" class="btn btn-secondary">← Back</a>
-                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
-                        </div>
-                        <div class="form-actions-right">
-                            <button type="button" class="btn btn-success btn-lg" onclick="completeWorkflow()">✓ Close Workflow & Archive</button>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
-        </main>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-between items-center mt-6">
+            <button onclick="window.location.href='stage-11-accounts.html'" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Stage 11
+            </button>
+            <div class="flex gap-3">
+                <button onclick="saveDraft()" class="btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+                <button onclick="archiveVehicle()" class="btn-archive">
+                    <i class="fas fa-archive"></i> Complete & Archive
+                </button>
+            </div>
+        </div>
     </div>
-    
+
     <script>
+        let vehicles = [];
+        let staff = [];
         let currentVehicle = null;
+        let fullVehicleData = {};
+        let signaturePad = null;
+        let isDrawing = false;
+
         document.addEventListener('DOMContentLoaded', function() {
-            WorkflowEngine.setStage(12);
-            loadComponents();
-            populateManagers();
-            initSignature();
-            loadVehicle();
-            loadWorkflowSummary();
-            loadSavedData();
-            document.getElementById('review-date').valueAsDate = new Date();
+            loadData();
+            initSignaturePad();
+            setupAutoSave();
+            document.getElementById('approvalDate').valueAsDate = new Date();
         });
-        
-        function loadComponents() {
-            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
-            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
-        }
-        
-        function populateManagers() {
-            const select = document.getElementById('manager');
-            if (STAFF_DATA) {
-                STAFF_DATA.getStaffByDept('management').forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name;
-                    select.appendChild(opt);
-                });
-            }
-        }
-        
-        function initSignature() {
-            document.getElementById('signature-container').appendChild(
-                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
-            );
-        }
-        
-        function loadVehicle() {
-            currentVehicle = WorkflowEngine.getVehicle();
-            if (!currentVehicle) {
-                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
-                return;
-            }
-            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
-            document.getElementById('vehicle-details-content').innerHTML = `
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
-            `;
-        }
-        
-        function loadWorkflowSummary() {
-            if (!currentVehicle) return;
-            const progress = WorkflowEngine.getVehicleProgress(currentVehicle.stockNo);
-            let html = '<div style="display: grid; gap: 0.5rem;">';
-            progress.forEach(p => {
-                const status = p.completed ? '✅' : '⬜';
-                const date = p.timestamp ? new Date(p.timestamp).toLocaleDateString() : '-';
-                html += `<div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 4px;">
-                    <span>${status} ${p.stage.id}. ${p.stage.name}</span>
-                    <span style="color: var(--color-text-secondary); font-size: 0.875rem;">${date}</span>
-                </div>`;
+
+        function loadData() {
+            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    vehicles = results.data.filter(v => v['Stock No'] || v['StockNo']);
+                    populateVehicleDropdown();
+                }
             });
-            html += '</div>';
-            document.getElementById('workflow-summary').innerHTML = html;
+
+            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    staff = results.data.filter(s => s['Name'] || s['Staff Name']);
+                    populateStaffDropdown();
+                }
+            });
         }
-        
-        function toggleIssues() {
-            const show = document.getElementById('issues-raised').value === 'yes';
-            document.getElementById('issues-details-group').style.display = show ? 'block' : 'none';
+
+        function populateVehicleDropdown() {
+            const select = document.getElementById('stockNo');
+            vehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle['Stock No'] || vehicle['StockNo'];
+                option.textContent = `${vehicle['Stock No'] || vehicle['StockNo']} - ${vehicle['Make']} ${vehicle['Model']}`;
+                select.appendChild(option);
+            });
         }
-        
-        function getFormData() {
-            const form = document.getElementById('stage-12-form');
-            const fd = new FormData(form);
+
+        function populateStaffDropdown() {
+            const select = document.getElementById('approvedBy');
+            const managers = staff.filter(s => 
+                s['Role']?.includes('Manager') || s['Role']?.includes('Director') || s['Role']?.includes('GM')
+            );
+            
+            managers.forEach(m => {
+                const name = m['Name'] || m['Staff Name'];
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = `${name} - ${m['Role']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadVehicleData() {
+            const stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) return;
+            
+            currentVehicle = vehicles.find(v => (v['Stock No'] || v['StockNo']) === stockNo);
+            if (currentVehicle) {
+                document.getElementById('registration').value = currentVehicle['Registration'] || '';
+                document.getElementById('vehicleDetails').value = `${currentVehicle['Make']} ${currentVehicle['Model']} ${currentVehicle['Year'] || ''}`;
+                
+                loadAllData(stockNo);
+                loadDraft(stockNo);
+            }
+        }
+
+        function loadAllData(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            fullVehicleData = JSON.parse(saved);
+            
+            // Show summary
+            document.getElementById('completeSummary').style.display = 'block';
+            
+            // Calculate totals
+            const costPrice = parseFloat(currentVehicle['Cost Price']?.replace(/[£,]/g, '')) || 0;
+            let prepCosts = 0;
+            let salePrice = 0;
+            let daysInStock = 0;
+            
+            if (fullVehicleData.stage3?.totalEstimate) {
+                prepCosts += parseFloat(fullVehicleData.stage3.totalEstimate.replace(/[£,]/g, '')) || 0;
+            }
+            if (fullVehicleData.stage5?.hoursSpent) {
+                prepCosts += parseFloat(fullVehicleData.stage5.hoursSpent) * 45;
+            }
+            if (fullVehicleData.stage6?.hoursSpent) {
+                prepCosts += parseFloat(fullVehicleData.stage6.hoursSpent) * 45;
+            }
+            if (fullVehicleData.stage7?.hoursSpent) {
+                prepCosts += parseFloat(fullVehicleData.stage7.hoursSpent) * 25;
+            }
+            
+            if (fullVehicleData.stage10?.sale?.price) {
+                salePrice = parseFloat(fullVehicleData.stage10.sale.price);
+            }
+            
+            // Calculate days to sell
+            const dateInStock = currentVehicle['Date In Stock'] || currentVehicle['DateInStock'];
+            const saleDate = fullVehicleData.stage10?.sale?.date;
+            if (dateInStock && saleDate) {
+                daysInStock = Math.floor((new Date(saleDate) - new Date(dateInStock)) / (1000 * 60 * 60 * 24));
+            }
+            
+            const totalCost = costPrice + prepCosts;
+            const grossProfit = salePrice - totalCost;
+            const profitMargin = salePrice > 0 ? ((grossProfit / salePrice) * 100).toFixed(1) : 0;
+            const roi = costPrice > 0 ? ((grossProfit / costPrice) * 100).toFixed(1) : 0;
+            
+            // Update summary grid
+            const summaryGrid = document.getElementById('summaryGrid');
+            summaryGrid.innerHTML = `
+                <div class="summary-item">
+                    <div class="summary-label">Cost Price</div>
+                    <div class="summary-value">£${costPrice.toFixed(2)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Prep Costs</div>
+                    <div class="summary-value">£${prepCosts.toFixed(2)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Total Investment</div>
+                    <div class="summary-value">£${totalCost.toFixed(2)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Sale Price</div>
+                    <div class="summary-value">£${salePrice.toFixed(2)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Gross Profit</div>
+                    <div class="summary-value ${grossProfit >= 0 ? 'profit' : 'loss'}">£${grossProfit.toFixed(2)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Profit Margin</div>
+                    <div class="summary-value ${grossProfit >= 0 ? 'profit' : 'loss'}">${profitMargin}%</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Days to Sell</div>
+                    <div class="summary-value">${daysInStock}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">ROI</div>
+                    <div class="summary-value ${grossProfit >= 0 ? 'profit' : 'loss'}">${roi}%</div>
+                </div>
+            `;
+            
+            // Update financial fields
+            document.getElementById('totalCost').value = totalCost.toFixed(2);
+            document.getElementById('finalSalePrice').value = salePrice.toFixed(2);
+            document.getElementById('grossProfit').value = grossProfit.toFixed(2);
+            document.getElementById('profitMargin').value = profitMargin + '%';
+            document.getElementById('daysToSell').value = daysInStock;
+            document.getElementById('roiPercent').value = roi + '%';
+            
+            // Build timeline
+            buildTimeline();
+        }
+
+        function buildTimeline() {
+            const timeline = document.getElementById('stageTimeline');
+            timeline.innerHTML = '';
+            
+            const stages = [
+                { key: 'stage1', name: 'Vehicle Intake', icon: 'fa-car' },
+                { key: 'stage2', name: 'Bodywork & Cosmetic', icon: 'fa-tools' },
+                { key: 'stage3', name: 'Dent & Paint Repairs', icon: 'fa-paint-roller' },
+                { key: 'stage4', name: 'Legal & Documentation', icon: 'fa-file-contract' },
+                { key: 'stage5', name: 'Mechanical & Diagnostic', icon: 'fa-cog' },
+                { key: 'stage6', name: 'External & Electrical', icon: 'fa-bolt' },
+                { key: 'stage7', name: 'Interior & Valeting', icon: 'fa-broom' },
+                { key: 'stage8', name: 'Fault Overview', icon: 'fa-clipboard-check' },
+                { key: 'stage9', name: 'Ready for Advertising', icon: 'fa-camera' },
+                { key: 'stage10', name: 'Customer Delivery', icon: 'fa-handshake' },
+                { key: 'stage11', name: 'Accounts & Warranty', icon: 'fa-calculator' }
+            ];
+            
+            stages.forEach((stage, index) => {
+                const data = fullVehicleData[stage.key];
+                const item = document.createElement('div');
+                item.className = 'timeline-item' + (data ? '' : ' pending');
+                
+                const date = data?.submittedAt ? new Date(data.submittedAt).toLocaleDateString('en-GB') : 'Pending';
+                const by = data?.completedBy || data?.inspectedBy || data?.verifiedBy || data?.preparedBy || data?.processedBy || '';
+                
+                item.innerHTML = `
+                    <div class="timeline-date">${date}</div>
+                    <div class="timeline-title"><i class="fas ${stage.icon} mr-2"></i>Stage ${index + 1}: ${stage.name}</div>
+                    <div class="timeline-meta">${by ? 'By: ' + by : 'Not completed'}</div>
+                `;
+                
+                timeline.appendChild(item);
+            });
+        }
+
+        function initSignaturePad() {
+            const canvas = document.getElementById('signaturePad');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', stopDrawing);
+            
+            signaturePad = { canvas, ctx };
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = signaturePad.canvas.getBoundingClientRect();
+            signaturePad.ctx.beginPath();
+            signaturePad.ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = signaturePad.canvas.getBoundingClientRect();
+            signaturePad.ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            signaturePad.ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            signaturePad.canvas.dispatchEvent(mouseEvent);
+        }
+
+        function clearSignature() {
+            if (signaturePad) {
+                signaturePad.ctx.clearRect(0, 0, signaturePad.canvas.width, signaturePad.canvas.height);
+            }
+        }
+
+        function archiveVehicle() {
+            if (!validateForm()) return;
+            
+            const stockNo = document.getElementById('stockNo').value;
+            const formData = collectFormData();
+            
+            // Merge all data
+            const archivedData = {
+                ...fullVehicleData,
+                stage12: formData,
+                archived: true,
+                archivedDate: new Date().toISOString(),
+                archiveReference: `ARC-${stockNo}-${Date.now()}`
+            };
+            
+            // Save to archived storage
+            localStorage.setItem(`capeye_archived_${stockNo}`, JSON.stringify(archivedData));
+            
+            // Remove from active
+            localStorage.removeItem(`capeye_vehicle_${stockNo}`);
+            
+            alert(`Vehicle ${stockNo} has been successfully archived!\n\nArchive Reference: ${archivedData.archiveReference}`);
+            
+            // Reset form
+            window.location.reload();
+        }
+
+        function validateForm() {
+            const required = ['stockNo', 'approvedBy', 'approvalDate'];
+            for (let field of required) {
+                const el = document.getElementById(field);
+                if (!el.value) {
+                    el.focus();
+                    alert('Please fill in all required fields');
+                    return false;
+                }
+            }
+            
+            const checkboxes = ['verifyAllStages', 'verifyFinancials', 'verifyCustomer', 'approveArchive'];
+            for (let id of checkboxes) {
+                if (!document.getElementById(id).checked) {
+                    alert('Please complete all approval checkboxes');
+                    return false;
+                }
+            }
+            
+            if (signaturePad) {
+                const pixelData = signaturePad.canvas.toDataURL();
+                if (pixelData.length < 1000) {
+                    alert('Please provide a signature');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function collectFormData() {
             return {
-                manager: fd.get('manager'),
-                reviewDate: fd.get('reviewDate'),
-                profitMargin: fd.get('profitMargin'),
-                customerSatisfaction: fd.get('customerSatisfaction'),
-                issuesRaised: fd.get('issuesRaised'),
-                issuesDetails: fd.get('issuesDetails'),
-                improvements: fd.get('improvements'),
-                finalNotes: fd.get('finalNotes'),
-                signature: document.getElementById('signature').value,
-                workflowComplete: true,
-                archivedAt: new Date().toISOString()
+                financial: {
+                    totalCost: document.getElementById('totalCost').value,
+                    salePrice: document.getElementById('finalSalePrice').value,
+                    grossProfit: document.getElementById('grossProfit').value,
+                    profitMargin: document.getElementById('profitMargin').value,
+                    daysToSell: document.getElementById('daysToSell').value,
+                    roi: document.getElementById('roiPercent').value
+                },
+                performance: {
+                    vehicleGrade: document.getElementById('vehicleGrade').value,
+                    buySimilar: document.getElementById('buySimilar').value,
+                    notes: document.getElementById('managementNotes').value
+                },
+                approval: {
+                    allStagesVerified: document.getElementById('verifyAllStages').checked,
+                    financialsVerified: document.getElementById('verifyFinancials').checked,
+                    customerVerified: document.getElementById('verifyCustomer').checked,
+                    archiveApproved: document.getElementById('approveArchive').checked,
+                    approvedBy: document.getElementById('approvedBy').value,
+                    approvalDate: document.getElementById('approvalDate').value,
+                    signature: signaturePad ? signaturePad.canvas.toDataURL() : null
+                },
+                submittedAt: new Date().toISOString()
             };
         }
-        
-        function loadSavedData() {
-            if (!currentVehicle) return;
-            const saved = WorkflowEngine.loadStageData(12, currentVehicle.stockNo);
-            if (saved?.data) {
-                const d = saved.data;
-                if (d.manager) document.getElementById('manager').value = d.manager;
-                if (d.profitMargin) document.getElementById('profit-margin').value = d.profitMargin;
-                if (d.customerSatisfaction) document.getElementById('customer-satisfaction').value = d.customerSatisfaction;
-                if (d.issuesRaised) {
-                    document.getElementById('issues-raised').value = d.issuesRaised;
-                    toggleIssues();
+
+        function setupAutoSave() {
+            setInterval(() => {
+                const stockNo = document.getElementById('stockNo').value;
+                if (stockNo) saveDraft(stockNo, true);
+            }, 30000);
+        }
+
+        function saveDraft(stockNo = null, silent = false) {
+            if (!stockNo) stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) {
+                if (!silent) alert('Please select a vehicle first');
+                return;
+            }
+            
+            const draftData = collectFormData();
+            draftData.isDraft = true;
+            draftData.lastSaved = new Date().toISOString();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage12Draft = draftData;
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            if (!silent) alert('Draft saved successfully!');
+        }
+
+        function loadDraft(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            const data = JSON.parse(saved);
+            if (data.stage12Draft) {
+                const draft = data.stage12Draft;
+                
+                if (draft.performance) {
+                    document.getElementById('vehicleGrade').value = draft.performance.vehicleGrade || '';
+                    document.getElementById('buySimilar').value = draft.performance.buySimilar || '';
+                    document.getElementById('managementNotes').value = draft.performance.notes || '';
                 }
-                if (d.issuesDetails) document.getElementById('issues-details').value = d.issuesDetails;
-                if (d.improvements) document.getElementById('improvements').value = d.improvements;
-                if (d.finalNotes) document.getElementById('final-notes').value = d.finalNotes;
+                
+                if (draft.approval) {
+                    document.getElementById('approvedBy').value = draft.approval.approvedBy || '';
+                }
             }
         }
-        
-        function saveDraft() {
-            if (!currentVehicle) return;
-            WorkflowEngine.saveStageData(12, getFormData());
-            showAlert('Draft saved', 'success');
-        }
-        
-        function completeWorkflow() {
-            if (!currentVehicle) return;
-            const data = getFormData();
-            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
-            
-            // Complete final stage
-            WorkflowEngine.completeStage(12, data);
-            
-            // Archive vehicle
-            if (typeof VehicleStore !== 'undefined') {
-                VehicleStore.update(currentVehicle.stockNo, {
-                    status: 'Sold',
-                    workflowComplete: true,
-                    archivedAt: new Date().toISOString()
-                });
-            }
-            
-            showAlert('Workflow complete! Vehicle archived.', 'success');
-            setTimeout(() => window.location.href = '../../../index.html', 2000);
-        }
-        
-        function showAlert(msg, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `<span>${msg}</span>`;
-            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
-            setTimeout(() => alert.remove(), 5000);
-        }
-        
-        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
     </script>
 </body>
 </html>
