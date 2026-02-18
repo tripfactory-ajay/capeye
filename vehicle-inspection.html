@@ -603,7 +603,7 @@
     <!-- Header -->
     <header class="cy-header">
         <div class="cy-header-content">
-            <a href="../workflow.html" class="cy-brand">
+            <a href="workflow.html" class="cy-brand">
                 <div class="cy-logo">AC</div>
                 <div class="cy-brand-text">
                     <h1>CAPEYE</h1>
@@ -619,7 +619,7 @@
                 </div>
             </div>
 
-            <a href="../workflow.html" class="btn-secondary">
+            <a href="workflow.html" class="btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back to Pipeline
             </a>
         </div>
@@ -1078,12 +1078,12 @@
             document.getElementById('additionalCosts').addEventListener('input', calculateTotal);
         });
 
-        // Initialize Signature Pad - COMPACT VERSION
+        // Initialize Signature Pad
         function initSignaturePad() {
             const canvas = document.getElementById('signaturePad');
             signatureContext = canvas.getContext('2d');
             
-            // Set canvas size - COMPACT HEIGHT
+            // Set canvas size
             canvas.width = canvas.offsetWidth;
             canvas.height = 120;
             
@@ -1159,37 +1159,65 @@
             return !pixelData.some((pixel, index) => index % 4 === 3 && pixel < 255);
         }
 
-        // Load CSV Data
+        // Load CSV Data with multiple path attempts
         async function loadData() {
-            try {
-                // Load stock data
-                const stockResponse = await fetch('../Auto Capital - Stock List-639068391990284525.csv');
-                const stockCsv = await stockResponse.text();
-                
-                Papa.parse(stockCsv, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
-                        populateVehicleSelect();
-                        loadStaffData();
-                    },
-                    error: function(err) {
-                        showStatus('Error loading vehicle data: ' + err.message, 'error');
-                        document.getElementById('loadingOverlay').style.display = 'none';
+            const possiblePaths = [
+                'Auto Capital - Stock List-639068391990284525.csv',
+                './Auto Capital - Stock List-639068391990284525.csv',
+                '../Auto Capital - Stock List-639068391990284525.csv'
+            ];
+            
+            let stockCsv = null;
+            let successfulPath = '';
+            
+            for (const path of possiblePaths) {
+                try {
+                    const response = await fetch(path);
+                    if (response.ok) {
+                        stockCsv = await response.text();
+                        successfulPath = path;
+                        console.log('Stock CSV loaded from:', path);
+                        break;
                     }
-                });
-            } catch (error) {
-                showStatus('Error: ' + error.message, 'error');
-                document.getElementById('loadingOverlay').style.display = 'none';
+                } catch (e) {
+                    continue;
+                }
             }
+            
+            if (!stockCsv) {
+                showStatus('Could not load vehicle data. Please check CSV file location.', 'error');
+                document.getElementById('loadingOverlay').style.display = 'none';
+                return;
+            }
+            
+            Papa.parse(stockCsv, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
+                    console.log(`Loaded ${allVehicles.length} vehicles`);
+                    populateVehicleSelect();
+                    loadStaffData(successfulPath);
+                },
+                error: function(err) {
+                    showStatus('Error parsing vehicle data: ' + err.message, 'error');
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }
+            });
         }
 
         // Load Staff Data
-        async function loadStaffData() {
+        async function loadStaffData(stockPath) {
+            const staffFile = 'Auto Capital - Staff List-639068391990284525.csv';
+            let staffPath = staffFile;
+            
+            if (stockPath.includes('../')) {
+                staffPath = '../' + staffFile;
+            }
+            
             try {
-                const staffResponse = await fetch('../Auto Capital - Staff List-639068391990284525.csv');
-                const staffCsv = await staffResponse.text();
+                const response = await fetch(staffPath);
+                const staffCsv = await response.text();
                 
                 Papa.parse(staffCsv, {
                     header: true,
@@ -1198,12 +1226,13 @@
                         staffList = results.data.filter(s => s.Name);
                         populateStaffSelect();
                         
-                        // Check for existing form data in URL
+                        // Check for stock parameter in URL
                         const urlParams = new URLSearchParams(window.location.search);
                         const stockNo = urlParams.get('stock');
                         if (stockNo) {
                             document.getElementById('stockNoInput').value = stockNo;
-                            searchVehicle();
+                            // Wait for dropdown to populate then search
+                            setTimeout(() => searchVehicle(), 100);
                         }
                         
                         document.getElementById('loadingOverlay').style.display = 'none';
@@ -1213,6 +1242,7 @@
                     }
                 });
             } catch (error) {
+                console.error('Staff load error:', error);
                 document.getElementById('loadingOverlay').style.display = 'none';
             }
         }
@@ -1250,6 +1280,11 @@
         // Populate Vehicle Select
         function populateVehicleSelect() {
             const select = document.getElementById('vehicleSelect');
+            // Clear existing options except first
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
             allVehicles.forEach(v => {
                 const option = document.createElement('option');
                 option.value = v.stockNo;
@@ -1490,7 +1525,7 @@
             return data;
         }
 
-        // Save Form Data (Submit) - WITH AUTO DATE STAMP AND WORKFLOW UPDATE
+        // Save Form Data (Submit)
         function saveFormData(event) {
             event.preventDefault();
             
@@ -1505,7 +1540,7 @@
                 return;
             }
             
-            // AUTO DATE STAMP - Capture current date/time at submission
+            // AUTO DATE STAMP
             const submissionDateTime = new Date();
             const formattedDateTime = submissionDateTime.toLocaleString('en-GB', {
                 day: '2-digit',
@@ -1545,19 +1580,7 @@
             // Remove draft
             localStorage.removeItem(`capeye_stage1_${currentVehicle.stockNo}`);
             
-            // UPDATE WORKFLOW DASHBOARD - Update vehicle in main list with new stage
-            const vehicleIndex = allVehicles.findIndex(v => v.stockNo === currentVehicle.stockNo);
-            if (vehicleIndex >= 0) {
-                allVehicles[vehicleIndex].workflowStage = parseInt(formData.nextStage);
-                allVehicles[vehicleIndex].currentStage = parseInt(formData.nextStage);
-                allVehicles[vehicleIndex].lastUpdated = submissionDateTime.toISOString();
-                allVehicles[vehicleIndex].status = 'In Progress';
-                
-                // Save updated vehicle list to localStorage for dashboard sync
-                localStorage.setItem('capeye_all_vehicles', JSON.stringify(allVehicles));
-            }
-            
-            // Trigger workflow update event for other pages
+            // Trigger workflow update
             localStorage.setItem('capeye_workflow_update', JSON.stringify({
                 stockNo: currentVehicle.stockNo,
                 fromStage: 1,
@@ -1568,14 +1591,14 @@
             
             showStatus(`Stage 1 completed at ${formattedDateTime}! Vehicle forwarded to Stage ${formData.nextStage}.`, 'success');
             
-            // Disable form to prevent double submission
+            // Disable form
             document.getElementById('intakeForm').querySelectorAll('input, select, textarea, button').forEach(el => {
                 el.disabled = true;
             });
             
             // Redirect after delay
             setTimeout(() => {
-                window.location.href = '../workflow.html';
+                window.location.href = 'workflow.html';
             }, 2500);
         }
 
