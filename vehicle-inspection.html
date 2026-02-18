@@ -1255,7 +1255,7 @@
             });
         }
 
-        // Load Staff Data - FIXED PATHS
+        // Load Staff Data - FIXED VERSION
         async function loadStaffData() {
             // Try both staff list files (CSVs in same directory as HTML)
             const possiblePaths = [
@@ -1291,15 +1291,23 @@
             if (!staffCsv) {
                 showDebug(`<strong>Staff CSV not found</strong><br>Tried paths: ${possiblePaths.join(', ')}<br>Last error: ${lastError}<br>Current page URL: ${window.location.href}<br>Please ensure the staff CSV file is uploaded to the repository.`);
                 
-                document.getElementById('staffCount').textContent = 'Error: Staff file not found (see debug panel above)';
-                document.getElementById('staffCount').style.color = 'var(--cy-accent-red)';
+                // Use default staff list as fallback
+                const defaultStaff = [
+                    { name: 'Keith Hardy', department: 'Management' },
+                    { name: 'Ibrahim Ata', department: 'Sales' },
+                    { name: 'Ali Amood', department: 'Workshop' },
+                    { name: 'Morteza Rahamian', department: 'Workshop' },
+                    { name: 'Marcin Kiljan', department: 'Workshop' },
+                    { name: 'Sia Vajihi', department: 'Workshop' },
+                    { name: 'Iman Zarien', department: 'Workshop' },
+                    { name: 'Stash', department: 'Bodyshop' }
+                ];
                 
-                // Add manual entry option
-                const select = document.getElementById('inspectedBy');
-                const option = document.createElement('option');
-                option.value = '__manual__';
-                option.textContent = '-- Type name manually --';
-                select.appendChild(option);
+                staffList = defaultStaff;
+                populateStaffSelect();
+                
+                document.getElementById('staffCount').textContent = `${staffList.length} staff members loaded (default list)`;
+                document.getElementById('staffCount').style.color = 'var(--cy-accent-orange)';
                 
                 document.getElementById('loadingOverlay').style.display = 'none';
                 return;
@@ -1314,46 +1322,66 @@
                     console.log('Staff parse complete. Columns found:', results.meta.fields);
                     console.log('First row sample:', results.data[0]);
                     
-                    // Normalize staff data with flexible column matching
-                    staffList = results.data.map(row => {
-                        const normalized = {};
-                        
-                        // Find name column (case insensitive)
-                        const nameKey = results.meta.fields.find(f => 
-                            f.toLowerCase().includes('name') || 
-                            f.toLowerCase() === 'staff' ||
-                            f.toLowerCase() === 'employee'
-                        );
-                        
-                        // Find department/role column
-                        const deptKey = results.meta.fields.find(f => 
-                            f.toLowerCase().includes('dept') || 
-                            f.toLowerCase().includes('department') ||
-                            f.toLowerCase().includes('role') ||
-                            f.toLowerCase().includes('position') ||
-                            f.toLowerCase().includes('job')
-                        );
-                        
-                        normalized.name = nameKey ? row[nameKey] : '';
-                        normalized.department = deptKey ? row[deptKey] : '';
-                        normalized.role = normalized.department;
-                        
-                        return normalized;
-                    }).filter(s => s.name && s.name.trim() !== '');
+                    if (!results.data || results.data.length === 0) {
+                        showDebug('Staff CSV loaded but contains no data rows');
+                        useDefaultStaff();
+                        return;
+                    }
                     
-                    console.log('Normalized staff list:', staffList);
+                    // Find column indices with flexible matching
+                    const headers = results.meta.fields.map(h => h.toLowerCase().trim());
+                    console.log('Normalized headers:', headers);
+                    
+                    // Find name column
+                    const nameIndex = headers.findIndex(h => 
+                        h.includes('name') || h === 'staff' || h === 'employee' || 
+                        h === 'person' || h === 'full name' || h === 'staff name'
+                    );
+                    
+                    // Find department/role column
+                    const deptIndex = headers.findIndex(h => 
+                        h.includes('dept') || h.includes('department') || 
+                        h.includes('role') || h.includes('position') || 
+                        h.includes('job') || h.includes('title') || h.includes('function')
+                    );
+                    
+                    console.log('Name column index:', nameIndex, 'Dept column index:', deptIndex);
+                    
+                    if (nameIndex === -1) {
+                        showDebug(`<strong>Could not find Name column</strong><br>Available columns: ${results.meta.fields.join(', ')}<br>Looking for: name, staff, employee, person`);
+                        useDefaultStaff();
+                        return;
+                    }
+                    
+                    const nameKey = results.meta.fields[nameIndex];
+                    const deptKey = deptIndex !== -1 ? results.meta.fields[deptIndex] : null;
+                    
+                    // Parse staff data
+                    staffList = results.data.map(row => {
+                        const name = row[nameKey]?.toString().trim();
+                        const department = deptKey ? row[deptKey]?.toString().trim() : '';
+                        
+                        return {
+                            name: name,
+                            department: department,
+                            role: department
+                        };
+                    }).filter(s => s.name && s.name !== '');
+                    
+                    console.log('Parsed staff list:', staffList);
+                    
+                    if (staffList.length === 0) {
+                        showDebug('No valid staff names found in CSV');
+                        useDefaultStaff();
+                        return;
+                    }
                     
                     populateStaffSelect();
                     
                     // Update staff count display
                     const staffCount = document.getElementById('staffCount');
-                    if (staffList.length > 0) {
-                        staffCount.textContent = `${staffList.length} staff members loaded`;
-                        staffCount.style.color = 'var(--cy-accent-green)';
-                    } else {
-                        staffCount.textContent = 'No staff found in CSV - check column headers';
-                        staffCount.style.color = 'var(--cy-accent-orange)';
-                    }
+                    staffCount.textContent = `${staffList.length} staff members loaded from CSV`;
+                    staffCount.style.color = 'var(--cy-accent-green)';
                     
                     // Check for stock parameter in URL
                     const urlParams = new URLSearchParams(window.location.search);
@@ -1368,11 +1396,32 @@
                 error: function(err) {
                     console.error('Staff CSV parse error:', err);
                     showDebug(`Error parsing staff CSV: ${err.message}`);
-                    document.getElementById('staffCount').textContent = 'Error parsing staff data';
-                    document.getElementById('staffCount').style.color = 'var(--cy-accent-red)';
-                    document.getElementById('loadingOverlay').style.display = 'none';
+                    useDefaultStaff();
                 }
             });
+        }
+
+        // Use default staff list when CSV fails
+        function useDefaultStaff() {
+            const defaultStaff = [
+                { name: 'Keith Hardy', department: 'Management' },
+                { name: 'Ibrahim Ata', department: 'Sales' },
+                { name: 'Ali Amood', department: 'Workshop' },
+                { name: 'Morteza Rahamian', department: 'Workshop' },
+                { name: 'Marcin Kiljan', department: 'Workshop' },
+                { name: 'Sia Vajihi', department: 'Workshop' },
+                { name: 'Iman Zarien', department: 'Workshop' },
+                { name: 'Stash', department: 'Bodyshop' }
+            ];
+            
+            staffList = defaultStaff;
+            populateStaffSelect();
+            
+            const staffCount = document.getElementById('staffCount');
+            staffCount.textContent = `${staffList.length} staff members loaded (default list)`;
+            staffCount.style.color = 'var(--cy-accent-orange)';
+            
+            document.getElementById('loadingOverlay').style.display = 'none';
         }
 
         // Normalize Vehicle
@@ -1421,7 +1470,7 @@
             });
         }
 
-        // Populate Staff Select
+        // Populate Staff Select - FIXED VERSION
         function populateStaffSelect() {
             const select = document.getElementById('inspectedBy');
             
@@ -1430,8 +1479,8 @@
                 select.remove(1);
             }
             
-            // Filter for Sales and Management staff
-            const relevantStaff = staffList.filter(s => {
+            // Filter for Sales and Management staff, but if none found, show ALL staff
+            let relevantStaff = staffList.filter(s => {
                 const dept = (s.department || '').toLowerCase();
                 const role = (s.role || '').toLowerCase();
                 return dept.includes('sales') || dept.includes('management') || 
@@ -1440,21 +1489,25 @@
                        role.includes('gm') || role.includes('general manager');
             });
             
-            console.log('Relevant staff for dropdown:', relevantStaff);
+            // If no relevant staff found, show ALL staff
+            if (relevantStaff.length === 0) {
+                console.log('No Sales/Management staff found, showing all staff');
+                relevantStaff = staffList;
+            }
             
-            const staffToShow = relevantStaff.length > 0 ? relevantStaff : staffList;
+            console.log('Staff for dropdown:', relevantStaff);
             
-            staffToShow.forEach(s => {
+            relevantStaff.forEach(s => {
                 const option = document.createElement('option');
                 option.value = s.name;
-                option.textContent = `${s.name}${s.department ? ' (' + s.department + ')' : ''}`;
+                option.textContent = s.name + (s.department ? ` (${s.department})` : '');
                 select.appendChild(option);
             });
             
             // Add manual entry option
             const manualOption = document.createElement('option');
             manualOption.value = '__manual__';
-            manualOption.textContent = '-- Other (type below) --';
+            manualOption.textContent = '-- Other (type name in notes) --';
             select.appendChild(manualOption);
         }
 
