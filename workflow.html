@@ -376,6 +376,7 @@
             transition: all 0.15s ease;
             white-space: nowrap;
             text-decoration: none;
+            border: none;
         }
 
         .action-chip:hover {
@@ -839,7 +840,9 @@
             border-radius: var(--cy-radius-xl);
             padding: 32px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .modal-header {
@@ -858,17 +861,17 @@
         }
 
         .vehicle-list {
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
             margin: 16px 0;
         }
 
         .vehicle-option {
-            padding: 12px;
+            padding: 16px;
             background: var(--cy-bg-tertiary);
             border: 1px solid var(--cy-border);
             border-radius: var(--cy-radius-md);
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             cursor: pointer;
             transition: all 0.15s ease;
         }
@@ -881,12 +884,23 @@
         .vehicle-option-title {
             font-weight: 600;
             font-size: 14px;
+            color: var(--cy-text-primary);
         }
 
         .vehicle-option-meta {
             font-size: 12px;
             color: var(--cy-text-muted);
             margin-top: 4px;
+        }
+
+        .vehicle-option-stock {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--cy-accent-blue-soft);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--cy-accent-blue);
+            margin-top: 8px;
         }
     </style>
 </head>
@@ -1008,10 +1022,10 @@
 
         <!-- Quick Actions -->
         <div class="actions-bar">
-            <!-- RED NEW INTAKE BUTTON - Links to vehicle-inspection.html -->
-            <a href="vehicle-inspection.html" class="action-chip new-intake">
+            <!-- RED NEW INTAKE BUTTON - Opens Modal -->
+            <button onclick="openIntakeModal()" class="action-chip new-intake">
                 <i class="fas fa-plus-circle"></i> New Intake
-            </a>
+            </button>
             <div class="action-chip" onclick="quickAction('search')">
                 <i class="fas fa-search"></i> Find Vehicle
             </div>
@@ -1114,7 +1128,7 @@
     </main>
 
     <script>
-        // Stage definitions - simplified without file paths (using vehicle-inspection.html instead)
+        // Stage definitions
         const stages = [
             { id: 1, name: 'Vehicle Intake', dept: 'Sales', icon: 'fa-clipboard-check', color: '#3b82f6', colorSoft: 'rgba(59, 130, 246, 0.15)' },
             { id: 2, name: 'Bodywork', dept: 'Bodyshop', icon: 'fa-spray-can', color: '#8b5cf6', colorSoft: 'rgba(139, 92, 246, 0.15)' },
@@ -1141,44 +1155,72 @@
             loadData();
         });
 
-        // Load CSV Data
+        // Load CSV Data with multiple path attempts
         async function loadData() {
-            try {
-                const stockResponse = await fetch('Auto Capital - Stock List-639068391990284525.csv');
-                const stockCsv = await stockResponse.text();
-                
-                Papa.parse(stockCsv, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
-                        
-                        // Check localStorage for workflow stages
-                        allVehicles.forEach(v => {
-                            const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
-                            v.workflowStage = profile.currentStage || determineWorkflowStage(v);
-                            v.daysInStage = calculateDaysInStage(v, profile);
-                        });
-                        
-                        filteredVehicles = [...allVehicles];
-                        loadStaffData();
-                    },
-                    error: function(err) {
-                        showDataStatus('Error loading stock data: ' + err.message, 'error');
-                        document.getElementById('loadingOverlay').style.display = 'none';
+            const possiblePaths = [
+                'Auto Capital - Stock List-639068391990284525.csv',
+                './Auto Capital - Stock List-639068391990284525.csv',
+                '../Auto Capital - Stock List-639068391990284525.csv'
+            ];
+            
+            let stockCsv = null;
+            let successfulPath = '';
+            
+            for (const path of possiblePaths) {
+                try {
+                    const response = await fetch(path);
+                    if (response.ok) {
+                        stockCsv = await response.text();
+                        successfulPath = path;
+                        console.log('Stock CSV loaded from:', path);
+                        break;
                     }
-                });
-            } catch (error) {
-                showDataStatus('Error: ' + error.message, 'error');
-                document.getElementById('loadingOverlay').style.display = 'none';
+                } catch (e) {
+                    continue;
+                }
             }
+            
+            if (!stockCsv) {
+                showDataStatus('Could not load stock data. Please check CSV file location.', 'error');
+                document.getElementById('loadingOverlay').style.display = 'none';
+                return;
+            }
+            
+            Papa.parse(stockCsv, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
+                    
+                    // Check localStorage for workflow stages
+                    allVehicles.forEach(v => {
+                        const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
+                        v.workflowStage = profile.currentStage || determineWorkflowStage(v);
+                        v.daysInStage = calculateDaysInStage(v, profile);
+                    });
+                    
+                    filteredVehicles = [...allVehicles];
+                    loadStaffData(successfulPath);
+                },
+                error: function(err) {
+                    showDataStatus('Error loading stock data: ' + err.message, 'error');
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }
+            });
         }
 
         // Load Staff Data
-        async function loadStaffData() {
+        async function loadStaffData(stockPath) {
+            const staffFile = 'Auto Capital - Staff List-639068391990284525.csv';
+            let staffPath = staffFile;
+            
+            if (stockPath.includes('../')) {
+                staffPath = '../' + staffFile;
+            }
+            
             try {
-                const staffResponse = await fetch('Auto Capital - Staff List-639068391990284525.csv');
-                const staffCsv = await staffResponse.text();
+                const response = await fetch(staffPath);
+                const staffCsv = await response.text();
                 
                 Papa.parse(staffCsv, {
                     header: true,
@@ -1422,12 +1464,11 @@
             }).join('');
         }
 
-        // OPEN STAGE - Now links to vehicle-inspection.html
+        // OPEN STAGE - Links to vehicle-inspection.html
         function openStage(stageId) {
             const stage = stages.find(s => s.id === stageId);
             if (!stage) return;
             
-            // Get vehicles in this stage
             const vehiclesInStage = filteredVehicles.filter(v => v.workflowStage === stageId);
             
             if (vehiclesInStage.length === 0) {
@@ -1435,13 +1476,10 @@
                 return;
             }
             
-            // If multiple vehicles, show first one with option to change
-            // If Stage 1, allow new intake selection
             if (stageId === 1) {
                 openIntakeModal();
             } else {
-                // For other stages, go to inspection page with first vehicle
-                window.location.href = `vehicle-inspection.html?stock=${vehiclesInStage[0].stockNo}`;
+                window.location.href = `vehicle-inspection.html?stock=${encodeURIComponent(vehiclesInStage[0].stockNo)}`;
             }
         }
 
@@ -1450,19 +1488,20 @@
             const modal = document.getElementById('intakeModal');
             const list = document.getElementById('intakeVehicleList');
             
-            // Show vehicles not yet in workflow (Stage 1 or no stage)
+            // Show vehicles not yet started in workflow
             const availableVehicles = allVehicles.filter(v => {
                 const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
                 return !profile.currentStage || profile.currentStage === 1;
-            }).slice(0, 10);
+            }).slice(0, 20);
             
             if (availableVehicles.length === 0) {
-                list.innerHTML = '<p style="color: var(--cy-text-muted); text-align: center;">No vehicles available for intake</p>';
+                list.innerHTML = '<p style="color: var(--cy-text-muted); text-align: center; padding: 20px;">No vehicles available for intake. All vehicles are already in workflow.</p>';
             } else {
                 list.innerHTML = availableVehicles.map(v => `
                     <div class="vehicle-option" onclick="startIntake('${v.stockNo}')">
-                        <div class="vehicle-option-title">${v.make} ${v.model}</div>
-                        <div class="vehicle-option-meta">${v.stockNo} • ${v.registration || 'No Reg'} • ${v.location || 'Unknown'}</div>
+                        <div class="vehicle-option-title">${v.make} ${v.model} ${v.year || ''}</div>
+                        <div class="vehicle-option-meta">${v.registration || 'No Reg'} • ${v.fuelType || ''} • ${v.location || 'Unknown'}</div>
+                        <span class="vehicle-option-stock">${v.stockNo}</span>
                     </div>
                 `).join('');
             }
@@ -1477,7 +1516,7 @@
 
         // Start Intake for Specific Vehicle
         function startIntake(stockNo) {
-            window.location.href = `vehicle-inspection.html?stock=${stockNo}`;
+            window.location.href = `vehicle-inspection.html?stock=${encodeURIComponent(stockNo)}`;
         }
 
         // Load Vehicle Queue
@@ -1528,43 +1567,34 @@
             }).join('');
         }
 
-        // View Vehicle Detail - Links to inspection page
+        // View Vehicle Detail
         function viewVehicle(stockNo) {
-            window.location.href = `vehicle-inspection.html?stock=${stockNo}`;
+            window.location.href = `vehicle-inspection.html?stock=${encodeURIComponent(stockNo)}`;
         }
 
         // Load Activity Feed
         function loadActivityFeed() {
             const activities = [];
             
-            // Get recent stage completions from localStorage
             allVehicles.forEach(v => {
                 const profile = JSON.parse(localStorage.getItem(`capeye_vehicle_${v.stockNo}`) || '{}');
-                if (profile.stage1 && profile.stage1.completedAt) {
-                    activities.push({
-                        title: 'Stage 1 Completed',
-                        desc: `${v.make} ${v.model} (${v.stockNo}) - Intake finished`,
-                        time: timeAgo(profile.stage1.completedAt),
-                        user: profile.stage1.inspectedBy || 'Unknown',
-                        completed: true
-                    });
-                }
-                if (profile.stage2 && profile.stage2.completedAt) {
-                    activities.push({
-                        title: 'Stage 2 Completed',
-                        desc: `${v.make} ${v.model} (${v.stockNo}) - Bodywork assessed`,
-                        time: timeAgo(profile.stage2.completedAt),
-                        user: profile.stage2.authorizedBy || 'Unknown',
-                        completed: true
+                if (profile.stageHistory) {
+                    profile.stageHistory.forEach(h => {
+                        activities.push({
+                            title: `Stage ${h.stage} Completed`,
+                            desc: `${v.make} ${v.model} (${v.stockNo}) - ${h.stageName}`,
+                            time: timeAgo(h.completedAt),
+                            user: h.completedBy || 'Unknown',
+                            completed: true,
+                            date: new Date(h.completedAt)
+                        });
                     });
                 }
             });
             
-            // Sort by time and take top 5
-            activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+            activities.sort((a, b) => b.date - new Date());
             const recentActivities = activities.slice(0, 5);
             
-            // Fallback if no activities
             if (recentActivities.length === 0) {
                 recentActivities.push({
                     title: 'System Ready',
