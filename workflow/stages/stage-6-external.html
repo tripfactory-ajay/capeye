@@ -3,311 +3,1266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stage 6: External & Electrical - Capeye Workflow</title>
-    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
-    <script src="../../data/staff/staff-list.js"></script>
-    <script src="../../js/workflow/workflow-engine.js"></script>
-    <script src="../../js/workflow/form-components.js"></script>
-</head>
-<body>
-    <div class="workflow-container">
-        <div id="stage-nav-container"></div>
-        <main class="main-content">
-            <div id="header-container"></div>
-            <div class="stage-container">
-                <div class="stage-header">
-                    <h1 class="stage-title"><span style="font-size: 2rem;">⚡</span> Stage 6: External & Electrical</h1>
-                    <p class="stage-description">Inspect tyres, lights, wipers, and all electrical systems.</p>
-                </div>
-                
-                <div id="vehicle-info-display" class="vehicle-info-card">
-                    <div class="vehicle-info-header">
-                        <div class="vehicle-info-title">Vehicle Details</div>
-                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
-                    </div>
-                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
-                </div>
-                
-                <form id="stage-6-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="inspector">Inspector <span class="required">*</span></label>
-                            <select id="inspector" name="inspector" class="form-select" required>
-                                <option value="">Select...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="inspection-date">Inspection Date</label>
-                            <input type="date" id="inspection-date" name="inspectionDate" class="form-input">
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Tyre Condition</h3>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="front-left">Front Left</label>
-                            <select id="front-left" name="frontLeft" class="form-select">
-                                <option value="good">Good (>3mm)</option>
-                                <option value="fair">Fair (2-3mm)</option>
-                                <option value="low">Low (1.6-2mm)</option>
-                                <option value="replace">Replace (<1.6mm)</option>
-                                <option value="damaged">Damaged</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="front-right">Front Right</label>
-                            <select id="front-right" name="frontRight" class="form-select">
-                                <option value="good">Good (>3mm)</option>
-                                <option value="fair">Fair (2-3mm)</option>
-                                <option value="low">Low (1.6-2mm)</option>
-                                <option value="replace">Replace (<1.6mm)</option>
-                                <option value="damaged">Damaged</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="rear-left">Rear Left</label>
-                            <select id="rear-left" name="rearLeft" class="form-select">
-                                <option value="good">Good (>3mm)</option>
-                                <option value="fair">Fair (2-3mm)</option>
-                                <option value="low">Low (1.6-2mm)</option>
-                                <option value="replace">Replace (<1.6mm)</option>
-                                <option value="damaged">Damaged</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="rear-right">Rear Right</label>
-                            <select id="rear-right" name="rearRight" class="form-select">
-                                <option value="good">Good (>3mm)</option>
-                                <option value="fair">Fair (2-3mm)</option>
-                                <option value="low">Low (1.6-2mm)</option>
-                                <option value="replace">Replace (<1.6mm)</option>
-                                <option value="damaged">Damaged</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="spare-tyre">Spare Tyre</label>
-                            <select id="spare-tyre" name="spareTyre" class="form-select">
-                                <option value="full">Full Size</option>
-                                <option value="space">Space Saver</option>
-                                <option value="repair">Repair Kit</option>
-                                <option value="missing">Missing</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="locking-nuts">Locking Wheel Nuts</label>
-                            <select id="locking-nuts" name="lockingNuts" class="form-select">
-                                <option value="present">Present</option>
-                                <option value="missing">Missing</option>
-                                <option value="not-fitted">Not Fitted</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Lighting</h3>
-                    
-                    <div class="checkbox-grid cols-3">
-                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="headlights"><span>Headlights</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="taillights"><span>Taillights</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="brake-lights"><span>Brake Lights</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="indicators"><span>Indicators</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="fog-lights"><span>Fog Lights</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="reverse"><span>Reverse Lights</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="number-plate"><span>Number Plate Lights</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="lights[]" value="interior"><span>Interior Lights</span></label>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Wipers & Glass</h3>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="wiper-condition">Wiper Condition</label>
-                            <select id="wiper-condition" name="wiperCondition" class="form-select">
-                                <option value="good">Good</option>
-                                <option value="streaking">Streaking</option>
-                                <option value="worn">Worn</option>
-                                <option value="replace">Replace</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="windscreen">Windscreen Condition</label>
-                            <select id="windscreen" name="windscreen" class="form-select">
-                                <option value="good">Good</option>
-                                <option value="chips">Minor Chips</option>
-                                <option value="crack">Crack Present</option>
-                                <option value="replace">Replace Required</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Electrical Systems</h3>
-                    
-                    <div class="checkbox-grid cols-3">
-                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="windows"><span>Windows</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="mirrors"><span>Mirrors</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="central-locking"><span>Central Locking</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="air-con"><span>Air Conditioning</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="heater"><span>Heater</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="radio"><span>Radio/Infotainment</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="cigarette-lighter"><span>12V Socket</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="electrical[]" value="usb"><span>USB/Aux</span></label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">External Photos</label>
-                        <div id="external-photos-container"></div>
-                        <input type="hidden" id="external-photos" name="externalPhotos">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="external-notes">Notes</label>
-                        <textarea id="external-notes" name="externalNotes" class="form-textarea" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Signature <span class="required">*</span></label>
-                        <div id="signature-container"></div>
-                        <input type="hidden" id="signature" name="signature" required>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <div class="form-actions-left">
-                            <a href="stage-5-mechanical.html" class="btn btn-secondary">← Back</a>
-                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
-                        </div>
-                        <div class="form-actions-right">
-                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete & Send to Valeting →</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </main>
-    </div>
-    
-    <script>
-        let currentVehicle = null;
-        document.addEventListener('DOMContentLoaded', function() {
-            WorkflowEngine.setStage(6);
-            loadComponents();
-            populateStaff();
-            initPhotos();
-            initSignature();
-            loadVehicle();
-            loadSavedData();
-            document.getElementById('inspection-date').valueAsDate = new Date();
-        });
-        
-        function loadComponents() {
-            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
-            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+    <title>Stage 6: External & Electrical - Capeye Auto Capital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #f59e0b;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card: #1e293b;
+            --border: #334155;
         }
         
-        function populateStaff() {
-            const select = document.getElementById('inspector');
-            if (STAFF_DATA) {
-                STAFF_DATA.getStaffByDept('workshop').forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name;
-                    select.appendChild(opt);
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        
+        .stage-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .form-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section h3 {
+            color: #f59e0b;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .check-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .check-item {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .check-item:hover {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+        
+        .check-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #f59e0b;
+        }
+        
+        .check-item label {
+            flex: 1;
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .status-ok { background: #10b981; }
+        .status-fail { background: #ef4444; }
+        .status-na { background: #64748b; }
+        
+        .tyre-tread {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--darker);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .tread-depth {
+            flex: 1;
+        }
+        
+        .depth-bar {
+            height: 20px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .depth-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+        
+        .depth-fill.safe { background: linear-gradient(90deg, #10b981, #059669); }
+        .depth-fill.warning { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .depth-fill.danger { background: linear-gradient(90deg, #ef4444, #dc2626); }
+        
+        .depth-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: #e2e8f0;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+        }
+        
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .photo-slot {
+            aspect-ratio: 4/3;
+            background: var(--darker);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .photo-slot:hover {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+        
+        .photo-slot.has-image {
+            border-style: solid;
+            border-color: #f59e0b;
+        }
+        
+        .photo-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-slot .remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .photo-slot:hover .remove-btn {
+            opacity: 1;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+            width: 50%;
+            transition: width 0.3s;
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .stage-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        .stage-step.active {
+            opacity: 1;
+        }
+        
+        .stage-step.completed {
+            opacity: 1;
+        }
+        
+        .stage-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        
+        .stage-step.active .stage-dot {
+            background: #f59e0b;
+            border-color: #fbbf24;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+        }
+        
+        .stage-step.completed .stage-dot {
+            background: #10b981;
+            border-color: #34d399;
+        }
+        
+        .stage-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        .previous-summary {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .check-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="glass-panel p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="stage-badge">Stage 6 of 12</span>
+                        <span class="text-sm text-gray-400">Workshop Department</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">External & Electrical</h1>
+                    <p class="text-gray-400 mt-1">Tyres, lights, wipers, glass, and electrical systems check</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="saveDraft()" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button onclick="submitForm()" class="btn-primary">
+                        <i class="fas fa-check-circle"></i> Complete Stage
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Progress -->
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <!-- Stage Navigation -->
+            <div class="stage-indicator">
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Intake</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Bodywork</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Paint</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Legal</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Mechanical</span>
+                </div>
+                <div class="stage-step active">
+                    <div class="stage-dot">6</div>
+                    <span class="stage-label">External</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">7</div>
+                    <span class="stage-label">Valeting</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">8</div>
+                    <span class="stage-label">Faults</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">9</div>
+                    <span class="stage-label">Ready</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">10</div>
+                    <span class="stage-label">Delivery</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">11</div>
+                    <span class="stage-label">Accounts</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">12</div>
+                    <span class="stage-label">Management</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Selection -->
+        <div class="glass-panel p-6 mb-6">
+            <h3 class="text-lg font-semibold text-white mb-4"><i class="fas fa-car"></i> Select Vehicle</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Stock Number *</label>
+                    <select id="stockNo" class="form-control" onchange="loadVehicleData()">
+                        <option value="">Select Stock Number...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="registration" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Make & Model</label>
+                    <input type="text" id="makeModel" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Current Mileage</label>
+                    <input type="number" id="currentMileage" class="form-control" placeholder="Confirm mileage">
+                </div>
+            </div>
+        </div>
+
+        <!-- Previous Stage Summary -->
+        <div id="previousSummary" class="previous-summary" style="display: none;">
+            <h4 class="font-semibold text-amber-400 mb-2"><i class="fas fa-history"></i> Stage 5 Summary - Mechanical Inspection</h4>
+            <div id="previousData" class="text-sm text-gray-300"></div>
+        </div>
+
+        <form id="stage6Form">
+            <!-- Section 1: Tyres -->
+            <div class="form-section">
+                <h3><i class="fas fa-circle"></i> Tyre Condition & Tread Depth</h3>
+                
+                <div class="space-y-4">
+                    <div class="tyre-tread">
+                        <div class="w-20 font-semibold">NSF</div>
+                        <div class="tread-depth">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>Tread Depth</span>
+                                <span id="nsfValue">0.0 mm</span>
+                            </div>
+                            <div class="depth-bar">
+                                <div class="depth-fill danger" id="nsfBar" style="width: 0%">
+                                    <span class="depth-text">ILLEGAL</span>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="number" id="nsfDepth" class="form-control w-24" step="0.1" min="0" max="8" placeholder="mm" oninput="updateTyre('nsf', this.value)">
+                        <select id="nsfCondition" class="form-control w-32">
+                            <option value="good">Good</option>
+                            <option value="worn">Worn</option>
+                            <option value="damaged">Damaged</option>
+                            <option value="replace">Replace</option>
+                        </select>
+                    </div>
+                    
+                    <div class="tyre-tread">
+                        <div class="w-20 font-semibold">OSF</div>
+                        <div class="tread-depth">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>Tread Depth</span>
+                                <span id="osfValue">0.0 mm</span>
+                            </div>
+                            <div class="depth-bar">
+                                <div class="depth-fill danger" id="osfBar" style="width: 0%">
+                                    <span class="depth-text">ILLEGAL</span>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="number" id="osfDepth" class="form-control w-24" step="0.1" min="0" max="8" placeholder="mm" oninput="updateTyre('osf', this.value)">
+                        <select id="osfCondition" class="form-control w-32">
+                            <option value="good">Good</option>
+                            <option value="worn">Worn</option>
+                            <option value="damaged">Damaged</option>
+                            <option value="replace">Replace</option>
+                        </select>
+                    </div>
+                    
+                    <div class="tyre-tread">
+                        <div class="w-20 font-semibold">NSR</div>
+                        <div class="tread-depth">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>Tread Depth</span>
+                                <span id="nsrValue">0.0 mm</span>
+                            </div>
+                            <div class="depth-bar">
+                                <div class="depth-fill danger" id="nsrBar" style="width: 0%">
+                                    <span class="depth-text">ILLEGAL</span>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="number" id="nsrDepth" class="form-control w-24" step="0.1" min="0" max="8" placeholder="mm" oninput="updateTyre('nsr', this.value)">
+                        <select id="nsrCondition" class="form-control w-32">
+                            <option value="good">Good</option>
+                            <option value="worn">Worn</option>
+                            <option value="damaged">Damaged</option>
+                            <option value="replace">Replace</option>
+                        </select>
+                    </div>
+                    
+                    <div class="tyre-tread">
+                        <div class="w-20 font-semibold">OSR</div>
+                        <div class="tread-depth">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>Tread Depth</span>
+                                <span id="osrValue">0.0 mm</span>
+                            </div>
+                            <div class="depth-bar">
+                                <div class="depth-fill danger" id="osrBar" style="width: 0%">
+                                    <span class="depth-text">ILLEGAL</span>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="number" id="osrDepth" class="form-control w-24" step="0.1" min="0" max="8" placeholder="mm" oninput="updateTyre('osr', this.value)">
+                        <select id="osrCondition" class="form-control w-32">
+                            <option value="good">Good</option>
+                            <option value="worn">Worn</option>
+                            <option value="damaged">Damaged</option>
+                            <option value="replace">Replace</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-grid mt-4">
+                    <div class="form-group">
+                        <label>Tyre Brand (Front)</label>
+                        <input type="text" id="frontTyreBrand" class="form-control" placeholder="e.g., Michelin">
+                    </div>
+                    <div class="form-group">
+                        <label>Tyre Brand (Rear)</label>
+                        <input type="text" id="rearTyreBrand" class="form-control" placeholder="e.g., Michelin">
+                    </div>
+                    <div class="form-group">
+                        <label>Tyre Size</label>
+                        <input type="text" id="tyreSize" class="form-control" placeholder="e.g., 225/45 R17">
+                    </div>
+                    <div class="form-group">
+                        <label>Spare Tyre</label>
+                        <select id="spareTyre" class="form-control">
+                            <option value="full">Full Size</option>
+                            <option value="space">Space Saver</option>
+                            <option value="repair">Repair Kit</option>
+                            <option value="none">None</option>
+                            <option value="missing">Missing</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Lights -->
+            <div class="form-section">
+                <h3><i class="fas fa-lightbulb"></i> Lighting Systems</h3>
+                <div class="check-grid">
+                    <div class="check-item">
+                        <input type="checkbox" id="headlightsLow" checked>
+                        <label for="headlightsLow">Headlights (Low Beam)</label>
+                        <div class="status-indicator status-ok" id="ind-headlightsLow"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="headlightsHigh" checked>
+                        <label for="headlightsHigh">Headlights (High Beam)</label>
+                        <div class="status-indicator status-ok" id="ind-headlightsHigh"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="sideLights" checked>
+                        <label for="sideLights">Side/Parking Lights</label>
+                        <div class="status-indicator status-ok" id="ind-sideLights"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="indicatorsFront" checked>
+                        <label for="indicatorsFront">Indicators (Front)</label>
+                        <div class="status-indicator status-ok" id="ind-indicatorsFront"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="indicatorsRear" checked>
+                        <label for="indicatorsRear">Indicators (Rear)</label>
+                        <div class="status-indicator status-ok" id="ind-indicatorsRear"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="brakeLights" checked>
+                        <label for="brakeLights">Brake Lights</label>
+                        <div class="status-indicator status-ok" id="ind-brakeLights"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="reverseLights" checked>
+                        <label for="reverseLights">Reverse Lights</label>
+                        <div class="status-indicator status-ok" id="ind-reverseLights"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="fogLights" checked>
+                        <label for="fogLights">Fog Lights</label>
+                        <div class="status-indicator status-ok" id="ind-fogLights"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="numberPlateLights" checked>
+                        <label for="numberPlateLights">Number Plate Lights</label>
+                        <div class="status-indicator status-ok" id="ind-numberPlateLights"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="interiorLights" checked>
+                        <label for="interiorLights">Interior/Courtesy Lights</label>
+                        <div class="status-indicator status-ok" id="ind-interiorLights"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="hazardLights" checked>
+                        <label for="hazardLights">Hazard Warning Lights</label>
+                        <div class="status-indicator status-ok" id="ind-hazardLights"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="daytimeLights" checked>
+                        <label for="daytimeLights">Daytime Running Lights</label>
+                        <div class="status-indicator status-ok" id="ind-daytimeLights"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <label>Light Issues / Notes</label>
+                    <textarea id="lightNotes" class="form-control" placeholder="Note any bulb replacements needed, alignment issues, etc."></textarea>
+                </div>
+            </div>
+
+            <!-- Section 3: Wipers & Washers -->
+            <div class="form-section">
+                <h3><i class="fas fa-wind"></i> Wipers & Washers</h3>
+                <div class="check-grid">
+                    <div class="check-item">
+                        <input type="checkbox" id="wiperDriver" checked>
+                        <label for="wiperDriver">Driver Side Wiper</label>
+                        <div class="status-indicator status-ok" id="ind-wiperDriver"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="wiperPassenger" checked>
+                        <label for="wiperPassenger">Passenger Side Wiper</label>
+                        <div class="status-indicator status-ok" id="ind-wiperPassenger"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="rearWiper" checked>
+                        <label for="rearWiper">Rear Wiper (if applicable)</label>
+                        <div class="status-indicator status-ok" id="ind-rearWiper"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="washerJets" checked>
+                        <label for="washerJets">Washer Jets</label>
+                        <div class="status-indicator status-ok" id="ind-washerJets"></div>
+                    </div>
+                </div>
+                
+                <div class="form-grid mt-4">
+                    <div class="form-group">
+                        <label>Wiper Blade Condition</label>
+                        <select id="wiperCondition" class="form-control">
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Good</option>
+                            <option value="fair">Fair - Some streaking</option>
+                            <option value="poor">Poor - Replace needed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Washer Fluid Level</label>
+                        <select id="washerFluid" class="form-control">
+                            <option value="full">Full</option>
+                            <option value="ok">OK</option>
+                            <option value="low">Low - Top up</option>
+                            <option value="empty">Empty</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Glass & Mirrors -->
+            <div class="form-section">
+                <h3><i class="fas fa-square"></i> Glass & Mirrors</h3>
+                <div class="check-grid">
+                    <div class="check-item">
+                        <input type="checkbox" id="windscreen" checked>
+                        <label for="windscreen">Windscreen - No chips/cracks</label>
+                        <div class="status-indicator status-ok" id="ind-windscreen"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="rearWindow" checked>
+                        <label for="rearWindow">Rear Window - No damage</label>
+                        <div class="status-indicator status-ok" id="ind-rearWindow"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="sideWindows" checked>
+                        <label for="sideWindows">Side Windows - All intact</label>
+                        <div class="status-indicator status-ok" id="ind-sideWindows"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="driverMirror" checked>
+                        <label for="driverMirror">Driver Mirror</label>
+                        <div class="status-indicator status-ok" id="ind-driverMirror"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="passengerMirror" checked>
+                        <label for="passengerMirror">Passenger Mirror</label>
+                        <div class="status-indicator status-ok" id="ind-passengerMirror"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="interiorMirror" checked>
+                        <label for="interiorMirror">Interior Mirror</label>
+                        <div class="status-indicator status-ok" id="ind-interiorMirror"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <label>Glass Damage Notes</label>
+                    <textarea id="glassNotes" class="form-control" placeholder="Note any chips, cracks, or mirror issues..."></textarea>
+                </div>
+            </div>
+
+            <!-- Section 5: Electrical Systems -->
+            <div class="form-section">
+                <h3><i class="fas fa-bolt"></i> Electrical Systems</h3>
+                <div class="check-grid">
+                    <div class="check-item">
+                        <input type="checkbox" id="battery" checked>
+                        <label for="battery">Battery - Good charge</label>
+                        <div class="status-indicator status-ok" id="ind-battery"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="alternator" checked>
+                        <label for="alternator">Alternator Charging</label>
+                        <div class="status-indicator status-ok" id="ind-alternator"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="starterMotor" checked>
+                        <label for="starterMotor">Starter Motor</label>
+                        <div class="status-indicator status-ok" id="ind-starterMotor"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="horn" checked>
+                        <label for="horn">Horn</label>
+                        <div class="status-indicator status-ok" id="ind-horn"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="centralLocking" checked>
+                        <label for="centralLocking">Central Locking</label>
+                        <div class="status-indicator status-ok" id="ind-centralLocking"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="electricWindows" checked>
+                        <label for="electricWindows">Electric Windows</label>
+                        <div class="status-indicator status-ok" id="ind-electricWindows"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="airCon" checked>
+                        <label for="airCon">Air Conditioning</label>
+                        <div class="status-indicator status-ok" id="ind-airCon"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="heater" checked>
+                        <label for="heater">Heater/Blower</label>
+                        <div class="status-indicator status-ok" id="ind-heater"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="radio" checked>
+                        <label for="radio">Radio/Infotainment</label>
+                        <div class="status-indicator status-ok" id="ind-radio"></div>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="cigaretteLighter" checked>
+                        <label for="cigaretteLighter">12V Socket/USB Ports</label>
+                        <div class="status-indicator status-ok" id="ind-cigaretteLighter"></div>
+                    </div>
+                </div>
+                
+                <div class="form-grid mt-4">
+                    <div class="form-group">
+                        <label>Battery Voltage</label>
+                        <input type="text" id="batteryVoltage" class="form-control" placeholder="e.g., 12.6V">
+                    </div>
+                    <div class="form-group">
+                        <label>Alternator Output</label>
+                        <input type="text" id="alternatorOutput" class="form-control" placeholder="e.g., 14.2V">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Photo Documentation -->
+            <div class="form-section">
+                <h3><i class="fas fa-camera"></i> Photo Documentation</h3>
+                <div class="photo-grid" id="photoGrid">
+                    <div class="photo-slot" onclick="triggerUpload(0)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Tyre Tread</span>
+                        <input type="file" id="photo0" accept="image/*" style="display: none;" onchange="handlePhoto(0, this)">
+                    </div>
+                    <div class="photo-slot" onclick="triggerUpload(1)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Lights Working</span>
+                        <input type="file" id="photo1" accept="image/*" style="display: none;" onchange="handlePhoto(1, this)">
+                    </div>
+                    <div class="photo-slot" onclick="triggerUpload(2)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Glass Condition</span>
+                        <input type="file" id="photo2" accept="image/*" style="display: none;" onchange="handlePhoto(2, this)">
+                    </div>
+                    <div class="photo-slot" onclick="triggerUpload(3)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Damage (if any)</span>
+                        <input type="file" id="photo3" accept="image/*" style="display: none;" onchange="handlePhoto(3, this)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Sign-off -->
+            <div class="form-section">
+                <h3><i class="fas fa-signature"></i> Sign-off</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Inspected By *</label>
+                        <select id="inspectedBy" class="form-control" required>
+                            <option value="">Select Technician...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Inspection Date *</label>
+                        <input type="date" id="inspectionDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Overall Grade</label>
+                        <select id="overallGrade" class="form-control">
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Good</option>
+                            <option value="fair">Fair - Minor Issues</option>
+                            <option value="poor">Poor - Repairs Needed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-between items-center mt-6">
+            <button onclick="window.location.href='stage-5-mechanical.html'" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Stage 5
+            </button>
+            <div class="flex gap-3">
+                <button onclick="saveDraft()" class="btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+                <button onclick="submitForm()" class="btn-primary">
+                    <i class="fas fa-check-circle"></i> Complete Stage 6
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let vehicles = [];
+        let staff = [];
+        let currentVehicle = null;
+        let uploadedPhotos = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            setupAutoSave();
+            setupCheckboxes();
+            document.getElementById('inspectionDate').valueAsDate = new Date();
+        });
+
+        function loadData() {
+            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    vehicles = results.data.filter(v => v['Stock No'] || v['StockNo']);
+                    populateVehicleDropdown();
+                }
+            });
+
+            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    staff = results.data.filter(s => s['Name'] || s['Staff Name']);
+                    populateStaffDropdown();
+                }
+            });
+        }
+
+        function populateVehicleDropdown() {
+            const select = document.getElementById('stockNo');
+            vehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle['Stock No'] || vehicle['StockNo'];
+                option.textContent = `${vehicle['Stock No'] || vehicle['StockNo']} - ${vehicle['Make']} ${vehicle['Model']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function populateStaffDropdown() {
+            const select = document.getElementById('inspectedBy');
+            const techs = staff.filter(s => 
+                s['Department'] === 'Workshop' || s['Role']?.includes('Technician')
+            );
+            
+            techs.forEach(t => {
+                const name = t['Name'] || t['Staff Name'];
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = `${name} - ${t['Role']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadVehicleData() {
+            const stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) return;
+            
+            currentVehicle = vehicles.find(v => (v['Stock No'] || v['StockNo']) === stockNo);
+            if (currentVehicle) {
+                document.getElementById('registration').value = currentVehicle['Registration'] || '';
+                document.getElementById('makeModel').value = `${currentVehicle['Make']} ${currentVehicle['Model']}`;
+                
+                loadPreviousStage(stockNo);
+                loadDraft(stockNo);
+            }
+        }
+
+        function loadPreviousStage(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.stage5) {
+                    document.getElementById('previousSummary').style.display = 'block';
+                    const s = data.stage5;
+                    document.getElementById('previousData').innerHTML = `
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><strong>Mechanical Grade:</strong> ${s.mechanicalGrade || 'N/A'}</div>
+                            <div><strong>Fault Codes:</strong> ${s.faultCodeCount || 0}</div>
+                            <div><strong>Engine:</strong> ${s.engineCondition || 'N/A'}</div>
+                            <div><strong>Inspected By:</strong> ${s.inspectedBy || 'N/A'}</div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function setupCheckboxes() {
+            document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const indicator = document.getElementById('ind-' + this.id);
+                    if (indicator) {
+                        indicator.className = 'status-indicator ' + (this.checked ? 'status-ok' : 'status-fail');
+                    }
+                });
+            });
+        }
+
+        function updateTyre(position, value) {
+            const depth = parseFloat(value) || 0;
+            const bar = document.getElementById(position + 'Bar');
+            const text = document.getElementById(position + 'Value');
+            
+            text.textContent = depth.toFixed(1) + ' mm';
+            
+            let percentage = (depth / 8) * 100;
+            bar.style.width = Math.min(percentage, 100) + '%';
+            
+            bar.className = 'depth-fill';
+            if (depth >= 3) {
+                bar.classList.add('safe');
+                bar.querySelector('.depth-text').textContent = 'SAFE';
+            } else if (depth >= 1.6) {
+                bar.classList.add('warning');
+                bar.querySelector('.depth-text').textContent = 'WARNING';
+            } else {
+                bar.classList.add('danger');
+                bar.querySelector('.depth-text').textContent = 'ILLEGAL';
+            }
+        }
+
+        function triggerUpload(index) {
+            document.getElementById(`photo${index}`).click();
+        }
+
+        function handlePhoto(index, input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const slot = input.closest('.photo-slot');
+                    slot.innerHTML = `
+                        <img src="${e.target.result}" alt="Photo ${index + 1}">
+                        <button type="button" class="remove-btn" onclick="removePhoto(${index}, event)">Remove</button>
+                    `;
+                    slot.classList.add('has-image');
+                    uploadedPhotos[index] = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removePhoto(index, event) {
+            event.stopPropagation();
+            const slot = document.getElementById(`photo${index}`).closest('.photo-slot');
+            const labels = ['Tyre Tread', 'Lights Working', 'Glass Condition', 'Damage (if any)'];
+            slot.innerHTML = `
+                <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                <span class="text-xs text-gray-500">${labels[index]}</span>
+                <input type="file" id="photo${index}" accept="image/*" style="display: none;" onchange="handlePhoto(${index}, this)">
+            `;
+            slot.classList.remove('has-image');
+            delete uploadedPhotos[index];
+        }
+
+        function submitForm() {
+            if (!validateForm()) return;
+            
+            const stockNo = document.getElementById('stockNo').value;
+            const formData = collectFormData();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage6 = formData;
+            vehicleData.currentStage = 7;
+            vehicleData.lastUpdated = new Date().toISOString();
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            
+            alert('Stage 6 completed successfully! Moving to Stage 7: Interior & Valeting.');
+            window.location.href = 'stage-7-valeting.html?stockNo=' + stockNo;
+        }
+
+        function validateForm() {
+            const required = ['stockNo', 'inspectedBy', 'inspectionDate'];
+            for (let field of required) {
+                const el = document.getElementById(field);
+                if (!el.value) {
+                    el.focus();
+                    alert('Please fill in all required fields');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function collectFormData() {
+            const getCheckValue = (id) => document.getElementById(id)?.checked || false;
+            
+            return {
+                nsfDepth: document.getElementById('nsfDepth').value,
+                nsfCondition: document.getElementById('nsfCondition').value,
+                osfDepth: document.getElementById('osfDepth').value,
+                osfCondition: document.getElementById('osfCondition').value,
+                nsrDepth: document.getElementById('nsrDepth').value,
+                nsrCondition: document.getElementById('nsrCondition').value,
+                osrDepth: document.getElementById('osrDepth').value,
+                osrCondition: document.getElementById('osrCondition').value,
+                frontTyreBrand: document.getElementById('frontTyreBrand').value,
+                rearTyreBrand: document.getElementById('rearTyreBrand').value,
+                tyreSize: document.getElementById('tyreSize').value,
+                spareTyre: document.getElementById('spareTyre').value,
+                
+                lights: {
+                    headlightsLow: getCheckValue('headlightsLow'),
+                    headlightsHigh: getCheckValue('headlightsHigh'),
+                    sideLights: getCheckValue('sideLights'),
+                    indicatorsFront: getCheckValue('indicatorsFront'),
+                    indicatorsRear: getCheckValue('indicatorsRear'),
+                    brakeLights: getCheckValue('brakeLights'),
+                    reverseLights: getCheckValue('reverseLights'),
+                    fogLights: getCheckValue('fogLights'),
+                    numberPlateLights: getCheckValue('numberPlateLights'),
+                    interiorLights: getCheckValue('interiorLights'),
+                    hazardLights: getCheckValue('hazardLights'),
+                    daytimeLights: getCheckValue('daytimeLights')
+                },
+                lightNotes: document.getElementById('lightNotes').value,
+                
+                wipers: {
+                    wiperDriver: getCheckValue('wiperDriver'),
+                    wiperPassenger: getCheckValue('wiperPassenger'),
+                    rearWiper: getCheckValue('rearWiper'),
+                    washerJets: getCheckValue('washerJets')
+                },
+                wiperCondition: document.getElementById('wiperCondition').value,
+                washerFluid: document.getElementById('washerFluid').value,
+                
+                glass: {
+                    windscreen: getCheckValue('windscreen'),
+                    rearWindow: getCheckValue('rearWindow'),
+                    sideWindows: getCheckValue('sideWindows'),
+                    driverMirror: getCheckValue('driverMirror'),
+                    passengerMirror: getCheckValue('passengerMirror'),
+                    interiorMirror: getCheckValue('interiorMirror')
+                },
+                glassNotes: document.getElementById('glassNotes').value,
+                
+                electrical: {
+                    battery: getCheckValue('battery'),
+                    alternator: getCheckValue('alternator'),
+                    starterMotor: getCheckValue('starterMotor'),
+                    horn: getCheckValue('horn'),
+                    centralLocking: getCheckValue('centralLocking'),
+                    electricWindows: getCheckValue('electricWindows'),
+                    airCon: getCheckValue('airCon'),
+                    heater: getCheckValue('heater'),
+                    radio: getCheckValue('radio'),
+                    cigaretteLighter: getCheckValue('cigaretteLighter')
+                },
+                batteryVoltage: document.getElementById('batteryVoltage').value,
+                alternatorOutput: document.getElementById('alternatorOutput').value,
+                
+                photos: uploadedPhotos,
+                inspectedBy: document.getElementById('inspectedBy').value,
+                inspectionDate: document.getElementById('inspectionDate').value,
+                overallGrade: document.getElementById('overallGrade').value,
+                submittedAt: new Date().toISOString()
+            };
+        }
+
+        function setupAutoSave() {
+            setInterval(() => {
+                const stockNo = document.getElementById('stockNo').value;
+                if (stockNo) saveDraft(stockNo, true);
+            }, 30000);
+        }
+
+        function saveDraft(stockNo = null, silent = false) {
+            if (!stockNo) stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) {
+                if (!silent) alert('Please select a vehicle first');
+                return;
+            }
+            
+            const draftData = collectFormData();
+            draftData.isDraft = true;
+            draftData.lastSaved = new Date().toISOString();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage6Draft = draftData;
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            if (!silent) alert('Draft saved successfully!');
+        }
+
+        function loadDraft(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            const data = JSON.parse(saved);
+            if (data.stage6Draft) {
+                const draft = data.stage6Draft;
+                
+                // Load tyre data
+                ['nsf', 'osf', 'nsr', 'osr'].forEach(pos => {
+                    if (draft[pos + 'Depth']) {
+                        document.getElementById(pos + 'Depth').value = draft[pos + 'Depth'];
+                        updateTyre(pos, draft[pos + 'Depth']);
+                    }
+                    if (draft[pos + 'Condition']) {
+                        document.getElementById(pos + 'Condition').value = draft[pos + 'Condition'];
+                    }
+                });
+                
+                // Load checkboxes
+                if (draft.lights) {
+                    Object.keys(draft.lights).forEach(key => {
+                        const cb = document.getElementById(key);
+                        if (cb) cb.checked = draft.lights[key];
+                    });
+                }
+                if (draft.wipers) {
+                    Object.keys(draft.wipers).forEach(key => {
+                        const cb = document.getElementById(key);
+                        if (cb) cb.checked = draft.wipers[key];
+                    });
+                }
+                if (draft.glass) {
+                    Object.keys(draft.glass).forEach(key => {
+                        const cb = document.getElementById(key);
+                        if (cb) cb.checked = draft.glass[key];
+                    });
+                }
+                if (draft.electrical) {
+                    Object.keys(draft.electrical).forEach(key => {
+                        const cb = document.getElementById(key);
+                        if (cb) cb.checked = draft.electrical[key];
+                    });
+                }
+                
+                // Load other fields
+                ['frontTyreBrand', 'rearTyreBrand', 'tyreSize', 'spareTyre', 'lightNotes', 
+                 'wiperCondition', 'washerFluid', 'glassNotes', 'batteryVoltage', 
+                 'alternatorOutput', 'inspectedBy', 'overallGrade'].forEach(field => {
+                    if (draft[field]) document.getElementById(field).value = draft[field];
+                });
+                
+                // Load photos
+                if (draft.photos) {
+                    uploadedPhotos = draft.photos;
+                    Object.keys(uploadedPhotos).forEach(index => {
+                        const slot = document.getElementById(`photo${index}`).closest('.photo-slot');
+                        slot.innerHTML = `
+                            <img src="${uploadedPhotos[index]}" alt="Photo ${parseInt(index) + 1}">
+                            <button type="button" class="remove-btn" onclick="removePhoto(${index}, event)">Remove</button>
+                        `;
+                        slot.classList.add('has-image');
+                    });
+                }
+                
+                // Update indicators
+                setupCheckboxes();
+                document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
+                    const indicator = document.getElementById('ind-' + cb.id);
+                    if (indicator) {
+                        indicator.className = 'status-indicator ' + (cb.checked ? 'status-ok' : 'status-fail');
+                    }
                 });
             }
         }
-        
-        function initPhotos() {
-            document.getElementById('external-photos-container').appendChild(
-                FormComponents.createPhotoUpload({ id: 'external-photos', label: 'External Photos', maxPhotos: 8 })
-            );
-        }
-        
-        function initSignature() {
-            document.getElementById('signature-container').appendChild(
-                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
-            );
-        }
-        
-        function loadVehicle() {
-            currentVehicle = WorkflowEngine.getVehicle();
-            if (!currentVehicle) {
-                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
-                return;
-            }
-            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
-            document.getElementById('vehicle-details-content').innerHTML = `
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
-            `;
-        }
-        
-        function getFormData() {
-            const form = document.getElementById('stage-6-form');
-            const fd = new FormData(form);
-            return {
-                inspector: fd.get('inspector'),
-                inspectionDate: fd.get('inspectionDate'),
-                frontLeft: fd.get('frontLeft'),
-                frontRight: fd.get('frontRight'),
-                rearLeft: fd.get('rearLeft'),
-                rearRight: fd.get('rearRight'),
-                spareTyre: fd.get('spareTyre'),
-                lockingNuts: fd.get('lockingNuts'),
-                lights: fd.getAll('lights[]'),
-                wiperCondition: fd.get('wiperCondition'),
-                windscreen: fd.get('windscreen'),
-                electrical: fd.getAll('electrical[]'),
-                externalPhotos: document.getElementById('external-photos').value,
-                externalNotes: fd.get('externalNotes'),
-                signature: document.getElementById('signature').value
-            };
-        }
-        
-        function loadSavedData() {
-            if (!currentVehicle) return;
-            const saved = WorkflowEngine.loadStageData(6, currentVehicle.stockNo);
-            if (saved?.data) {
-                const d = saved.data;
-                if (d.inspector) document.getElementById('inspector').value = d.inspector;
-                if (d.frontLeft) document.getElementById('front-left').value = d.frontLeft;
-                if (d.frontRight) document.getElementById('front-right').value = d.frontRight;
-                if (d.rearLeft) document.getElementById('rear-left').value = d.rearLeft;
-                if (d.rearRight) document.getElementById('rear-right').value = d.rearRight;
-                if (d.spareTyre) document.getElementById('spare-tyre').value = d.spareTyre;
-                if (d.lockingNuts) document.getElementById('locking-nuts').value = d.lockingNuts;
-                if (d.wiperCondition) document.getElementById('wiper-condition').value = d.wiperCondition;
-                if (d.windscreen) document.getElementById('windscreen').value = d.windscreen;
-                if (d.externalNotes) document.getElementById('external-notes').value = d.externalNotes;
-                if (d.lights) d.lights.forEach(v => { const cb = document.querySelector(`input[value="${v}"]`); if (cb) cb.checked = true; });
-                if (d.electrical) d.electrical.forEach(v => { const cb = document.querySelector(`input[name="electrical[]"][value="${v}"]`); if (cb) cb.checked = true; });
-            }
-        }
-        
-        function saveDraft() {
-            if (!currentVehicle) return;
-            WorkflowEngine.saveStageData(6, getFormData());
-            showAlert('Draft saved', 'success');
-        }
-        
-        function completeStage() {
-            if (!currentVehicle) return;
-            const data = getFormData();
-            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
-            WorkflowEngine.completeStage(6, data);
-            showAlert('Stage 6 complete!', 'success');
-            setTimeout(() => window.location.href = 'stage-7-valeting.html', 1500);
-        }
-        
-        function showAlert(msg, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `<span>${msg}</span>`;
-            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
-            setTimeout(() => alert.remove(), 5000);
-        }
-        
-        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
     </script>
 </body>
 </html>
