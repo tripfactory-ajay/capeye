@@ -3,238 +3,973 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stage 10: Customer Delivery - Capeye Workflow</title>
-    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
-    <script src="../../data/staff/staff-list.js"></script>
-    <script src="../../js/workflow/workflow-engine.js"></script>
-    <script src="../../js/workflow/form-components.js"></script>
+    <title>Stage 10: Customer Delivery - Capeye Auto Capital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #3b82f6;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card: #1e293b;
+            --border: #334155;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        
+        .stage-badge {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .form-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section h3 {
+            color: #3b82f6;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .customer-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .sale-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-item {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .summary-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .summary-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        
+        .summary-value.profit {
+            color: #10b981;
+        }
+        
+        .summary-value.loss {
+            color: #ef4444;
+        }
+        
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .checklist-item {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #3b82f6;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: #e2e8f0;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+        }
+        
+        .signature-pad {
+            background: white;
+            border-radius: 8px;
+            height: 200px;
+            cursor: crosshair;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            width: 83%;
+            transition: width 0.3s;
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .stage-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        .stage-step.active {
+            opacity: 1;
+        }
+        
+        .stage-step.completed {
+            opacity: 1;
+        }
+        
+        .stage-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        
+        .stage-step.active .stage-dot {
+            background: #3b82f6;
+            border-color: #60a5fa;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .stage-step.completed .stage-dot {
+            background: #10b981;
+            border-color: #34d399;
+        }
+        
+        .stage-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        .previous-summary {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body>
-    <div class="workflow-container">
-        <div id="stage-nav-container"></div>
-        <main class="main-content">
-            <div id="header-container"></div>
-            <div class="stage-container">
-                <div class="stage-header">
-                    <h1 class="stage-title"><span style="font-size: 2rem;">🚗</span> Stage 10: Customer Delivery</h1>
-                    <p class="stage-description">Complete customer handover, final checks, and delivery documentation.</p>
-                </div>
-                
-                <div id="vehicle-info-display" class="vehicle-info-card">
-                    <div class="vehicle-info-header">
-                        <div class="vehicle-info-title">Vehicle Details</div>
-                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="glass-panel p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="stage-badge">Stage 10 of 12</span>
+                        <span class="text-sm text-gray-400">Sales Department</span>
                     </div>
-                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">Customer Delivery</h1>
+                    <p class="text-gray-400 mt-1">Sale recording, handover, and customer documentation</p>
                 </div>
-                
-                <form id="stage-10-form">
+                <div class="flex items-center gap-3">
+                    <button onclick="saveDraft()" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button onclick="submitForm()" class="btn-primary">
+                        <i class="fas fa-check-circle"></i> Complete Sale
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Progress -->
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <!-- Stage Navigation -->
+            <div class="stage-indicator">
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Intake</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Bodywork</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Paint</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Legal</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Mechanical</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">External</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Valeting</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Faults</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Ready</span>
+                </div>
+                <div class="stage-step active">
+                    <div class="stage-dot">10</div>
+                    <span class="stage-label">Delivery</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">11</div>
+                    <span class="stage-label">Accounts</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">12</div>
+                    <span class="stage-label">Management</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Selection -->
+        <div class="glass-panel p-6 mb-6">
+            <h3 class="text-lg font-semibold text-white mb-4"><i class="fas fa-car"></i> Select Vehicle</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Stock Number *</label>
+                    <select id="stockNo" class="form-control" onchange="loadVehicleData()">
+                        <option value="">Select Stock Number...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="registration" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Make & Model</label>
+                    <input type="text" id="makeModel" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Days in Stock</label>
+                    <input type="number" id="daysInStock" class="form-control" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Previous Stage Summary -->
+        <div id="previousSummary" class="previous-summary" style="display: none;">
+            <h4 class="font-semibold text-blue-400 mb-2"><i class="fas fa-history"></i> Stage 9 Summary - Advertising</h4>
+            <div id="previousData" class="text-sm text-gray-300"></div>
+        </div>
+
+        <!-- Sale Summary -->
+        <div id="saleSummary" class="sale-summary" style="display: none;">
+            <div class="summary-item">
+                <div class="summary-label">Listed Price</div>
+                <div class="summary-value" id="listedPrice">£0.00</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Cost Price</div>
+                <div class="summary-value" id="costPriceDisplay">£0.00</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Sale Price</div>
+                <div class="summary-value" id="salePriceDisplay">£0.00</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Gross Profit</div>
+                <div class="summary-value profit" id="grossProfit">£0.00</div>
+            </div>
+        </div>
+
+        <form id="stage10Form">
+            <!-- Section 1: Customer Details -->
+            <div class="form-section">
+                <h3><i class="fas fa-user"></i> Customer Details</h3>
+                <div class="customer-card">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label class="form-label" for="salesperson">Salesperson <span class="required">*</span></label>
-                            <select id="salesperson" name="salesperson" class="form-select" required>
-                                <option value="">Select...</option>
+                            <label>Customer Name *</label>
+                            <input type="text" id="customerName" class="form-control" placeholder="Full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address *</label>
+                            <input type="email" id="customerEmail" class="form-control" placeholder="email@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number *</label>
+                            <input type="tel" id="customerPhone" class="form-control" placeholder="Phone number" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea id="customerAddress" class="form-control" rows="2" placeholder="Full address"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Postcode</label>
+                            <input type="text" id="customerPostcode" class="form-control" placeholder="Postcode">
+                        </div>
+                        <div class="form-group">
+                            <label>Customer Type</label>
+                            <select id="customerType" class="form-control">
+                                <option value="private">Private Individual</option>
+                                <option value="business">Business</option>
+                                <option value="trade">Trade</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label" for="delivery-date">Delivery Date</label>
-                            <input type="date" id="delivery-date" name="deliveryDate" class="form-input">
-                        </div>
                     </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Customer Details</h3>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="customer-name">Customer Name <span class="required">*</span></label>
-                            <input type="text" id="customer-name" name="customerName" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="customer-phone">Phone Number</label>
-                            <input type="tel" id="customer-phone" name="customerPhone" class="form-input">
-                        </div>
-                    </div>
-                    
+                </div>
+            </div>
+
+            <!-- Section 2: Sale Details -->
+            <div class="form-section">
+                <h3><i class="fas fa-handshake"></i> Sale Details</h3>
+                <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label" for="customer-email">Email Address</label>
-                        <input type="email" id="customer-email" name="customerEmail" class="form-input">
+                        <label>Sale Price *</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="salePrice" class="form-control pl-8" step="0.01" required onchange="calculateProfit()">
+                        </div>
                     </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Handover Checklist</h3>
-                    
-                    <div class="checkbox-grid cols-2">
-                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="v5-present"><span>V5C Handed Over</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="mot-present"><span>MOT Certificate</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="service-history"><span>Service History</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="spare-key"><span>Spare Key</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="handbook"><span>Handbook</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="fuel"><span>Fuel Provided</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="vehicle-clean"><span>Vehicle Clean</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="handover[]" value="features-explained"><span>Features Explained</span></label>
-                    </div>
-                    
                     <div class="form-group">
-                        <label class="form-label" for="warranty-given">Warranty Given</label>
-                        <select id="warranty-given" name="warrantyGiven" class="form-select">
-                            <option value="3-month">3 Month</option>
-                            <option value="6-month">6 Month</option>
-                            <option value="12-month">12 Month</option>
-                            <option value="none">None</option>
+                        <label>Part Exchange Value</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="partExchange" class="form-control pl-8" step="0.01" value="0" onchange="calculateProfit()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Finance Amount</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="financeAmount" class="form-control pl-8" step="0.01" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Deposit Taken</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="depositTaken" class="form-control pl-8" step="0.01" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Sale Date *</label>
+                        <input type="date" id="saleDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Salesperson *</label>
+                        <select id="salesperson" class="form-control" required>
+                            <option value="">Select Salesperson...</option>
                         </select>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Handover Photos</label>
-                        <div id="handover-photos-container"></div>
-                        <input type="hidden" id="handover-photos" name="handoverPhotos">
+                </div>
+                
+                <div class="mt-4 p-4 bg-slate-800 rounded-lg border border-slate-700">
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-semibold">Net Profit:</span>
+                        <span class="text-2xl font-bold text-emerald-400" id="netProfit">£0.00</span>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="delivery-notes">Delivery Notes</label>
-                        <textarea id="delivery-notes" name="deliveryNotes" class="form-textarea" rows="3" placeholder="Customer feedback, special instructions..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Customer Signature <span class="required">*</span></label>
-                        <div id="customer-sig-container"></div>
-                        <input type="hidden" id="customer-signature" name="customerSignature" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Salesperson Signature <span class="required">*</span></label>
-                        <div id="sales-sig-container"></div>
-                        <input type="hidden" id="sales-signature" name="salesSignature" required>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <div class="form-actions-left">
-                            <a href="stage-9-advertising.html" class="btn btn-secondary">← Back</a>
-                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
-                        </div>
-                        <div class="form-actions-right">
-                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete Delivery →</button>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
-        </main>
+
+            <!-- Section 3: Handover Checklist -->
+            <div class="form-section">
+                <h3><i class="fas fa-clipboard-check"></i> Handover Checklist</h3>
+                <div class="checklist-grid">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkV5C" required>
+                        <label for="chkV5C">V5C Registration Document</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkMOT" required>
+                        <label for="chkMOT">MOT Certificate</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkServiceHistory" required>
+                        <label for="chkServiceHistory">Service History</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkHandbook" required>
+                        <label for="chkHandbook">Owners Handbook</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkKeys" required>
+                        <label for="chkKeys">All Keys (including spare)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkLockingWheel" required>
+                        <label for="chkLockingWheel">Locking Wheel Nut Key</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkWarranty" required>
+                        <label for="chkWarranty">Warranty Documents</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkInvoice" required>
+                        <label for="chkInvoice">Sales Invoice</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkFuel" required>
+                        <label for="chkFuel">Minimum £20 Fuel</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkValet" required>
+                        <label for="chkValet">Vehicle Valeted</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkInspection" required>
+                        <label for="chkInspection">Pre-Delivery Inspection Complete</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="chkMileage" required>
+                        <label for="chkMileage">Mileage Recorded</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Customer Acknowledgements -->
+            <div class="form-section">
+                <h3><i class="fas fa-file-signature"></i> Customer Acknowledgements</h3>
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" id="ackCondition" class="mt-1" required>
+                        <span class="text-sm">I acknowledge that I have inspected the vehicle and am satisfied with its condition</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" id="ackDocuments" class="mt-1" required>
+                        <span class="text-sm">I confirm receipt of all documents listed above</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" id="ackWarranty" class="mt-1" required>
+                        <span class="text-sm">I understand the warranty terms and conditions</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <input type="checkbox" id="ackReturns" class="mt-1" required>
+                        <span class="text-sm">I understand the returns policy and my consumer rights</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Section 5: Signatures -->
+            <div class="form-section">
+                <h3><i class="fas fa-signature"></i> Signatures</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Customer Signature *</label>
+                        <canvas id="customerSignature" class="signature-pad w-full"></canvas>
+                        <button type="button" class="btn-secondary mt-2" onclick="clearSignature('customerSignature')">
+                            <i class="fas fa-undo"></i> Clear
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Salesperson Signature *</label>
+                        <canvas id="salesSignature" class="signature-pad w-full"></canvas>
+                        <button type="button" class="btn-secondary mt-2" onclick="clearSignature('salesSignature')">
+                            <i class="fas fa-undo"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-between items-center mt-6">
+            <button onclick="window.location.href='stage-9-advertising.html'" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Stage 9
+            </button>
+            <div class="flex gap-3">
+                <button onclick="saveDraft()" class="btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+                <button onclick="submitForm()" class="btn-primary">
+                    <i class="fas fa-check-circle"></i> Complete Sale
+                </button>
+            </div>
+        </div>
     </div>
-    
+
     <script>
+        let vehicles = [];
+        let staff = [];
         let currentVehicle = null;
+        let signatures = {};
+        let costPrice = 0;
+        let listedPrice = 0;
+
         document.addEventListener('DOMContentLoaded', function() {
-            WorkflowEngine.setStage(10);
-            loadComponents();
-            populateSales();
-            initPhotos();
+            loadData();
             initSignatures();
-            loadVehicle();
-            loadSavedData();
-            document.getElementById('delivery-date').valueAsDate = new Date();
+            setupAutoSave();
+            document.getElementById('saleDate').valueAsDate = new Date();
         });
-        
-        function loadComponents() {
-            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
-            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+
+        function loadData() {
+            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    vehicles = results.data.filter(v => v['Stock No'] || v['StockNo']);
+                    populateVehicleDropdown();
+                }
+            });
+
+            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    staff = results.data.filter(s => s['Name'] || s['Staff Name']);
+                    populateStaffDropdown();
+                }
+            });
         }
-        
-        function populateSales() {
+
+        function populateVehicleDropdown() {
+            const select = document.getElementById('stockNo');
+            vehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle['Stock No'] || vehicle['StockNo'];
+                option.textContent = `${vehicle['Stock No'] || vehicle['StockNo']} - ${vehicle['Make']} ${vehicle['Model']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function populateStaffDropdown() {
             const select = document.getElementById('salesperson');
-            if (STAFF_DATA) {
-                STAFF_DATA.getStaffByDept('sales').forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name;
-                    select.appendChild(opt);
-                });
+            const sales = staff.filter(s => 
+                s['Department'] === 'Sales' || s['Role']?.includes('Sales')
+            );
+            
+            sales.forEach(s => {
+                const name = s['Name'] || s['Staff Name'];
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = `${name} - ${s['Role']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadVehicleData() {
+            const stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) return;
+            
+            currentVehicle = vehicles.find(v => (v['Stock No'] || v['StockNo']) === stockNo);
+            if (currentVehicle) {
+                document.getElementById('registration').value = currentVehicle['Registration'] || '';
+                document.getElementById('makeModel').value = `${currentVehicle['Make']} ${currentVehicle['Model']}`;
+                
+                // Calculate days in stock
+                const dateInStock = currentVehicle['Date In Stock'] || currentVehicle['DateInStock'];
+                if (dateInStock) {
+                    const days = Math.floor((new Date() - new Date(dateInStock)) / (1000 * 60 * 60 * 24));
+                    document.getElementById('daysInStock').value = days;
+                }
+                
+                // Get pricing from CSV
+                const cost = currentVehicle['Cost Price'] || currentVehicle['CostPrice'];
+                if (cost) costPrice = parseFloat(cost.replace(/[£,]/g, '')) || 0;
+                
+                loadPreviousStage(stockNo);
+                loadDraft(stockNo);
             }
         }
-        
-        function initPhotos() {
-            document.getElementById('handover-photos-container').appendChild(
-                FormComponents.createPhotoUpload({ id: 'handover-photos', label: 'Handover Photos', maxPhotos: 6 })
-            );
+
+        function loadPreviousStage(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.stage9) {
+                    document.getElementById('previousSummary').style.display = 'block';
+                    const s = data.stage9;
+                    listedPrice = parseFloat(s.retailPrice) || 0;
+                    
+                    document.getElementById('previousData').innerHTML = `
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><strong>Listed Price:</strong> £${listedPrice.toFixed(2)}</div>
+                            <div><strong>Title:</strong> ${s.shortTitle || 'N/A'}</div>
+                            <div><strong>Prepared By:</strong> ${s.preparedBy || 'N/A'}</div>
+                            <div><strong>Date:</strong> ${s.prepDate || 'N/A'}</div>
+                        </div>
+                    `;
+                    
+                    // Show sale summary
+                    document.getElementById('saleSummary').style.display = 'grid';
+                    document.getElementById('listedPrice').textContent = '£' + listedPrice.toLocaleString('en-GB', {minimumFractionDigits: 2});
+                    document.getElementById('costPriceDisplay').textContent = '£' + costPrice.toLocaleString('en-GB', {minimumFractionDigits: 2});
+                    
+                    // Set default sale price
+                    document.getElementById('salePrice').value = listedPrice;
+                    calculateProfit();
+                }
+            }
         }
-        
+
+        function calculateProfit() {
+            const salePrice = parseFloat(document.getElementById('salePrice').value) || 0;
+            const partExchange = parseFloat(document.getElementById('partExchange').value) || 0;
+            
+            const grossProfit = salePrice - costPrice;
+            const netProfit = grossProfit - partExchange;
+            
+            document.getElementById('salePriceDisplay').textContent = '£' + salePrice.toLocaleString('en-GB', {minimumFractionDigits: 2});
+            document.getElementById('grossProfit').textContent = '£' + grossProfit.toLocaleString('en-GB', {minimumFractionDigits: 2});
+            document.getElementById('grossProfit').className = 'summary-value ' + (grossProfit >= 0 ? 'profit' : 'loss');
+            document.getElementById('netProfit').textContent = '£' + netProfit.toLocaleString('en-GB', {minimumFractionDigits: 2});
+        }
+
         function initSignatures() {
-            document.getElementById('customer-sig-container').appendChild(
-                FormComponents.createSignaturePad({ id: 'customer-signature', label: '', required: true })
-            );
-            document.getElementById('sales-sig-container').appendChild(
-                FormComponents.createSignaturePad({ id: 'sales-signature', label: '', required: true })
-            );
+            ['customerSignature', 'salesSignature'].forEach(id => {
+                const canvas = document.getElementById(id);
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = canvas.offsetWidth;
+                canvas.height = 200;
+                
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                
+                let isDrawing = false;
+                
+                const startDrawing = (e) => {
+                    isDrawing = true;
+                    const rect = canvas.getBoundingClientRect();
+                    const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                    const y = (e.clientY || e.touches[0].clientY) - rect.top;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                };
+                
+                const draw = (e) => {
+                    if (!isDrawing) return;
+                    const rect = canvas.getBoundingClientRect();
+                    const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                    const y = (e.clientY || e.touches[0].clientY) - rect.top;
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                };
+                
+                const stopDrawing = () => {
+                    isDrawing = false;
+                };
+                
+                canvas.addEventListener('mousedown', startDrawing);
+                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mouseup', stopDrawing);
+                canvas.addEventListener('mouseout', stopDrawing);
+                
+                canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); });
+                canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
+                canvas.addEventListener('touchend', stopDrawing);
+                
+                signatures[id] = { canvas, ctx };
+            });
         }
-        
-        function loadVehicle() {
-            currentVehicle = WorkflowEngine.getVehicle();
-            if (!currentVehicle) {
-                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
-                return;
+
+        function clearSignature(id) {
+            const sig = signatures[id];
+            if (sig) {
+                sig.ctx.clearRect(0, 0, sig.canvas.width, sig.canvas.height);
             }
-            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
-            document.getElementById('vehicle-details-content').innerHTML = `
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
-            `;
         }
-        
-        function getFormData() {
-            const form = document.getElementById('stage-10-form');
-            const fd = new FormData(form);
+
+        function submitForm() {
+            if (!validateForm()) return;
+            
+            const stockNo = document.getElementById('stockNo').value;
+            const formData = collectFormData();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage10 = formData;
+            vehicleData.currentStage = 11;
+            vehicleData.status = 'Sold';
+            vehicleData.soldDate = new Date().toISOString();
+            vehicleData.lastUpdated = new Date().toISOString();
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            
+            alert('Sale completed successfully! Moving to Stage 11: Accounts & Warranty.');
+            window.location.href = 'stage-11-accounts.html?stockNo=' + stockNo;
+        }
+
+        function validateForm() {
+            const required = ['stockNo', 'customerName', 'customerEmail', 'customerPhone', 'salePrice', 'saleDate', 'salesperson'];
+            for (let field of required) {
+                const el = document.getElementById(field);
+                if (!el.value) {
+                    el.focus();
+                    alert('Please fill in all required fields');
+                    return false;
+                }
+            }
+            
+            // Check handover checklist
+            const checklist = ['chkV5C', 'chkMOT', 'chkServiceHistory', 'chkHandbook', 'chkKeys', 'chkLockingWheel', 'chkWarranty', 'chkInvoice', 'chkFuel', 'chkValet', 'chkInspection', 'chkMileage'];
+            for (let id of checklist) {
+                if (!document.getElementById(id).checked) {
+                    alert('Please complete all handover checklist items');
+                    return false;
+                }
+            }
+            
+            // Check acknowledgements
+            const acks = ['ackCondition', 'ackDocuments', 'ackWarranty', 'ackReturns'];
+            for (let id of acks) {
+                if (!document.getElementById(id).checked) {
+                    alert('Please complete all customer acknowledgements');
+                    return false;
+                }
+            }
+            
+            // Check signatures
+            for (let id of ['customerSignature', 'salesSignature']) {
+                const sig = signatures[id];
+                const pixelData = sig.canvas.toDataURL();
+                if (pixelData.length < 1000) {
+                    alert('Please provide both signatures');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function collectFormData() {
             return {
-                salesperson: fd.get('salesperson'),
-                deliveryDate: fd.get('deliveryDate'),
-                customerName: fd.get('customerName'),
-                customerPhone: fd.get('customerPhone'),
-                customerEmail: fd.get('customerEmail'),
-                handover: fd.getAll('handover[]'),
-                warrantyGiven: fd.get('warrantyGiven'),
-                handoverPhotos: document.getElementById('handover-photos').value,
-                deliveryNotes: fd.get('deliveryNotes'),
-                customerSignature: document.getElementById('customer-signature').value,
-                salesSignature: document.getElementById('sales-signature').value
+                customer: {
+                    name: document.getElementById('customerName').value,
+                    email: document.getElementById('customerEmail').value,
+                    phone: document.getElementById('customerPhone').value,
+                    address: document.getElementById('customerAddress').value,
+                    postcode: document.getElementById('customerPostcode').value,
+                    type: document.getElementById('customerType').value
+                },
+                sale: {
+                    price: document.getElementById('salePrice').value,
+                    partExchange: document.getElementById('partExchange').value,
+                    financeAmount: document.getElementById('financeAmount').value,
+                    depositTaken: document.getElementById('depositTaken').value,
+                    date: document.getElementById('saleDate').value,
+                    salesperson: document.getElementById('salesperson').value,
+                    profit: document.getElementById('netProfit').textContent
+                },
+                handoverChecklist: {
+                    v5c: document.getElementById('chkV5C').checked,
+                    mot: document.getElementById('chkMOT').checked,
+                    serviceHistory: document.getElementById('chkServiceHistory').checked,
+                    handbook: document.getElementById('chkHandbook').checked,
+                    keys: document.getElementById('chkKeys').checked,
+                    lockingWheel: document.getElementById('chkLockingWheel').checked,
+                    warranty: document.getElementById('chkWarranty').checked,
+                    invoice: document.getElementById('chkInvoice').checked,
+                    fuel: document.getElementById('chkFuel').checked,
+                    valet: document.getElementById('chkValet').checked,
+                    inspection: document.getElementById('chkInspection').checked,
+                    mileage: document.getElementById('chkMileage').checked
+                },
+                acknowledgements: {
+                    condition: document.getElementById('ackCondition').checked,
+                    documents: document.getElementById('ackDocuments').checked,
+                    warranty: document.getElementById('ackWarranty').checked,
+                    returns: document.getElementById('ackReturns').checked
+                },
+                signatures: {
+                    customer: signatures.customerSignature.canvas.toDataURL(),
+                    salesperson: signatures.salesSignature.canvas.toDataURL()
+                },
+                submittedAt: new Date().toISOString()
             };
         }
-        
-        function loadSavedData() {
-            if (!currentVehicle) return;
-            const saved = WorkflowEngine.loadStageData(10, currentVehicle.stockNo);
-            if (saved?.data) {
-                const d = saved.data;
-                if (d.salesperson) document.getElementById('salesperson').value = d.salesperson;
-                if (d.customerName) document.getElementById('customer-name').value = d.customerName;
-                if (d.customerPhone) document.getElementById('customer-phone').value = d.customerPhone;
-                if (d.customerEmail) document.getElementById('customer-email').value = d.customerEmail;
-                if (d.warrantyGiven) document.getElementById('warranty-given').value = d.warrantyGiven;
-                if (d.deliveryNotes) document.getElementById('delivery-notes').value = d.deliveryNotes;
-                if (d.handover) d.handover.forEach(v => { const cb = document.querySelector(`input[value="${v}"]`); if (cb) cb.checked = true; });
+
+        function setupAutoSave() {
+            setInterval(() => {
+                const stockNo = document.getElementById('stockNo').value;
+                if (stockNo) saveDraft(stockNo, true);
+            }, 30000);
+        }
+
+        function saveDraft(stockNo = null, silent = false) {
+            if (!stockNo) stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) {
+                if (!silent) alert('Please select a vehicle first');
+                return;
+            }
+            
+            const draftData = collectFormData();
+            draftData.isDraft = true;
+            draftData.lastSaved = new Date().toISOString();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage10Draft = draftData;
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            if (!silent) alert('Draft saved successfully!');
+        }
+
+        function loadDraft(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            const data = JSON.parse(saved);
+            if (data.stage10Draft) {
+                const draft = data.stage10Draft;
+                
+                // Load customer data
+                if (draft.customer) {
+                    Object.keys(draft.customer).forEach(key => {
+                        const el = document.getElementById('customer' + key.charAt(0).toUpperCase() + key.slice(1));
+                        if (el) el.value = draft.customer[key];
+                    });
+                }
+                
+                // Load sale data
+                if (draft.sale) {
+                    ['salePrice', 'partExchange', 'financeAmount', 'depositTaken', 'salesperson'].forEach(field => {
+                        if (draft.sale[field]) document.getElementById(field).value = draft.sale[field];
+                    });
+                    calculateProfit();
+                }
             }
         }
-        
-        function saveDraft() {
-            if (!currentVehicle) return;
-            WorkflowEngine.saveStageData(10, getFormData());
-            showAlert('Draft saved', 'success');
-        }
-        
-        function completeStage() {
-            if (!currentVehicle) return;
-            const data = getFormData();
-            if (!data.customerSignature || !data.salesSignature) { showAlert('Both signatures required', 'danger'); return; }
-            WorkflowEngine.completeStage(10, data);
-            showAlert('Delivery completed!', 'success');
-            setTimeout(() => window.location.href = 'stage-11-accounts.html', 1500);
-        }
-        
-        function showAlert(msg, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `<span>${msg}</span>`;
-            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
-            setTimeout(() => alert.remove(), 5000);
-        }
-        
-        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
     </script>
 </body>
 </html>
