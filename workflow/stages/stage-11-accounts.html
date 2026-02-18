@@ -3,241 +3,971 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stage 11: Accounts & Warranty - Capeye Workflow</title>
-    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
-    <script src="../../data/staff/staff-list.js"></script>
-    <script src="../../js/workflow/workflow-engine.js"></script>
-    <script src="../../js/workflow/form-components.js"></script>
+    <title>Stage 11: Accounts & Warranty - Capeye Auto Capital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #64748b;
+            --accent: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card: #1e293b;
+            --border: #334155;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        
+        .stage-badge {
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .form-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section h3 {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #64748b;
+            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .financial-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .financial-item {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .financial-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .financial-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        
+        .financial-value.income { color: #10b981; }
+        .financial-value.expense { color: #ef4444; }
+        .financial-value.profit { color: #3b82f6; }
+        
+        .warranty-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .warranty-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .warranty-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .warranty-active { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .warranty-pending { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .warranty-none { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(100, 116, 139, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: #e2e8f0;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #64748b, #475569);
+            width: 92%;
+            transition: width 0.3s;
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .stage-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        .stage-step.active {
+            opacity: 1;
+        }
+        
+        .stage-step.completed {
+            opacity: 1;
+        }
+        
+        .stage-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        
+        .stage-step.active .stage-dot {
+            background: #64748b;
+            border-color: #94a3b8;
+            box-shadow: 0 0 20px rgba(100, 116, 139, 0.4);
+        }
+        
+        .stage-step.completed .stage-dot {
+            background: #10b981;
+            border-color: #34d399;
+        }
+        
+        .stage-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        .previous-summary {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .document-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .document-item {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .document-item i {
+            color: #64748b;
+        }
+        
+        .document-item.complete i {
+            color: #10b981;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body>
-    <div class="workflow-container">
-        <div id="stage-nav-container"></div>
-        <main class="main-content">
-            <div id="header-container"></div>
-            <div class="stage-container">
-                <div class="stage-header">
-                    <h1 class="stage-title"><span style="font-size: 2rem;">💰</span> Stage 11: Accounts & Warranty</h1>
-                    <p class="stage-description">Process payment, activate warranty, and complete financial documentation.</p>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="glass-panel p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="stage-badge">Stage 11 of 12</span>
+                        <span class="text-sm text-gray-400">Accounts Department</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">Accounts & Warranty</h1>
+                    <p class="text-gray-400 mt-1">Invoicing, payment processing, and warranty activation</p>
                 </div>
-                
-                <div id="vehicle-info-display" class="vehicle-info-card">
-                    <div class="vehicle-info-header">
-                        <div class="vehicle-info-title">Vehicle Details</div>
-                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
-                    </div>
-                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                <div class="flex items-center gap-3">
+                    <button onclick="saveDraft()" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button onclick="submitForm()" class="btn-primary">
+                        <i class="fas fa-check-circle"></i> Complete Stage
+                    </button>
                 </div>
-                
-                <form id="stage-11-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="accounts-person">Accounts Handler <span class="required">*</span></label>
-                            <select id="accounts-person" name="accountsPerson" class="form-select" required>
-                                <option value="">Select...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="process-date">Process Date</label>
-                            <input type="date" id="process-date" name="processDate" class="form-input">
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Payment Details</h3>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="sale-price">Final Sale Price (£)</label>
-                            <input type="number" id="sale-price" name="salePrice" class="form-input" step="0.01" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="deposit">Deposit (£)</label>
-                            <input type="number" id="deposit" name="deposit" class="form-input" step="0.01">
-                        </div>
-                    </div>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="payment-method">Payment Method</label>
-                            <select id="payment-method" name="paymentMethod" class="form-select">
-                                <option value="cash">Cash</option>
-                                <option value="card">Card</option>
-                                <option value="finance">Finance</option>
-                                <option value="transfer">Bank Transfer</option>
-                                <option value="part-exchange">Part Exchange</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="balance">Balance Outstanding (£)</label>
-                            <input type="number" id="balance" name="balance" class="form-input" step="0.01" readonly>
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Warranty</h3>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="warranty-provider">Warranty Provider</label>
-                            <select id="warranty-provider" name="warrantyProvider" class="form-select">
-                                <option value="none">No Warranty</option>
-                                <option value="capeye">Capeye Warranty</option>
-                                <option value="third-party">Third Party</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="warranty-duration">Duration</label>
-                            <select id="warranty-duration" name="warrantyDuration" class="form-select">
-                                <option value="3">3 Months</option>
-                                <option value="6">6 Months</option>
-                                <option value="12">12 Months</option>
-                                <option value="24">24 Months</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="warranty-policy">Policy Number</label>
-                        <input type="text" id="warranty-policy" name="warrantyPolicy" class="form-input" placeholder="Enter policy number">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="accounts-notes">Accounts Notes</label>
-                        <textarea id="accounts-notes" name="accountsNotes" class="form-textarea" rows="3" placeholder="Payment references, special arrangements..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Accounts Signature <span class="required">*</span></label>
-                        <div id="signature-container"></div>
-                        <input type="hidden" id="signature" name="signature" required>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <div class="form-actions-left">
-                            <a href="stage-10-delivery.html" class="btn btn-secondary">← Back</a>
-                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
-                        </div>
-                        <div class="form-actions-right">
-                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete & Send to Management →</button>
-                        </div>
-                    </div>
-                </form>
             </div>
-        </main>
+            
+            <!-- Progress -->
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <!-- Stage Navigation -->
+            <div class="stage-indicator">
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Intake</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Bodywork</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Paint</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Legal</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Mechanical</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">External</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Valeting</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Faults</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Ready</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Delivery</span>
+                </div>
+                <div class="stage-step active">
+                    <div class="stage-dot">11</div>
+                    <span class="stage-label">Accounts</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">12</div>
+                    <span class="stage-label">Management</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Selection -->
+        <div class="glass-panel p-6 mb-6">
+            <h3 class="text-lg font-semibold text-white mb-4"><i class="fas fa-car"></i> Select Vehicle</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Stock Number *</label>
+                    <select id="stockNo" class="form-control" onchange="loadVehicleData()">
+                        <option value="">Select Stock Number...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="registration" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Customer</label>
+                    <input type="text" id="customerName" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Sale Date</label>
+                    <input type="text" id="saleDate" class="form-control" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Previous Stage Summary -->
+        <div id="previousSummary" class="previous-summary" style="display: none;">
+            <h4 class="font-semibold text-blue-400 mb-2"><i class="fas fa-history"></i> Stage 10 Summary - Customer Delivery</h4>
+            <div id="previousData" class="text-sm text-gray-300"></div>
+        </div>
+
+        <!-- Financial Summary -->
+        <div id="financialSummary" class="financial-summary" style="display: none;">
+            <div class="financial-item">
+                <div class="financial-label">Sale Price</div>
+                <div class="financial-value income" id="finSalePrice">£0.00</div>
+            </div>
+            <div class="financial-item">
+                <div class="financial-label">Cost Price</div>
+                <div class="financial-value expense" id="finCostPrice">£0.00</div>
+            </div>
+            <div class="financial-item">
+                <div class="financial-label">Prep Costs</div>
+                <div class="financial-value expense" id="finPrepCosts">£0.00</div>
+            </div>
+            <div class="financial-item">
+                <div class="financial-label">Net Profit</div>
+                <div class="financial-value profit" id="finNetProfit">£0.00</div>
+            </div>
+        </div>
+
+        <form id="stage11Form">
+            <!-- Section 1: Invoicing -->
+            <div class="form-section">
+                <h3><i class="fas fa-file-invoice"></i> Invoicing</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Invoice Number *</label>
+                        <input type="text" id="invoiceNumber" class="form-control" placeholder="INV-XXXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Invoice Date *</label>
+                        <input type="date" id="invoiceDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Method *</label>
+                        <select id="paymentMethod" class="form-control" required>
+                            <option value="">Select Method...</option>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card Payment</option>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="finance">Finance</option>
+                            <option value="mixed">Mixed Payment</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Status *</label>
+                        <select id="paymentStatus" class="form-control" required>
+                            <option value="pending">Pending</option>
+                            <option value="partial">Partial Payment</option>
+                            <option value="paid">Paid in Full</option>
+                            <option value="financed">Financed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-grid mt-4">
+                    <div class="form-group">
+                        <label>Amount Paid</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="amountPaid" class="form-control pl-8" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Balance Due</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                            <input type="number" id="balanceDue" class="form-control pl-8" step="0.01" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Finance Company (if applicable)</label>
+                        <input type="text" id="financeCompany" class="form-control" placeholder="e.g., Black Horse, MotoNovo">
+                    </div>
+                    <div class="form-group">
+                        <label>Finance Agreement Number</label>
+                        <input type="text" id="financeAgreement" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Warranty -->
+            <div class="form-section">
+                <h3><i class="fas fa-shield-alt"></i> Warranty</h3>
+                <div class="warranty-card">
+                    <div class="warranty-header">
+                        <h4 class="font-semibold text-emerald-400">Warranty Activation</h4>
+                        <span class="warranty-status warranty-pending" id="warrantyStatus">Pending</span>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Warranty Provider</label>
+                            <select id="warrantyProvider" class="form-control" onchange="updateWarrantyStatus()">
+                                <option value="">No Warranty</option>
+                                <option value="warrantywise">Warrantywise</option>
+                                <option value="rac">RAC</option>
+                                <option value="aa">AA</option>
+                                <option value="alba">Alba</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Policy Number</label>
+                            <input type="text" id="policyNumber" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Warranty Start Date</label>
+                            <input type="date" id="warrantyStart" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Warranty End Date</label>
+                            <input type="date" id="warrantyEnd" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Cover Level</label>
+                            <select id="coverLevel" class="form-control">
+                                <option value="bronze">Bronze</option>
+                                <option value="silver">Silver</option>
+                                <option value="gold">Gold</option>
+                                <option value="platinum">Platinum</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Claim Limit</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                                <input type="number" id="claimLimit" class="form-control pl-8" value="500">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="warrantyActivated" onchange="updateWarrantyStatus()">
+                            <span>Warranty activated and documents sent to customer</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Documentation -->
+            <div class="form-section">
+                <h3><i class="fas fa-folder"></i> Documentation Checklist</h3>
+                <div class="document-list">
+                    <div class="document-item" id="docInvoice">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Sales Invoice</span>
+                        <input type="checkbox" class="ml-auto" onchange="toggleDocComplete('docInvoice')">
+                    </div>
+                    <div class="document-item" id="docV5C">
+                        <i class="fas fa-id-card"></i>
+                        <span>V5C Sent to DVLA</span>
+                        <input type="checkbox" class="ml-auto" onchange="toggleDocComplete('docV5C')">
+                    </div>
+                    <div class="document-item" id="docWarranty">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Warranty Documents</span>
+                        <input type="checkbox" class="ml-auto" onchange="toggleDocComplete('docWarranty')">
+                    </div>
+                    <div class="document-item" id="docReceipt">
+                        <i class="fas fa-receipt"></i>
+                        <span>Payment Receipt</span>
+                        <input type="checkbox" class="ml-auto" onchange="toggleDocComplete('docReceipt')">
+                    </div>
+                    <div class="document-item" id="docFinance">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Finance Agreement (if applicable)</span>
+                        <input type="checkbox" class="ml-auto" onchange="toggleDocComplete('docFinance')">
+                    </div>
+                    <div class="document-item" id="docMOT">
+                        <i class="fas fa-certificate"></i>
+                        <span>MOT Certificate Copy</span>
+                        <input type="checkbox" class="ml-auto" onchange="toggleDocComplete('docMOT')">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Tax & MOT -->
+            <div class="form-section">
+                <h3><i class="fas fa-car-side"></i> Tax & MOT Status</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Road Tax Status</label>
+                        <select id="taxStatus" class="form-control">
+                            <option value="taxed">Taxed</option>
+                            <option value="sorn">SORN</option>
+                            <option value="na">Not Applicable</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tax Expiry Date</label>
+                        <input type="date" id="taxExpiry" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>MOT Expiry Date</label>
+                        <input type="date" id="motExpiry" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Next Service Due</label>
+                        <input type="date" id="nextService" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Notes -->
+            <div class="form-section">
+                <h3><i class="fas fa-sticky-note"></i> Accounts Notes</h3>
+                <textarea id="accountsNotes" class="form-control" rows="4" placeholder="Any additional notes for accounts records..."></textarea>
+            </div>
+
+            <!-- Section 6: Sign-off -->
+            <div class="form-section">
+                <h3><i class="fas fa-signature"></i> Accounts Sign-off</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Processed By *</label>
+                        <select id="processedBy" class="form-control" required>
+                            <option value="">Select Accounts Staff...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Processing Date *</label>
+                        <input type="date" id="processingDate" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-between items-center mt-6">
+            <button onclick="window.location.href='stage-10-delivery.html'" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Stage 10
+            </button>
+            <div class="flex gap-3">
+                <button onclick="saveDraft()" class="btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+                <button onclick="submitForm()" class="btn-primary">
+                    <i class="fas fa-check-circle"></i> Complete Stage 11
+                </button>
+            </div>
+        </div>
     </div>
-    
+
     <script>
+        let vehicles = [];
+        let staff = [];
         let currentVehicle = null;
+        let saleData = {};
+
         document.addEventListener('DOMContentLoaded', function() {
-            WorkflowEngine.setStage(11);
-            loadComponents();
-            populateAccounts();
-            initSignature();
-            loadVehicle();
-            loadPreviousData();
-            loadSavedData();
-            document.getElementById('process-date').valueAsDate = new Date();
+            loadData();
+            setupAutoSave();
+            document.getElementById('invoiceDate').valueAsDate = new Date();
+            document.getElementById('processingDate').valueAsDate = new Date();
+            document.getElementById('warrantyStart').valueAsDate = new Date();
+            
+            // Set warranty end date (12 months from now)
+            const endDate = new Date();
+            endDate.setFullYear(endDate.getFullYear() + 1);
+            document.getElementById('warrantyEnd').valueAsDate = endDate;
         });
-        
-        function loadComponents() {
-            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
-            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+
+        function loadData() {
+            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    vehicles = results.data.filter(v => v['Stock No'] || v['StockNo']);
+                    populateVehicleDropdown();
+                }
+            });
+
+            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    staff = results.data.filter(s => s['Name'] || s['Staff Name']);
+                    populateStaffDropdown();
+                }
+            });
         }
-        
-        function populateAccounts() {
-            const select = document.getElementById('accounts-person');
-            if (STAFF_DATA) {
-                STAFF_DATA.getStaffByDept('accounts').forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name;
-                    select.appendChild(opt);
-                });
-            }
+
+        function populateVehicleDropdown() {
+            const select = document.getElementById('stockNo');
+            vehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle['Stock No'] || vehicle['StockNo'];
+                option.textContent = `${vehicle['Stock No'] || vehicle['StockNo']} - ${vehicle['Make']} ${vehicle['Model']}`;
+                select.appendChild(option);
+            });
         }
-        
-        function initSignature() {
-            document.getElementById('signature-container').appendChild(
-                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
+
+        function populateStaffDropdown() {
+            const select = document.getElementById('processedBy');
+            const accounts = staff.filter(s => 
+                s['Department'] === 'Accounts' || s['Role']?.includes('Accounts') || s['Role']?.includes('Finance')
             );
+            
+            accounts.forEach(a => {
+                const name = a['Name'] || a['Staff Name'];
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = `${name} - ${a['Role']}`;
+                select.appendChild(option);
+            });
         }
-        
-        function loadVehicle() {
-            currentVehicle = WorkflowEngine.getVehicle();
-            if (!currentVehicle) {
-                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
-                return;
+
+        function loadVehicleData() {
+            const stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) return;
+            
+            currentVehicle = vehicles.find(v => (v['Stock No'] || v['StockNo']) === stockNo);
+            if (currentVehicle) {
+                document.getElementById('registration').value = currentVehicle['Registration'] || '';
+                
+                loadPreviousStage(stockNo);
+                loadDraft(stockNo);
             }
-            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
-            document.getElementById('vehicle-details-content').innerHTML = `
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
-            `;
         }
-        
-        function loadPreviousData() {
-            if (!currentVehicle) return;
-            const delivery = WorkflowEngine.loadStageData(10, currentVehicle.stockNo);
-            if (delivery?.data?.salePrice) {
-                document.getElementById('sale-price').value = delivery.data.salePrice;
+
+        function loadPreviousStage(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            const data = JSON.parse(saved);
+            if (data.stage10) {
+                saleData = data.stage10;
+                document.getElementById('previousSummary').style.display = 'block';
+                document.getElementById('customerName').value = saleData.customer?.name || '';
+                document.getElementById('saleDate').value = saleData.sale?.date || '';
+                
+                document.getElementById('previousData').innerHTML = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Customer:</strong> ${saleData.customer?.name || 'N/A'}</div>
+                        <div><strong>Sale Price:</strong> £${saleData.sale?.price || 'N/A'}</div>
+                        <div><strong>Salesperson:</strong> ${saleData.sale?.salesperson || 'N/A'}</div>
+                        <div><strong>Profit:</strong> ${saleData.sale?.profit || 'N/A'}</div>
+                    </div>
+                `;
+                
+                // Calculate financials
+                const salePrice = parseFloat(saleData.sale?.price) || 0;
+                const costPrice = parseFloat(currentVehicle['Cost Price']?.replace(/[£,]/g, '')) || 0;
+                const prepCosts = calculatePrepCosts(data);
+                const netProfit = salePrice - costPrice - prepCosts;
+                
+                document.getElementById('financialSummary').style.display = 'grid';
+                document.getElementById('finSalePrice').textContent = '£' + salePrice.toFixed(2);
+                document.getElementById('finCostPrice').textContent = '£' + costPrice.toFixed(2);
+                document.getElementById('finPrepCosts').textContent = '£' + prepCosts.toFixed(2);
+                document.getElementById('finNetProfit').textContent = '£' + netProfit.toFixed(2);
+                
+                // Set default amounts
+                document.getElementById('amountPaid').value = salePrice;
+                document.getElementById('balanceDue').value = 0;
             }
         }
-        
-        function getFormData() {
-            const form = document.getElementById('stage-11-form');
-            const fd = new FormData(form);
+
+        function calculatePrepCosts(data) {
+            let total = 0;
+            // Add up costs from all stages if available
+            if (data.stage3?.totalEstimate) total += parseFloat(data.stage3.totalEstimate.replace(/[£,]/g, '')) || 0;
+            if (data.stage5?.hoursSpent) total += (parseFloat(data.stage5.hoursSpent) * 45) || 0;
+            if (data.stage6?.hoursSpent) total += (parseFloat(data.stage6.hoursSpent) * 45) || 0;
+            if (data.stage7?.hoursSpent) total += (parseFloat(data.stage7.hoursSpent) * 25) || 0;
+            return total;
+        }
+
+        function updateWarrantyStatus() {
+            const provider = document.getElementById('warrantyProvider').value;
+            const activated = document.getElementById('warrantyActivated').checked;
+            const statusEl = document.getElementById('warrantyStatus');
+            
+            if (!provider) {
+                statusEl.textContent = 'None';
+                statusEl.className = 'warranty-status warranty-none';
+            } else if (activated) {
+                statusEl.textContent = 'Active';
+                statusEl.className = 'warranty-status warranty-active';
+            } else {
+                statusEl.textContent = 'Pending';
+                statusEl.className = 'warranty-status warranty-pending';
+            }
+        }
+
+        function toggleDocComplete(docId) {
+            const doc = document.getElementById(docId);
+            const checkbox = doc.querySelector('input[type="checkbox"]');
+            if (checkbox.checked) {
+                doc.classList.add('complete');
+            } else {
+                doc.classList.remove('complete');
+            }
+        }
+
+        function submitForm() {
+            if (!validateForm()) return;
+            
+            const stockNo = document.getElementById('stockNo').value;
+            const formData = collectFormData();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage11 = formData;
+            vehicleData.currentStage = 12;
+            vehicleData.lastUpdated = new Date().toISOString();
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            
+            alert('Accounts processing completed! Moving to Stage 12: Management Overview.');
+            window.location.href = 'stage-12-management.html?stockNo=' + stockNo;
+        }
+
+        function validateForm() {
+            const required = ['stockNo', 'invoiceNumber', 'invoiceDate', 'paymentMethod', 'paymentStatus', 'processedBy', 'processingDate'];
+            for (let field of required) {
+                const el = document.getElementById(field);
+                if (!el.value) {
+                    el.focus();
+                    alert('Please fill in all required fields');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function collectFormData() {
             return {
-                accountsPerson: fd.get('accountsPerson'),
-                processDate: fd.get('processDate'),
-                salePrice: fd.get('salePrice'),
-                deposit: fd.get('deposit'),
-                paymentMethod: fd.get('paymentMethod'),
-                balance: fd.get('balance'),
-                warrantyProvider: fd.get('warrantyProvider'),
-                warrantyDuration: fd.get('warrantyDuration'),
-                warrantyPolicy: fd.get('warrantyPolicy'),
-                accountsNotes: fd.get('accountsNotes'),
-                signature: document.getElementById('signature').value
+                invoice: {
+                    number: document.getElementById('invoiceNumber').value,
+                    date: document.getElementById('invoiceDate').value,
+                    method: document.getElementById('paymentMethod').value,
+                    status: document.getElementById('paymentStatus').value,
+                    amountPaid: document.getElementById('amountPaid').value,
+                    balanceDue: document.getElementById('balanceDue').value,
+                    financeCompany: document.getElementById('financeCompany').value,
+                    financeAgreement: document.getElementById('financeAgreement').value
+                },
+                warranty: {
+                    provider: document.getElementById('warrantyProvider').value,
+                    policyNumber: document.getElementById('policyNumber').value,
+                    startDate: document.getElementById('warrantyStart').value,
+                    endDate: document.getElementById('warrantyEnd').value,
+                    coverLevel: document.getElementById('coverLevel').value,
+                    claimLimit: document.getElementById('claimLimit').value,
+                    activated: document.getElementById('warrantyActivated').checked
+                },
+                documents: {
+                    invoice: document.querySelector('#docInvoice input').checked,
+                    v5c: document.querySelector('#docV5C input').checked,
+                    warranty: document.querySelector('#docWarranty input').checked,
+                    receipt: document.querySelector('#docReceipt input').checked,
+                    finance: document.querySelector('#docFinance input').checked,
+                    mot: document.querySelector('#docMOT input').checked
+                },
+                vehicleStatus: {
+                    taxStatus: document.getElementById('taxStatus').value,
+                    taxExpiry: document.getElementById('taxExpiry').value,
+                    motExpiry: document.getElementById('motExpiry').value,
+                    nextService: document.getElementById('nextService').value
+                },
+                notes: document.getElementById('accountsNotes').value,
+                processedBy: document.getElementById('processedBy').value,
+                processingDate: document.getElementById('processingDate').value,
+                submittedAt: new Date().toISOString()
             };
         }
-        
-        function loadSavedData() {
-            if (!currentVehicle) return;
-            const saved = WorkflowEngine.loadStageData(11, currentVehicle.stockNo);
-            if (saved?.data) {
-                const d = saved.data;
-                if (d.accountsPerson) document.getElementById('accounts-person').value = d.accountsPerson;
-                if (d.deposit) document.getElementById('deposit').value = d.deposit;
-                if (d.paymentMethod) document.getElementById('payment-method').value = d.paymentMethod;
-                if (d.warrantyProvider) document.getElementById('warranty-provider').value = d.warrantyProvider;
-                if (d.warrantyDuration) document.getElementById('warranty-duration').value = d.warrantyDuration;
-                if (d.warrantyPolicy) document.getElementById('warranty-policy').value = d.warrantyPolicy;
-                if (d.accountsNotes) document.getElementById('accounts-notes').value = d.accountsNotes;
+
+        function setupAutoSave() {
+            setInterval(() => {
+                const stockNo = document.getElementById('stockNo').value;
+                if (stockNo) saveDraft(stockNo, true);
+            }, 30000);
+        }
+
+        function saveDraft(stockNo = null, silent = false) {
+            if (!stockNo) stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) {
+                if (!silent) alert('Please select a vehicle first');
+                return;
+            }
+            
+            const draftData = collectFormData();
+            draftData.isDraft = true;
+            draftData.lastSaved = new Date().toISOString();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage11Draft = draftData;
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            if (!silent) alert('Draft saved successfully!');
+        }
+
+        function loadDraft(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            const data = JSON.parse(saved);
+            if (data.stage11Draft) {
+                const draft = data.stage11Draft;
+                
+                // Load invoice data
+                if (draft.invoice) {
+                    Object.keys(draft.invoice).forEach(key => {
+                        const el = document.getElementById(key);
+                        if (el) el.value = draft.invoice[key];
+                    });
+                }
+                
+                // Load warranty data
+                if (draft.warranty) {
+                    Object.keys(draft.warranty).forEach(key => {
+                        const el = document.getElementById(key);
+                        if (el) {
+                            if (el.type === 'checkbox') {
+                                el.checked = draft.warranty[key];
+                            } else {
+                                el.value = draft.warranty[key];
+                            }
+                        }
+                    });
+                    updateWarrantyStatus();
+                }
+                
+                // Load documents
+                if (draft.documents) {
+                    Object.keys(draft.documents).forEach(key => {
+                        const checkbox = document.querySelector(`#doc${key.charAt(0).toUpperCase() + key.slice(1)} input`);
+                        if (checkbox) {
+                            checkbox.checked = draft.documents[key];
+                            toggleDocComplete(checkbox.closest('.document-item').id);
+                        }
+                    });
+                }
+                
+                // Load vehicle status
+                if (draft.vehicleStatus) {
+                    Object.keys(draft.vehicleStatus).forEach(key => {
+                        const el = document.getElementById(key);
+                        if (el) el.value = draft.vehicleStatus[key];
+                    });
+                }
+                
+                if (draft.notes) document.getElementById('accountsNotes').value = draft.notes;
+                if (draft.processedBy) document.getElementById('processedBy').value = draft.processedBy;
             }
         }
-        
-        function saveDraft() {
-            if (!currentVehicle) return;
-            WorkflowEngine.saveStageData(11, getFormData());
-            showAlert('Draft saved', 'success');
-        }
-        
-        function completeStage() {
-            if (!currentVehicle) return;
-            const data = getFormData();
-            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
-            WorkflowEngine.completeStage(11, data);
-            showAlert('Accounts complete!', 'success');
-            setTimeout(() => window.location.href = 'stage-12-management.html', 1500);
-        }
-        
-        function showAlert(msg, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `<span>${msg}</span>`;
-            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
-            setTimeout(() => alert.remove(), 5000);
-        }
-        
-        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
     </script>
 </body>
 </html>
