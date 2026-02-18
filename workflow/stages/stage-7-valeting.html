@@ -3,228 +3,1222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stage 7: Interior & Valeting - Capeye Workflow</title>
-    <link rel="stylesheet" href="../../css/workflow/workflow-styles.css">
-    <script src="../../data/staff/staff-list.js"></script>
-    <script src="../../js/workflow/workflow-engine.js"></script>
-    <script src="../../js/workflow/form-components.js"></script>
+    <title>Stage 7: Interior & Valeting - Capeye Auto Capital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #10b981;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card: #1e293b;
+            --border: #334155;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        
+        .stage-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .form-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section h3 {
+            color: #10b981;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .condition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .condition-item {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .condition-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .condition-title {
+            font-weight: 600;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .condition-select {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .condition-excellent { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .condition-good { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .condition-fair { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .condition-poor { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        
+        .odometer {
+            background: var(--darker);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .odometer-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #10b981;
+            letter-spacing: 0.1em;
+        }
+        
+        .odometer-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+        
+        .cleaning-checklist {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .cleaning-item {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .cleaning-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #10b981;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: #e2e8f0;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+        }
+        
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .photo-slot {
+            aspect-ratio: 4/3;
+            background: var(--darker);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .photo-slot:hover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .photo-slot.has-image {
+            border-style: solid;
+            border-color: #10b981;
+        }
+        
+        .photo-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-slot .remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .photo-slot:hover .remove-btn {
+            opacity: 1;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            width: 58%;
+            transition: width 0.3s;
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .stage-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        .stage-step.active {
+            opacity: 1;
+        }
+        
+        .stage-step.completed {
+            opacity: 1;
+        }
+        
+        .stage-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        
+        .stage-step.active .stage-dot {
+            background: #10b981;
+            border-color: #34d399;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .stage-step.completed .stage-dot {
+            background: #10b981;
+            border-color: #34d399;
+        }
+        
+        .stage-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        .previous-summary {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .signature-pad {
+            background: white;
+            border-radius: 8px;
+            height: 200px;
+            cursor: crosshair;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .condition-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body>
-    <div class="workflow-container">
-        <div id="stage-nav-container"></div>
-        <main class="main-content">
-            <div id="header-container"></div>
-            <div class="stage-container">
-                <div class="stage-header">
-                    <h1 class="stage-title"><span style="font-size: 2rem;">✨</span> Stage 7: Interior & Valeting</h1>
-                    <p class="stage-description">Deep clean interior, shampoo carpets, clean glass, and prepare for display.</p>
-                </div>
-                
-                <div id="vehicle-info-display" class="vehicle-info-card">
-                    <div class="vehicle-info-header">
-                        <div class="vehicle-info-title">Vehicle Details</div>
-                        <div class="vehicle-stock-no" id="display-stock-no">--</div>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="glass-panel p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="stage-badge">Stage 7 of 12</span>
+                        <span class="text-sm text-gray-400">Valeting Department</span>
                     </div>
-                    <div class="vehicle-details-grid" id="vehicle-details-content"><p>Loading...</p></div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">Interior & Valeting</h1>
+                    <p class="text-gray-400 mt-1">Deep cleaning, interior condition assessment, and final preparation</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="saveDraft()" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button onclick="submitForm()" class="btn-primary">
+                        <i class="fas fa-check-circle"></i> Complete Stage
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Progress -->
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <!-- Stage Navigation -->
+            <div class="stage-indicator">
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Intake</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Bodywork</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Paint</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Legal</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">Mechanical</span>
+                </div>
+                <div class="stage-step completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <span class="stage-label">External</span>
+                </div>
+                <div class="stage-step active">
+                    <div class="stage-dot">7</div>
+                    <span class="stage-label">Valeting</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">8</div>
+                    <span class="stage-label">Faults</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">9</div>
+                    <span class="stage-label">Ready</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">10</div>
+                    <span class="stage-label">Delivery</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">11</div>
+                    <span class="stage-label">Accounts</span>
+                </div>
+                <div class="stage-step">
+                    <div class="stage-dot">12</div>
+                    <span class="stage-label">Management</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Selection -->
+        <div class="glass-panel p-6 mb-6">
+            <h3 class="text-lg font-semibold text-white mb-4"><i class="fas fa-car"></i> Select Vehicle</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Stock Number *</label>
+                    <select id="stockNo" class="form-control" onchange="loadVehicleData()">
+                        <option value="">Select Stock Number...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Registration</label>
+                    <input type="text" id="registration" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Make & Model</label>
+                    <input type="text" id="makeModel" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Colour</label>
+                    <input type="text" id="colour" class="form-control" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Previous Stage Summary -->
+        <div id="previousSummary" class="previous-summary" style="display: none;">
+            <h4 class="font-semibold text-emerald-400 mb-2"><i class="fas fa-history"></i> Stage 6 Summary - External & Electrical</h4>
+            <div id="previousData" class="text-sm text-gray-300"></div>
+        </div>
+
+        <form id="stage7Form">
+            <!-- Section 1: Mileage Verification -->
+            <div class="form-section">
+                <h3><i class="fas fa-tachometer-alt"></i> Mileage Verification</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Current Odometer Reading *</label>
+                        <input type="number" id="odometerReading" class="form-control" placeholder="Enter mileage" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Miles Since Intake</label>
+                        <input type="number" id="milesSinceIntake" class="form-control" readonly placeholder="Auto-calculated">
+                    </div>
                 </div>
                 
-                <form id="stage-7-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="valeter">Valeter <span class="required">*</span></label>
-                            <select id="valeter" name="valeter" class="form-select" required>
-                                <option value="">Select Valeter...</option>
+                <div class="odometer mt-4">
+                    <div class="odometer-value" id="odometerDisplay">000000</div>
+                    <div class="odometer-label">MILES</div>
+                </div>
+                
+                <label class="flex items-center gap-2 mt-4">
+                    <input type="checkbox" id="mileageVerified" required>
+                    <span>I verify this mileage is accurate and matches the vehicle's actual odometer</span>
+                </label>
+            </div>
+
+            <!-- Section 2: Interior Condition -->
+            <div class="form-section">
+                <h3><i class="fas fa-couch"></i> Interior Condition Assessment</h3>
+                <div class="condition-grid">
+                    <div class="condition-item">
+                        <div class="condition-header">
+                            <span class="condition-title"><i class="fas fa-chair"></i> Driver Seat</span>
+                            <select class="condition-select condition-excellent" id="driverSeat" onchange="updateConditionColor(this)">
+                                <option value="excellent" class="condition-excellent">Excellent</option>
+                                <option value="good" class="condition-good">Good</option>
+                                <option value="fair" class="condition-fair">Fair</option>
+                                <option value="poor" class="condition-poor">Poor</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label" for="valet-date">Valet Date</label>
-                            <input type="date" id="valet-date" name="valetDate" class="form-input">
+                        <textarea class="form-control mt-2" rows="2" placeholder="Notes on wear, tears, stains..."></textarea>
+                    </div>
+                    
+                    <div class="condition-item">
+                        <div class="condition-header">
+                            <span class="condition-title"><i class="fas fa-chair"></i> Passenger Seat</span>
+                            <select class="condition-select condition-excellent" id="passengerSeat" onchange="updateConditionColor(this)">
+                                <option value="excellent" class="condition-excellent">Excellent</option>
+                                <option value="good" class="condition-good">Good</option>
+                                <option value="fair" class="condition-fair">Fair</option>
+                                <option value="poor" class="condition-poor">Poor</option>
+                            </select>
                         </div>
+                        <textarea class="form-control mt-2" rows="2" placeholder="Notes on condition..."></textarea>
                     </div>
                     
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Interior Cleaning Checklist</h3>
-                    
-                    <div class="checkbox-grid cols-3">
-                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="vacuum"><span>Vacuum Complete</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="carpets-shampoo"><span>Carpets Shampooed</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="seats-clean"><span>Seats Cleaned</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="dashboard"><span>Dashboard Cleaned</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="door-cards"><span>Door Cards Cleaned</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="headlining"><span>Headlining Cleaned</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="boot"><span>Boot Area Cleaned</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="glass-inside"><span>Glass (Inside)</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="interior[]" value="odour-eliminate"><span>Odour Eliminated</span></label>
+                    <div class="condition-item">
+                        <div class="condition-header">
+                            <span class="condition-title"><i class="fas fa-users"></i> Rear Seats</span>
+                            <select class="condition-select condition-excellent" id="rearSeats" onchange="updateConditionColor(this)">
+                                <option value="excellent" class="condition-excellent">Excellent</option>
+                                <option value="good" class="condition-good">Good</option>
+                                <option value="fair" class="condition-fair">Fair</option>
+                                <option value="poor" class="condition-poor">Poor</option>
+                            </select>
+                        </div>
+                        <textarea class="form-control mt-2" rows="2" placeholder="Notes on condition..."></textarea>
                     </div>
                     
-                    <h3 style="margin: 2rem 0 1rem; color: var(--color-text); border-bottom: 2px solid var(--color-border); padding-bottom: 0.5rem;">Exterior Cleaning</h3>
-                    
-                    <div class="checkbox-grid cols-3">
-                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="hand-wash"><span>Hand Wash</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="clay-bar"><span>Clay Bar Treatment</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="polish"><span>Polish/Wax</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="glass-outside"><span>Glass (Outside)</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="wheels"><span>Wheels Cleaned</span></label>
-                        <label class="checkbox-item"><input type="checkbox" name="exterior[]" value="tyre-dress"><span>Tyre Dressing</span></label>
+                    <div class="condition-item">
+                        <div class="condition-header">
+                            <span class="condition-title"><i class="fas fa-compact-disc"></i> Dashboard</span>
+                            <select class="condition-select condition-excellent" id="dashboard" onchange="updateConditionColor(this)">
+                                <option value="excellent" class="condition-excellent">Excellent</option>
+                                <option value="good" class="condition-good">Good</option>
+                                <option value="fair" class="condition-fair">Fair</option>
+                                <option value="poor" class="condition-poor">Poor</option>
+                            </select>
+                        </div>
+                        <textarea class="form-control mt-2" rows="2" placeholder="Scratches, marks, condition..."></textarea>
                     </div>
                     
+                    <div class="condition-item">
+                        <div class="condition-header">
+                            <span class="condition-title"><i class="fas fa-rug"></i> Carpets</span>
+                            <select class="condition-select condition-excellent" id="carpets" onchange="updateConditionColor(this)">
+                                <option value="excellent" class="condition-excellent">Excellent</option>
+                                <option value="good" class="condition-good">Good</option>
+                                <option value="fair" class="condition-fair">Fair</option>
+                                <option value="poor" class="condition-poor">Poor</option>
+                            </select>
+                        </div>
+                        <textarea class="form-control mt-2" rows="2" placeholder="Stains, wear, condition..."></textarea>
+                    </div>
+                    
+                    <div class="condition-item">
+                        <div class="condition-header">
+                            <span class="condition-title"><i class="fas fa-door-open"></i> Door Cards</span>
+                            <select class="condition-select condition-excellent" id="doorCards" onchange="updateConditionColor(this)">
+                                <option value="excellent" class="condition-excellent">Excellent</option>
+                                <option value="good" class="condition-good">Good</option>
+                                <option value="fair" class="condition-fair">Fair</option>
+                                <option value="poor" class="condition-poor">Poor</option>
+                            </select>
+                        </div>
+                        <textarea class="form-control mt-2" rows="2" placeholder="Marks, scratches, condition..."></textarea>
+                    </div>
+                    
+                    <div class="condition-item">
+                        <div class="condition-header">
+                            <span class="condition-title"><i class="fas fa-square"></i> Headlining</span>
+                            <select class="condition-select condition-excellent" id="headlining" onchange="updateConditionColor(this)">
+                                <option value="excellent" class="condition-excellent">Excellent</option>
+                                <option value="good" class="condition-good">Good</option>
+                                <option value="fair" class="condition-fair">Fair</option>
+                                <option value="poor" class="condition-poor">Poor</option>
+                            </select>
+                        </div>
+                        <textarea class="form-control mt-2" rows="2" placeholder="Sags, stains, marks..."></textarea>
+                    </div>
+                    
+                    <div class="condition-item">
+                        <div class="condition-header">
+                            <span class="condition-title"><i class="fas fa-box"></i> Boot/Load Area</span>
+                            <select class="condition-select condition-excellent" id="bootArea" onchange="updateConditionColor(this)">
+                                <option value="excellent" class="condition-excellent">Excellent</option>
+                                <option value="good" class="condition-good">Good</option>
+                                <option value="fair" class="condition-fair">Fair</option>
+                                <option value="poor" class="condition-poor">Poor</option>
+                            </select>
+                        </div>
+                        <textarea class="form-control mt-2" rows="2" placeholder="Condition of load area..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Cleaning Checklist -->
+            <div class="form-section">
+                <h3><i class="fas fa-broom"></i> Valeting Checklist</h3>
+                
+                <h4 class="text-sm font-semibold text-gray-400 mb-3 mt-4">Interior Cleaning</h4>
+                <div class="cleaning-checklist">
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="vacuumCarpets" checked>
+                        <label for="vacuumCarpets">Vacuum all carpets & mats</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="vacuumSeats" checked>
+                        <label for="vacuumSeats">Vacuum seats & crevices</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="cleanDashboard" checked>
+                        <label for="cleanDashboard">Dashboard & console cleaned</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="cleanWindows" checked>
+                        <label for="cleanWindows">Interior windows cleaned</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="cleanDoorShuts" checked>
+                        <label for="cleanDoorShuts">Door shuts cleaned</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="removeRubbish" checked>
+                        <label for="removeRubbish">All rubbish removed</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="deodorise" checked>
+                        <label for="deodorise">Interior deodorised</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="leatherTreat" checked>
+                        <label for="leatherTreat">Leather treatment (if applicable)</label>
+                    </div>
+                </div>
+                
+                <h4 class="text-sm font-semibold text-gray-400 mb-3 mt-6">Exterior Cleaning</h4>
+                <div class="cleaning-checklist">
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="handWash" checked>
+                        <label for="handWash">Hand wash completed</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="tarRemoval" checked>
+                        <label for="tarRemoval">Tar spots removed</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="clayBar" checked>
+                        <label for="clayBar">Clay bar treatment</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="polish" checked>
+                        <label for="polish">Hand polish/wax</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="alloysCleaned" checked>
+                        <label for="alloysCleaned">Alloy wheels cleaned</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="tyreDressing" checked>
+                        <label for="tyreDressing">Tyre dressing applied</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="windowsCleaned" checked>
+                        <label for="windowsCleaned">Exterior windows cleaned</label>
+                    </div>
+                    <div class="cleaning-item">
+                        <input type="checkbox" id="engineBay" checked>
+                        <label for="engineBay">Engine bay dressed</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Odour & Smoke -->
+            <div class="form-section">
+                <h3><i class="fas fa-wind"></i> Odour Assessment</h3>
+                <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label" for="valet-grade">Valet Grade</label>
-                        <select id="valet-grade" name="valetGrade" class="form-select">
-                            <option value="standard">Standard</option>
-                            <option value="enhanced">Enhanced</option>
-                            <option value="full">Full Detail</option>
+                        <label>Smoke/Pet Odour Present?</label>
+                        <select id="odourPresent" class="form-control" onchange="toggleOdourDetails()">
+                            <option value="no">No - Fresh smell</option>
+                            <option value="smoke">Yes - Smoke odour</option>
+                            <option value="pet">Yes - Pet odour</option>
+                            <option value="other">Yes - Other odour</option>
                         </select>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Before Photos</label>
-                        <div id="before-photos-container"></div>
-                        <input type="hidden" id="before-photos" name="beforePhotos">
+                    <div class="form-group" id="odourTreatmentGroup" style="display: none;">
+                        <label>Treatment Applied</label>
+                        <select id="odourTreatment" class="form-control">
+                            <option value="none">None required</option>
+                            <option value="ozone">Ozone treatment</option>
+                            <option value="fogging">Fogging treatment</option>
+                            <option value="deepClean">Deep clean + deodorise</option>
+                        </select>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">After Photos <span class="required">*</span></label>
-                        <div id="after-photos-container"></div>
-                        <input type="hidden" id="after-photos" name="afterPhotos" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="valet-notes">Valet Notes</label>
-                        <textarea id="valet-notes" name="valetNotes" class="form-textarea" rows="3" placeholder="Any stains removed, damage noted, etc..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Valeter Signature <span class="required">*</span></label>
-                        <div id="signature-container"></div>
-                        <input type="hidden" id="signature" name="signature" required>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <div class="form-actions-left">
-                            <a href="stage-6-external.html" class="btn btn-secondary">← Back</a>
-                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 Save</button>
-                        </div>
-                        <div class="form-actions-right">
-                            <button type="button" class="btn btn-success btn-lg" onclick="completeStage()">✓ Complete & Send to Fault Overview →</button>
-                        </div>
-                    </div>
-                </form>
+                </div>
+                
+                <div class="form-group mt-4" id="odourNotesGroup" style="display: none;">
+                    <label>Odour Treatment Notes</label>
+                    <textarea id="odourNotes" class="form-control" placeholder="Details of odour issue and treatment..."></textarea>
+                </div>
             </div>
-        </main>
+
+            <!-- Section 5: Photo Documentation -->
+            <div class="form-section">
+                <h3><i class="fas fa-camera"></i> Photo Documentation</h3>
+                <p class="text-sm text-gray-400 mb-4">Before and after photos of interior cleaning</p>
+                
+                <div class="photo-grid" id="photoGrid">
+                    <div class="photo-slot" onclick="triggerUpload(0)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Driver Seat Before</span>
+                        <input type="file" id="photo0" accept="image/*" style="display: none;" onchange="handlePhoto(0, this)">
+                    </div>
+                    <div class="photo-slot" onclick="triggerUpload(1)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Driver Seat After</span>
+                        <input type="file" id="photo1" accept="image/*" style="display: none;" onchange="handlePhoto(1, this)">
+                    </div>
+                    <div class="photo-slot" onclick="triggerUpload(2)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Dashboard</span>
+                        <input type="file" id="photo2" accept="image/*" style="display: none;" onchange="handlePhoto(2, this)">
+                    </div>
+                    <div class="photo-slot" onclick="triggerUpload(3)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Rear Seats</span>
+                        <input type="file" id="photo3" accept="image/*" style="display: none;" onchange="handlePhoto(3, this)">
+                    </div>
+                    <div class="photo-slot" onclick="triggerUpload(4)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Boot Area</span>
+                        <input type="file" id="photo4" accept="image/*" style="display: none;" onchange="handlePhoto(4, this)">
+                    </div>
+                    <div class="photo-slot" onclick="triggerUpload(5)">
+                        <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                        <span class="text-xs text-gray-500">Carpets</span>
+                        <input type="file" id="photo5" accept="image/*" style="display: none;" onchange="handlePhoto(5, this)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Sign-off -->
+            <div class="form-section">
+                <h3><i class="fas fa-signature"></i> Sign-off</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Valeting Completed By *</label>
+                        <select id="completedBy" class="form-control" required>
+                            <option value="">Select Valeter...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Completion Date *</label>
+                        <input type="date" id="completionDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hours Spent</label>
+                        <input type="number" id="hoursSpent" class="form-control" step="0.5" min="0" placeholder="Hours">
+                    </div>
+                    <div class="form-group">
+                        <label>Overall Interior Grade</label>
+                        <select id="interiorGrade" class="form-control">
+                            <option value="A">A - Showroom</option>
+                            <option value="B">B - Excellent</option>
+                            <option value="C">C - Good</option>
+                            <option value="D">D - Fair</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Digital Signature *</label>
+                    <canvas id="signaturePad" class="signature-pad w-full"></canvas>
+                    <button type="button" class="btn-secondary mt-2" onclick="clearSignature()">
+                        <i class="fas fa-undo"></i> Clear Signature
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-between items-center mt-6">
+            <button onclick="window.location.href='stage-6-external.html'" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Stage 6
+            </button>
+            <div class="flex gap-3">
+                <button onclick="saveDraft()" class="btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+                <button onclick="submitForm()" class="btn-primary">
+                    <i class="fas fa-check-circle"></i> Complete Stage 7
+                </button>
+            </div>
+        </div>
     </div>
-    
+
     <script>
+        let vehicles = [];
+        let staff = [];
         let currentVehicle = null;
+        let uploadedPhotos = {};
+        let signaturePad = null;
+        let isDrawing = false;
+        let intakeMileage = 0;
+
         document.addEventListener('DOMContentLoaded', function() {
-            WorkflowEngine.setStage(7);
-            loadComponents();
-            populateValeters();
-            initPhotos();
-            initSignature();
-            loadVehicle();
-            loadSavedData();
-            document.getElementById('valet-date').valueAsDate = new Date();
+            loadData();
+            initSignaturePad();
+            setupAutoSave();
+            document.getElementById('completionDate').valueAsDate = new Date();
+            
+            // Odometer input listener
+            document.getElementById('odometerReading').addEventListener('input', function() {
+                document.getElementById('odometerDisplay').textContent = this.value.padStart(6, '0');
+                calculateMilesSinceIntake();
+            });
         });
-        
-        function loadComponents() {
-            fetch('../../workflow/components/header.html').then(r => r.text()).then(html => document.getElementById('header-container').innerHTML = html);
-            fetch('../../workflow/components/stage-nav.html').then(r => r.text()).then(html => document.getElementById('stage-nav-container').innerHTML = html);
+
+        function loadData() {
+            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    vehicles = results.data.filter(v => v['Stock No'] || v['StockNo']);
+                    populateVehicleDropdown();
+                }
+            });
+
+            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    staff = results.data.filter(s => s['Name'] || s['Staff Name']);
+                    populateStaffDropdown();
+                }
+            });
         }
-        
-        function populateValeters() {
-            const select = document.getElementById('valeter');
-            if (STAFF_DATA) {
-                STAFF_DATA.getStaffByDept('valeting').forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name;
-                    select.appendChild(opt);
-                });
+
+        function populateVehicleDropdown() {
+            const select = document.getElementById('stockNo');
+            vehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle['Stock No'] || vehicle['StockNo'];
+                option.textContent = `${vehicle['Stock No'] || vehicle['StockNo']} - ${vehicle['Make']} ${vehicle['Model']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function populateStaffDropdown() {
+            const select = document.getElementById('completedBy');
+            const valeters = staff.filter(s => 
+                s['Department'] === 'Valeting' || s['Role']?.includes('Valeter') || s['Role']?.includes('Detailer')
+            );
+            
+            valeters.forEach(v => {
+                const name = v['Name'] || v['Staff Name'];
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = `${name} - ${v['Role']}`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadVehicleData() {
+            const stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) return;
+            
+            currentVehicle = vehicles.find(v => (v['Stock No'] || v['StockNo']) === stockNo);
+            if (currentVehicle) {
+                document.getElementById('registration').value = currentVehicle['Registration'] || '';
+                document.getElementById('makeModel').value = `${currentVehicle['Make']} ${currentVehicle['Model']}`;
+                document.getElementById('colour').value = currentVehicle['Colour'] || '';
+                
+                // Get intake mileage from stage 1
+                const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (data.stage1 && data.stage1.mileage) {
+                        intakeMileage = parseInt(data.stage1.mileage) || 0;
+                    }
+                }
+                
+                loadPreviousStage(stockNo);
+                loadDraft(stockNo);
             }
         }
-        
-        function initPhotos() {
-            document.getElementById('before-photos-container').appendChild(
-                FormComponents.createPhotoUpload({ id: 'before-photos', label: 'Before Photos', maxPhotos: 6 })
-            );
-            document.getElementById('after-photos-container').appendChild(
-                FormComponents.createPhotoUpload({ id: 'after-photos', label: 'After Photos', maxPhotos: 8, required: true })
-            );
-        }
-        
-        function initSignature() {
-            document.getElementById('signature-container').appendChild(
-                FormComponents.createSignaturePad({ id: 'signature', label: '', required: true })
-            );
-        }
-        
-        function loadVehicle() {
-            currentVehicle = WorkflowEngine.getVehicle();
-            if (!currentVehicle) {
-                if (confirm('No vehicle selected. Go to Stage 1?')) window.location.href = 'stage-1-intake.html';
-                return;
+
+        function loadPreviousStage(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.stage6) {
+                    document.getElementById('previousSummary').style.display = 'block';
+                    const s = data.stage6;
+                    document.getElementById('previousData').innerHTML = `
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><strong>External Grade:</strong> ${s.overallGrade || 'N/A'}</div>
+                            <div><strong>Tyre Condition:</strong> All checked</div>
+                            <div><strong>Lights:</strong> All working</div>
+                            <div><strong>Inspected By:</strong> ${s.inspectedBy || 'N/A'}</div>
+                        </div>
+                    `;
+                }
             }
-            document.getElementById('display-stock-no').textContent = currentVehicle.stockNo;
-            document.getElementById('vehicle-details-content').innerHTML = `
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Vehicle</span><span class="vehicle-detail-value">${currentVehicle.make} ${currentVehicle.model}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Reg</span><span class="vehicle-detail-value">${currentVehicle.registration}</span></div>
-                <div class="vehicle-detail"><span class="vehicle-detail-label">Colour</span><span class="vehicle-detail-value">${currentVehicle.colour}</span></div>
+        }
+
+        function calculateMilesSinceIntake() {
+            const current = parseInt(document.getElementById('odometerReading').value) || 0;
+            const diff = current - intakeMileage;
+            document.getElementById('milesSinceIntake').value = diff >= 0 ? diff : 0;
+        }
+
+        function updateConditionColor(select) {
+            select.className = 'condition-select condition-' + select.value;
+        }
+
+        function toggleOdourDetails() {
+            const value = document.getElementById('odourPresent').value;
+            const show = value !== 'no';
+            document.getElementById('odourTreatmentGroup').style.display = show ? 'block' : 'none';
+            document.getElementById('odourNotesGroup').style.display = show ? 'block' : 'none';
+        }
+
+        function triggerUpload(index) {
+            document.getElementById(`photo${index}`).click();
+        }
+
+        function handlePhoto(index, input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const slot = input.closest('.photo-slot');
+                    slot.innerHTML = `
+                        <img src="${e.target.result}" alt="Photo ${index + 1}">
+                        <button type="button" class="remove-btn" onclick="removePhoto(${index}, event)">Remove</button>
+                    `;
+                    slot.classList.add('has-image');
+                    uploadedPhotos[index] = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removePhoto(index, event) {
+            event.stopPropagation();
+            const slot = document.getElementById(`photo${index}`).closest('.photo-slot');
+            const labels = ['Driver Seat Before', 'Driver Seat After', 'Dashboard', 'Rear Seats', 'Boot Area', 'Carpets'];
+            slot.innerHTML = `
+                <i class="fas fa-plus text-2xl text-gray-500 mb-2"></i>
+                <span class="text-xs text-gray-500">${labels[index]}</span>
+                <input type="file" id="photo${index}" accept="image/*" style="display: none;" onchange="handlePhoto(${index}, this)">
             `;
+            slot.classList.remove('has-image');
+            delete uploadedPhotos[index];
         }
-        
-        function getFormData() {
-            const form = document.getElementById('stage-7-form');
-            const fd = new FormData(form);
+
+        function initSignaturePad() {
+            const canvas = document.getElementById('signaturePad');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', stopDrawing);
+            
+            signaturePad = { canvas, ctx };
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = signaturePad.canvas.getBoundingClientRect();
+            signaturePad.ctx.beginPath();
+            signaturePad.ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = signaturePad.canvas.getBoundingClientRect();
+            signaturePad.ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            signaturePad.ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            signaturePad.canvas.dispatchEvent(mouseEvent);
+        }
+
+        function clearSignature() {
+            if (signaturePad) {
+                signaturePad.ctx.clearRect(0, 0, signaturePad.canvas.width, signaturePad.canvas.height);
+            }
+        }
+
+        function submitForm() {
+            if (!validateForm()) return;
+            
+            const stockNo = document.getElementById('stockNo').value;
+            const formData = collectFormData();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage7 = formData;
+            vehicleData.currentStage = 8;
+            vehicleData.lastUpdated = new Date().toISOString();
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            
+            alert('Stage 7 completed successfully! Moving to Stage 8: Fault Overview.');
+            window.location.href = 'stage-8-faults.html?stockNo=' + stockNo;
+        }
+
+        function validateForm() {
+            const required = ['stockNo', 'odometerReading', 'completedBy', 'completionDate'];
+            for (let field of required) {
+                const el = document.getElementById(field);
+                if (!el.value) {
+                    el.focus();
+                    alert('Please fill in all required fields');
+                    return false;
+                }
+            }
+            
+            if (!document.getElementById('mileageVerified').checked) {
+                alert('Please verify the mileage');
+                return false;
+            }
+            
+            // Check signature
+            if (signaturePad) {
+                const pixelData = signaturePad.canvas.toDataURL();
+                if (pixelData.length < 1000) {
+                    alert('Please provide a signature');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function collectFormData() {
+            const getConditionData = (prefix) => ({
+                condition: document.getElementById(prefix).value,
+                notes: document.getElementById(prefix)?.closest('.condition-item')?.querySelector('textarea')?.value || ''
+            });
+            
             return {
-                valeter: fd.get('valeter'),
-                valetDate: fd.get('valetDate'),
-                interior: fd.getAll('interior[]'),
-                exterior: fd.getAll('exterior[]'),
-                valetGrade: fd.get('valetGrade'),
-                beforePhotos: document.getElementById('before-photos').value,
-                afterPhotos: document.getElementById('after-photos').value,
-                valetNotes: fd.get('valetNotes'),
-                signature: document.getElementById('signature').value
+                odometerReading: document.getElementById('odometerReading').value,
+                milesSinceIntake: document.getElementById('milesSinceIntake').value,
+                mileageVerified: document.getElementById('mileageVerified').checked,
+                
+                driverSeat: getConditionData('driverSeat'),
+                passengerSeat: getConditionData('passengerSeat'),
+                rearSeats: getConditionData('rearSeats'),
+                dashboard: getConditionData('dashboard'),
+                carpets: getConditionData('carpets'),
+                doorCards: getConditionData('doorCards'),
+                headlining: getConditionData('headlining'),
+                bootArea: getConditionData('bootArea'),
+                
+                cleaning: {
+                    vacuumCarpets: document.getElementById('vacuumCarpets').checked,
+                    vacuumSeats: document.getElementById('vacuumSeats').checked,
+                    cleanDashboard: document.getElementById('cleanDashboard').checked,
+                    cleanWindows: document.getElementById('cleanWindows').checked,
+                    cleanDoorShuts: document.getElementById('cleanDoorShuts').checked,
+                    removeRubbish: document.getElementById('removeRubbish').checked,
+                    deodorise: document.getElementById('deodorise').checked,
+                    leatherTreat: document.getElementById('leatherTreat').checked,
+                    handWash: document.getElementById('handWash').checked,
+                    tarRemoval: document.getElementById('tarRemoval').checked,
+                    clayBar: document.getElementById('clayBar').checked,
+                    polish: document.getElementById('polish').checked,
+                    alloysCleaned: document.getElementById('alloysCleaned').checked,
+                    tyreDressing: document.getElementById('tyreDressing').checked,
+                    windowsCleaned: document.getElementById('windowsCleaned').checked,
+                    engineBay: document.getElementById('engineBay').checked
+                },
+                
+                odourPresent: document.getElementById('odourPresent').value,
+                odourTreatment: document.getElementById('odourTreatment').value,
+                odourNotes: document.getElementById('odourNotes').value,
+                
+                photos: uploadedPhotos,
+                completedBy: document.getElementById('completedBy').value,
+                completionDate: document.getElementById('completionDate').value,
+                hoursSpent: document.getElementById('hoursSpent').value,
+                interiorGrade: document.getElementById('interiorGrade').value,
+                signature: signaturePad ? signaturePad.canvas.toDataURL() : null,
+                submittedAt: new Date().toISOString()
             };
         }
-        
-        function loadSavedData() {
-            if (!currentVehicle) return;
-            const saved = WorkflowEngine.loadStageData(7, currentVehicle.stockNo);
-            if (saved?.data) {
-                const d = saved.data;
-                if (d.valeter) document.getElementById('valeter').value = d.valeter;
-                if (d.valetGrade) document.getElementById('valet-grade').value = d.valetGrade;
-                if (d.valetNotes) document.getElementById('valet-notes').value = d.valetNotes;
-                if (d.interior) d.interior.forEach(v => { const cb = document.querySelector(`input[value="${v}"]`); if (cb) cb.checked = true; });
-                if (d.exterior) d.exterior.forEach(v => { const cb = document.querySelector(`input[name="exterior[]"][value="${v}"]`); if (cb) cb.checked = true; });
+
+        function setupAutoSave() {
+            setInterval(() => {
+                const stockNo = document.getElementById('stockNo').value;
+                if (stockNo) saveDraft(stockNo, true);
+            }, 30000);
+        }
+
+        function saveDraft(stockNo = null, silent = false) {
+            if (!stockNo) stockNo = document.getElementById('stockNo').value;
+            if (!stockNo) {
+                if (!silent) alert('Please select a vehicle first');
+                return;
+            }
+            
+            const draftData = collectFormData();
+            draftData.isDraft = true;
+            draftData.lastSaved = new Date().toISOString();
+            
+            const existing = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            const vehicleData = existing ? JSON.parse(existing) : {};
+            vehicleData.stage7Draft = draftData;
+            
+            localStorage.setItem(`capeye_vehicle_${stockNo}`, JSON.stringify(vehicleData));
+            if (!silent) alert('Draft saved successfully!');
+        }
+
+        function loadDraft(stockNo) {
+            const saved = localStorage.getItem(`capeye_vehicle_${stockNo}`);
+            if (!saved) return;
+            
+            const data = JSON.parse(saved);
+            if (data.stage7Draft) {
+                const draft = data.stage7Draft;
+                
+                // Load simple fields
+                ['odometerReading', 'completedBy', 'hoursSpent', 'interiorGrade', 'odourTreatment', 'odourNotes'].forEach(field => {
+                    if (draft[field]) document.getElementById(field).value = draft[field];
+                });
+                
+                if (draft.odometerReading) {
+                    document.getElementById('odometerDisplay').textContent = draft.odometerReading.padStart(6, '0');
+                    calculateMilesSinceIntake();
+                }
+                
+                if (draft.odourPresent) {
+                    document.getElementById('odourPresent').value = draft.odourPresent;
+                    toggleOdourDetails();
+                }
+                
+                // Load condition data
+                ['driverSeat', 'passengerSeat', 'rearSeats', 'dashboard', 'carpets', 'doorCards', 'headlining', 'bootArea'].forEach(item => {
+                    if (draft[item]) {
+                        const select = document.getElementById(item);
+                        if (select) {
+                            select.value = draft[item].condition;
+                            updateConditionColor(select);
+                        }
+                        const textarea = select?.closest('.condition-item')?.querySelector('textarea');
+                        if (textarea && draft[item].notes) textarea.value = draft[item].notes;
+                    }
+                });
+                
+                // Load cleaning checkboxes
+                if (draft.cleaning) {
+                    Object.keys(draft.cleaning).forEach(key => {
+                        const cb = document.getElementById(key);
+                        if (cb) cb.checked = draft.cleaning[key];
+                    });
+                }
+                
+                // Load photos
+                if (draft.photos) {
+                    uploadedPhotos = draft.photos;
+                    Object.keys(uploadedPhotos).forEach(index => {
+                        const slot = document.getElementById(`photo${index}`).closest('.photo-slot');
+                        slot.innerHTML = `
+                            <img src="${uploadedPhotos[index]}" alt="Photo ${parseInt(index) + 1}">
+                            <button type="button" class="remove-btn" onclick="removePhoto(${index}, event)">Remove</button>
+                        `;
+                        slot.classList.add('has-image');
+                    });
+                }
             }
         }
-        
-        function saveDraft() {
-            if (!currentVehicle) return;
-            WorkflowEngine.saveStageData(7, getFormData());
-            showAlert('Draft saved', 'success');
-        }
-        
-        function completeStage() {
-            if (!currentVehicle) return;
-            const data = getFormData();
-            if (!data.signature) { showAlert('Signature required', 'danger'); return; }
-            WorkflowEngine.completeStage(7, data);
-            showAlert('Stage 7 complete!', 'success');
-            setTimeout(() => window.location.href = 'stage-8-faults.html', 1500);
-        }
-        
-        function showAlert(msg, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `<span>${msg}</span>`;
-            document.querySelector('.stage-container').insertBefore(alert, document.querySelector('.stage-container').firstChild);
-            setTimeout(() => alert.remove(), 5000);
-        }
-        
-        document.addEventListener('workflowAutosave', () => currentVehicle && saveDraft());
     </script>
 </body>
 </html>
