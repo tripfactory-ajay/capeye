@@ -1105,7 +1105,6 @@
         let uploadedPhotos = {};
         let signaturePad = null;
         let signatureContext = null;
-        let basePath = ''; // Will be set based on successful CSV load path
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1206,23 +1205,10 @@
             content.innerHTML += message + '<br>';
         }
 
-        // Get base path based on current URL
-        function getBasePath() {
-            const path = window.location.pathname;
-            // If we're in /capeye/ subdirectory, go up one level
-            if (path.includes('/capeye/')) {
-                return '../';
-            }
-            return '';
-        }
-
-        // Load CSV Data with corrected paths
+        // Load CSV Data - FIXED PATHS (CSVs in same directory as HTML)
         async function loadData() {
-            basePath = getBasePath();
-            
+            // CSV files are in same /capeye/ directory as HTML
             const possiblePaths = [
-                basePath + 'Auto Capital - Stock List-639068391990284525.csv',
-                basePath + 'Auto Capital - Stock List.csv',
                 'Auto Capital - Stock List-639068391990284525.csv',
                 './Auto Capital - Stock List-639068391990284525.csv'
             ];
@@ -1247,7 +1233,7 @@
             }
             
             if (!stockCsv) {
-                showDebug(`<strong>Stock CSV not found</strong><br>Tried paths: ${possiblePaths.join(', ')}<br>Current URL: ${window.location.href}<br>Please ensure CSV files are in the repository root.`);
+                showDebug(`<strong>Stock CSV not found</strong><br>Tried paths: ${possiblePaths.join(', ')}<br>Current URL: ${window.location.href}<br>Please ensure CSV files are uploaded to the repository.`);
                 showStatus('Could not load vehicle data. Check debug panel.', 'error');
                 document.getElementById('loadingOverlay').style.display = 'none';
                 return;
@@ -1269,15 +1255,14 @@
             });
         }
 
-        // Load Staff Data with corrected paths
+        // Load Staff Data - FIXED PATHS
         async function loadStaffData() {
+            // Try both staff list files (CSVs in same directory as HTML)
             const possiblePaths = [
-                basePath + 'Auto Capital - Staff List-639068391990284525.csv',
-                basePath + 'Auto Capital - Staff List.csv',
                 'Auto Capital - Staff List-639068391990284525.csv',
                 './Auto Capital - Staff List-639068391990284525.csv',
-                '../Auto Capital - Staff List-639068391990284525.csv',
-                '../Auto Capital - Staff List.csv'
+                'Global list - Staff-639068391659046081.csv',
+                './Global list - Staff-639068391659046081.csv'
             ];
             
             let staffCsv = null;
@@ -1304,7 +1289,7 @@
             }
             
             if (!staffCsv) {
-                showDebug(`<strong>Staff CSV not found</strong><br>Tried paths: ${possiblePaths.join(', ')}<br>Last error: ${lastError}<br>Current page URL: ${window.location.href}<br>Please ensure the staff CSV file is in the same directory as this HTML file or in the parent directory.`);
+                showDebug(`<strong>Staff CSV not found</strong><br>Tried paths: ${possiblePaths.join(', ')}<br>Last error: ${lastError}<br>Current page URL: ${window.location.href}<br>Please ensure the staff CSV file is uploaded to the repository.`);
                 
                 document.getElementById('staffCount').textContent = 'Error: Staff file not found (see debug panel above)';
                 document.getElementById('staffCount').style.color = 'var(--cy-accent-red)';
