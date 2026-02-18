@@ -1255,7 +1255,7 @@
             });
         }
 
-        // Load Staff Data - FIXED VERSION
+        // Load Staff Data - FIXED FOR HEADERLESS CSV FORMAT
         async function loadStaffData() {
             // Try both staff list files (CSVs in same directory as HTML)
             const possiblePaths = [
@@ -1290,37 +1290,19 @@
             
             if (!staffCsv) {
                 showDebug(`<strong>Staff CSV not found</strong><br>Tried paths: ${possiblePaths.join(', ')}<br>Last error: ${lastError}<br>Current page URL: ${window.location.href}<br>Please ensure the staff CSV file is uploaded to the repository.`);
-                
-                // Use default staff list as fallback
-                const defaultStaff = [
-                    { name: 'Keith Hardy', department: 'Management' },
-                    { name: 'Ibrahim Ata', department: 'Sales' },
-                    { name: 'Ali Amood', department: 'Workshop' },
-                    { name: 'Morteza Rahamian', department: 'Workshop' },
-                    { name: 'Marcin Kiljan', department: 'Workshop' },
-                    { name: 'Sia Vajihi', department: 'Workshop' },
-                    { name: 'Iman Zarien', department: 'Workshop' },
-                    { name: 'Stash', department: 'Bodyshop' }
-                ];
-                
-                staffList = defaultStaff;
-                populateStaffSelect();
-                
-                document.getElementById('staffCount').textContent = `${staffList.length} staff members loaded (default list)`;
-                document.getElementById('staffCount').style.color = 'var(--cy-accent-orange)';
-                
-                document.getElementById('loadingOverlay').style.display = 'none';
+                useDefaultStaff();
                 return;
             }
             
             console.log('Staff CSV loaded from:', successfulPath);
             
+            // Parse WITHOUT headers first to check format
             Papa.parse(staffCsv, {
-                header: true,
+                header: false,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    console.log('Staff parse complete. Columns found:', results.meta.fields);
-                    console.log('First row sample:', results.data[0]);
+                    console.log('Raw staff data (no headers):', results.data);
+                    console.log('First row:', results.data[0]);
                     
                     if (!results.data || results.data.length === 0) {
                         showDebug('Staff CSV loaded but contains no data rows');
@@ -1328,70 +1310,60 @@
                         return;
                     }
                     
-                    // Find column indices with flexible matching
-                    const headers = results.meta.fields.map(h => h.toLowerCase().trim());
-                    console.log('Normalized headers:', headers);
-                    
-                    // Find name column
-                    const nameIndex = headers.findIndex(h => 
-                        h.includes('name') || h === 'staff' || h === 'employee' || 
-                        h === 'person' || h === 'full name' || h === 'staff name'
+                    const firstRow = results.data[0];
+                    const isHeaderRow = firstRow.some(cell => 
+                        cell && (
+                            cell.toString().toLowerCase().includes('name') ||
+                            cell.toString().toLowerCase().includes('staff') ||
+                            cell.toString().toLowerCase().includes('department') ||
+                            cell.toString().toLowerCase().includes('role')
+                        )
                     );
                     
-                    // Find department/role column
-                    const deptIndex = headers.findIndex(h => 
-                        h.includes('dept') || h.includes('department') || 
-                        h.includes('role') || h.includes('position') || 
-                        h.includes('job') || h.includes('title') || h.includes('function')
-                    );
+                    console.log('First row appears to be header:', isHeaderRow);
+                    console.log('First row values:', firstRow);
                     
-                    console.log('Name column index:', nameIndex, 'Dept column index:', deptIndex);
+                    let parsedStaff = [];
                     
-                    if (nameIndex === -1) {
-                        showDebug(`<strong>Could not find Name column</strong><br>Available columns: ${results.meta.fields.join(', ')}<br>Looking for: name, staff, employee, person`);
-                        useDefaultStaff();
-                        return;
-                    }
-                    
-                    const nameKey = results.meta.fields[nameIndex];
-                    const deptKey = deptIndex !== -1 ? results.meta.fields[deptIndex] : null;
-                    
-                    // Parse staff data
-                    staffList = results.data.map(row => {
-                        const name = row[nameKey]?.toString().trim();
-                        const department = deptKey ? row[deptKey]?.toString().trim() : '';
+                    if (isHeaderRow) {
+                        // CSV has headers - reparse with headers
+                        Papa.parse(staffCsv, {
+                            header: true,
+                            skipEmptyLines: true,
+                            complete: function(headerResults) {
+                                const headers = headerResults.meta.fields;
+                                console.log('Headers found:', headers);
+                                
+                                // Find name and department columns
+                                const nameCol = headers.find(h => 
+                                    h.toLowerCase().includes('name') || 
+                                    h.toLowerCase() === 'staff'
+                                );
+                                const deptCol = headers.find(h => 
+                                    h.toLowerCase().includes('dept') || 
+                                    h.toLowerCase().includes('role') ||
+                                    h.toLowerCase().includes('position')
+                                );
+                                
+                                parsedStaff = headerResults.data.map(row => ({
+                                    name: row[nameCol] || '',
+                                    department: deptCol ? row[deptCol] : ''
+                                })).filter(s => s.name && s.name.trim() !== '');
+                                
+                                processStaffList(parsedStaff);
+                            }
+                        });
+                    } else {
+                        // No headers - first row is data
+                        // Assume: Column 0 = Name, Column 1 = Department/Role, Column 2 = Extra info
+                        parsedStaff = results.data.map(row => ({
+                            name: row[0] || '',
+                            department: row[1] || '',
+                            role: row[2] || row[1] || ''
+                        })).filter(s => s.name && s.name.trim() !== '' && s.name.toLowerCase() !== 'name');
                         
-                        return {
-                            name: name,
-                            department: department,
-                            role: department
-                        };
-                    }).filter(s => s.name && s.name !== '');
-                    
-                    console.log('Parsed staff list:', staffList);
-                    
-                    if (staffList.length === 0) {
-                        showDebug('No valid staff names found in CSV');
-                        useDefaultStaff();
-                        return;
+                        processStaffList(parsedStaff);
                     }
-                    
-                    populateStaffSelect();
-                    
-                    // Update staff count display
-                    const staffCount = document.getElementById('staffCount');
-                    staffCount.textContent = `${staffList.length} staff members loaded from CSV`;
-                    staffCount.style.color = 'var(--cy-accent-green)';
-                    
-                    // Check for stock parameter in URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const stockNo = urlParams.get('stock');
-                    if (stockNo) {
-                        document.getElementById('stockNoInput').value = stockNo;
-                        setTimeout(() => searchVehicle(), 100);
-                    }
-                    
-                    document.getElementById('loadingOverlay').style.display = 'none';
                 },
                 error: function(err) {
                     console.error('Staff CSV parse error:', err);
@@ -1399,6 +1371,35 @@
                     useDefaultStaff();
                 }
             });
+        }
+
+        // Process the parsed staff list
+        function processStaffList(parsedStaff) {
+            console.log('Parsed staff:', parsedStaff);
+            
+            if (parsedStaff.length === 0) {
+                showDebug('No valid staff names found in CSV');
+                useDefaultStaff();
+                return;
+            }
+            
+            staffList = parsedStaff;
+            populateStaffSelect();
+            
+            // Update staff count display
+            const staffCount = document.getElementById('staffCount');
+            staffCount.textContent = `${staffList.length} staff members loaded from CSV`;
+            staffCount.style.color = 'var(--cy-accent-green)';
+            
+            // Check for stock parameter in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const stockNo = urlParams.get('stock');
+            if (stockNo) {
+                document.getElementById('stockNoInput').value = stockNo;
+                setTimeout(() => searchVehicle(), 100);
+            }
+            
+            document.getElementById('loadingOverlay').style.display = 'none';
         }
 
         // Use default staff list when CSV fails
@@ -1654,189 +1655,189 @@
 
         function removePhoto(photoId) {
             delete uploadedPhotos[photoId];
-            const slot = document.querySelector(`[onclick="triggerPhotoUpload('${photoId}')"]`);
-            if (slot) {
-                slot.classList.remove('has-image');
-                const label = photoId.replace('photo', '');
-                const labels = ['Front View', 'Rear View', 'Driver Side', 'Passenger Side', 'Interior Front', 'Interior Rear', 'Dashboard', 'Load Area'];
-                slot.innerHTML = `
-                    <i class="fas fa-plus"></i>
-                    <span>${labels[parseInt(label) - 1]}</span>
-                    <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${photoId}Slot')">
-                `;
-            }
-        }
+    const slot = document.querySelector(`[onclick="triggerPhotoUpload('${photoId}')"]`);
+    if (slot) {
+        slot.classList.remove('has-image');
+        const label = photoId.replace('photo', '');
+        const labels = ['Front View', 'Rear View', 'Driver Side', 'Passenger Side', 'Interior Front', 'Interior Rear', 'Dashboard', 'Load Area'];
+        slot.innerHTML = `
+            <i class="fas fa-plus"></i>
+            <span>${labels[parseInt(label) - 1]}</span>
+            <input type="file" id="${photoId}" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, '${photoId}Slot')">
+        `;
+    }
+}
 
-        // Save Draft
-        function saveDraft() {
-            if (!currentVehicle) {
-                showStatus('Please select a vehicle first', 'error');
-                return;
-            }
-            
-            const formData = collectFormData();
-            formData.lastSaved = new Date().toISOString();
-            formData.isDraft = true;
-            
-            localStorage.setItem(`capeye_stage1_${currentVehicle.stockNo}`, JSON.stringify(formData));
-            showStatus('Draft saved successfully', 'success');
-        }
+// Save Draft
+function saveDraft() {
+    if (!currentVehicle) {
+        showStatus('Please select a vehicle first', 'error');
+        return;
+    }
+    
+    const formData = collectFormData();
+    formData.lastSaved = new Date().toISOString();
+    formData.isDraft = true;
+    
+    localStorage.setItem(`capeye_stage1_${currentVehicle.stockNo}`, JSON.stringify(formData));
+    showStatus('Draft saved successfully', 'success');
+}
 
-        // Collect Form Data
-        function collectFormData() {
-            const data = {
-                stockNo: currentVehicle?.stockNo,
-                make: document.getElementById('make').value,
-                model: document.getElementById('model').value,
-                variant: document.getElementById('variant').value,
-                year: document.getElementById('year').value,
-                fuelType: document.getElementById('fuelType').value,
-                transmission: document.getElementById('transmission').value,
-                dateAcquired: document.getElementById('dateAcquired').value,
-                source: document.getElementById('source').value,
-                supplierName: document.getElementById('supplierName').value,
-                purchasePrice: document.getElementById('purchasePrice').value,
-                additionalCosts: document.getElementById('additionalCosts').value,
-                totalInvestment: document.getElementById('totalInvestment').value,
-                supplierNotes: document.getElementById('supplierNotes').value,
-                overallCondition: document.getElementById('overallCondition').value,
-                intakeMileage: document.getElementById('intakeMileage').value,
-                conditionDescription: document.getElementById('conditionDescription').value,
-                motExpiry: document.getElementById('motExpiry').value,
-                lastServiceDate: document.getElementById('lastServiceDate').value,
-                serviceInterval: document.getElementById('serviceInterval').value,
-                inspectedBy: document.getElementById('inspectedBy').value,
-                nextStage: document.getElementById('nextStage').value,
-                internalNotes: document.getElementById('internalNotes').value,
-                photos: uploadedPhotos
-            };
-            
-            // Checkboxes
-            document.querySelectorAll('input[name="conditionIssues"]:checked').forEach(cb => {
-                data[cb.id] = true;
-            });
-            
-            document.querySelectorAll('input[name="documents"]:checked').forEach(cb => {
-                data[cb.id] = true;
-            });
-            
-            // Signature
-            if (signaturePad && !isSignatureEmpty()) {
-                data.signature = signaturePad.toDataURL();
-            }
-            
-            return data;
-        }
+// Collect Form Data
+function collectFormData() {
+    const data = {
+        stockNo: currentVehicle?.stockNo,
+        make: document.getElementById('make').value,
+        model: document.getElementById('model').value,
+        variant: document.getElementById('variant').value,
+        year: document.getElementById('year').value,
+        fuelType: document.getElementById('fuelType').value,
+        transmission: document.getElementById('transmission').value,
+        dateAcquired: document.getElementById('dateAcquired').value,
+        source: document.getElementById('source').value,
+        supplierName: document.getElementById('supplierName').value,
+        purchasePrice: document.getElementById('purchasePrice').value,
+        additionalCosts: document.getElementById('additionalCosts').value,
+        totalInvestment: document.getElementById('totalInvestment').value,
+        supplierNotes: document.getElementById('supplierNotes').value,
+        overallCondition: document.getElementById('overallCondition').value,
+        intakeMileage: document.getElementById('intakeMileage').value,
+        conditionDescription: document.getElementById('conditionDescription').value,
+        motExpiry: document.getElementById('motExpiry').value,
+        lastServiceDate: document.getElementById('lastServiceDate').value,
+        serviceInterval: document.getElementById('serviceInterval').value,
+        inspectedBy: document.getElementById('inspectedBy').value,
+        nextStage: document.getElementById('nextStage').value,
+        internalNotes: document.getElementById('internalNotes').value,
+        photos: uploadedPhotos
+    };
+    
+    // Checkboxes
+    document.querySelectorAll('input[name="conditionIssues"]:checked').forEach(cb => {
+        data[cb.id] = true;
+    });
+    
+    document.querySelectorAll('input[name="documents"]:checked').forEach(cb => {
+        data[cb.id] = true;
+    });
+    
+    // Signature
+    if (signaturePad && !isSignatureEmpty()) {
+        data.signature = signaturePad.toDataURL();
+    }
+    
+    return data;
+}
 
-        // Save Form Data (Submit)
-        function saveFormData(event) {
-            event.preventDefault();
-            
-            if (!currentVehicle) {
-                showStatus('Please select a vehicle first', 'error');
-                return;
-            }
-            
-            // Validate signature
-            if (isSignatureEmpty()) {
-                showStatus('Please provide a signature', 'error');
-                return;
-            }
-            
-            // AUTO DATE STAMP
-            const submissionDateTime = new Date();
-            const formattedDateTime = submissionDateTime.toLocaleString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            const formData = collectFormData();
-            formData.completedAt = submissionDateTime.toISOString();
-            formData.formattedCompletedAt = formattedDateTime;
-            formData.isComplete = true;
-            formData.stage = 1;
-            formData.stageName = 'Vehicle Intake';
-            
-            // Show date stamp in UI
-            document.getElementById('dateStampText').textContent = formattedDateTime;
-            document.getElementById('dateStampDisplay').style.display = 'inline-flex';
-            
-            // Save to vehicle profile
-            const vehicleProfile = JSON.parse(localStorage.getItem(`capeye_vehicle_${currentVehicle.stockNo}`) || '{}');
-            vehicleProfile.stage1 = formData;
-            vehicleProfile.currentStage = parseInt(formData.nextStage);
-            vehicleProfile.lastUpdated = submissionDateTime.toISOString();
-            vehicleProfile.stageHistory = vehicleProfile.stageHistory || [];
-            vehicleProfile.stageHistory.push({
-                stage: 1,
-                stageName: 'Vehicle Intake',
-                completedAt: submissionDateTime.toISOString(),
-                completedBy: formData.inspectedBy,
-                nextStage: parseInt(formData.nextStage)
-            });
-            
-            localStorage.setItem(`capeye_vehicle_${currentVehicle.stockNo}`, JSON.stringify(vehicleProfile));
-            
-            // Remove draft
-            localStorage.removeItem(`capeye_stage1_${currentVehicle.stockNo}`);
-            
-            // Trigger workflow update
-            localStorage.setItem('capeye_workflow_update', JSON.stringify({
-                stockNo: currentVehicle.stockNo,
-                fromStage: 1,
-                toStage: parseInt(formData.nextStage),
-                timestamp: submissionDateTime.toISOString(),
-                action: 'stage_complete'
-            }));
-            
-            showStatus(`Stage 1 completed at ${formattedDateTime}! Vehicle forwarded to Stage ${formData.nextStage}.`, 'success');
-            
-            // Disable form
-            document.getElementById('intakeForm').querySelectorAll('input, select, textarea, button').forEach(el => {
-                el.disabled = true;
-            });
-            
-            // Redirect after delay
-            setTimeout(() => {
-                window.location.href = 'workflow.html';
-            }, 2500);
-        }
+// Save Form Data (Submit)
+function saveFormData(event) {
+    event.preventDefault();
+    
+    if (!currentVehicle) {
+        showStatus('Please select a vehicle first', 'error');
+        return;
+    }
+    
+    // Validate signature
+    if (isSignatureEmpty()) {
+        showStatus('Please provide a signature', 'error');
+        return;
+    }
+    
+    // AUTO DATE STAMP
+    const submissionDateTime = new Date();
+    const formattedDateTime = submissionDateTime.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    const formData = collectFormData();
+    formData.completedAt = submissionDateTime.toISOString();
+    formData.formattedCompletedAt = formattedDateTime;
+    formData.isComplete = true;
+    formData.stage = 1;
+    formData.stageName = 'Vehicle Intake';
+    
+    // Show date stamp in UI
+    document.getElementById('dateStampText').textContent = formattedDateTime;
+    document.getElementById('dateStampDisplay').style.display = 'inline-flex';
+    
+    // Save to vehicle profile
+    const vehicleProfile = JSON.parse(localStorage.getItem(`capeye_vehicle_${currentVehicle.stockNo}`) || '{}');
+    vehicleProfile.stage1 = formData;
+    vehicleProfile.currentStage = parseInt(formData.nextStage);
+    vehicleProfile.lastUpdated = submissionDateTime.toISOString();
+    vehicleProfile.stageHistory = vehicleProfile.stageHistory || [];
+    vehicleProfile.stageHistory.push({
+        stage: 1,
+        stageName: 'Vehicle Intake',
+        completedAt: submissionDateTime.toISOString(),
+        completedBy: formData.inspectedBy,
+        nextStage: parseInt(formData.nextStage)
+    });
+    
+    localStorage.setItem(`capeye_vehicle_${currentVehicle.stockNo}`, JSON.stringify(vehicleProfile));
+    
+    // Remove draft
+    localStorage.removeItem(`capeye_stage1_${currentVehicle.stockNo}`);
+    
+    // Trigger workflow update
+    localStorage.setItem('capeye_workflow_update', JSON.stringify({
+        stockNo: currentVehicle.stockNo,
+        fromStage: 1,
+        toStage: parseInt(formData.nextStage),
+        timestamp: submissionDateTime.toISOString(),
+        action: 'stage_complete'
+    }));
+    
+    showStatus(`Stage 1 completed at ${formattedDateTime}! Vehicle forwarded to Stage ${formData.nextStage}.`, 'success');
+    
+    // Disable form
+    document.getElementById('intakeForm').querySelectorAll('input, select, textarea, button').forEach(el => {
+        el.disabled = true;
+    });
+    
+    // Redirect after delay
+    setTimeout(() => {
+        window.location.href = 'workflow.html';
+    }, 2500);
+}
 
-        // Print Form
-        function printForm() {
-            window.print();
-        }
+// Print Form
+function printForm() {
+    window.print();
+}
 
-        // Show Status Message
-        function showStatus(message, type) {
-            const statusEl = document.getElementById('statusMessage');
-            const textEl = document.getElementById('statusText');
-            
-            statusEl.className = `status-message ${type}`;
-            textEl.textContent = message;
-            
-            setTimeout(() => {
-                statusEl.className = 'status-message';
-            }, 5000);
-        }
+// Show Status Message
+function showStatus(message, type) {
+    const statusEl = document.getElementById('statusMessage');
+    const textEl = document.getElementById('statusText');
+    
+    statusEl.className = `status-message ${type}`;
+    textEl.textContent = message;
+    
+    setTimeout(() => {
+        statusEl.className = 'status-message';
+    }, 5000);
+}
 
-        // Utility Functions
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('en-GB', { 
-                style: 'currency', 
-                currency: 'GBP',
-                maximumFractionDigits: 0 
-            }).format(value || 0);
-        }
+// Utility Functions
+function formatCurrency(value) {
+    return new Intl.NumberFormat('en-GB', { 
+        style: 'currency', 
+        currency: 'GBP',
+        maximumFractionDigits: 0 
+    }).format(value || 0);
+}
 
-        function formatDateForInput(dateString) {
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) return '';
-            return date.toISOString().split('T')[0];
-        }
+function formatDateForInput(dateString) {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    return date.toISOString().split('T')[0];
+}
     </script>
 </body>
 </html>
