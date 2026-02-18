@@ -227,21 +227,27 @@
             color: #dc2626;
         }
         
-        /* KPI Cards */
+        /* KPI Cards - Compact */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 24px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
         
         .kpi-card {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 10px;
+            padding: 16px;
             position: relative;
             overflow: hidden;
+            transition: all 0.2s;
+        }
+        
+        .kpi-card:hover {
+            border-color: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
         }
         
         .kpi-card::before {
@@ -250,7 +256,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
+            height: 2px;
             background: linear-gradient(90deg, var(--kpi-color, #3b82f6), transparent);
         }
         
@@ -258,39 +264,39 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         
         .kpi-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             background: rgba(255,255,255,0.03);
             color: var(--kpi-color, #3b82f6);
         }
         
         .kpi-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--cy-text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         
         .kpi-value {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--cy-text-primary);
         }
         
         .kpi-change {
-            font-size: 12px;
-            margin-top: 8px;
+            font-size: 11px;
+            margin-top: 6px;
             display: flex;
             align-items: center;
             gap: 4px;
@@ -300,21 +306,21 @@
         .kpi-change.negative { color: #dc2626; }
         .kpi-change.neutral { color: var(--cy-text-muted); }
         
-        /* Alert Cards - Enhanced */
+        /* Alert Cards - Compact Grid */
         .alerts-section {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
         
         .alerts-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
         
         .alerts-title {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: var(--cy-text-primary);
             display: flex;
@@ -325,17 +331,17 @@
         .alerts-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+            gap: 12px;
         }
         
         .alert-card {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 10px;
+            padding: 14px;
             display: flex;
-            align-items: flex-start;
-            gap: 16px;
+            align-items: center;
+            gap: 12px;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
@@ -345,7 +351,7 @@
         .alert-card:hover {
             border-color: var(--alert-color, #dc2626);
             background: rgba(255,255,255,0.02);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
         
         .alert-card::before {
@@ -354,38 +360,38 @@
             left: 0;
             top: 0;
             bottom: 0;
-            width: 4px;
+            width: 3px;
             background: var(--alert-color, #dc2626);
         }
         
         .alert-card.critical {
             --alert-color: #dc2626;
-            background: rgba(220, 38, 38, 0.05);
+            background: rgba(220, 38, 38, 0.03);
         }
         
         .alert-card.warning {
             --alert-color: #f59e0b;
-            background: rgba(245, 158, 11, 0.05);
+            background: rgba(245, 158, 11, 0.03);
         }
         
         .alert-card.info {
             --alert-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.05);
+            background: rgba(59, 130, 246, 0.03);
         }
         
         .alert-card.success {
             --alert-color: #10b981;
-            background: rgba(16, 185, 129, 0.05);
+            background: rgba(16, 185, 129, 0.03);
         }
         
         .alert-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 16px;
             background: rgba(220, 38, 38, 0.1);
             color: #dc2626;
             flex-shrink: 0;
@@ -412,141 +418,209 @@
         }
         
         .alert-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--cy-text-primary);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .alert-desc {
-            font-size: 12px;
-            color: var(--cy-text-muted);
-            line-height: 1.4;
-        }
-        
-        .alert-meta {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 8px;
             font-size: 11px;
             color: var(--cy-text-muted);
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .alert-count {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 700;
             color: var(--alert-color, #dc2626);
-            margin-left: auto;
-            padding-left: 16px;
         }
         
         .alert-trend {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            font-size: 11px;
+            gap: 3px;
+            font-size: 10px;
             font-weight: 500;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.05);
         }
         
         .alert-trend.up { color: #10b981; }
         .alert-trend.down { color: #dc2626; }
         
-        /* Charts */
-        .chart-grid {
+        /* Charts - Compact with Hover Popup */
+        .charts-section {
+            margin-bottom: 20px;
+        }
+        
+        .charts-row {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        
-        .chart-card {
-            background: var(--cy-bg-secondary);
-            border: 1px solid var(--cy-border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-        
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
             margin-bottom: 16px;
         }
         
-        .chart-title {
+        .chart-card-small {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 10px;
+            padding: 16px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        .chart-card-small:hover {
+            border-color: rgba(255,255,255,0.1);
+        }
+        
+        .chart-header-small {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .chart-title-small {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--cy-text-primary);
         }
         
-        .chart-container {
+        .chart-container-small {
             position: relative;
-            height: 300px;
-        }
-        
-        .chart-legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            margin-top: 12px;
-        }
-        
-        .legend-item {
+            height: 140px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            background: var(--cy-bg-tertiary);
-            border-radius: 20px;
-            font-size: 11px;
-            color: var(--cy-text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
+            justify-content: center;
         }
         
-        .legend-item:hover {
-            background: rgba(255,255,255,0.05);
+        .chart-center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+        }
+        
+        .chart-center-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
             color: var(--cy-text-primary);
         }
         
-        .legend-color {
+        .chart-center-label {
+            font-size: 10px;
+            color: var(--cy-text-muted);
+            text-transform: uppercase;
+        }
+        
+        /* Hover Popup */
+        .chart-popup {
+            position: absolute;
+            background: rgba(26, 26, 36, 0.98);
+            border: 1px solid var(--cy-border);
+            border-radius: 8px;
+            padding: 12px;
+            min-width: 200px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            pointer-events: none;
+        }
+        
+        .chart-card-small:hover .chart-popup {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .chart-popup-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--cy-text-primary);
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--cy-border);
+        }
+        
+        .chart-popup-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            font-size: 11px;
+        }
+        
+        .chart-popup-color {
             width: 8px;
             height: 8px;
             border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        /* Larger Charts Row */
+        .charts-row-large {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        .chart-card-large {
+            background: var(--cy-bg-secondary);
+            border: 1px solid var(--cy-border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        
+        .chart-container-large {
+            position: relative;
+            height: 250px;
         }
         
         /* Tables */
+        .tables-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
         .table-card {
             background: var(--cy-bg-secondary);
             border: 1px solid var(--cy-border);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 10px;
+            padding: 16px;
         }
         
         .table-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
         
         .cy-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
         }
         
         .cy-table th {
             text-align: left;
-            padding: 12px;
-            font-size: 11px;
+            padding: 10px;
+            font-size: 10px;
             font-weight: 600;
             color: var(--cy-text-muted);
             text-transform: uppercase;
@@ -556,7 +630,7 @@
         }
         
         .cy-table td {
-            padding: 12px;
+            padding: 10px;
             border-bottom: 1px solid var(--cy-border);
             color: var(--cy-text-secondary);
         }
@@ -575,7 +649,7 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
             font-size: 10px;
             font-weight: 600;
@@ -587,22 +661,61 @@
         .badge-sold { background: rgba(100, 116, 139, 0.1); color: #64748b; }
         .badge-stuck { background: rgba(220, 38, 38, 0.1); color: #dc2626; }
         
-        /* Pulse animation for live indicator */
+        /* Pulse animation */
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
         
+        /* Mini legend */
+        .mini-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            justify-content: center;
+        }
+        
+        .mini-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: var(--cy-text-muted);
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .mini-legend-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--cy-text-primary);
+        }
+        
+        .mini-legend-color {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        
         /* Responsive */
+        @media (max-width: 1400px) {
+            .charts-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        
         @media (max-width: 1200px) {
             .kpi-grid { grid-template-columns: repeat(2, 1fr); }
             .alerts-grid { grid-template-columns: repeat(2, 1fr); }
-            .chart-grid { grid-template-columns: 1fr; }
+            .charts-row { grid-template-columns: repeat(2, 1fr); }
+            .charts-row-large { grid-template-columns: 1fr; }
+            .tables-row { grid-template-columns: 1fr; }
         }
         
         @media (max-width: 768px) {
             .kpi-grid { grid-template-columns: 1fr; }
             .alerts-grid { grid-template-columns: 1fr; }
+            .charts-row { grid-template-columns: 1fr; }
             .filter-row { flex-direction: column; align-items: stretch; }
             .filter-group { width: 100%; }
         }
@@ -727,21 +840,21 @@
     </div>
 
     <!-- Main Content -->
-    <main style="max-width: 1600px; margin: 0 auto; padding: 24px;">
+    <main style="max-width: 1600px; margin: 0 auto; padding: 20px 24px;">
         
         <!-- Page Header -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
             <div>
-                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #f8fafc; margin-bottom: 6px;">
+                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #f8fafc; margin-bottom: 4px;">
                     Business <span style="color: #3b82f6;">Intelligence</span>
                 </h1>
-                <p style="color: #94a3b8; font-size: 14px;">Real-time analytics and performance insights</p>
+                <p style="color: #94a3b8; font-size: 13px;">Real-time analytics and performance insights</p>
             </div>
             
             <div style="display: flex; gap: 16px; align-items: center;">
                 <div style="text-align: right;">
-                    <div style="font-family: 'Space Grotesk'; font-size: 14px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Last Updated</div>
-                    <div style="font-size: 13px; color: #94a3b8;" id="lastUpdated">--:--</div>
+                    <div style="font-family: 'Space Grotesk'; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Last Updated</div>
+                    <div style="font-size: 12px; color: #94a3b8;" id="lastUpdated">--:--</div>
                 </div>
             </div>
         </div>
@@ -752,13 +865,13 @@
                 <div class="alerts-title">
                     <i class="fas fa-bell" style="color: #f59e0b;"></i>
                     Actionable Alerts
-                    <span id="totalAlertsBadge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: none;">0</span>
+                    <span id="totalAlertsBadge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; display: none;">0</span>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <button onclick="acknowledgeAllAlerts()" style="padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; font-size: 12px; color: #94a3b8; cursor: pointer;">
+                    <button onclick="acknowledgeAllAlerts()" style="padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; font-size: 11px; color: #94a3b8; cursor: pointer;">
                         <i class="fas fa-check-double"></i> Acknowledge All
                     </button>
-                    <button onclick="toggleAlertSettings()" style="padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; font-size: 12px; color: #94a3b8; cursor: pointer;">
+                    <button onclick="toggleAlertSettings()" style="padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; font-size: 11px; color: #94a3b8; cursor: pointer;">
                         <i class="fas fa-cog"></i> Settings
                     </button>
                 </div>
@@ -836,61 +949,131 @@
             </div>
         </div>
 
-        <!-- Charts Row 1 -->
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Stock by Status</h3>
-                    <button onclick="exportChart('status')" style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; color: var(--cy-text-muted); font-size: 12px; cursor: pointer;">
-                        <i class="fas fa-download"></i>
-                    </button>
+        <!-- Compact Charts Row -->
+        <div class="charts-section">
+            <div class="charts-row">
+                <!-- Status Doughnut -->
+                <div class="chart-card-small">
+                    <div class="chart-header-small">
+                        <h3 class="chart-title-small">Stock Status</h3>
+                        <i class="fas fa-ellipsis-h" style="color: #64748b; cursor: pointer;"></i>
+                    </div>
+                    <div class="chart-container-small">
+                        <canvas id="statusChart"></canvas>
+                        <div class="chart-center-text">
+                            <div class="chart-center-value" id="statusTotal">0</div>
+                            <div class="chart-center-label">Total</div>
+                        </div>
+                    </div>
+                    <div class="mini-legend" id="statusLegend"></div>
+                    
+                    <!-- Hover Popup -->
+                    <div class="chart-popup" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <div class="chart-popup-title">Stock Status Breakdown</div>
+                        <div id="statusPopupContent"></div>
+                    </div>
                 </div>
-                <div class="chart-container">
-                    <canvas id="statusChart"></canvas>
+
+                <!-- Location Pie -->
+                <div class="chart-card-small">
+                    <div class="chart-header-small">
+                        <h3 class="chart-title-small">By Location</h3>
+                        <i class="fas fa-ellipsis-h" style="color: #64748b; cursor: pointer;"></i>
+                    </div>
+                    <div class="chart-container-small">
+                        <canvas id="locationChart"></canvas>
+                        <div class="chart-center-text">
+                            <div class="chart-center-value" id="locationTotal">0</div>
+                            <div class="chart-center-label">Sites</div>
+                        </div>
+                    </div>
+                    <div class="mini-legend" id="locationLegend"></div>
+                    
+                    <!-- Hover Popup -->
+                    <div class="chart-popup" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <div class="chart-popup-title">Location Distribution</div>
+                        <div id="locationPopupContent"></div>
+                    </div>
                 </div>
-                <div class="chart-legend" id="statusLegend"></div>
-            </div>
-            
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Stock by Location</h3>
-                    <button onclick="exportChart('location')" style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; color: var(--cy-text-muted); font-size: 12px; cursor: pointer;">
-                        <i class="fas fa-download"></i>
-                    </button>
+
+                <!-- Fuel Type -->
+                <div class="chart-card-small">
+                    <div class="chart-header-small">
+                        <h3 class="chart-title-small">Fuel Type</h3>
+                        <i class="fas fa-ellipsis-h" style="color: #64748b; cursor: pointer;"></i>
+                    </div>
+                    <div class="chart-container-small">
+                        <canvas id="fuelChart"></canvas>
+                        <div class="chart-center-text">
+                            <div class="chart-center-value" id="fuelTotal">0</div>
+                            <div class="chart-center-label">Types</div>
+                        </div>
+                    </div>
+                    <div class="mini-legend" id="fuelLegend"></div>
+                    
+                    <!-- Hover Popup -->
+                    <div class="chart-popup" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <div class="chart-popup-title">Fuel Type Distribution</div>
+                        <div id="fuelPopupContent"></div>
+                    </div>
                 </div>
-                <div class="chart-container">
-                    <canvas id="locationChart"></canvas>
+
+                <!-- Year Distribution -->
+                <div class="chart-card-small">
+                    <div class="chart-header-small">
+                        <h3 class="chart-title-small">Year Range</h3>
+                        <i class="fas fa-ellipsis-h" style="color: #64748b; cursor: pointer;"></i>
+                    </div>
+                    <div class="chart-container-small">
+                        <canvas id="yearChart"></canvas>
+                        <div class="chart-center-text">
+                            <div class="chart-center-value" id="yearTotal">0</div>
+                            <div class="chart-center-label">Years</div>
+                        </div>
+                    </div>
+                    <div class="mini-legend" id="yearLegend"></div>
+                    
+                    <!-- Hover Popup -->
+                    <div class="chart-popup" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <div class="chart-popup-title">Year Distribution</div>
+                        <div id="yearPopupContent"></div>
+                    </div>
                 </div>
-                <div class="chart-legend" id="locationLegend"></div>
             </div>
         </div>
 
-        <!-- Charts Row 2 -->
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Vehicles by Make (Top 10)</h3>
+        <!-- Larger Charts -->
+        <div class="charts-row-large" style="margin-bottom: 20px;">
+            <div class="chart-card-large">
+                <div class="chart-header-small" style="margin-bottom: 16px;">
+                    <h3 class="chart-title-small">Vehicles by Make (Top 10)</h3>
+                    <button onclick="exportChart('make')" style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; color: var(--cy-text-muted); font-size: 11px; cursor: pointer;">
+                        <i class="fas fa-download"></i> Export
+                    </button>
                 </div>
-                <div class="chart-container">
+                <div class="chart-container-large">
                     <canvas id="makeChart"></canvas>
                 </div>
             </div>
             
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Stock Aging Distribution</h3>
+            <div class="chart-card-large">
+                <div class="chart-header-small" style="margin-bottom: 16px;">
+                    <h3 class="chart-title-small">Stock Aging Distribution</h3>
+                    <button onclick="exportChart('aging')" style="padding: 6px 12px; background: var(--cy-bg-tertiary); border: 1px solid var(--cy-border); border-radius: 6px; color: var(--cy-text-muted); font-size: 11px; cursor: pointer;">
+                        <i class="fas fa-download"></i> Export
+                    </button>
                 </div>
-                <div class="chart-container">
+                <div class="chart-container-large">
                     <canvas id="agingChart"></canvas>
                 </div>
             </div>
         </div>
 
         <!-- Tables -->
-        <div class="chart-grid">
+        <div class="tables-row">
             <div class="table-card">
                 <div class="table-header">
-                    <h3 class="chart-title">Longest in Stock (Aging Report)</h3>
+                    <h3 class="chart-title-small">Longest in Stock (Aging Report)</h3>
                     <span class="badge badge-stuck" id="stuckCount">0 vehicles >60 days</span>
                 </div>
                 <div style="overflow-x: auto;">
@@ -913,7 +1096,7 @@
             
             <div class="table-card">
                 <div class="table-header">
-                    <h3 class="chart-title">Top Makes by Value</h3>
+                    <h3 class="chart-title-small">Top Makes by Value</h3>
                 </div>
                 <div style="overflow-x: auto;">
                     <table class="cy-table">
@@ -956,6 +1139,15 @@
             'Unknown': '#3b82f6'
         };
         
+        // Fuel colors
+        const fuelColors = {
+            'Diesel': '#3b82f6',
+            'Petrol': '#ef4444',
+            'Electric': '#10b981',
+            'Hybrid': '#f59e0b',
+            'Plug-in Hybrid': '#8b5cf6'
+        };
+        
         document.addEventListener('DOMContentLoaded', function() {
             loadCSVData();
         });
@@ -963,40 +1155,65 @@
         function loadCSVData() {
             showLoading(true);
             
-            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                transformHeader: function(header) {
-                    return header.trim();
-                },
-                complete: function(results) {
-                    console.log('CSV loaded:', results.data.length, 'rows');
-                    
-                    if (results.data && results.data.length > 0) {
-                        allVehicles = results.data.map((row, index) => {
-                            return normalizeVehicleData(row, index);
-                        }).filter(v => v.stockNo || v.registration);
+            // Try to load from the correct CSV filename
+            const csvFiles = [
+                'Auto Capital - Stock List-639068391990284525.csv',
+                'onetrue_table-4.csv',
+                'Auto Capital - Stock List.csv'
+            ];
+            
+            let loaded = false;
+            let attempts = 0;
+            
+            function tryLoadFile(filename) {
+                Papa.parse(filename, {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    transformHeader: function(header) {
+                        return header.trim();
+                    },
+                    complete: function(results) {
+                        if (loaded) return;
                         
-                        filteredVehicles = [...allVehicles];
-                        
-                        showLoading(false);
-                        showDataStatus(true, allVehicles.length);
-                        populateFilters();
-                        updateDashboard();
-                        
-                        document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
-                    } else {
-                        showLoading(false);
-                        showDataStatus(false, 0, 'No data found in CSV');
+                        if (results.data && results.data.length > 0) {
+                            loaded = true;
+                            console.log('CSV loaded:', filename, results.data.length, 'rows');
+                            
+                            allVehicles = results.data.map((row, index) => {
+                                return normalizeVehicleData(row, index);
+                            }).filter(v => v.stockNo || v.registration);
+                            
+                            filteredVehicles = [...allVehicles];
+                            
+                            showLoading(false);
+                            showDataStatus(true, allVehicles.length);
+                            populateFilters();
+                            updateDashboard();
+                            
+                            document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+                        } else {
+                            tryNext();
+                        }
+                    },
+                    error: function(error) {
+                        console.warn('Failed to load:', filename, error);
+                        tryNext();
                     }
-                },
-                error: function(error) {
-                    console.error('Error loading CSV:', error);
+                });
+            }
+            
+            function tryNext() {
+                attempts++;
+                if (attempts < csvFiles.length) {
+                    tryLoadFile(csvFiles[attempts]);
+                } else {
                     showLoading(false);
-                    showDataStatus(false, 0, 'Error loading data: ' + error.message);
+                    showDataStatus(false, 0, 'Could not load CSV. Please check file exists.');
                 }
-            });
+            }
+            
+            tryLoadFile(csvFiles[0]);
         }
         
         function normalizeVehicleData(row, index) {
@@ -1035,12 +1252,12 @@
                 colour: getValue('Colour', 'Color', 'colour', 'color') || '',
                 location: getValue('Location', 'location', 'Site') || 'Unknown',
                 status: getValue('Status', 'status') || 'In Stock',
+                fuelType: getValue('Fuel Type', 'FuelType', 'Fuel', 'fuelType') || 'Unknown',
                 dateInStock: dateInStock,
                 daysInStock: daysInStock,
                 costPrice: parsePrice(getValue('Cost Price', 'CostPrice', 'costPrice', 'Cost')),
                 retailPrice: parsePrice(getValue('Retail Price', 'RetailPrice', 'retailPrice', 'Retail')),
-                mileage: parseInt(getValue('Mileage', 'mileage')) || 0,
-                fuelType: getValue('Fuel Type', 'FuelType', 'fuel', 'Fuel') || ''
+                mileage: parseInt(getValue('Mileage', 'mileage')) || 0
             };
         }
         
@@ -1169,7 +1386,6 @@
         // ENHANCED ALERTS SYSTEM
         function updateAlerts() {
             const alerts = [];
-            const now = new Date();
             
             // 1. CRITICAL: Stuck vehicles >60 days
             const stuckVehicles = filteredVehicles.filter(v => v.daysInStock > alertSettings.stuckThreshold && v.status !== 'Sold');
@@ -1179,11 +1395,11 @@
                     type: 'critical',
                     icon: 'fa-exclamation-circle',
                     title: 'Stuck Vehicles',
-                    desc: `${stuckVehicles.length} vehicles over ${alertSettings.stuckThreshold} days in stock requiring immediate attention`,
+                    desc: `${stuckVehicles.length} vehicles over ${alertSettings.stuckThreshold} days`,
                     count: stuckVehicles.length,
                     value: totalValue,
                     trend: 'up',
-                    trendValue: '+3 this week',
+                    trendValue: '+3',
                     action: () => filterByAlert('stuck')
                 });
             }
@@ -1198,11 +1414,11 @@
                 alerts.push({
                     type: 'warning',
                     icon: 'fa-percentage',
-                    title: 'Low Margin Alert',
-                    desc: `${lowMargin.length} vehicles with margin below ${alertSettings.marginThreshold}% - review pricing strategy`,
+                    title: 'Low Margin',
+                    desc: `${lowMargin.length} vehicles below ${alertSettings.marginThreshold}% margin`,
                     count: lowMargin.length,
                     trend: 'neutral',
-                    trendValue: 'Check pricing',
+                    trendValue: 'Review',
                     action: () => filterByAlert('lowmargin')
                 });
             }
@@ -1214,15 +1430,15 @@
                     type: 'info',
                     icon: 'fa-truck',
                     title: 'In Transit',
-                    desc: `${inTransit.length} vehicles arriving soon - prepare intake workflow`,
+                    desc: `${inTransit.length} vehicles arriving soon`,
                     count: inTransit.length,
                     trend: 'up',
-                    trendValue: 'Incoming stock',
+                    trendValue: 'Incoming',
                     action: () => filterByAlert('transit')
                 });
             }
             
-            // 4. WARNING: Aging stock (45-60 days) - early warning
+            // 4. WARNING: Aging stock (45-60 days)
             const agingWarning = filteredVehicles.filter(v => 
                 v.daysInStock > alertSettings.agingWarning && 
                 v.daysInStock <= alertSettings.stuckThreshold && 
@@ -1233,15 +1449,15 @@
                     type: 'warning',
                     icon: 'fa-clock',
                     title: 'Aging Stock',
-                    desc: `${agingWarning.length} vehicles approaching stuck threshold (${alertSettings.agingWarning}+ days)`,
+                    desc: `${agingWarning.length} vehicles ${alertSettings.agingWarning}+ days`,
                     count: agingWarning.length,
                     trend: 'up',
-                    trendValue: 'Action needed',
+                    trendValue: 'Action',
                     action: () => filterByAlert('aging')
                 });
             }
             
-            // 5. CRITICAL: Negative margin (cost > retail)
+            // 5. CRITICAL: Negative margin
             const negativeMargin = filteredVehicles.filter(v => {
                 if (!v.costPrice || !v.retailPrice || v.status === 'Sold') return false;
                 return v.costPrice > v.retailPrice;
@@ -1251,18 +1467,17 @@
                     type: 'critical',
                     icon: 'fa-arrow-down',
                     title: 'Negative Margin',
-                    desc: `${negativeMargin.length} vehicles with cost price exceeding retail - immediate review required`,
+                    desc: `${negativeMargin.length} vehicles with cost > retail`,
                     count: negativeMargin.length,
                     trend: 'down',
-                    trendValue: 'Loss risk',
+                    trendValue: 'Urgent',
                     action: () => filterByAlert('negative')
                 });
             }
             
-            // 6. SUCCESS: Fast movers (sold within 14 days) - positive alert
+            // 6. SUCCESS: Fast movers
             const fastMovers = filteredVehicles.filter(v => {
                 if (v.status !== 'Sold' || !v.dateInStock) return false;
-                // Mock logic - in real system would check sale date vs stock date
                 return v.daysInStock <= 14;
             });
             if (fastMovers.length > 0) {
@@ -1270,10 +1485,10 @@
                     type: 'success',
                     icon: 'fa-bolt',
                     title: 'Fast Movers',
-                    desc: `${fastMovers.length} vehicles sold within 14 days - high demand models identified`,
+                    desc: `${fastMovers.length} sold within 14 days`,
                     count: fastMovers.length,
                     trend: 'up',
-                    trendValue: 'Top performers',
+                    trendValue: 'Top',
                     action: () => filterByAlert('fast')
                 });
             }
@@ -1284,18 +1499,15 @@
             
             if (alerts.length === 0) {
                 container.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #64748b;">
-                        <i class="fas fa-check-circle" style="font-size: 48px; margin-bottom: 16px; color: #10b981;"></i>
-                        <p>No alerts - all systems normal</p>
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 32px; color: #64748b;">
+                        <i class="fas fa-check-circle" style="font-size: 40px; margin-bottom: 12px; color: #10b981;"></i>
+                        <p style="font-size: 13px;">No alerts - all systems normal</p>
                     </div>
                 `;
                 badge.style.display = 'none';
             } else {
-                // Sort by severity: critical first, then warning, then info, then success
                 const severityOrder = { critical: 0, warning: 1, info: 2, success: 3 };
                 alerts.sort((a, b) => severityOrder[a.type] - severityOrder[b.type]);
-                
-                // Limit to max alerts
                 const displayAlerts = alerts.slice(0, alertSettings.maxAlerts);
                 
                 container.innerHTML = displayAlerts.map(alert => `
@@ -1306,81 +1518,60 @@
                         <div class="alert-content">
                             <div class="alert-title">
                                 ${alert.title}
-                                ${alert.trend ? `<span class="alert-trend ${alert.trend}"><i class="fas fa-arrow-${alert.trend}"></i> ${alert.trendValue}</span>` : ''}
+                                <span class="alert-trend ${alert.trend}"><i class="fas fa-arrow-${alert.trend}"></i> ${alert.trendValue}</span>
                             </div>
                             <div class="alert-desc">${alert.desc}</div>
-                            ${alert.value ? `<div class="alert-meta">Total value: ${formatCurrency(alert.value)}</div>` : ''}
                         </div>
                         <div class="alert-count">${alert.count}</div>
                     </div>
                 `).join('');
                 
-                // Update badge
                 const criticalCount = alerts.filter(a => a.type === 'critical').length;
-                if (criticalCount > 0) {
-                    badge.textContent = criticalCount;
-                    badge.style.display = 'inline-block';
-                    badge.style.background = 'rgba(220, 38, 38, 0.2)';
-                    badge.style.color = '#dc2626';
-                } else {
-                    badge.textContent = alerts.length;
-                    badge.style.display = 'inline-block';
-                    badge.style.background = 'rgba(245, 158, 11, 0.2)';
-                    badge.style.color = '#f59e0b';
-                }
+                badge.textContent = criticalCount > 0 ? criticalCount : alerts.length;
+                badge.style.display = 'inline-block';
+                badge.style.background = criticalCount > 0 ? 'rgba(220, 38, 38, 0.2)' : 'rgba(245, 158, 11, 0.2)';
+                badge.style.color = criticalCount > 0 ? '#dc2626' : '#f59e0b';
             }
         }
         
         function filterByAlert(type) {
             switch(type) {
                 case 'stuck':
-                    // Filter to show stuck vehicles and sort by days
-                    document.getElementById('filterStatus').value = '';
-                    applyFilters();
-                    filteredVehicles = filteredVehicles.filter(v => v.daysInStock > alertSettings.stuckThreshold && v.status !== 'Sold');
+                    filteredVehicles = allVehicles.filter(v => v.daysInStock > alertSettings.stuckThreshold && v.status !== 'Sold');
                     filteredVehicles.sort((a, b) => b.daysInStock - a.daysInStock);
                     updateActiveFilters();
                     updateKPIs();
                     updateCharts();
                     updateTables();
-                    // Scroll to aging table
                     document.getElementById('agingTable').scrollIntoView({ behavior: 'smooth' });
                     break;
                 case 'lowmargin':
-                    alert('Filter applied: Low margin vehicles. Review pricing strategy for these items.');
+                    alert('Filter applied: Low margin vehicles');
                     break;
                 case 'transit':
                     document.getElementById('filterStatus').value = 'In Transit';
                     applyFilters();
                     break;
                 case 'aging':
-                    alert('Filter applied: Aging stock (45-60 days). Consider promotional pricing.');
+                    alert('Filter applied: Aging stock');
                     break;
                 case 'negative':
-                    alert('URGENT: Negative margin vehicles detected. Immediate pricing review required.');
+                    alert('URGENT: Negative margin vehicles detected');
                     break;
                 case 'fast':
-                    alert('Fast movers identified. Consider increasing stock of these models.');
+                    alert('Fast movers identified');
                     break;
             }
         }
         
         function acknowledgeAllAlerts() {
-            if (confirm('Acknowledge all current alerts? This will mark them as reviewed.')) {
-                // In a real system, this would update a database
-                // For now, we'll just show a confirmation
+            if (confirm('Acknowledge all current alerts?')) {
                 const badge = document.getElementById('totalAlertsBadge');
                 badge.style.display = 'none';
-                
-                // Visual feedback
-                const cards = document.querySelectorAll('.alert-card');
-                cards.forEach(card => {
+                document.querySelectorAll('.alert-card').forEach(card => {
                     card.style.opacity = '0.5';
                 });
-                
-                setTimeout(() => {
-                    alert('All alerts acknowledged. They will reappear if conditions persist on next refresh.');
-                }, 300);
+                setTimeout(() => alert('All alerts acknowledged'), 300);
             }
         }
         
@@ -1424,6 +1615,8 @@
         function updateCharts() {
             updateStatusChart();
             updateLocationChart();
+            updateFuelChart();
+            updateYearChart();
             updateMakeChart();
             updateAgingChart();
         }
@@ -1437,6 +1630,9 @@
                 statusCounts[status] = (statusCounts[status] || 0) + 1;
             });
             
+            const total = Object.values(statusCounts).reduce((a, b) => a + b, 0);
+            document.getElementById('statusTotal').textContent = total;
+            
             if (charts.status) charts.status.destroy();
             
             charts.status = new Chart(ctx, {
@@ -1446,22 +1642,22 @@
                     datasets: [{
                         data: Object.values(statusCounts),
                         backgroundColor: Object.keys(statusCounts).map(s => statusColors[s] || '#3b82f6'),
-                        borderWidth: 0
+                        borderWidth: 0,
+                        hoverOffset: 4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    cutout: '70%',
                     plugins: {
                         legend: { display: false },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    const label = context.label || '';
                                     const value = context.parsed || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                     const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${value} (${percentage}%)`;
+                                    return ` ${context.label}: ${value} (${percentage}%)`;
                                 }
                             }
                         }
@@ -1476,14 +1672,29 @@
                 }
             });
             
-            // Custom legend
+            // Mini legend
             const legend = document.getElementById('statusLegend');
-            legend.innerHTML = Object.keys(statusCounts).map((status, i) => `
-                <div class="legend-item" onclick="document.getElementById('filterStatus').value='${status}';applyFilters()">
-                    <span class="legend-color" style="background: ${statusColors[status] || '#3b82f6'}"></span>
-                    <span>${status} (${statusCounts[status]})</span>
+            legend.innerHTML = Object.keys(statusCounts).map(status => `
+                <div class="mini-legend-item" onclick="document.getElementById('filterStatus').value='${status}';applyFilters()">
+                    <span class="mini-legend-color" style="background: ${statusColors[status] || '#3b82f6'}"></span>
+                    <span>${status}</span>
                 </div>
             `).join('');
+            
+            // Popup content
+            const popupContent = document.getElementById('statusPopupContent');
+            popupContent.innerHTML = Object.entries(statusCounts).map(([status, count]) => {
+                const percentage = ((count / total) * 100).toFixed(1);
+                return `
+                    <div class="chart-popup-item">
+                        <div style="display: flex; align-items: center;">
+                            <span class="chart-popup-color" style="background: ${statusColors[status] || '#3b82f6'}"></span>
+                            <span style="color: #94a3b8;">${status}</span>
+                        </div>
+                        <span style="color: #f8fafc; font-weight: 600;">${count} (${percentage}%)</span>
+                    </div>
+                `;
+            }).join('');
         }
         
         function updateLocationChart() {
@@ -1495,26 +1706,29 @@
                 locationCounts[loc] = (locationCounts[loc] || 0) + 1;
             });
             
-            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316'];
+            const total = Object.values(locationCounts).reduce((a, b) => a + b, 0);
+            document.getElementById('locationTotal').textContent = Object.keys(locationCounts).length;
+            
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
             
             if (charts.location) charts.location.destroy();
             
             charts.location = new Chart(ctx, {
-                type: 'pie',
+                type: 'doughnut',
                 data: {
                     labels: Object.keys(locationCounts),
                     datasets: [{
                         data: Object.values(locationCounts),
                         backgroundColor: Object.keys(locationCounts).map((_, i) => colors[i % colors.length]),
-                        borderWidth: 0
+                        borderWidth: 0,
+                        hoverOffset: 4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    cutout: '70%',
+                    plugins: { legend: { display: false } },
                     onClick: (e, elements) => {
                         if (elements.length > 0) {
                             const location = Object.keys(locationCounts)[elements[0].index];
@@ -1525,14 +1739,153 @@
                 }
             });
             
-            // Custom legend
+            // Mini legend
             const legend = document.getElementById('locationLegend');
-            legend.innerHTML = Object.keys(locationCounts).map((loc, i) => `
-                <div class="legend-item" onclick="document.getElementById('filterLocation').value='${loc}';applyFilters()">
-                    <span class="legend-color" style="background: ${colors[i % colors.length]}"></span>
-                    <span>${loc} (${locationCounts[loc]})</span>
+            legend.innerHTML = Object.keys(locationCounts).slice(0, 3).map((loc, i) => `
+                <div class="mini-legend-item" onclick="document.getElementById('filterLocation').value='${loc}';applyFilters()">
+                    <span class="mini-legend-color" style="background: ${colors[i % colors.length]}"></span>
+                    <span>${loc}</span>
+                </div>
+            `).join('') + (Object.keys(locationCounts).length > 3 ? `<span style="font-size: 10px; color: #64748b;">+${Object.keys(locationCounts).length - 3} more</span>` : '');
+            
+            // Popup content
+            const popupContent = document.getElementById('locationPopupContent');
+            popupContent.innerHTML = Object.entries(locationCounts).map(([loc, count], i) => {
+                const percentage = ((count / total) * 100).toFixed(1);
+                return `
+                    <div class="chart-popup-item">
+                        <div style="display: flex; align-items: center;">
+                            <span class="chart-popup-color" style="background: ${colors[i % colors.length]}"></span>
+                            <span style="color: #94a3b8;">${loc}</span>
+                        </div>
+                        <span style="color: #f8fafc; font-weight: 600;">${count} (${percentage}%)</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateFuelChart() {
+            const ctx = document.getElementById('fuelChart').getContext('2d');
+            const fuelCounts = {};
+            
+            filteredVehicles.forEach(v => {
+                const fuel = v.fuelType || 'Unknown';
+                fuelCounts[fuel] = (fuelCounts[fuel] || 0) + 1;
+            });
+            
+            const total = Object.values(fuelCounts).reduce((a, b) => a + b, 0);
+            document.getElementById('fuelTotal').textContent = Object.keys(fuelCounts).length;
+            
+            if (charts.fuel) charts.fuel.destroy();
+            
+            charts.fuel = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(fuelCounts),
+                    datasets: [{
+                        data: Object.values(fuelCounts),
+                        backgroundColor: Object.keys(fuelCounts).map(f => fuelColors[f] || '#64748b'),
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+            
+            // Mini legend
+            const legend = document.getElementById('fuelLegend');
+            legend.innerHTML = Object.keys(fuelCounts).slice(0, 3).map(fuel => `
+                <div class="mini-legend-item">
+                    <span class="mini-legend-color" style="background: ${fuelColors[fuel] || '#64748b'}"></span>
+                    <span>${fuel}</span>
                 </div>
             `).join('');
+            
+            // Popup content
+            const popupContent = document.getElementById('fuelPopupContent');
+            popupContent.innerHTML = Object.entries(fuelCounts).map(([fuel, count]) => {
+                const percentage = ((count / total) * 100).toFixed(1);
+                return `
+                    <div class="chart-popup-item">
+                        <div style="display: flex; align-items: center;">
+                            <span class="chart-popup-color" style="background: ${fuelColors[fuel] || '#64748b'}"></span>
+                            <span style="color: #94a3b8;">${fuel}</span>
+                        </div>
+                        <span style="color: #f8fafc; font-weight: 600;">${count} (${percentage}%)</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateYearChart() {
+            const ctx = document.getElementById('yearChart').getContext('2d');
+            const yearCounts = {};
+            
+            filteredVehicles.forEach(v => {
+                const year = v.year || 'Unknown';
+                if (year !== 'Unknown') {
+                    yearCounts[year] = (yearCounts[year] || 0) + 1;
+                }
+            });
+            
+            const sortedYears = Object.keys(yearCounts).sort((a, b) => b - a).slice(0, 5);
+            const limitedCounts = {};
+            sortedYears.forEach(y => limitedCounts[y] = yearCounts[y]);
+            
+            const total = Object.values(limitedCounts).reduce((a, b) => a + b, 0);
+            document.getElementById('yearTotal').textContent = sortedYears.length;
+            
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+            
+            if (charts.year) charts.year.destroy();
+            
+            charts.year = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: sortedYears,
+                    datasets: [{
+                        data: Object.values(limitedCounts),
+                        backgroundColor: colors,
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+            
+            // Mini legend
+            const legend = document.getElementById('yearLegend');
+            legend.innerHTML = sortedYears.slice(0, 3).map((year, i) => `
+                <div class="mini-legend-item">
+                    <span class="mini-legend-color" style="background: ${colors[i]}"></span>
+                    <span>${year}</span>
+                </div>
+            `).join('');
+            
+            // Popup content
+            const popupContent = document.getElementById('yearPopupContent');
+            popupContent.innerHTML = Object.entries(limitedCounts).map(([year, count], i) => {
+                const percentage = ((count / total) * 100).toFixed(1);
+                return `
+                    <div class="chart-popup-item">
+                        <div style="display: flex; align-items: center;">
+                            <span class="chart-popup-color" style="background: ${colors[i]}"></span>
+                            <span style="color: #94a3b8;">${year}</span>
+                        </div>
+                        <span style="color: #f8fafc; font-weight: 600;">${count} (${percentage}%)</span>
+                    </div>
+                `;
+            }).join('');
         }
         
         function updateMakeChart() {
@@ -1564,18 +1917,16 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
                         y: {
                             beginAtZero: true,
                             grid: { color: 'rgba(255,255,255,0.06)' },
-                            ticks: { color: '#64748b' }
+                            ticks: { color: '#64748b', font: { size: 11 } }
                         },
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#64748b' }
+                            ticks: { color: '#64748b', font: { size: 11 } }
                         }
                     },
                     onClick: (e, elements) => {
@@ -1623,18 +1974,16 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
                         y: {
                             beginAtZero: true,
                             grid: { color: 'rgba(255,255,255,0.06)' },
-                            ticks: { color: '#64748b' }
+                            ticks: { color: '#64748b', font: { size: 11 } }
                         },
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#64748b' }
+                            ticks: { color: '#64748b', font: { size: 11 } }
                         }
                     }
                 }
@@ -1642,23 +1991,23 @@
         }
         
         function updateTables() {
-            // Aging table - longest in stock
+            // Aging table
             const stuckVehicles = filteredVehicles
                 .filter(v => v.daysInStock > 0)
                 .sort((a, b) => b.daysInStock - a.daysInStock)
                 .slice(0, 10);
             
-            document.getElementById('stuckCount').textContent = `${filteredVehicles.filter(v => v.daysInStock > alertSettings.stuckThreshold).length} vehicles >${alertSettings.stuckThreshold} days`;
+            document.getElementById('stuckCount').textContent = `${filteredVehicles.filter(v => v.daysInStock > alertSettings.stuckThreshold).length} >${alertSettings.stuckThreshold} days`;
             
             const agingTbody = document.getElementById('agingTable');
             if (stuckVehicles.length > 0) {
                 agingTbody.innerHTML = stuckVehicles.map(v => `
                     <tr>
-                        <td><span class="font-medium text-white">${v.stockNo || 'N/A'}</span></td>
+                        <td><span style="font-weight: 600; color: #f8fafc;">${v.stockNo || 'N/A'}</span></td>
                         <td>${v.make || 'Unknown'} ${v.model || ''}</td>
                         <td>${v.location || 'Unknown'}</td>
                         <td><span class="${v.daysInStock > 90 ? 'text-red-400' : v.daysInStock > 60 ? 'text-orange-400' : 'text-yellow-400'} font-semibold">${v.daysInStock}</span></td>
-                        <td class="text-white">${formatCurrency(v.costPrice)}</td>
+                        <td style="color: #f8fafc;">${formatCurrency(v.costPrice)}</td>
                     </tr>
                 `).join('');
             } else {
@@ -1684,9 +2033,9 @@
             if (sortedMakes.length > 0) {
                 makesTbody.innerHTML = sortedMakes.map(([make, data]) => `
                     <tr>
-                        <td class="font-medium text-white">${make}</td>
+                        <td style="font-weight: 600; color: #f8fafc;">${make}</td>
                         <td>${data.count}</td>
-                        <td class="text-white">${formatCurrency(data.value)}</td>
+                        <td style="color: #f8fafc;">${formatCurrency(data.value)}</td>
                         <td>${formatCurrency(data.value / data.count)}</td>
                     </tr>
                 `).join('');
@@ -1710,6 +2059,10 @@
         function logout() {
             localStorage.removeItem('capeye_session');
             window.location.href = './login.html';
+        }
+        
+        function exportChart(type) {
+            alert(`Export ${type} chart - functionality to be implemented`);
         }
         
         // Search debounce
