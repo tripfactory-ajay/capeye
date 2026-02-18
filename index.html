@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Papa Parse for CSV loading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
         
@@ -1226,24 +1228,118 @@
     </main>
 
     <script>
+        // Global variables
+        let allVehicles = [];
+        let salesChart, statusChart;
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            const session = JSON.parse(localStorage.getItem('capeye_session') || '{}');
-            
+            loadDataFromCSV();
+        });
+
+        // Load data from CSV files - FIXED PATHS
+        async function loadDataFromCSV() {
+            try {
+                // CSV files are in same /capeye/ directory as HTML
+                const stockCsvPath = 'Auto Capital - Stock List-639068391990284525.csv';
+                
+                console.log('Loading stock data from:', stockCsvPath);
+                const response = await fetch(stockCsvPath);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const csvText = await response.text();
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        console.log('CSV loaded, rows:', results.data.length);
+                        allVehicles = results.data.map(normalizeVehicle).filter(v => v.stockNo);
+                        console.log('Normalized vehicles:', allVehicles.length);
+                        
+                        // Store in localStorage for other pages
+                        localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
+                        
+                        // Initialize dashboard
+                        initializeDashboard();
+                    },
+                    error: function(err) {
+                        console.error('CSV parse error:', err);
+                        showError('Error parsing CSV data');
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Failed to load CSV:', error);
+                showError('Failed to load stock data. Please ensure CSV file is uploaded.');
+            }
+        }
+
+        // Normalize vehicle data from CSV
+        function normalizeVehicle(row) {
+            const getValue = (keys) => {
+                for (let key of keys) {
+                    if (row[key] !== undefined && row[key] !== '') return row[key];
+                }
+                return '';
+            };
+
+            return {
+                stockNo: getValue(['Stock No', 'StockNo', 'Stock Number', 'StockNo.']),
+                registration: getValue(['Registration', 'Reg', 'Reg No', 'RegNo']),
+                make: getValue(['Make', 'Manufacturer', 'Brand']),
+                model: getValue(['Model', 'Model Name']),
+                variant: getValue(['Variant', 'Trim', 'Spec']),
+                year: getValue(['Year', 'Year Reg', 'Reg Year']),
+                colour: getValue(['Colour', 'Color', 'Body Colour']),
+                location: getValue(['Location', 'Vehicle Location', 'Current Location']),
+                status: getValue(['Status', 'Vehicle Status', 'Stock Status']),
+                dateInStock: getValue(['Date In Stock', 'DateInStock', 'In Stock Date']),
+                costPrice: parseFloat(getValue(['Cost Price', 'CostPrice', 'Cost'])?.toString().replace(/[£,]/g, '')) || 0,
+                retailPrice: parseFloat(getValue(['Retail Price', 'RetailPrice', 'Retail'])?.toString().replace(/[£,]/g, '')) || 0,
+                fuelType: getValue(['Fuel Type', 'Fuel', 'FuelType']),
+                transmission: getValue(['Transmission', 'Gearbox', 'Trans']),
+                mileage: getValue(['Mileage', 'Miles', 'Odometer']),
+                body: getValue(['Body', 'Body Type', 'Body Style']),
+                mot: getValue(['MOT', 'MOT Date', 'MOT Expiry']),
+                workflowStage: 1 // Default stage
+            };
+        }
+
+        // Initialize dashboard after data loaded
+        function initializeDashboard() {
             loadFilters();
             loadDashboardData();
             loadWorkflowPipeline();
             loadStuckVehicles();
             loadAlerts();
             initCharts();
-        });
+            
+            // Auto refresh every 30 seconds
+            setInterval(() => {
+                loadDashboardData();
+                loadWorkflowPipeline();
+                loadStuckVehicles();
+            }, 30000);
+        }
+
+        // Show error message
+        function showError(message) {
+            document.getElementById('stuckVehiclesTable').innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px; color: var(--accent-red);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 12px; display: block;"></i>
+                        <span style="font-size: 13px;">${message}</span>
+                    </td>
+                </tr>
+            `;
+        }
 
         // Charts
-        let salesChart, statusChart;
-        
         function initCharts() {
-            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            
             // Sales Chart
             const salesCtx = document.getElementById('salesChart').getContext('2d');
             salesChart = new Chart(salesCtx, {
@@ -1284,10 +1380,10 @@
             
             // Status Chart
             const statusData = {
-                'In Stock': vehicles.filter(v => v.status === 'In Stock').length,
-                'In Transit': vehicles.filter(v => v.status === 'In Transit').length,
-                'Sold': vehicles.filter(v => v.status === 'Sold').length,
-                'Other': vehicles.filter(v => !['In Stock', 'In Transit', 'Sold'].includes(v.status)).length
+                'In Stock': allVehicles.filter(v => v.status === 'In Stock').length,
+                'In Transit': allVehicles.filter(v => v.status === 'In Transit').length,
+                'Sold': allVehicles.filter(v => v.status === 'Sold').length,
+                'Other': allVehicles.filter(v => !['In Stock', 'In Transit', 'Sold'].includes(v.status)).length
             };
             
             const statusCtx = document.getElementById('statusChart').getContext('2d');
@@ -1318,9 +1414,7 @@
 
         // Filters
         function loadFilters() {
-            const vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
-            
-            const makes = [...new Set(vehicles.map(v => v.make).filter(Boolean))].sort();
+            const makes = [...new Set(allVehicles.map(v => v.make).filter(Boolean))].sort();
             const makeSelect = document.getElementById('filter-make');
             makes.forEach(make => {
                 const opt = document.createElement('option');
@@ -1329,7 +1423,7 @@
                 makeSelect.appendChild(opt);
             });
             
-            const locations = [...new Set(vehicles.map(v => v.location).filter(Boolean))].sort();
+            const locations = [...new Set(allVehicles.map(v => v.location).filter(Boolean))].sort();
             const locSelect = document.getElementById('filter-location');
             locations.forEach(loc => {
                 const opt = document.createElement('option');
@@ -1356,7 +1450,7 @@
         }
 
         function getFilteredVehicles() {
-            let vehicles = JSON.parse(localStorage.getItem('capeye_vehicles') || '[]');
+            let vehicles = allVehicles;
             
             const dateFrom = document.getElementById('filter-date-from').value;
             const dateTo = document.getElementById('filter-date-to').value;
@@ -1564,13 +1658,6 @@
             localStorage.removeItem('capeye_session');
             window.location.replace('./login.html');
         }
-
-        // Auto refresh
-        setInterval(() => {
-            loadDashboardData();
-            loadWorkflowPipeline();
-            loadStuckVehicles();
-        }, 30000);
     </script>
 </body>
 </html>
