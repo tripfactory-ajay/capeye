@@ -232,6 +232,28 @@
             color: #dc2626;
         }
         
+        /* Debug Panel */
+        .debug-panel {
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 24px;
+            font-size: 12px;
+            color: #94a3b8;
+            display: none;
+        }
+        
+        .debug-panel.show {
+            display: block;
+        }
+        
+        .debug-panel h4 {
+            color: #dc2626;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
         /* Pipeline Stages */
         .pipeline-container {
             display: grid;
@@ -888,6 +910,12 @@
         <p style="margin-top: 16px; color: #94a3b8; font-size: 14px;">Loading operations data...</p>
     </div>
 
+    <!-- Debug Panel -->
+    <div id="debugPanel" class="debug-panel">
+        <h4><i class="fas fa-bug"></i> Debug Info</h4>
+        <div id="debugContent"></div>
+    </div>
+
     <!-- Header -->
     <header class="cy-header">
         <div class="cy-header-content">
@@ -1258,11 +1286,16 @@
             initGlobalSearch();
         });
 
+        // FIXED: Better CSV loading with error handling
         function loadCSVData() {
             showLoading(true);
             
-            // Load stock data
-            Papa.parse('Auto Capital - Stock List-639068391990284525.csv', {
+            // Try to load from CSV first
+            const stockCsvPath = 'Auto Capital - Stock List-639068391990284525.csv';
+            
+            console.log('Loading stock data from:', stockCsvPath);
+            
+            Papa.parse(stockCsvPath, {
                 download: true,
                 header: true,
                 skipEmptyLines: true,
@@ -1270,12 +1303,15 @@
                     return header.trim();
                 },
                 complete: function(results) {
-                    console.log('CSV loaded:', results.data.length, 'rows');
+                    console.log('CSV loaded successfully:', results.data.length, 'rows');
                     
                     if (results.data && results.data.length > 0) {
                         allVehicles = results.data.map((row, index) => {
                             return normalizeVehicleData(row, index);
                         }).filter(v => v.stockNo || v.registration);
+                        
+                        // Save to localStorage for other pages
+                        localStorage.setItem('capeye_vehicles', JSON.stringify(allVehicles));
                         
                         // Load staff list
                         loadStaffList(() => {
@@ -1288,20 +1324,54 @@
                             setInterval(refreshOperations, 30000);
                         });
                     } else {
-                        showLoading(false);
-                        showDataStatus(false, 0, 'No data found in CSV');
+                        // Try localStorage fallback
+                        tryLocalStorageFallback();
                     }
                 },
                 error: function(error) {
                     console.error('Error loading CSV:', error);
-                    showLoading(false);
-                    showDataStatus(false, 0, 'Error loading data: ' + error.message);
+                    showDebug(`<strong>CSV Load Error</strong><br>File: ${stockCsvPath}<br>Error: ${error.message}<br>Trying localStorage fallback...`);
+                    tryLocalStorageFallback();
                 }
             });
         }
 
+        // NEW: Fallback to localStorage if CSV fails
+        function tryLocalStorageFallback() {
+            const saved = localStorage.getItem('capeye_vehicles');
+            if (saved) {
+                try {
+                    allVehicles = JSON.parse(saved);
+                    console.log('Loaded from localStorage:', allVehicles.length, 'vehicles');
+                    showLoading(false);
+                    showDataStatus(true, allVehicles.length, ' (from localStorage)');
+                    populateFilters();
+                    applyFilters();
+                    setInterval(refreshOperations, 30000);
+                } catch (e) {
+                    showLoading(false);
+                    showDataStatus(false, 0, 'No data available');
+                    showDebug(`<strong>No Data Available</strong><br>CSV file not found and no localStorage data.<br>Please import data via Import page.`);
+                }
+            } else {
+                showLoading(false);
+                showDataStatus(false, 0, 'No data available');
+                showDebug(`<strong>No Data Available</strong><br>CSV file not found: Auto Capital - Stock List-639068391990284525.csv<br>Please ensure the file is uploaded to the repository.`);
+            }
+        }
+
+        // NEW: Show debug info
+        function showDebug(message) {
+            const panel = document.getElementById('debugPanel');
+            const content = document.getElementById('debugContent');
+            panel.classList.add('show');
+            content.innerHTML = message;
+        }
+
         function loadStaffList(callback) {
-            Papa.parse('Auto Capital - Staff List-639068391990284525.csv', {
+            const staffCsvPath = 'Auto Capital - Staff List-639068391990284525.csv';
+            
+            Papa.parse(staffCsvPath, {
                 download: true,
                 header: true,
                 complete: function(results) {
@@ -1311,28 +1381,28 @@
                             .filter(Boolean)
                             .map(name => ({ name }));
                     } else {
-                        staffList = [
-                            { name: 'Keith Hardy' },
-                            { name: 'Ibrahim Ata' },
-                            { name: 'Ali Amood' },
-                            { name: 'Morteza Rahamian' },
-                            { name: 'Marcin Kiljan' },
-                            { name: 'Sia Vajihi' },
-                            { name: 'Iman Zarien' },
-                            { name: 'Stash' }
-                        ];
+                        useDefaultStaff();
                     }
                     if (callback) callback();
                 },
                 error: function() {
-                    staffList = [
-                        { name: 'Keith Hardy' },
-                        { name: 'Ibrahim Ata' },
-                        { name: 'Ali Amood' }
-                    ];
+                    useDefaultStaff();
                     if (callback) callback();
                 }
             });
+        }
+
+        function useDefaultStaff() {
+            staffList = [
+                { name: 'Keith Hardy' },
+                { name: 'Ibrahim Ata' },
+                { name: 'Ali Amood' },
+                { name: 'Morteza Rahamian' },
+                { name: 'Marcin Kiljan' },
+                { name: 'Sia Vajihi' },
+                { name: 'Iman Zarien' },
+                { name: 'Stash' }
+            ];
         }
 
         function normalizeVehicleData(row, index) {
@@ -1403,7 +1473,7 @@
             overlay.style.display = show ? 'flex' : 'none';
         }
 
-        function showDataStatus(success, count, errorMessage) {
+        function showDataStatus(success, count, suffix = '') {
             const status = document.getElementById('dataStatus');
             const text = status.querySelector('.data-status-text');
             const countEl = document.getElementById('recordCount');
@@ -1412,10 +1482,10 @@
             status.className = 'data-status' + (success ? '' : ' error');
             
             if (success) {
-                text.textContent = `Loaded ${count} vehicles from CSV`;
+                text.textContent = `Loaded ${count} vehicles from CSV${suffix}`;
                 countEl.textContent = new Date().toLocaleTimeString();
             } else {
-                text.textContent = errorMessage || 'Error loading data';
+                text.textContent = count > 0 ? `Error: ${count}` : 'Error loading data';
                 countEl.textContent = '';
             }
         }
